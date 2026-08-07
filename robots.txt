@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+Disallow: /project-unveiled-analytics/
+Disallow: /owner/
+
+Sitemap: https://bobsome1.com/sitemap.xml

@@ -1,0 +1,21 @@
+# Local operating data and secrets
+/site-private/
+/.env
+/.env.*
+*.pem
+*.key
+
+# Hosting and deployment artifacts
+*.zip
+*.sql
+*.log
+*.bak
+*.old
+error_log
+*BACKUP*.html
+
+# Editor and operating-system noise
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

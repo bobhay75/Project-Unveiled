@@ -1,0 +1,551 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="author" content="Robert J. Hayes">
+  <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+  <meta name="theme-color" content="#050403">
+  <link rel="sitemap" type="application/xml" href="/sitemap.xml">
+
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Project Unveiled">
+  <meta property="og:title" content="Interactive Historical Timeline | Project Unveiled">
+  <meta property="og:description" content="Explore ten interactive historical moments with original generated cinematic reconstructions, from the first-century Way through the 1945 Nag Hammadi discovery.">
+  <meta property="og:url" content="https://bobsome1.com/book/timeline.html">
+  <meta property="og:image" content="https://bobsome1.com/book/images/timeline/timeline-01-the-way-begins.png">
+  <meta property="og:image:alt" content="Generated cinematic reconstruction of the first-century Way">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Interactive Historical Timeline | Project Unveiled">
+  <meta name="twitter:description" content="Ten interactive historical moments with original generated cinematic reconstructions.">
+  <meta name="twitter:image" content="https://bobsome1.com/book/images/timeline/timeline-01-the-way-begins.png">
+
+<title>Interactive Historical Timeline | Project Unveiled</title>
+<meta name="description" content="A full-screen interactive historical timeline for Project Unveiled.">
+<link rel="canonical" href="https://bobsome1.com/book/timeline.html">
+<style>
+:root {
+ --black:#050403;--panel:#0a0805;--panel2:#11100d;--gold:#d6a93a;--bright:#f0c95c;
+ --cream:#f3ead8;--text:#e4dac6;--muted:#a99c85;--line:rgba(214,169,58,.4);
+ --header:68px;--rail:340px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:#000;color:var(--text);font-family:Arial,Helvetica,sans-serif;overflow:hidden}
+button,a{font:inherit}
+button{cursor:pointer}
+img{display:block;max-width:100%}
+header{
+ height:var(--header);border-bottom:1px solid var(--line);background:#050403;
+ display:flex;align-items:center;position:relative;z-index:100
+}
+.nav{width:100%;padding:0 22px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.brand{font:900 22px Georgia,serif;letter-spacing:.13em;color:var(--cream);text-decoration:none;line-height:1.05}
+.brand span{display:block;color:var(--bright)}
+.links{display:flex;gap:28px;align-items:center}
+.links a{color:var(--cream);text-decoration:none;font-size:13px;letter-spacing:.06em}
+.links .active{color:var(--bright)}
+.book-btn{padding:12px 18px;border:1px solid var(--gold);border-radius:4px;color:var(--cream)!important}
+.shell{height:calc(100vh - var(--header));display:grid;grid-template-columns:var(--rail) 1fr;background:#000}
+.sidebar{height:100%;background:#080706;border-right:1px solid var(--line);display:flex;flex-direction:column;min-width:0}
+.side-head{padding:18px 20px 14px;border-bottom:1px solid var(--line)}
+.side-head h1{margin:0;color:var(--bright);font:900 25px Georgia,serif;letter-spacing:.02em}
+.side-head p{margin:4px 0 10px;color:#ddd3c2;font-size:13px;line-height:1.35}
+.progress-label{display:flex;justify-content:space-between;color:var(--bright);font-size:10px;font-weight:900;letter-spacing:.12em}
+.progress-track{height:7px;border-radius:99px;background:#3a3019;overflow:hidden;margin-top:6px}
+.progress-bar{height:100%;width:10%;background:linear-gradient(90deg,var(--bright),#a57216);transition:width .3s}
+.rail{overflow:auto;flex:1;scrollbar-width:thin;scrollbar-color:var(--gold) #080706}
+.rail-item{width:100%;display:grid;grid-template-columns:34px 1fr 90px;gap:10px;align-items:center;padding:12px 12px;border:0;border-bottom:1px solid rgba(214,169,58,.15);background:transparent;color:inherit;text-align:left;position:relative}
+.rail-item:hover{background:rgba(214,169,58,.05)}
+.rail-item.active{background:linear-gradient(90deg,rgba(214,169,58,.18),rgba(214,169,58,.03));box-shadow:inset 0 0 0 1px var(--gold)}
+.rail-dot{display:grid;place-items:center;width:28px;height:28px;border:1px solid var(--gold);border-radius:50%;color:var(--bright);font-weight:900;font-size:12px;background:#090805}
+.rail-item.active .rail-dot{background:var(--bright);color:#171108}
+.rail-text small{display:block;color:var(--bright);font-size:10px;font-weight:900}
+.rail-text strong{display:block;color:var(--cream);font:700 14px Georgia,serif;line-height:1.15;margin:2px 0}
+.rail-text em{display:block;color:var(--muted);font-style:normal;font-size:10px;line-height:1.3}
+.rail-item img{width:90px;height:62px;object-fit:cover;border-radius:3px;border:1px solid rgba(214,169,58,.35)}
+.main{height:100%;display:grid;grid-template-rows:54% 46%;min-width:0;overflow:hidden}
+.hero{position:relative;overflow:hidden;border-bottom:1px solid var(--gold);background:#090805}
+.hero img{width:100%;height:100%;object-fit:cover;object-position:50% 38%;transition:opacity .22s,transform .8s,object-position .5s}
+.hero.loading img{opacity:.2;transform:scale(1.03)}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.52),transparent 45%),linear-gradient(180deg,rgba(0,0,0,.04),rgba(0,0,0,.85));pointer-events:none}
+.hero-copy{position:absolute;left:46px;top:42px;z-index:3;max-width:520px;text-shadow:0 4px 18px #000}
+.event-count{display:inline-block;padding:5px 9px;border:1px solid var(--gold);background:rgba(0,0,0,.72);color:var(--bright);font-size:11px;font-weight:900;letter-spacing:.08em;border-radius:4px}
+.hero-copy h2{margin:12px 0 6px;color:white;font:900 clamp(38px,4vw,64px) Georgia,serif;line-height:.95}
+.hero-date{color:var(--bright);font:900 26px Georgia,serif}
+.hero-copy p{font-size:16px;line-height:1.45;color:white;max-width:480px}
+.hero-dots{position:absolute;left:50%;bottom:24px;z-index:4;transform:translateX(-50%);display:flex;align-items:center;gap:14px}
+.hero-dots::before{content:"";position:absolute;left:-30px;right:-30px;top:50%;height:1px;background:rgba(214,169,58,.65);z-index:-1}
+.dot{width:32px;height:32px;border-radius:50%;border:1px solid #ddd;background:#080706;color:white;font-size:12px}
+.dot.active{background:var(--bright);color:#1c1304;border-color:var(--bright);box-shadow:0 0 0 4px rgba(214,169,58,.25)}
+.arrow{position:absolute;top:50%;z-index:4;transform:translateY(-50%);width:44px;height:44px;border:1px solid rgba(214,169,58,.6);border-radius:50%;background:rgba(0,0,0,.55);color:white;font-size:22px}
+.arrow.prev{left:18px} .arrow.next{right:18px}
+.details{display:grid;grid-template-columns:1.15fr .95fr 1fr;background:#090805;min-height:0}
+.story-panel,.image-panel,.facts-panel{padding:24px 28px;overflow:auto}
+.story-panel,.image-panel{border-right:1px solid var(--line)}
+.section-title{color:var(--bright);font:900 18px Georgia,serif;letter-spacing:.04em;margin:0 0 14px}
+.story-panel p,.facts-panel li{font-size:13px;line-height:1.55;color:#d4c9b5}
+.quote{margin-top:20px;color:var(--bright)!important;font:italic 17px Georgia,serif!important}
+.image-panel img{width:100%;height:72%;object-fit:cover;border:1px solid var(--line)}
+.caption{text-align:center;color:var(--muted);font-size:11px;margin-top:9px}
+.facts-panel h3{color:var(--bright);font:900 16px Georgia,serif;margin:0 0 8px}
+.facts-panel ul{margin:0 0 18px;padding-left:18px}
+.facts-panel a{display:inline-block;padding:9px 14px;border:1px solid var(--gold);color:var(--cream);text-decoration:none;font-size:11px;font-weight:900}
+.bottom-bar{position:absolute;left:var(--rail);right:0;bottom:0;height:58px;background:#080706;border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 28px;z-index:10}
+.tip{font-size:12px;color:var(--muted)} .tip strong{color:var(--bright)}
+.bottom-controls{display:flex;gap:12px}
+.bottom-controls button{min-width:150px;padding:11px 18px;border:1px solid var(--gold);background:#111;color:var(--cream);font-size:12px;font-weight:900;letter-spacing:.06em}
+.bottom-controls .next-btn{background:linear-gradient(180deg,#e7bd56,#b77d1d);color:#171108}
+@media(max-width:1050px){
+ :root{--rail:290px}
+ .rail-item{grid-template-columns:30px 1fr} .rail-item img{display:none}
+ .hero-copy{left:30px;top:30px}
+ .details{grid-template-columns:1fr 1fr} .facts-panel{display:none}
+}
+@media(max-width:780px){
+ html,body{overflow:auto;height:auto}
+ header{position:sticky;top:0}
+ .links a:not(.active):not(.book-btn){display:none}
+ .shell{height:auto;display:block}
+ .sidebar{height:auto;position:sticky;top:var(--header);z-index:90;border-right:0;border-bottom:1px solid var(--line)}
+ .side-head{display:none}
+ .rail{display:flex;overflow-x:auto}
+ .rail-item{flex:0 0 190px;grid-template-columns:30px 1fr;padding:9px}
+ .rail-text em{display:none}
+ .main{height:auto;display:block}
+ .hero{height:58vh;min-height:430px}
+ .hero-copy{left:22px;right:22px;top:28px}
+ .hero-copy h2{font-size:42px}
+ .hero-copy p{font-size:14px}
+ .hero-dots{gap:7px;bottom:18px} .dot{width:27px;height:27px;font-size:10px}
+ .details{display:block}
+ .story-panel,.image-panel,.facts-panel{display:block;border-right:0;border-bottom:1px solid var(--line);max-height:none;overflow:visible}
+ .image-panel img{height:auto;max-height:420px}
+ .bottom-bar{position:static;height:auto;padding:14px;left:0;flex-direction:column;gap:10px}
+}
+</style>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "CreativeWork",
+      "@id": "https://bobsome1.com/book/timeline.html#timeline",
+      "name": "Project Unveiled Interactive Historical Timeline",
+      "url": "https://bobsome1.com/book/timeline.html",
+      "author": {
+        "@type": "Person",
+        "name": "Robert J. Hayes",
+        "url": "https://bobsome1.com/book/read/about-author.html"
+      },
+      "description": "A full-screen interactive timeline presenting ten historical milestones with original generated cinematic reconstructions.",
+      "isPartOf": {
+        "@type": "Book",
+        "name": "Project Unveiled",
+        "url": "https://bobsome1.com/book/"
+      },
+      "inLanguage": "en-US",
+      "dateModified": "2026-07-30"
+    },
+    {
+      "@type": "ItemList",
+      "@id": "https://bobsome1.com/book/timeline.html#events",
+      "name": "Project Unveiled Historical Timeline Events",
+      "numberOfItems": 10,
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "The Way Begins",
+          "url": "https://bobsome1.com/book/timeline.html#event-1"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Fire and Scapegoating",
+          "url": "https://bobsome1.com/book/timeline.html#event-2"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Sacrifice as a Loyalty Test",
+          "url": "https://bobsome1.com/book/timeline.html#event-3"
+        },
+        {
+          "@type": "ListItem",
+          "position": 4,
+          "name": "The Great Persecution",
+          "url": "https://bobsome1.com/book/timeline.html#event-4"
+        },
+        {
+          "@type": "ListItem",
+          "position": 5,
+          "name": "The Edict of Milan",
+          "url": "https://bobsome1.com/book/timeline.html#event-5"
+        },
+        {
+          "@type": "ListItem",
+          "position": 6,
+          "name": "The Council of Nicaea",
+          "url": "https://bobsome1.com/book/timeline.html#event-6"
+        },
+        {
+          "@type": "ListItem",
+          "position": 7,
+          "name": "Arius's Writings Burned",
+          "url": "https://bobsome1.com/book/timeline.html#event-7"
+        },
+        {
+          "@type": "ListItem",
+          "position": 8,
+          "name": "The Thirty-Ninth Festal Letter",
+          "url": "https://bobsome1.com/book/timeline.html#event-8"
+        },
+        {
+          "@type": "ListItem",
+          "position": 9,
+          "name": "State-Backed Orthodoxy",
+          "url": "https://bobsome1.com/book/timeline.html#event-9"
+        },
+        {
+          "@type": "ListItem",
+          "position": 10,
+          "name": "The Nag Hammadi Library",
+          "url": "https://bobsome1.com/book/timeline.html#event-10"
+        }
+      ]
+    }
+  ]
+}
+</script>
+
+<style id="project-unveiled-traffic-layer-styles">
+/* PROJECT-UNVEILED-TRAFFIC-DONATION-LAYER */
+.pu-support-footer{max-width:1100px;margin:18px auto 0;padding:14px 18px;border-top:1px solid rgba(215,173,81,.4);display:flex;gap:12px;justify-content:center;align-items:center;flex-wrap:wrap;font-family:Arial,sans-serif;font-size:14px}.pu-support-footer a{color:#f3d47d;text-decoration:underline;text-underline-offset:3px}.pu-support-footer span{color:#8d7b55}.pu-final-support-cta,.pu-reader-support-cta{max-width:980px;margin:34px auto;padding:26px;border:1px solid #d7ad51;background:linear-gradient(135deg,#15110b,#080706);color:#f4ead2;text-align:center;box-shadow:0 18px 55px rgba(0,0,0,.35)}.pu-final-support-cta h2,.pu-reader-support-cta h2{margin:.2rem 0 .7rem;color:#f3d47d;font-family:Georgia,"Times New Roman",serif}.pu-final-support-cta p,.pu-reader-support-cta p{max-width:760px;margin:.6rem auto}.pu-conversion-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:18px}.pu-conversion-actions a{display:inline-flex;align-items:center;justify-content:center;padding:12px 18px;border:1px solid #d7ad51;background:#d7ad51;color:#090806!important;font-weight:800;text-decoration:none!important}.pu-conversion-actions a.secondary{background:transparent;color:#f3d47d!important}.pu-support-legal{font-size:13px;color:#bdb49f}.pu-support-float{position:fixed;right:15px;bottom:15px;z-index:9998;padding:10px 14px;border:1px solid #d7ad51;border-radius:999px;background:rgba(8,7,6,.95);color:#f3d47d!important;text-decoration:none!important;font:700 13px Arial,sans-serif;box-shadow:0 8px 28px rgba(0,0,0,.5)}@media(max-width:650px){.pu-final-support-cta,.pu-reader-support-cta{margin:24px 14px;padding:21px 16px}.pu-support-float{right:10px;bottom:10px;padding:9px 12px}}
+</style>
+
+<style id="timeline-support-control-fix">
+.pu-support-float{display:none!important}
+</style>
+
+<style id="timeline-scroll-fix-20260730">
+/* Desktop: the timeline content scrolls inside the right pane.
+   The event rail scrolls independently on the left. */
+html, body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden !important;
+}
+
+body {
+  position: static !important;
+}
+
+.shell {
+  height: calc(100vh - var(--header)) !important;
+  min-height: 0 !important;
+  align-items: stretch;
+}
+
+.sidebar {
+  height: 100% !important;
+  min-height: 0;
+  position: relative !important;
+  top: auto !important;
+}
+
+.rail {
+  min-height: 0;
+  overflow-y: auto !important;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.main {
+  height: 100% !important;
+  min-height: 0 !important;
+  display: block !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+  padding-bottom: 72px;
+}
+
+.hero {
+  height: max(620px, calc(100vh - var(--header))) !important;
+  min-height: 620px;
+}
+
+.details {
+  display: grid;
+  min-height: 520px;
+}
+
+.story-panel,
+.image-panel,
+.facts-panel {
+  overflow: visible !important;
+}
+
+.bottom-bar {
+  position: fixed !important;
+  left: var(--rail) !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  margin-left: 0 !important;
+}
+
+.pu-support-footer {
+  margin-left: 0 !important;
+}
+
+/* Prevent a focused button from forcing the entire page sideways. */
+.rail-item,
+.dot,
+.arrow,
+.bottom-controls button {
+  scroll-margin: 12px;
+}
+
+@media (max-width: 780px) {
+  html, body {
+    height: auto !important;
+    min-height: 100% !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+  }
+
+  header {
+    position: sticky;
+    top: 0;
+  }
+
+  .shell {
+    height: auto !important;
+    display: block;
+  }
+
+  .sidebar {
+    height: auto !important;
+    position: sticky !important;
+    top: var(--header) !important;
+  }
+
+  .rail {
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+  }
+
+  .main {
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+    padding-bottom: 0;
+  }
+
+  .hero {
+    height: 58vh !important;
+    min-height: 430px;
+  }
+
+  .details {
+    display: block;
+    min-height: 0;
+  }
+
+  .bottom-bar {
+    position: static !important;
+    left: auto !important;
+    right: auto !important;
+  }
+
+  .pu-support-footer {
+    margin-left: 0 !important;
+  }
+
+  .pu-support-float {
+    display: none !important;
+  }
+}
+</style>
+</head>
+<body>
+<header>
+ <div class="nav">
+   <a class="brand" href="/"><span>PROJECT</span>UNVEILED</a>
+   <nav class="links">
+     <a href="/">HOME</a><a href="/book/">BOOK</a><a class="active" href="/book/timeline.html">TIMELINE</a>
+     <a href="/book/research.html">RESEARCH</a><a href="/book/read/support-right-hand.html">SUPPORT</a>
+     <a href="/book/read/about-author.html">ABOUT</a><a class="book-btn" href="/book/read/">READ THE COMPLETE BOOK</a>
+   </nav>
+ </div>
+</header>
+
+<div class="shell">
+ <aside class="sidebar">
+   <div class="side-head">
+     <h1>HISTORY MOVES</h1>
+     <p>An Interactive Timeline of Key Moments<br>That Shaped the Way</p>
+     <div class="progress-label"><span>YOU ARE HERE</span><span id="progressText">1 / 10</span></div>
+     <div class="progress-track"><div class="progress-bar" id="progressBar"></div></div>
+   </div>
+   <div class="rail"><button class="rail-item active" id="event-1" data-index="0" type="button">
+<span class="rail-dot">1</span>
+<span class="rail-text"><small>30–100 AD</small><strong>The Way Begins</strong><em>The first followers of Jesus live and teach in His way. Oral teachings, letters, and eyewitness testimony spread across the nations.</em></span>
+<img src="/book/images/timeline/timeline-01-the-way-begins.webp" alt="" loading="lazy" width="956" height="554">
+</button>
+<button class="rail-item" id="event-2" data-index="1" type="button">
+<span class="rail-dot">2</span>
+<span class="rail-text"><small>64 AD</small><strong>Fire and Scapegoating</strong><em>Nero blamed Christians after the Great Fire of Rome, turning fear into persecution.</em></span>
+<img src="/book/images/timeline/timeline-02-fire-and-scapegoating.webp" alt="" loading="lazy" width="956" height="554">
+</button>
+<button class="rail-item" id="event-3" data-index="2" type="button">
+<span class="rail-dot">3</span>
+<span class="rail-text"><small>250 AD</small><strong>Sacrifice as a Loyalty Test</strong><em>Under Decius, public sacrifice became a test of loyalty across the empire.</em></span>
+<img src="/book/images/timeline/timeline-03-sacrifice-loyalty-test.webp" alt="" loading="lazy" width="956" height="554">
+</button>
+<button class="rail-item" id="event-4" data-index="3" type="button">
+<span class="rail-dot">4</span>
+<span class="rail-text"><small>303 AD</small><strong>The Great Persecution</strong><em>Diocletian’s edicts targeted churches, scriptures, clergy, and public worship.</em></span>
+<img src="/book/images/timeline/timeline-04-great-persecution.webp" alt="" loading="lazy" width="956" height="554">
+</button>
+<button class="rail-item" id="event-5" data-index="4" type="button">
+<span class="rail-dot">5</span>
+<span class="rail-text"><small>313 AD</small><strong>The Edict of Milan</strong><em>Christian worship gained legal protection and confiscated property could be restored.</em></span>
+<img src="/book/images/timeline/timeline-05-edict-of-milan.webp" alt="" loading="lazy" width="956" height="554">
+</button>
+<button class="rail-item" id="event-6" data-index="5" type="button">
+<span class="rail-dot">6</span>
+<span class="rail-text"><small>325 AD</small><strong>The Council of Nicaea</strong><em>Constantine called bishops together to address division over Christ’s status and relation to the Father.</em></span>
+<img src="/book/images/timeline/timeline-06-council-of-nicea.webp" alt="" loading="lazy" width="956" height="554">
+</button>
+<button class="rail-item" id="event-7" data-index="6" type="button">
+<span class="rail-dot">7</span>
+<span class="rail-text"><small>After 325</small><strong>Arius’s Writings Burned</strong><em>Constantine ordered Arius’s writings destroyed, narrowing what later generations could examine.</em></span>
+<img src="/book/images/timeline/timeline-07-arius-writings-burned.webp" alt="" loading="lazy" width="956" height="554">
+</button>
+<button class="rail-item" id="event-8" data-index="7" type="button">
+<span class="rail-dot">8</span>
+<span class="rail-text"><small>367 AD</small><strong>The Thirty-Ninth Festal Letter</strong><em>Athanasius listed the twenty-seven New Testament books recognized today.</em></span>
+<img src="/book/images/timeline/timeline-08-athanasius-festal-letter.webp" alt="" loading="lazy" width="956" height="554">
+</button>
+<button class="rail-item" id="event-9" data-index="8" type="button">
+<span class="rail-dot">9</span>
+<span class="rail-text"><small>380 AD</small><strong>State-Backed Orthodoxy</strong><em>The Edict of Thessalonica tied Nicene Christianity to imperial enforcement.</em></span>
+<img src="/book/images/timeline/timeline-09-state-backed-orthodoxy.webp" alt="" loading="lazy" width="956" height="554">
+</button>
+<button class="rail-item" id="event-10" data-index="9" type="button">
+<span class="rail-dot">10</span>
+<span class="rail-text"><small>1945 AD</small><strong>The Nag Hammadi Library</strong><em>Ancient codices discovered in Egypt reopened access to writings long absent from the standard manuscript tradition.</em></span>
+<img src="/book/images/timeline/timeline-10-nag-hammadi-discovery.webp" alt="" loading="lazy" width="956" height="554">
+</button></div>
+ </aside>
+
+ <main class="main">
+   <section class="hero" id="hero">
+     <img id="heroImage" src="/book/images/timeline/timeline-01-the-way-begins.webp" alt="Generated cinematic reconstruction: The Way Begins" width="956" height="554">
+     <button class="arrow prev" id="heroPrev" aria-label="Previous event">‹</button>
+     <button class="arrow next" id="heroNext" aria-label="Next event">›</button>
+     <div class="hero-copy">
+       <span class="event-count" id="eventCount">EVENT 1 OF 10</span>
+       <h2 id="heroTitle">The Way Begins</h2>
+       <div class="hero-date" id="heroDate">30–100 AD</div>
+       <p id="heroSummary">The first followers of Jesus live and teach in His way. Oral teachings, letters, and eyewitness testimony spread across the nations.</p>
+     </div>
+     <div class="hero-dots"><button class="dot active" data-index="0" aria-label="Open event 1">1</button>
+<button class="dot" data-index="1" aria-label="Open event 2">2</button>
+<button class="dot" data-index="2" aria-label="Open event 3">3</button>
+<button class="dot" data-index="3" aria-label="Open event 4">4</button>
+<button class="dot" data-index="4" aria-label="Open event 5">5</button>
+<button class="dot" data-index="5" aria-label="Open event 6">6</button>
+<button class="dot" data-index="6" aria-label="Open event 7">7</button>
+<button class="dot" data-index="7" aria-label="Open event 8">8</button>
+<button class="dot" data-index="8" aria-label="Open event 9">9</button>
+<button class="dot" data-index="9" aria-label="Open event 10">10</button></div>
+   </section>
+
+   <section class="details">
+     <div class="story-panel">
+       <h3 class="section-title">THE STORY</h3>
+       <p id="storyText">Jesus taught the Kingdom of God. He called people to repent, believe, and live by love. His followers—called the Way—shared meals, prayed, healed the sick, and cared for the poor. There was no empire behind them and no state-backed centralized institution. The message spread from Jerusalem to Antioch, Asia Minor, Rome, and beyond.</p>
+       <p class="quote" id="quoteText">“They turned the world upside down…” — Acts 17:6</p>
+     </div>
+     <div class="image-panel">
+       <img id="detailImage" src="/book/images/timeline/timeline-01-the-way-begins.webp" alt="Generated cinematic reconstruction: The Way Begins" loading="lazy" width="956" height="554">
+       <div class="caption" id="imageCaption">Generated cinematic reconstruction of Jesus teaching beside the Sea of Galilee.</div>
+     </div>
+     <div class="facts-panel">
+       <h3>KEY POINTS</h3><ul id="pointsList"><li>Oral teachings and eyewitness accounts</li><li>Letters and messages to churches</li><li>Persecution but rapid growth</li><li>The Way was a life, not a religion</li></ul>
+       <h3>PRIMARY SOURCES</h3><ul id="sourcesList"><li>Acts of the Apostles</li><li>Pauline Letters</li><li>Gospel Traditions</li><li>Early Church Writings</li></ul>
+       <a href="/book/read/appendix-e.html">VIEW SOURCES</a>
+     </div>
+   </section>
+ </main>
+</div>
+
+<div class="bottom-bar">
+ <div class="tip"><strong>TIP:</strong> Click any event in the timeline or use the arrow buttons to move through history.</div>
+ <div class="bottom-controls">
+   <button id="bottomPrev">‹ PREVIOUS</button>
+   <button class="next-btn" id="bottomNext">NEXT EVENT ›</button>
+ </div>
+</div>
+
+<script>
+const events=[{"date": "30–100 AD", "title": "The Way Begins", "summary": "The first followers of Jesus live and teach in His way. Oral teachings, letters, and eyewitness testimony spread across the nations.", "story": "Jesus taught the Kingdom of God. He called people to repent, believe, and live by love. His followers—called the Way—shared meals, prayed, healed the sick, and cared for the poor. There was no empire behind them and no state-backed centralized institution. The message spread from Jerusalem to Antioch, Asia Minor, Rome, and beyond.", "quote": "“They turned the world upside down…” — Acts 17:6", "points": ["Oral teachings and eyewitness accounts", "Letters and messages to churches", "Persecution but rapid growth", "The Way was a life, not a religion"], "sources": ["Acts of the Apostles", "Pauline Letters", "Gospel Traditions", "Early Church Writings"], "image": "/book/images/timeline/timeline-01-the-way-begins.webp", "caption": "Generated cinematic reconstruction of Jesus teaching beside the Sea of Galilee.", "object": "50% 38%"}, {"date": "64 AD", "title": "Fire and Scapegoating", "summary": "Nero blamed Christians after the Great Fire of Rome, turning fear into persecution.", "story": "The Great Fire of Rome became a turning point in the public perception of Christians. Tacitus later recorded that Nero used Christians as scapegoats. The event shows how quickly an unpopular minority could be blamed when politics, fear, and public anger converged.", "quote": "“An immense multitude was convicted…” — Tacitus, Annals 15.44", "points": ["Public fear shaped policy", "Christians were vulnerable outsiders", "State violence followed accusation", "Later sources preserve the account"], "sources": ["Tacitus, Annals 15.44", "Suetonius", "Cassius Dio", "Early Christian memory"], "image": "/book/images/timeline/timeline-02-fire-and-scapegoating.webp", "caption": "Generated cinematic reconstruction of Rome burning during Nero’s reign.", "object": "50% 48%"}, {"date": "250 AD", "title": "Sacrifice as a Loyalty Test", "summary": "Under Decius, public sacrifice became a test of loyalty across the empire.", "story": "Under Emperor Decius, citizens were pressured to perform sacrifice and obtain certificates proving compliance. For Christians, the issue was not merely religious ritual—it became a test of political loyalty with legal consequences.", "quote": "Public worship became a civil requirement.", "points": ["Sacrifice linked religion and citizenship", "Certificates recorded compliance", "Refusal carried consequences", "Regional enforcement varied"], "sources": ["Decian libelli", "Cyprian of Carthage", "Eusebius", "Roman administrative records"], "image": "/book/images/timeline/timeline-03-sacrifice-loyalty-test.webp", "caption": "Generated cinematic reconstruction of the Decian sacrifice loyalty test.", "object": "50% 23%"}, {"date": "303 AD", "title": "The Great Persecution", "summary": "Diocletian’s edicts targeted churches, scriptures, clergy, and public worship.", "story": "Beginning in 303, imperial orders targeted Christian meeting places, sacred writings, clergy, and legal rights. Enforcement differed across the empire, but the period became remembered as the most severe coordinated persecution before Constantine.", "quote": "The written word itself became a target.", "points": ["Church buildings were targeted", "Scriptures were confiscated", "Clergy faced pressure", "Enforcement differed by region"], "sources": ["Lactantius", "Eusebius", "Imperial edicts", "Martyr traditions"], "image": "/book/images/timeline/timeline-04-great-persecution.webp", "caption": "Generated cinematic reconstruction of soldiers confiscating Christian writings during the Great Persecution.", "object": "50% 50%"}, {"date": "313 AD", "title": "The Edict of Milan", "summary": "Christian worship gained legal protection and confiscated property could be restored.", "story": "Constantine and Licinius announced a policy of religious toleration that allowed Christians to worship legally and recover confiscated property. The change was dramatic: Christianity moved from vulnerability toward imperial favor.", "quote": "Protection replaced prohibition.", "points": ["Christian worship became legal", "Property could be restored", "Imperial favor increased", "Church and state drew closer"], "sources": ["Lactantius", "Eusebius", "Imperial correspondence", "Later legal summaries"], "image": "/book/images/timeline/timeline-05-edict-of-milan.webp", "caption": "Generated cinematic reconstruction of imperial legal protection after the Edict of Milan.", "object": "50% 38%"}, {"date": "325 AD", "title": "The Council of Nicaea", "summary": "Constantine called bishops together to address division over Christ’s status and relation to the Father.", "story": "The Council of Nicaea gathered bishops under imperial sponsorship. It produced a creed and condemned Arius, but the controversy did not end. The council became a major moment in the relationship between doctrine, bishops, and imperial authority.", "quote": "Creed, council, and empire met in one room.", "points": ["Constantine convened the council", "The Arian controversy dominated debate", "A creed was produced", "Disputes continued after 325"], "sources": ["Eusebius", "Athanasius", "The Nicene Creed", "Imperial letters"], "image": "/book/images/timeline/timeline-06-council-of-nicea.webp", "caption": "Generated cinematic reconstruction of bishops gathered at the Council of Nicaea.", "object": "50% 47%"}, {"date": "After 325", "title": "Arius’s Writings Burned", "summary": "Constantine ordered Arius’s writings destroyed, narrowing what later generations could examine.", "story": "When writings are suppressed, destroyed, or preserved mainly through opponents, historical reconstruction becomes more difficult. Later readers must distinguish surviving evidence from hostile quotation and retrospective interpretation.", "quote": "The surviving record is never the whole record.", "points": ["Writings were ordered destroyed", "Opponents preserved many quotations", "Historical reconstruction is difficult", "Power affects what survives"], "sources": ["Imperial letters", "Athanasius", "Socrates Scholasticus", "Sozomen"], "image": "/book/images/timeline/timeline-07-arius-writings-burned.webp", "caption": "Generated cinematic reconstruction of Arius’s writings being burned after Nicaea.", "object": "50% 52%"}, {"date": "367 AD", "title": "The Thirty-Ninth Festal Letter", "summary": "Athanasius listed the twenty-seven New Testament books recognized today.", "story": "Athanasius’s Thirty-Ninth Festal Letter is a major landmark in New Testament canon history. It named the twenty-seven books now recognized in the New Testament and distinguished them from other writings.", "quote": "A list became a landmark.", "points": ["Twenty-seven books were named", "Other writings were distinguished", "Regional practice still varied", "Canon history developed over time"], "sources": ["Athanasius, Festal Letter 39", "Eusebius", "Muratorian Fragment", "Early canon lists"], "image": "/book/images/timeline/timeline-08-athanasius-festal-letter.webp", "caption": "Generated cinematic reconstruction of Athanasius preparing his Thirty-Ninth Festal Letter.", "object": "50% 22%"}, {"date": "380 AD", "title": "State-Backed Orthodoxy", "summary": "The Edict of Thessalonica tied Nicene Christianity to imperial enforcement.", "story": "Under Theodosius I, Nicene Christianity received explicit imperial support. Religious disagreement increasingly carried political and legal consequences, marking a profound change from the vulnerable communities of earlier centuries.", "quote": "The persecuted faith became the protected faith.", "points": ["Nicene belief gained state backing", "Imperial enforcement shaped orthodoxy", "Dissent carried legal risk", "Church and empire became intertwined"], "sources": ["Edict of Thessalonica", "Theodosian Code", "Socrates Scholasticus", "Sozomen"], "image": "/book/images/timeline/timeline-09-state-backed-orthodoxy.webp", "caption": "Generated cinematic reconstruction of church authority and imperial power joined under Theodosius I.", "object": "50% 35%"}, {"date": "1945 AD", "title": "The Nag Hammadi Library", "summary": "Ancient codices discovered in Egypt reopened access to writings long absent from the standard manuscript tradition.", "story": "The Nag Hammadi codices preserved Christian, philosophical, and religious writings that had not survived through the dominant manuscript tradition. Their discovery transformed modern study of early Christian diversity.", "quote": "Buried texts returned to the conversation.", "points": ["Ancient codices were recovered", "Previously lost writings became accessible", "Early Christian diversity became clearer", "Discovery reshaped scholarship"], "sources": ["Nag Hammadi Codices", "Coptic Museum collections", "Modern critical editions", "Archaeological reports"], "image": "/book/images/timeline/timeline-10-nag-hammadi-discovery.webp", "caption": "Generated cinematic reconstruction of the Nag Hammadi codices being uncovered in Egypt.", "object": "50% 50%"}];
+let current=0;
+const q=s=>document.querySelector(s), qa=s=>[...document.querySelectorAll(s)];
+const hero=q("#hero"), heroImage=q("#heroImage"), detailImage=q("#detailImage");
+
+function setEvent(index){
+ current=(index+events.length)%events.length;
+ const e=events[current];
+ hero.classList.add("loading");
+ const loader=new Image();
+ loader.referrerPolicy="no-referrer";
+ loader.onload=()=>{
+   heroImage.src=e.image; detailImage.src=e.image;
+   const imageAlt=`Generated cinematic reconstruction: ${e.title}`;
+   heroImage.alt=imageAlt; detailImage.alt=imageAlt;
+   heroImage.style.objectPosition=e.object; detailImage.style.objectPosition=e.object;
+   hero.classList.remove("loading");
+ };
+ loader.onerror=()=>hero.classList.remove("loading");
+ loader.src=e.image;
+ q("#eventCount").textContent=`EVENT ${current+1} OF ${events.length}`;
+ q("#heroTitle").textContent=e.title;
+ q("#heroDate").textContent=e.date;
+ q("#heroSummary").textContent=e.summary;
+ q("#storyText").textContent=e.story;
+ q("#quoteText").textContent=e.quote;
+ q("#imageCaption").textContent=e.caption;
+ q("#pointsList").innerHTML=e.points.map(x=>`<li>${x}</li>`).join("");
+ q("#sourcesList").innerHTML=e.sources.map(x=>`<li>${x}</li>`).join("");
+ q("#progressText").textContent=`${current+1} / ${events.length}`;
+ q("#progressBar").style.width=`${(current+1)/events.length*100}%`;
+ qa("[data-index]").forEach(el=>{
+   const isActive=Number(el.dataset.index)===current;
+   el.classList.toggle("active",isActive);
+   if(isActive)el.setAttribute("aria-current","step");else el.removeAttribute("aria-current");
+ });
+ history.replaceState(null,"",`#event-${current+1}`);
+ const activeRail=q(`.rail-item[data-index="${current}"]`);
+ if(activeRail) activeRail.scrollIntoView({behavior:"smooth",block:"nearest",inline:"nearest"});
+}
+qa("[data-index]").forEach(el=>el.addEventListener("click",()=>setEvent(Number(el.dataset.index))));
+q("#heroPrev").onclick=()=>setEvent(current-1);
+q("#heroNext").onclick=()=>setEvent(current+1);
+q("#bottomPrev").onclick=()=>setEvent(current-1);
+q("#bottomNext").onclick=()=>setEvent(current+1);
+document.addEventListener("keydown",e=>{if(e.key==="ArrowLeft")setEvent(current-1);if(e.key==="ArrowRight")setEvent(current+1);});
+const initialHash=window.location.hash.match(/^#event-(\d{1,2})$/i);
+setEvent(initialHash?Number(initialHash[1])-1:0);
+</script>
+<script id="project-unveiled-traffic-tracker" src="/project-unveiled-analytics/tracker.js?v=2" defer></script>
+<div class="pu-support-footer" aria-label="Project support and privacy links"><a href="/book/read/support-right-hand.html" data-pu-event="support_page_click">Support the Work</a><span aria-hidden="true">◆</span><a href="/privacy.html">Privacy</a></div>
+<a class="pu-support-float" href="/book/read/support-right-hand.html" data-pu-event="support_page_click" aria-label="Support Project Unveiled and Right Hand Ministry">Support the Work</a>
+</body>
+</html>

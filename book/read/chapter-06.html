@@ -1,0 +1,1703 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="Read Chapter Six of Project Unveiled by Robert J. Hayes: Having Eyes to See." name="description"/>
+<title>Chapter Six: Having Eyes to See | Project Unveiled</title>
+<style>
+    :root {
+      --black: #050505;
+      --deep-black: #090909;
+      --panel: #11100d;
+      --panel-light: #191711;
+      --gold: #d7ad51;
+      --bright-gold: #f3d47d;
+      --cream: #f4ead2;
+      --white: #fffdf7;
+      --muted: #c5bda9;
+      --line: rgba(215, 173, 81, 0.38);
+      --shadow: 0 25px 70px rgba(0, 0, 0, 0.65);
+      --max-width: 1180px;
+      --reading-width: 790px;
+      --reader-scale: 1;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      overflow-x: hidden;
+      background:
+        radial-gradient(
+          circle at 50% 0%,
+          rgba(215, 173, 81, 0.16),
+          transparent 540px
+        ),
+        linear-gradient(
+          180deg,
+          #050505 0%,
+          #0d0906 45%,
+          #050505 100%
+        );
+      color: var(--white);
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.7;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .container {
+      width: min(calc(100% - 34px), var(--max-width));
+      margin: 0 auto;
+    }
+
+    .reading-container {
+      width: min(calc(100% - 34px), var(--reading-width));
+      margin: 0 auto;
+    }
+
+    .gold {
+      color: var(--bright-gold);
+    }
+
+    .eyebrow {
+      margin-bottom: 13px;
+      color: var(--bright-gold);
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+    }
+
+    .button {
+      display: inline-flex;
+      min-height: 48px;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 21px;
+      border: 1px solid var(--gold);
+      border-radius: 999px;
+      background:
+        linear-gradient(
+          135deg,
+          var(--bright-gold),
+          #b88a34
+        );
+      color: #140e05;
+      text-decoration: none;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .button.secondary {
+      background: rgba(5, 5, 5, 0.7);
+      color: var(--cream);
+    }
+
+    .button.disabled {
+      border-color: rgba(215, 173, 81, 0.3);
+      background: rgba(255, 255, 255, 0.03);
+      color: #827968;
+      cursor: default;
+    }
+
+    .button:hover:not(.disabled) {
+      transform: translateY(-2px);
+    }
+
+    .reading-progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 1000;
+      width: 0;
+      height: 4px;
+      background:
+        linear-gradient(
+          90deg,
+          #9d7227,
+          var(--bright-gold)
+        );
+      box-shadow:
+        0 0 15px rgba(243, 212, 125, 0.6);
+    }
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid var(--line);
+      background: rgba(5, 5, 5, 0.94);
+      backdrop-filter: blur(14px);
+    }
+
+    .nav {
+      min-height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .brand {
+      color: var(--cream);
+      text-decoration: none;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 17px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      white-space: nowrap;
+    }
+
+    .brand span {
+      color: var(--bright-gold);
+    }
+
+    .nav-links {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 18px;
+    }
+
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .nav-links a:hover {
+      color: var(--bright-gold);
+    }
+
+    .reader-toolbar {
+      border-bottom: 1px solid var(--line);
+      background: rgba(17, 16, 13, 0.96);
+    }
+
+    .toolbar-inner {
+      min-height: 54px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .chapter-position {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .text-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .text-control {
+      min-width: 40px;
+      min-height: 36px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: #090806;
+      color: var(--cream);
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .text-control:hover {
+      border-color: var(--gold);
+      color: var(--bright-gold);
+    }
+
+    .chapter-hero {
+      position: relative;
+      padding: 72px 0 88px;
+    }
+
+    .chapter-hero::before {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      content: "";
+      background:
+        radial-gradient(
+          circle at 18% 30%,
+          rgba(243, 212, 125, 0.13),
+          transparent 400px
+        );
+    }
+
+    .hero-grid {
+      position: relative;
+      display: grid;
+      grid-template-columns: 1fr 0.9fr;
+      align-items: center;
+      gap: 56px;
+    }
+
+    .chapter-label {
+      display: inline-block;
+      margin-bottom: 19px;
+      padding: 7px 12px;
+      border: 1px solid var(--gold);
+      border-radius: 999px;
+      color: var(--bright-gold);
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .chapter-hero h1 {
+      margin: 0 0 22px;
+      color: var(--cream);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(48px, 8vw, 98px);
+      line-height: 0.94;
+      letter-spacing: -3px;
+      text-transform: uppercase;
+    }
+
+    .hero-lead {
+      max-width: 700px;
+      margin: 0 0 26px;
+      color: var(--muted);
+      font-size: clamp(18px, 2.2vw, 22px);
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .hero-art {
+      position: relative;
+      padding: 9px;
+      border: 1px solid var(--gold);
+      background: #050505;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-art::before,
+    .hero-art::after {
+      position: absolute;
+      width: 64px;
+      height: 64px;
+      content: "";
+    }
+
+    .hero-art::before {
+      top: -5px;
+      left: -5px;
+      border-top: 3px solid var(--bright-gold);
+      border-left: 3px solid var(--bright-gold);
+    }
+
+    .hero-art::after {
+      right: -5px;
+      bottom: -5px;
+      border-right: 3px solid var(--bright-gold);
+      border-bottom: 3px solid var(--bright-gold);
+    }
+
+    .art-label {
+      margin: 12px 0 0;
+      color: #918875;
+      font-size: 12px;
+      text-align: center;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .edition-wrap {
+      padding: 28px 0;
+      border-block: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .edition-notice {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 17px;
+      align-items: start;
+      padding: 22px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+    }
+
+    .edition-symbol {
+      color: var(--bright-gold);
+      font-size: 25px;
+    }
+
+    .edition-notice strong {
+      color: var(--cream);
+    }
+
+    .edition-notice p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .chapter-reading {
+      padding: 78px 0;
+    }
+
+    .chapter-text {
+      color: #e8dfca;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: calc(20px * var(--reader-scale));
+      line-height: 1.88;
+    }
+
+    .chapter-text p {
+      margin: 0 0 1.45em;
+    }
+
+    .short-line {
+      margin-bottom: 0.55em !important;
+      color: var(--cream);
+      font-size: calc(22px * var(--reader-scale));
+      font-weight: bold;
+    }
+
+    .question {
+      color: var(--cream);
+      font-size: calc(21px * var(--reader-scale));
+      font-style: italic;
+    }
+
+    .list-line {
+      margin-left: 18px !important;
+      padding-left: 20px;
+      border-left: 2px solid #8d7042;
+      color: #ddd1b8;
+    }
+
+    .disciple-line {
+      margin-bottom: 0.7em !important;
+      color: var(--cream);
+      font-weight: bold;
+    }
+
+    .test-line {
+      margin-bottom: 0.85em !important;
+      padding: 12px 16px;
+      border-left: 3px solid var(--gold);
+      background: rgba(215, 173, 81, 0.06);
+      color: var(--cream);
+    }
+
+    .central-prayer {
+      margin: 48px 0;
+      padding: 42px 25px;
+      border: 1px solid var(--gold);
+      background:
+        radial-gradient(
+          circle at 50% 0%,
+          rgba(215, 173, 81, 0.2),
+          transparent 320px
+        ),
+        var(--panel);
+      box-shadow: var(--shadow);
+      color: var(--bright-gold);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: calc(31px * var(--reader-scale));
+      font-style: italic;
+      font-weight: bold;
+      line-height: 1.35;
+      text-align: center;
+    }
+
+    .connections {
+      padding: 78px 0;
+      border-block: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .section-heading {
+      max-width: 830px;
+      margin-bottom: 38px;
+    }
+
+    .section-heading h2 {
+      margin: 0 0 17px;
+      color: var(--cream);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(37px, 5.5vw, 64px);
+      line-height: 1;
+      text-transform: uppercase;
+    }
+
+    .section-heading p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 18px;
+    }
+
+    .connection-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 19px;
+    }
+
+    .connection-card {
+      padding: 28px;
+      border: 1px solid var(--line);
+      background:
+        linear-gradient(
+          145deg,
+          var(--panel-light),
+          var(--deep-black)
+        );
+    }
+
+    .connection-card h3 {
+      margin: 0 0 12px;
+      color: var(--cream);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 24px;
+      text-transform: uppercase;
+    }
+
+    .connection-card p {
+      margin: 0 0 15px;
+      color: var(--muted);
+    }
+
+    .connection-card p:last-child {
+      margin-bottom: 0;
+    }
+
+    .status-tag {
+      display: inline-block;
+      margin-bottom: 16px;
+      padding: 6px 10px;
+      border: 1px solid var(--gold);
+      color: var(--bright-gold);
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .response-section {
+      padding: 78px 0;
+    }
+
+    .response-panel {
+      padding: 42px 30px;
+      border: 1px solid var(--gold);
+      background:
+        radial-gradient(
+          circle at 50% 0%,
+          rgba(215, 173, 81, 0.17),
+          transparent 380px
+        ),
+        var(--panel);
+      box-shadow: var(--shadow);
+      text-align: center;
+    }
+
+    .response-panel h2 {
+      margin: 0 0 16px;
+      color: var(--cream);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(36px, 5.5vw, 62px);
+      line-height: 1;
+      text-transform: uppercase;
+    }
+
+    .response-panel p {
+      max-width: 760px;
+      margin: 0 auto 25px;
+      color: var(--muted);
+      font-size: 18px;
+    }
+
+    .response-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .chapter-navigation {
+      padding: 36px 0 70px;
+    }
+
+    .chapter-nav-inner {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 14px;
+      padding-top: 30px;
+      border-top: 1px solid var(--line);
+    }
+
+    footer {
+      padding: 35px 0;
+      border-top: 1px solid var(--line);
+      color: #8e8675;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    footer strong {
+      color: var(--gold);
+    }
+
+    @media (max-width: 900px) {
+      .hero-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-copy {
+        text-align: center;
+      }
+
+      .hero-actions {
+        justify-content: center;
+      }
+
+      .hero-art {
+        max-width: 600px;
+        margin: 0 auto;
+      }
+
+      .connection-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .chapter-hero h1 {
+        letter-spacing: -2px;
+      }
+    }
+
+    @media (max-width: 650px) {
+      .nav {
+        padding: 14px 0;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .nav-links {
+        justify-content: flex-start;
+        gap: 12px 16px;
+      }
+
+      .toolbar-inner {
+        padding: 9px 0;
+      }
+
+      .chapter-hero {
+        padding: 57px 0 68px;
+      }
+
+      .chapter-hero h1 {
+        font-size: 46px;
+      }
+
+      .edition-notice {
+        grid-template-columns: 1fr;
+      }
+
+      .chapter-reading,
+      .connections,
+      .response-section {
+        padding: 62px 0;
+      }
+
+      .chapter-text {
+        font-size: calc(18px * var(--reader-scale));
+        line-height: 1.78;
+      }
+
+      .list-line {
+        margin-left: 0 !important;
+      }
+
+      .central-prayer {
+        font-size: calc(25px * var(--reader-scale));
+      }
+
+      .connection-card,
+      .response-panel {
+        padding: 24px 20px;
+      }
+
+      .chapter-nav-inner {
+        flex-direction: column;
+      }
+
+      .chapter-nav-inner .button {
+        width: 100%;
+      }
+    }
+  /* PROPHECY JOURNEY — CHAPTER 06 */
+    body {
+      background:
+        radial-gradient(circle at 77% 12%, rgba(243, 212, 125, 0.17), transparent 430px),
+        radial-gradient(circle at 18% 20%, rgba(133, 87, 32, 0.17), transparent 500px),
+        repeating-linear-gradient(
+          32deg,
+          transparent 0,
+          transparent 94px,
+          rgba(215, 173, 81, 0.025) 95px,
+          transparent 96px
+        ),
+        linear-gradient(180deg, #050403 0%, #0d0906 48%, #050403 100%);
+    }
+
+    .site-header {
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.42);
+    }
+
+    .chapter-hero {
+      position: relative;
+      isolation: isolate;
+      overflow: hidden;
+      min-height: calc(100vh - 128px);
+      display: flex;
+      align-items: center;
+    }
+
+    .chapter-hero::before {
+      inset: 0;
+      background:
+        linear-gradient(90deg, rgba(5, 4, 3, 0.2), transparent 48%),
+        radial-gradient(circle at 20% 72%, rgba(215, 173, 81, 0.12), transparent 320px);
+      opacity: 1;
+    }
+
+    .chapter-hero::after {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      left: 5%;
+      right: 5%;
+      bottom: 42px;
+      height: 1px;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(215, 173, 81, 0.24),
+        rgba(243, 212, 125, 0.72),
+        rgba(215, 173, 81, 0.24),
+        transparent
+      );
+    }
+
+    .hero-grid {
+      position: relative;
+      z-index: 1;
+      grid-template-columns: minmax(0, 0.88fr) minmax(440px, 1.12fr);
+      gap: clamp(38px, 6vw, 86px);
+    }
+
+    .chapter-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 15px;
+      padding: 7px 11px;
+      border: 1px solid rgba(215, 173, 81, 0.48);
+      background: rgba(7, 5, 3, 0.72);
+      color: var(--bright-gold);
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 2.4px;
+      text-transform: uppercase;
+    }
+
+    .chapter-label::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border: 2px solid var(--bright-gold);
+      border-radius: 50%;
+      box-shadow: 0 0 16px rgba(243, 212, 125, 0.72);
+    }
+
+    .chapter-hero h1 {
+      max-width: 700px;
+      text-wrap: balance;
+    }
+
+    .hero-lead {
+      max-width: 660px;
+    }
+
+    .journey-art {
+      position: relative;
+      margin: 0;
+      overflow: hidden;
+      border: 1px solid rgba(215, 173, 81, 0.62);
+      background: #080604;
+      box-shadow:
+        0 34px 90px rgba(0, 0, 0, 0.72),
+        0 0 0 1px rgba(243, 212, 125, 0.07) inset;
+    }
+
+    .journey-art::before {
+      content: "";
+      position: absolute;
+      z-index: 2;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(180deg, rgba(5, 4, 3, 0.04) 48%, rgba(5, 4, 3, 0.88) 100%),
+        radial-gradient(circle at 50% 22%, transparent 30%, rgba(5, 4, 3, 0.32) 100%);
+    }
+
+    .journey-art img {
+      width: 100%;
+      min-height: 560px;
+      max-height: 720px;
+      object-fit: cover;
+      object-position: center;
+      transform: scale(1.01);
+    }
+
+    .journey-kicker {
+      position: absolute;
+      z-index: 3;
+      top: 18px;
+      left: 18px;
+      padding: 8px 11px;
+      border: 1px solid rgba(243, 212, 125, 0.58);
+      background: rgba(5, 4, 3, 0.84);
+      color: var(--cream);
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: 2.2px;
+      text-transform: uppercase;
+    }
+
+    .journey-caption {
+      position: absolute;
+      z-index: 3;
+      left: 24px;
+      right: 24px;
+      bottom: 23px;
+      margin: 0;
+      color: var(--cream);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(21px, 2.1vw, 30px);
+      line-height: 1.15;
+      text-shadow: 0 3px 20px #000;
+    }
+
+    .journey-route {
+      position: absolute;
+      z-index: 3;
+      left: 25px;
+      right: 25px;
+      bottom: 94px;
+      height: 28px;
+    }
+
+    .journey-route::before {
+      content: "";
+      position: absolute;
+      top: 13px;
+      left: 4px;
+      right: 4px;
+      height: 1px;
+      background: linear-gradient(90deg, #76501d, var(--bright-gold), #76501d);
+    }
+
+    .journey-route span {
+      position: absolute;
+      top: 8px;
+      width: 11px;
+      height: 11px;
+      border: 2px solid var(--bright-gold);
+      border-radius: 50%;
+      background: #080604;
+      box-shadow: 0 0 12px rgba(243, 212, 125, 0.55);
+    }
+
+    .journey-route span:nth-child(1) { left: 0; }
+    .journey-route span:nth-child(2) { left: 32%; }
+    .journey-route span:nth-child(3) {
+      left: 65%;
+      background: var(--bright-gold);
+    }
+    .journey-route span:nth-child(4) { right: 0; }
+
+    .art-label {
+      margin-top: 13px;
+      color: #9e927b;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    .edition-notice {
+      border-color: rgba(215, 173, 81, 0.62);
+      background:
+        linear-gradient(90deg, rgba(215, 173, 81, 0.08), transparent 52%),
+        rgba(13, 10, 6, 0.82);
+    }
+
+    .chapter-reading {
+      position: relative;
+    }
+
+    .chapter-reading::before {
+      content: "WAYPOINT 6 · SIGHT";
+      display: block;
+      width: min(calc(100% - 34px), var(--reading-width));
+      margin: 0 auto 42px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(215, 173, 81, 0.34);
+      color: var(--bright-gold);
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+
+    @media (max-width: 900px) {
+      .chapter-hero {
+        min-height: 0;
+      }
+
+      .hero-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .journey-art img {
+        min-height: 420px;
+      }
+    }
+
+    @media (max-width: 650px) {
+      .chapter-hero {
+        padding-top: 58px;
+      }
+
+      .journey-art img {
+        min-height: 390px;
+        max-height: 520px;
+      }
+
+      .journey-caption {
+        left: 17px;
+        right: 17px;
+        bottom: 17px;
+      }
+
+      .journey-route {
+        left: 18px;
+        right: 18px;
+        bottom: 78px;
+      }
+
+      .journey-kicker {
+        top: 13px;
+        left: 13px;
+      }
+    }
+  
+    .interpretive-note {
+      margin: 34px 0;
+      padding: 22px 24px;
+      border: 1px solid var(--gold);
+      border-left: 4px solid var(--bright-gold);
+      background: rgba(215, 173, 81, 0.08);
+      color: var(--muted);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: calc(15px * var(--reader-scale));
+      line-height: 1.65;
+    }
+    .interpretive-note strong { color: var(--cream); }
+
+    /* PROJECT-UNVEILED-HERO-CAPTION-FINAL-FIX
+       Preserve the complete artwork and place HTML journey details below it. */
+    .journey-art {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .journey-art::before {
+      display: none;
+    }
+
+    .journey-art img {
+      display: block;
+      width: 100%;
+      height: auto;
+      min-height: 0;
+      max-height: none;
+      object-fit: contain;
+      object-position: center;
+      transform: none;
+    }
+
+    .journey-route {
+      position: relative;
+      z-index: 3;
+      left: auto;
+      right: auto;
+      bottom: auto;
+      width: auto;
+      height: 28px;
+      margin: 16px 24px 0;
+    }
+
+    .journey-caption {
+      position: relative;
+      z-index: 3;
+      left: auto;
+      right: auto;
+      bottom: auto;
+      display: block;
+      margin: 0;
+      padding: 12px 24px 22px;
+      border-bottom: 0;
+      background: #080604;
+      color: var(--cream);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(19px, 1.8vw, 26px);
+      line-height: 1.3;
+      text-align: center;
+      text-shadow: none;
+    }
+
+    @media (max-width: 650px) {
+      .journey-art img {
+        min-height: 0;
+        max-height: none;
+      }
+
+      .journey-route {
+        left: auto;
+        right: auto;
+        bottom: auto;
+        margin: 14px 18px 0;
+      }
+
+      .journey-caption {
+        left: auto;
+        right: auto;
+        bottom: auto;
+        padding: 10px 18px 18px;
+        font-size: 18px;
+      }
+    }
+  </style>
+<!-- PROJECT UNVEILED SAFE SEO METADATA: artwork body is untouched -->
+<link href="https://bobsome1.com/book/read/chapter-06.html" rel="canonical"/>
+<link href="/sitemap.xml" rel="sitemap" type="application/xml"/>
+<meta content="Robert J. Hayes" name="author"/>
+<meta content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" name="robots"/>
+<meta content="#050403" name="theme-color"/>
+<meta content="article" property="og:type"/>
+<meta content="Project Unveiled" property="og:site_name"/>
+<meta content="Chapter Six: Having Eyes to See | Project Unveiled" property="og:title"/>
+<meta content="Read Chapter Six of Project Unveiled by Robert J. Hayes: Having Eyes to See." property="og:description"/>
+<meta content="https://bobsome1.com/book/read/chapter-06.html" property="og:url"/>
+<meta content="https://bobsome1.com/book/images/timeline/timeline-04-great-persecution.png" property="og:image"/>
+<meta content="Project Unveiled symbolic artwork" property="og:image:alt"/>
+<meta content="Robert J. Hayes" property="article:author"/>
+<meta content="2026-07-20" property="article:modified_time"/>
+<meta content="summary_large_image" name="twitter:card"/>
+<meta content="Chapter Six: Having Eyes to See | Project Unveiled" name="twitter:title"/>
+<meta content="Read Chapter Six of Project Unveiled by Robert J. Hayes: Having Eyes to See." name="twitter:description"/>
+<meta content="https://bobsome1.com/book/images/timeline/timeline-04-great-persecution.png" name="twitter:image"/>
+<script data-project-unveiled-safe-seo="true" type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Person",
+      "@id": "https://bobsome1.com/#robert-j-hayes",
+      "name": "Robert J. Hayes",
+      "url": "https://bobsome1.com/book/read/about-author.html"
+    },
+    {
+      "@type": "Book",
+      "@id": "https://bobsome1.com/book/#project-unveiled",
+      "name": "Project Unveiled",
+      "author": {
+        "@id": "https://bobsome1.com/#robert-j-hayes"
+      },
+      "url": "https://bobsome1.com/book/read/",
+      "inLanguage": "en-US",
+      "bookFormat": "https://schema.org/EBook",
+      "isAccessibleForFree": true
+    },
+    {
+      "@type": "Chapter",
+      "@id": "https://bobsome1.com/book/read/chapter-06.html#page",
+      "url": "https://bobsome1.com/book/read/chapter-06.html",
+      "name": "Having Eyes to See",
+      "description": "Read Chapter Six of Project Unveiled by Robert J. Hayes: Having Eyes to See.",
+      "inLanguage": "en-US",
+      "dateModified": "2026-07-22",
+      "isAccessibleForFree": true,
+      "author": {
+        "@id": "https://bobsome1.com/#robert-j-hayes"
+      },
+      "isPartOf": {
+        "@id": "https://bobsome1.com/book/#project-unveiled"
+      },
+      "image": "https://bobsome1.com/book/images/timeline/timeline-04-great-persecution.png",
+      "position": 6,
+      "headline": "Having Eyes to See"
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://bobsome1.com/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Project Unveiled",
+          "item": "https://bobsome1.com/book/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Complete Reader",
+          "item": "https://bobsome1.com/book/read/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 4,
+          "name": "Chapter Six: Having Eyes to See",
+          "item": "https://bobsome1.com/book/read/chapter-06.html"
+        }
+      ]
+    }
+  ]
+}</script>
+
+<style id="project-unveiled-traffic-layer-styles">
+/* PROJECT-UNVEILED-TRAFFIC-DONATION-LAYER */
+.pu-support-footer{max-width:1100px;margin:18px auto 0;padding:14px 18px;border-top:1px solid rgba(215,173,81,.4);display:flex;gap:12px;justify-content:center;align-items:center;flex-wrap:wrap;font-family:Arial,sans-serif;font-size:14px}.pu-support-footer a{color:#f3d47d;text-decoration:underline;text-underline-offset:3px}.pu-support-footer span{color:#8d7b55}.pu-final-support-cta,.pu-reader-support-cta{max-width:980px;margin:34px auto;padding:26px;border:1px solid #d7ad51;background:linear-gradient(135deg,#15110b,#080706);color:#f4ead2;text-align:center;box-shadow:0 18px 55px rgba(0,0,0,.35)}.pu-final-support-cta h2,.pu-reader-support-cta h2{margin:.2rem 0 .7rem;color:#f3d47d;font-family:Georgia,"Times New Roman",serif}.pu-final-support-cta p,.pu-reader-support-cta p{max-width:760px;margin:.6rem auto}.pu-conversion-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:18px}.pu-conversion-actions a{display:inline-flex;align-items:center;justify-content:center;padding:12px 18px;border:1px solid #d7ad51;background:#d7ad51;color:#090806!important;font-weight:800;text-decoration:none!important}.pu-conversion-actions a.secondary{background:transparent;color:#f3d47d!important}.pu-support-legal{font-size:13px;color:#bdb49f}.pu-support-float{position:fixed;right:15px;bottom:15px;z-index:9998;padding:10px 14px;border:1px solid #d7ad51;border-radius:999px;background:rgba(8,7,6,.95);color:#f3d47d!important;text-decoration:none!important;font:700 13px Arial,sans-serif;box-shadow:0 8px 28px rgba(0,0,0,.5)}@media(max-width:650px){.pu-final-support-cta,.pu-reader-support-cta{margin:24px 14px;padding:21px 16px}.pu-support-float{right:10px;bottom:10px;padding:9px 12px}}
+</style>
+</head>
+<body>
+<div aria-hidden="true" class="reading-progress" id="readingProgress"></div>
+<header class="site-header">
+<div class="container nav">
+<a class="brand" href="/">
+<span>PROJECT</span> UNVEILED
+      </a>
+<nav class="nav-links" aria-label="Primary navigation"><a href="/">Home</a><a href="/book/read/">Reader</a><a href="/book/">Book</a><a href="/book/timeline.html">Timeline</a><a href="/book/research.html">Research</a><a href="/book/updates.html">Updates</a><a href="/book/read/support-right-hand.html">Support</a></nav>
+</div>
+</header>
+<div class="reader-toolbar">
+<div class="container toolbar-inner">
+<div class="chapter-position">
+        Chapter 6 of 13
+      </div>
+<div aria-label="Reading text-size controls" class="text-controls">
+<button aria-label="Decrease reading text size" class="text-control" onclick="changeReaderSize(-0.1)" type="button">
+          A−
+        </button>
+<button aria-label="Reset reading text size" class="text-control" onclick="resetReaderSize()" type="button">
+          A
+        </button>
+<button aria-label="Increase reading text size" class="text-control" onclick="changeReaderSize(0.1)" type="button">
+          A+
+        </button>
+</div>
+</div>
+</div>
+<main>
+<section class="chapter-hero">
+<div class="container hero-grid">
+<div class="hero-copy">
+<div class="chapter-label">
+            Waypoint 6 · Sight
+          </div>
+<div class="eyebrow">
+            Look Beyond the Approved Story
+          </div>
+<h1>
+            Having Eyes
+            <span class="gold">to See.</span>
+</h1>
+<p class="hero-lead">
+            A torn veil does not help the person who keeps
+            their eyes closed. This chapter turns the investigation
+            inward and asks what assumptions, traditions, fears,
+            and inherited answers still block our sight.
+          </p>
+<div class="hero-actions">
+<a class="button" href="#start-reading">
+              Begin Chapter Six
+            </a>
+<button class="button secondary" onclick="shareChapter()" type="button">
+              Share This Chapter
+            </button>
+</div>
+</div>
+<div>
+<figure class="journey-art">
+<img alt="Generated cinematic scene of persecution and confiscated writings, representing the need to see beyond inherited narratives" decoding="async" height="1024" loading="eager" src="/book/images/timeline/timeline-04-great-persecution.webp" width="1536"/>
+<div class="journey-kicker">
+              The Prophecy Journey · Waypoint 6
+            </div>
+<div aria-hidden="true" class="journey-route">
+<span></span><span></span><span></span><span></span>
+</div>
+<figcaption class="journey-caption">
+              Seeing clearly begins when the approved story is no longer the only story.
+            </figcaption>
+</figure>
+<p class="art-label">
+            Project Unveiled cinematic journey scene · Chapter 6
+          </p>
+</div>
+</div>
+</section>
+<section class="edition-wrap">
+<div class="reading-container">
+<div class="edition-notice">
+<div class="edition-symbol">
+            ◆
+          </div>
+<p>
+<strong>Complete Public Edition.</strong>
+            This chapter is published in the complete online reader.
+            Documented corrections, fuller context, and stronger supporting
+            evidence remain welcome.
+          </p>
+</div>
+</div>
+</section>
+<article class="chapter-reading" id="start-reading">
+<div class="reading-container">
+<div class="chapter-text">
+<p>Jesus tore the veil. [Matthew 27:51; Mark 15:38; Luke 23:45]</p>
+<p class="short-line">Now comes the harder question.</p>
+<p class="short-line">Will we look?</p>
+<p>Because a torn veil does not help the man who keeps his eyes closed.</p>
+<p>An open door does not help the person trained to fear the doorway. [John 10:9; Hebrews 10:19–22]</p>
+<p>A revealed truth does not free the one who still prefers the comfort of the lie. [John 8:32; Romans 1:25]</p>
+<p class="short-line">That is why Jesus spoke so often about seeing.</p>
+<p class="short-line">Not just seeing with physical eyes.</p>
+<p class="short-line">Seeing with the spirit.</p>
+<p class="short-line">Seeing with the heart.</p>
+<p class="short-line">Seeing past the surface.</p>
+<p class="short-line">Seeing through the performance.</p>
+<p>Seeing beyond the curtain men hung in front of God. [Matthew 13:13– 16; Mark 8:18; Ephesians 1:18]</p>
+<p>Because there is a kind of blindness that has nothing to do with the eyes.</p>
+<p class="short-line">A man can read and still not see.</p>
+<p>A woman can hear sermons her whole life and still not perceive.</p>
+<p>A preacher can hold a Bible and still miss the truth standing in front of him. [John 5:39–40; Matthew 23:13]</p>
+<p>A religious system can speak the language of God while hiding the face of God behind tradition, fear, control, and dead performance. [Isaiah 29:13; Mark 7:6–9; Matthew 23:27–28]</p>
+<p class="short-line">That is the danger.</p>
+<p class="short-line">Not that truth is hidden forever.</p>
+<p>But that men can stand in front of truth and not recognize it. [John 1:10– 11]</p>
+<p>Jesus walked among people who had Scriptures, temples, traditions, teachers, ceremonies, prayers, fasts, offerings, and religious language.</p>
+<p>And still many did not see Him. [John 5:39–40; Luke 19:41–44]</p>
+<p class="short-line">They had eyes.</p>
+<p class="short-line">But they did not see.</p>
+<p class="short-line">They had ears.</p>
+<p class="short-line">But they did not hear. [Matthew 13:13–15; Jeremiah 5:21; Ezekiel 12:2]</p>
+<p class="short-line">They had religion.</p>
+<p>But they missed the One religion was supposed to point toward. [John 5:46; Galatians 3:24]</p>
+<p class="short-line">That should shake us.</p>
+<p>Because if people surrounded by religious structure could miss Christ while He stood in front of them, then modern believers can miss Him too.</p>
+<p class="short-line">Not because Jesus is hidden.</p>
+<p>Because the veil is still hanging in the mind. [2 Corinthians 3:14–16]</p>
+<p class="list-line">The veil of assumption.</p>
+<p class="list-line">The veil of tradition.</p>
+<p class="list-line">The veil of fear.</p>
+<p class="list-line">The veil of inherited answers.</p>
+<p class="list-line">The veil of “I already know.”</p>
+<p class="list-line">The veil of “my church would have told me.”</p>
+<p class="list-line">The veil of “my denomination has it settled.”</p>
+<p class="list-line">The veil of “do not look beyond the shelf.”</p>
+<p>That veil is dangerous because it does not always feel like blindness.</p>
+<p class="short-line">Sometimes it feels like certainty.</p>
+<p class="short-line">Sometimes it feels like safety.</p>
+<p class="short-line">Sometimes it feels like loyalty.</p>
+<p class="short-line">Sometimes it feels like faith.</p>
+<p>But not every certainty is truth. [Proverbs 14:12; Proverbs 16:25]</p>
+<p class="short-line">Not every safe place is freedom. [Galatians 5:1]</p>
+<p>Not every tradition is holy. [Mark 7:8–13; Colossians 2:8]</p>
+<p>Not every voice claiming to protect God is actually serving Him. [Matthew 7:15–20; 1 John 4:1]</p>
+<p class="short-line">Some traditions preserve wisdom.</p>
+<p class="short-line">Some traditions carry beauty.</p>
+<p>Some traditions teach discipline, reverence, and remembrance.</p>
+<p class="short-line">But some traditions become cages.</p>
+<p class="short-line">Some traditions become idols.</p>
+<p>Some traditions become excuses for ignoring the living command of God. [Mark 7:9–13]</p>
+<p>Some traditions become curtains men hide behind because they are afraid of what truth might expose. [John 3:19–21]</p>
+<p class="short-line">That is why Jesus confronted the traditions of men.</p>
+<p>He did not condemn every practice simply because it was old.</p>
+<p>He condemned the kind of tradition that replaces the command of God. [Mark 7:8–13]</p>
+<p>He condemned the kind of religion that honors God with lips while the heart stays far away. [Isaiah 29:13; Matthew 15:7–9]</p>
+<p>He condemned the kind of system that teaches human rules as if they are divine truth. [Matthew 15:9; Colossians 2:20–23]</p>
+<p class="short-line">That is the issue.</p>
+<p class="short-line">Not tradition itself.</p>
+<p class="short-line">Tradition without truth.</p>
+<p class="short-line">Religion without life.</p>
+<p class="short-line">Worship without heart.</p>
+<p class="short-line">Obedience to men while disobeying God. [Acts 5:29]</p>
+<p class="short-line">That is the blindness Jesus exposed.</p>
+<p class="short-line">And it still exists.</p>
+<p>It exists when people defend a system more fiercely than they seek the Father.</p>
+<p>It exists when people protect a doctrine they have never examined.</p>
+<p>It exists when people fear questions more than they fear being deceived. [1 Thessalonians 5:21; 1 John 4:1]</p>
+<p>It exists when people call curiosity rebellion because the machine taught them that looking is dangerous.</p>
+<p>It exists when people mistake inherited belief for living faith.</p>
+<p>It exists when people think repeating the right words means they know the Truth. [Matthew 7:21–23]</p>
+<p class="short-line">But Jesus did not come to produce repeaters.</p>
+<p class="short-line">He came to make disciples. [Matthew 28:19–20]</p>
+<p class="disciple-line">A disciple follows. [Matthew 4:19; John 10:27]</p>
+<p class="disciple-line">A disciple learns. [Matthew 11:29]</p>
+<p class="disciple-line">A disciple listens. [John 10:27]</p>
+<p class="disciple-line">A disciple asks. [Matthew 7:7–8; James 1:5]</p>
+<p class="disciple-line">A disciple is corrected. [Hebrews 12:6; Proverbs 3:11–12]</p>
+<p class="disciple-line">A disciple keeps walking. [Luke 9:23]</p>
+<p class="disciple-line">A disciple has eyes to see. [Matthew 13:16]</p>
+<p class="short-line">That is what dead religion fears.</p>
+<p>Because the moment a person begins to see, control starts losing its grip.</p>
+<p>When a person sees that God is not owned by the institution, fear loses power. [Acts 17:24–25]</p>
+<p>When a person sees that Jesus tore the veil, gatekeepers lose power. [Matthew 27:51; Hebrews 10:19–22]</p>
+<p>When a person sees that the Kingdom is not the machine, empire loses power. [John 18:36; Luke 17:20–21]</p>
+<p>When a person sees that tradition can be tested, inherited lies lose power. [1 Thessalonians 5:21; Acts 17:11]</p>
+<p>When a person sees that the breath of the True One is already calling him to life, false identity loses power. [Genesis 2:7; Job 33:4; John 20:22]</p>
+<p class="short-line">That is why seeing matters.</p>
+<p class="short-line">Seeing is not passive.</p>
+<p class="short-line">Seeing is dangerous.</p>
+<p class="short-line">Seeing changes loyalty.</p>
+<p class="short-line">Seeing ruins false peace.</p>
+<p class="short-line">Seeing tears down idols. [2 Corinthians 10:4–5]</p>
+<p class="short-line">Seeing makes a sleeping believer uncomfortable.</p>
+<p class="short-line">Seeing makes a controlled person difficult to control.</p>
+<p class="short-line">That is why so many systems prefer blind obedience.</p>
+<p class="short-line">Blind obedience is easy to manage.</p>
+<p class="short-line">Blind obedience does not ask who built the shelf.</p>
+<p>Blind obedience does not ask who hung the veil back up.</p>
+<p class="short-line">Blind obedience does not ask why books were burned.</p>
+<p>Blind obedience does not ask why certain questions were forbidden.</p>
+<p>Blind obedience does not ask whether the system has confused itself with God.</p>
+<p class="short-line">Blind obedience stays quiet.</p>
+<p class="short-line">Blind obedience performs.</p>
+<p class="short-line">Blind obedience repeats.</p>
+<p>Blind obedience calls the cage safety because it has forgotten what open air feels like.</p>
+<p>But Jesus did not say the blind obedience of men would make us free.</p>
+<p>He said the truth would make us free. [John 8:32]</p>
+<p class="short-line">And truth requires sight. [Ephesians 1:18]</p>
+<p class="short-line">So we have to ask:</p>
+<p class="question">What have we refused to see?</p>
+<p class="question">What have we been trained not to see?</p>
+<p class="question">What have we called dangerous because someone else told us to fear it?</p>
+<p class="question">What truth did we walk past because it did not fit the shape of the shelf?</p>
+<p class="question">What voice of God did we ignore because it did not come dressed in approved clothing? [1 Samuel 16:7; John 7:24]</p>
+<p class="question">What questions did we bury because we were afraid of the label?</p>
+<p class="question">What did we mistake for holiness simply because it was familiar?</p>
+<p class="short-line">That is where the veil hides.</p>
+<p class="short-line">Not only in history.</p>
+<p class="short-line">Not only in Rome.</p>
+<p class="short-line">Not only in councils.</p>
+<p class="short-line">Not only in books.</p>
+<p class="short-line">In us. [Psalm 139:23–24; 2 Corinthians 13:5]</p>
+<p>In the places where we would rather defend what we inherited than examine whether it is true.</p>
+<p>In the places where we would rather keep peace with men than seek truth before God. [Galatians 1:10]</p>
+<p>In the places where we would rather remain certain than be corrected.</p>
+<p>In the places where we say we want truth, but only if truth leaves our idols standing.</p>
+<p class="short-line">That is not seeing.</p>
+<p class="short-line">That is protecting blindness. [John 9:39–41]</p>
+<p class="short-line">And Project Unveiled cannot do that.</p>
+<p>We cannot tear the veil from history while leaving it over our own eyes.</p>
+<p>We cannot question Rome and refuse to question ourselves.</p>
+<p>We cannot expose dead religion and then protect the dead places inside us.</p>
+<p>We cannot ask who built the shelf and then worship our own.</p>
+<p>If truth is truth, then it gets to examine everything. [Hebrews 4:12–13]</p>
+<p class="short-line">Not just their tradition.</p>
+<p class="short-line">Ours too.</p>
+<p class="short-line">Not just their doctrine.</p>
+<p class="short-line">Ours too.</p>
+<p class="short-line">Not just their idols.</p>
+<p class="short-line">Ours too.</p>
+<p class="short-line">Not just their blindness.</p>
+<p class="short-line">Ours too.</p>
+<p class="short-line">That is where real seeking begins.</p>
+<p class="short-line">Not with pride.</p>
+<p class="short-line">Not with arrogance.</p>
+<p class="short-line">Not with the hunger to prove everyone else wrong.</p>
+<p class="short-line">Real seeking begins with humility sharp enough to say:</p>
+<div class="central-prayer">
+            “Father, show me what I cannot see.” [Psalm 119:18; Psalm 139:23–24]
+          </div>
+<p class="short-line">That prayer is dangerous.</p>
+<p class="short-line">Because God may answer it. [James 1:5]</p>
+<p class="short-line">He may show us the lie we loved.</p>
+<p class="short-line">He may show us the fear we called wisdom.</p>
+<p>He may show us the tradition we used as a shield.</p>
+<p>He may show us the idol we decorated with religious language.</p>
+<p class="short-line">He may show us the curtain we helped hang.</p>
+<p>He may show us that the cage we defended was never Him.</p>
+<p class="short-line">And when He does, we have a choice.</p>
+<p class="short-line">We can close our eyes again.</p>
+<p class="short-line">Or we can look. [John 3:19–21]</p>
+<p class="short-line">That is the moment this book is chasing.</p>
+<p class="short-line">The moment a sleeping believer wakes. [Ephesians 5:14]</p>
+<p>The moment a seeker stops apologizing for seeking. [Matthew 7:7–8]</p>
+<p>The moment a captive realizes the door was opened by Christ long before men told him he was allowed to approach. [Hebrews 10:19–22; John 10:9]</p>
+<p>The moment a son remembers he is not a slave. [Galatians 4:6–7; Romans 8:15]</p>
+<p>The moment a daughter remembers she was not created for fear. [2 Timothy 1:7]</p>
+<p class="short-line">The moment the eyes open.</p>
+<p>The moment the veil tears in the mind. [2 Corinthians 3:16–18]</p>
+<p class="short-line">That moment is holy.</p>
+<p class="short-line">Not because it destroys faith.</p>
+<p class="short-line">Because it restores sight. [Luke 4:18]</p>
+<p class="short-line">Not because it replaces Jesus.</p>
+<p class="short-line">Because it reveals Him more clearly. [John 14:6]</p>
+<p class="short-line">Not because it removes God.</p>
+<p class="short-line">Because it tears down the false gods blocking the view. [1 John 5:21]</p>
+<p class="short-line">And when the false gods fall, we do not run into emptiness.</p>
+<p class="short-line">We return to the True One. [Jeremiah 24:7; Hosea 6:1]</p>
+<p>The One whose breath gives life. [Genesis 2:7; Job 33:4]</p>
+<p>The One who does not fear our questions. [Matthew 7:7–8; James 1:5]</p>
+<p>The One who calls us out of darkness. [1 Peter 2:9]</p>
+<p>The One who opens blind eyes. [Luke 4:18; John 9:25]</p>
+<p class="short-line">The One who tears veils. [Matthew 27:51]</p>
+<p>The One who says, “Come and see.” [John 1:39; John 1:46]</p>
+<p>So having eyes to see is not about becoming smarter than everyone else.</p>
+<p class="short-line">It is not about chasing every hidden thing.</p>
+<p>It is not about believing every banned writing, every strange teacher, every forbidden idea, or every mystery that claims to be truth.</p>
+<p class="short-line">That would be another deception. [Colossians 2:8; 1 John 4:1]</p>
+<p>Having eyes to see means we stop letting fear decide what we are allowed to examine. [2 Timothy 1:7]</p>
+<p>It means we test everything in the light. [1 Thessalonians 5:21; Ephesians 5:13]</p>
+<p class="short-line">It means we refuse to worship the shelf.</p>
+<p class="short-line">It means we refuse to call man-made curtains holy.</p>
+<p>It means we refuse to confuse the machine with the Kingdom. [John 18:36]</p>
+<p>It means we seek truth while staying anchored in the True One. [John 14:6; Hebrews 6:19]</p>
+<p class="short-line">Because sight without humility becomes pride.</p>
+<p>And pride is just another veil. [Proverbs 16:18; James 4:6]</p>
+<p>So we ask for eyes that see. [Psalm 119:18; Ephesians 1:18]</p>
+<p class="short-line">Not eyes that flatter us.</p>
+<p class="short-line">Not eyes that make us feel superior.</p>
+<p>Not eyes that turn us into accusers of everyone else.</p>
+<p class="short-line">Eyes that see truth.</p>
+<p class="short-line">Eyes that see deception.</p>
+<p>Eyes that see the hurting person under the religious costume. [Matthew 9:36]</p>
+<p class="short-line">Eyes that see the captive under the performance.</p>
+<p class="short-line">Eyes that see the son buried under shame.</p>
+<p class="short-line">Eyes that see the daughter buried under fear.</p>
+<p>Eyes that see the false god and the wounded worshiper standing beside it.</p>
+<p class="short-line">That is the kind of sight Jesus gives.</p>
+<p>Hard enough to expose the lie. [John 8:44; Ephesians 5:11]</p>
+<p>Loving enough to rescue the person trapped inside it. [Luke 19:10; Jude 1:22–23]</p>
+<p class="short-line">That is the balance.</p>
+<p class="short-line">We hit the idol in the mouth.</p>
+<p>But we speak life to the person who bowed to it. [Ezekiel 37:4–6; Proverbs 18:21]</p>
+<p class="short-line">We tear the veil.</p>
+<p>But we do not crush the one who was hidden behind it. [Isaiah 42:3; Matthew 12:20]</p>
+<p class="short-line">We expose dead religion.</p>
+<p>But we call the sleeping believer home. [Ephesians 5:14; Luke 15:20–24]</p>
+<p class="short-line">Because the people are not the enemy.</p>
+<p class="short-line">The lie is. [John 8:44]</p>
+<p class="short-line">The false god is. [1 John 5:21]</p>
+<p class="short-line">The curtain is. [Matthew 27:51]</p>
+<p class="short-line">The machine is.</p>
+<p class="short-line">The fear is. [2 Timothy 1:7]</p>
+<p class="short-line">The blindness is. [2 Corinthians 4:4]</p>
+<p class="short-line">So let the eyes open.</p>
+<p class="short-line">Let the traditions be tested. [Mark 7:8–13]</p>
+<p class="short-line">Let the shelf be examined. [Acts 17:11]</p>
+<p class="short-line">Let the questions come. [Matthew 7:7]</p>
+<p>Let the buried things be brought into the light. [Luke 8:17; Ephesians 5:13]</p>
+<p>Let every system that claims to speak for God be measured by the truth, love, freedom, mercy, justice, and life of the One it claims to represent. [Micah 6:8; Matthew 7:16–20; Galatians 5:22–23]</p>
+<p class="test-line">If it produces fear, test it. [2 Timothy 1:7; 1 John 4:18]</p>
+<p class="test-line">If it produces bondage, test it. [Galatians 5:1]</p>
+<p class="test-line">If it silences honest questions, test it. [1 Thessalonians 5:21]</p>
+<p class="test-line">If it keeps people dependent on men instead of leading them to the Father, test it. [1 Timothy 2:5; Hebrews 4:16]</p>
+<p class="test-line">If it teaches people to worship the curtain, tear it. [Matthew 27:51]</p>
+<p class="test-line">If it builds a box for God, break it open. [Acts 17:24–25]</p>
+<p class="test-line">If it calls spiritual sleep obedience, wake up. [Ephesians 5:14]</p>
+<p>Because Jesus did not tear the veil for blind men to praise the darkness. [Matthew 27:51; John 8:12]</p>
+<p>He tore it so we could see. [Luke 4:18; 2 Corinthians 3:16–18]</p>
+<p class="short-line">So look.</p>
+<p class="list-line">Look at history.</p>
+<p class="list-line">Look at the shelf.</p>
+<p class="list-line">Look at the systems.</p>
+<p class="list-line">Look at the traditions.</p>
+<p class="list-line">Look at the fear.</p>
+<p class="list-line">Look at the false identity.</p>
+<p class="list-line">Look at the dead religion.</p>
+<p class="list-line">Look at the places where men used the name of God to hide the face of God.</p>
+<p class="short-line">Then look again.</p>
+<p class="list-line">Look past the curtain.</p>
+<p class="list-line">Look past the machine.</p>
+<p class="list-line">Look past the false gods.</p>
+<p class="list-line">Look past the fear.</p>
+<p class="list-line">Look past the inherited lies.</p>
+<p class="short-line">Look to the True One. [Jeremiah 24:7]</p>
+<p class="short-line">Look to the Christ who opened the way. [Hebrews 10:19–22]</p>
+<p class="short-line">Look to the Father whose breath gives life. [Genesis 2:7; Job 33:4]</p>
+<p class="short-line">Look to the truth that is not afraid of investigation. [John 14:6; Acts 17:11]</p>
+<p class="short-line">Look to the light. [John 8:12; 1 John 1:5]</p>
+<p class="short-line">Because having eyes is not enough.</p>
+<p class="short-line">We must see. [Matthew 13:16]</p>
+<p>And if we finally see, then the next question becomes unavoidable:</p>
+<p class="question">What traditions of men have we mistaken for the commandments of God? [Isaiah 29:13; Mark 7:6–13]</p>
+</div>
+</div>
+</article>
+<section class="connections">
+<div class="container">
+<div class="section-heading">
+<div class="eyebrow">
+            Chapter Connections
+          </div>
+<h2>
+            Sight, Testing and the Traditions of Men
+          </h2>
+<p>
+            Chapter Six connects the torn veil to discernment,
+            humility, self-examination, testing inherited beliefs,
+            and the transition into Chapter Seven.
+          </p>
+</div>
+<div class="connection-grid">
+<article class="connection-card">
+<div class="status-tag">
+              Central Prayer
+            </div>
+<h3>
+              Show Me What I Cannot See
+            </h3>
+<p>
+              The chapter identifies humility—not superiority—as
+              the beginning of honest spiritual sight.
+            </p>
+</article>
+<article class="connection-card">
+<div class="status-tag">
+              Discernment
+            </div>
+<h3>
+              Test Everything
+            </h3>
+<p>
+              Seeing does not mean believing every hidden claim.
+              It means refusing fear while examining everything
+              in the light.
+            </p>
+</article>
+<article class="connection-card">
+<div class="status-tag">
+              Next Question
+            </div>
+<h3>
+              Traditions of Men
+            </h3>
+<p>
+              The chapter ends by asking which human traditions
+              have been mistaken for the commandments of God.
+            </p>
+</article>
+</div>
+</div>
+</section>
+<section class="response-section">
+<div class="container">
+<div class="response-panel">
+<div class="eyebrow">
+            Reader Response
+          </div>
+<h2>
+            What Have You Been Trained Not to See?
+          </h2>
+<p>
+            Reader responses remain private until approved.
+            Scripture context, corrections, and competing interpretations
+            are reviewed separately from personal testimony.
+          </p>
+<div class="response-actions">
+<a class="button" href="mailto:thebobsomest1@gmail.com?subject=Project%20Unveiled%20Chapter%20Six%20Reader%20Response">
+              Submit a Reader Response
+            </a>
+<a class="button secondary" href="mailto:thebobsomest1@gmail.com?subject=Project%20Unveiled%20Chapter%20Six%20Correction%20or%20Source">
+              Submit Evidence or a Correction
+            </a>
+</div>
+</div>
+</div>
+</section>
+<section class="chapter-navigation">
+<div class="reading-container">
+<div class="chapter-nav-inner"><a class="button secondary" href="/book/read/chapter-05.html">← Chapter Five</a><a class="button" href="/book/read/chapter-07.html">Chapter Seven →</a></div>
+</div>
+</section>
+</main>
+<footer>
+<div class="container">
+<strong>Project Unveiled</strong>
+      by Robert J. Hayes
+
+      <br/>
+
+      Chapter Six —
+      Having Eyes to See
+
+      <br/>
+
+      © 2026 Bobsome1.com
+
+    </div>
+<div class="pu-support-footer" aria-label="Project support and privacy links"><a href="/book/read/support-right-hand.html" data-pu-event="support_page_click">Support the Work</a><span aria-hidden="true">◆</span><a href="/privacy.html">Privacy</a></div>
+</footer>
+<script>
+    let readerScale =
+      parseFloat(
+        localStorage.getItem("projectUnveiledReaderScale")
+      ) || 1;
+
+    function applyReaderSize() {
+      document.documentElement.style.setProperty(
+        "--reader-scale",
+        readerScale
+      );
+
+      localStorage.setItem(
+        "projectUnveiledReaderScale",
+        readerScale
+      );
+    }
+
+    function changeReaderSize(amount) {
+      readerScale = Math.min(
+        1.4,
+        Math.max(0.8, readerScale + amount)
+      );
+
+      readerScale =
+        Math.round(readerScale * 10) / 10;
+
+      applyReaderSize();
+    }
+
+    function resetReaderSize() {
+      readerScale = 1;
+      applyReaderSize();
+    }
+
+    function updateReadingProgress() {
+      const scrollTop =
+        window.scrollY ||
+        document.documentElement.scrollTop;
+
+      const documentHeight =
+        document.documentElement.scrollHeight -
+        document.documentElement.clientHeight;
+
+      const progress =
+        documentHeight > 0
+          ? (scrollTop / documentHeight) * 100
+          : 0;
+
+      document.getElementById(
+        "readingProgress"
+      ).style.width = progress + "%";
+    }
+
+    function shareChapter() {
+      const shareData = {
+        title: "Having Eyes to See | Project Unveiled",
+        text: "Read Chapter Six of Project Unveiled by Robert J. Hayes.",
+        url: window.location.href
+      };
+
+      if (navigator.share) {
+        navigator.share(shareData);
+        return;
+      }
+
+      navigator.clipboard
+        .writeText(window.location.href)
+        .then(function () {
+          alert("Chapter link copied.");
+        })
+        .catch(function () {
+          alert(window.location.href);
+        });
+    }
+
+    applyReaderSize();
+
+    window.addEventListener(
+      "scroll",
+      updateReadingProgress
+    );
+
+    updateReadingProgress();
+  </script>
+<script id="project-unveiled-traffic-tracker" src="/project-unveiled-analytics/tracker.js?v=2" defer></script>
+<a class="pu-support-float" href="/book/read/support-right-hand.html" data-pu-event="support_page_click" aria-label="Support Project Unveiled and Right Hand Ministry">Support the Work</a>
+
+<!-- PROJECT UNVEILED READER COMMUNITY v6 START -->
+<div data-pu-community data-kind="comment" data-chapter="chapter-06"></div>
+<link rel="stylesheet" href="/book/reader-community.css?v=7">
+<script defer src="/book/reader-community.js?v=7"></script>
+<!-- PROJECT UNVEILED READER COMMUNITY v6 END -->
+<!-- PU_READER_SIGNUP_START -->
+<section id="pu-signup" aria-labelledby="pu-signup-title" data-version="7.3.1">
+  <h2 id="pu-signup-title">Stay connected to Project Unveiled</h2>
+  <p>Receive new chapter highlights, evidence updates, and occasional reader invitations. No daily spam.</p>
+  <div class="pu-signup-promise">We do not sell, rent, or trade your personal information. Ever.</div>
+  <form id="pu-signup-form" novalidate>
+    <div class="pu-signup-grid">
+      <div class="pu-signup-field"><label for="pu-first-name">First name</label><input id="pu-first-name" name="first_name" maxlength="80" autocomplete="given-name" required></div>
+      <div class="pu-signup-field"><label for="pu-email">Email address</label><input id="pu-email" name="email" type="email" maxlength="190" autocomplete="email" required></div>
+      <button class="pu-signup-button" type="submit">Join the reader list</button>
+    </div>
+    <label class="pu-signup-consent"><input type="checkbox" name="consent" value="yes" required><span>I agree to receive Project Unveiled email updates. I can unsubscribe at any time.</span></label>
+    <div class="pu-signup-hp" aria-hidden="true"><label>Website<input name="website" tabindex="-1" autocomplete="off"></label></div>
+    <input type="hidden" name="consent_version" value="2026-07-v2">
+    <p class="pu-signup-small">We collect your first name, email address, signup time, source page, campaign tags, and privacy-safe abuse-prevention hashes. Read the <a href="/privacy.html">Privacy Policy</a>.</p>
+    <div class="pu-signup-status" role="status" aria-live="polite"></div>
+  </form>
+</section>
+<link rel="stylesheet" href="/book/signup-widget.css?v=731">
+<script src="/book/signup-widget.js?v=731" defer></script>
+<!-- PU_READER_SIGNUP_END -->
+
+</body>
+</html>

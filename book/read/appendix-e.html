@@ -1,0 +1,4127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta name="description" content="Appendix E of Project Unveiled: the complete Works Consulted list for biblical text, Arius, Athanasius, Nicaea, the fourth century, Nag Hammadi, and noncanonical texts.">
+
+  <title>Appendix E: Works Consulted | Project Unveiled</title>
+
+  <style>
+    :root {
+      --black: #050505;
+      --deep-black: #090909;
+      --panel: #11100d;
+      --panel-light: #191711;
+      --gold: #d7ad51;
+      --bright-gold: #f3d47d;
+      --cream: #f4ead2;
+      --white: #fffdf7;
+      --muted: #c5bda9;
+      --line: rgba(215, 173, 81, 0.38);
+      --shadow: 0 25px 70px rgba(0, 0, 0, 0.65);
+      --max-width: 1180px;
+      --reading-width: 790px;
+      --reader-scale: 1;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      overflow-x: hidden;
+      background:
+        radial-gradient(
+          circle at 50% 0%,
+          rgba(215, 173, 81, 0.16),
+          transparent 540px
+        ),
+        linear-gradient(
+          180deg,
+          #050505 0%,
+          #0d0906 45%,
+          #050505 100%
+        );
+      color: var(--white);
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.7;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .container {
+      width: min(calc(100% - 34px), var(--max-width));
+      margin: 0 auto;
+    }
+
+    .reading-container {
+      width: min(calc(100% - 34px), var(--reading-width));
+      margin: 0 auto;
+    }
+
+    .gold {
+      color: var(--bright-gold);
+    }
+
+    .eyebrow {
+      margin-bottom: 13px;
+      color: var(--bright-gold);
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+    }
+
+    .button {
+      display: inline-flex;
+      min-height: 48px;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 21px;
+      border: 1px solid var(--gold);
+      border-radius: 999px;
+      background:
+        linear-gradient(
+          135deg,
+          var(--bright-gold),
+          #b88a34
+        );
+      color: #140e05;
+      text-decoration: none;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .button.secondary {
+      background: rgba(5, 5, 5, 0.7);
+      color: var(--cream);
+    }
+
+    .button.disabled {
+      border-color: rgba(215, 173, 81, 0.3);
+      background: rgba(255, 255, 255, 0.03);
+      color: #827968;
+      cursor: default;
+    }
+
+    .button:hover:not(.disabled) {
+      transform: translateY(-2px);
+    }
+
+    .reading-progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 1000;
+      width: 0;
+      height: 4px;
+      background:
+        linear-gradient(
+          90deg,
+          #9d7227,
+          var(--bright-gold)
+        );
+      box-shadow:
+        0 0 15px rgba(243, 212, 125, 0.6);
+    }
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid var(--line);
+      background: rgba(5, 5, 5, 0.94);
+      backdrop-filter: blur(14px);
+    }
+
+    .nav {
+      min-height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .brand {
+      color: var(--cream);
+      text-decoration: none;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 17px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      white-space: nowrap;
+    }
+
+    .brand span {
+      color: var(--bright-gold);
+    }
+
+    .nav-links {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 18px;
+    }
+
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .nav-links a:hover {
+      color: var(--bright-gold);
+    }
+
+    .reader-toolbar {
+      border-bottom: 1px solid var(--line);
+      background: rgba(17, 16, 13, 0.96);
+    }
+
+    .toolbar-inner {
+      min-height: 54px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .chapter-position {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .text-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .text-control {
+      min-width: 40px;
+      min-height: 36px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: #090806;
+      color: var(--cream);
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .text-control:hover {
+      border-color: var(--gold);
+      color: var(--bright-gold);
+    }
+
+    .chapter-hero {
+      position: relative;
+      padding: 72px 0 88px;
+    }
+
+    .chapter-hero::before {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      content: "";
+      background:
+        radial-gradient(
+          circle at 18% 30%,
+          rgba(243, 212, 125, 0.13),
+          transparent 400px
+        );
+    }
+
+    .hero-grid {
+      position: relative;
+      display: grid;
+      grid-template-columns: 1fr 0.9fr;
+      align-items: center;
+      gap: 56px;
+    }
+
+    .chapter-label {
+      display: inline-block;
+      margin-bottom: 19px;
+      padding: 7px 12px;
+      border: 1px solid var(--gold);
+      border-radius: 999px;
+      color: var(--bright-gold);
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .chapter-hero h1 {
+      margin: 0 0 22px;
+      color: var(--cream);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(46px, 7.5vw, 92px);
+      line-height: 0.95;
+      letter-spacing: -3px;
+      text-transform: uppercase;
+    }
+
+    .hero-lead {
+      max-width: 700px;
+      margin: 0 0 26px;
+      color: var(--muted);
+      font-size: clamp(18px, 2.2vw, 22px);
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .hero-art {
+      position: relative;
+      padding: 9px;
+      border: 1px solid var(--gold);
+      background: #050505;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-art::before,
+    .hero-art::after {
+      position: absolute;
+      width: 64px;
+      height: 64px;
+      content: "";
+    }
+
+    .hero-art::before {
+      top: -5px;
+      left: -5px;
+      border-top: 3px solid var(--bright-gold);
+      border-left: 3px solid var(--bright-gold);
+    }
+
+    .hero-art::after {
+      right: -5px;
+      bottom: -5px;
+      border-right: 3px solid var(--bright-gold);
+      border-bottom: 3px solid var(--bright-gold);
+    }
+
+    .art-label {
+      margin: 12px 0 0;
+      color: #918875;
+      font-size: 12px;
+      text-align: center;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .edition-wrap {
+      padding: 28px 0;
+      border-block: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .edition-notice {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 17px;
+      align-items: start;
+      padding: 22px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+    }
+
+    .edition-symbol {
+      color: var(--bright-gold);
+      font-size: 25px;
+    }
+
+    .edition-notice strong {
+      color: var(--cream);
+    }
+
+    .edition-notice p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .chapter-reading {
+      padding: 78px 0;
+    }
+
+    .chapter-text {
+      color: #e8dfca;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: calc(20px * var(--reader-scale));
+      line-height: 1.88;
+    }
+
+    .chapter-text p {
+      margin: 0 0 1.45em;
+    }
+
+    .short-line {
+      margin-bottom: 0.55em !important;
+      color: var(--cream);
+      font-size: calc(22px * var(--reader-scale));
+      font-weight: bold;
+    }
+
+    .question {
+      color: var(--cream);
+      font-size: calc(21px * var(--reader-scale));
+      font-style: italic;
+    }
+
+    .central-question {
+      margin: 48px 0;
+      padding: 42px 25px;
+      border: 1px solid var(--gold);
+      background:
+        radial-gradient(
+          circle at 50% 0%,
+          rgba(215, 173, 81, 0.2),
+          transparent 320px
+        ),
+        var(--panel);
+      box-shadow: var(--shadow);
+      color: var(--bright-gold);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: calc(34px * var(--reader-scale));
+      font-weight: bold;
+      line-height: 1.25;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    .tradition-line {
+      margin-bottom: 0.85em !important;
+      padding-left: 18px;
+      border-left: 2px solid #8d7042;
+      color: #ded2ba;
+    }
+
+    .fruit-line {
+      margin-bottom: 0.65em !important;
+      color: var(--cream);
+      font-size: calc(21px * var(--reader-scale));
+      font-weight: bold;
+    }
+
+    .king-test {
+      margin-bottom: 0.85em !important;
+      padding: 12px 16px;
+      border-left: 3px solid var(--gold);
+      background: rgba(215, 173, 81, 0.06);
+      color: var(--cream);
+    }
+
+    .tear-line {
+      margin-bottom: 0.75em !important;
+      padding-left: 18px;
+      border-left: 3px solid var(--gold);
+      color: var(--cream);
+      font-weight: bold;
+    }
+
+    .connections {
+      padding: 78px 0;
+      border-block: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .section-heading {
+      max-width: 830px;
+      margin-bottom: 38px;
+    }
+
+    .section-heading h2 {
+      margin: 0 0 17px;
+      color: var(--cream);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(37px, 5.5vw, 64px);
+      line-height: 1;
+      text-transform: uppercase;
+    }
+
+    .section-heading p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 18px;
+    }
+
+    .connection-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 19px;
+    }
+
+    .connection-card {
+      padding: 28px;
+      border: 1px solid var(--line);
+      background:
+        linear-gradient(
+          145deg,
+          var(--panel-light),
+          var(--deep-black)
+        );
+    }
+
+    .connection-card h3 {
+      margin: 0 0 12px;
+      color: var(--cream);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 24px;
+      text-transform: uppercase;
+    }
+
+    .connection-card p {
+      margin: 0 0 15px;
+      color: var(--muted);
+    }
+
+    .connection-card p:last-child {
+      margin-bottom: 0;
+    }
+
+    .status-tag {
+      display: inline-block;
+      margin-bottom: 16px;
+      padding: 6px 10px;
+      border: 1px solid var(--gold);
+      color: var(--bright-gold);
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .response-section {
+      padding: 78px 0;
+    }
+
+    .response-panel {
+      padding: 42px 30px;
+      border: 1px solid var(--gold);
+      background:
+        radial-gradient(
+          circle at 50% 0%,
+          rgba(215, 173, 81, 0.17),
+          transparent 380px
+        ),
+        var(--panel);
+      box-shadow: var(--shadow);
+      text-align: center;
+    }
+
+    .response-panel h2 {
+      margin: 0 0 16px;
+      color: var(--cream);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(36px, 5.5vw, 62px);
+      line-height: 1;
+      text-transform: uppercase;
+    }
+
+    .response-panel p {
+      max-width: 760px;
+      margin: 0 auto 25px;
+      color: var(--muted);
+      font-size: 18px;
+    }
+
+    .response-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .chapter-navigation {
+      padding: 36px 0 70px;
+    }
+
+    .chapter-nav-inner {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 14px;
+      padding-top: 30px;
+      border-top: 1px solid var(--line);
+    }
+
+    footer {
+      padding: 35px 0;
+      border-top: 1px solid var(--line);
+      color: #8e8675;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    footer strong {
+      color: var(--gold);
+    }
+
+    @media (max-width: 900px) {
+      .hero-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-copy {
+        text-align: center;
+      }
+
+      .hero-actions {
+        justify-content: center;
+      }
+
+      .hero-art {
+        max-width: 600px;
+        margin: 0 auto;
+      }
+
+      .connection-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .chapter-hero h1 {
+        letter-spacing: -2px;
+      }
+    }
+
+    @media (max-width: 650px) {
+      .nav {
+        padding: 14px 0;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .nav-links {
+        justify-content: flex-start;
+        gap: 12px 16px;
+      }
+
+      .toolbar-inner {
+        padding: 9px 0;
+      }
+
+      .chapter-hero {
+        padding: 57px 0 68px;
+      }
+
+      .chapter-hero h1 {
+        font-size: 43px;
+      }
+
+      .edition-notice {
+        grid-template-columns: 1fr;
+      }
+
+      .chapter-reading,
+      .connections,
+      .response-section {
+        padding: 62px 0;
+      }
+
+      .chapter-text {
+        font-size: calc(18px * var(--reader-scale));
+        line-height: 1.78;
+      }
+
+      .central-question {
+        font-size: calc(27px * var(--reader-scale));
+      }
+
+      .connection-card,
+      .response-panel {
+        padding: 24px 20px;
+      }
+
+      .chapter-nav-inner {
+        flex-direction: column;
+      }
+
+      .chapter-nav-inner .button {
+        width: 100%;
+      }
+    }
+  
+    .opening-scripture {
+      margin: 0 0 48px;
+      padding: 32px;
+      border-top: 1px solid var(--gold);
+      border-bottom: 1px solid var(--gold);
+      background:
+        radial-gradient(
+          circle at 50% 0%,
+          rgba(215, 173, 81, 0.14),
+          transparent 300px
+        );
+      color: var(--cream);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: calc(21px * var(--reader-scale));
+      font-style: italic;
+      line-height: 1.7;
+      text-align: center;
+    }
+
+    .calling-line,
+    .one-line,
+    .come-out-line {
+      margin-bottom: 0.85em !important;
+      padding-left: 18px;
+      border-left: 3px solid var(--gold);
+      color: var(--cream);
+    }
+
+    .lie-line {
+      margin-bottom: 0.65em !important;
+      color: #cdbd9c;
+      font-style: italic;
+    }
+
+    .truth-line {
+      margin-bottom: 1em !important;
+      padding: 12px 16px;
+      border-left: 3px solid var(--gold);
+      background: rgba(215, 173, 81, 0.06);
+      color: var(--cream);
+      font-weight: bold;
+    }
+
+    .identity-declaration {
+      margin: 50px 0;
+      padding: 35px 25px;
+      border: 1px solid var(--gold);
+      background:
+        radial-gradient(
+          circle at 50% 0%,
+          rgba(215, 173, 81, 0.21),
+          transparent 340px
+        ),
+        var(--panel);
+      box-shadow: var(--shadow);
+      text-align: center;
+    }
+
+    .identity-declaration p,
+    .identity-line {
+      margin-bottom: 0.65em !important;
+      color: var(--cream);
+      font-size: calc(21px * var(--reader-scale));
+      font-weight: bold;
+    }
+
+    .identity-declaration p:last-child {
+      margin-bottom: 0 !important;
+      color: var(--bright-gold);
+      font-size: calc(26px * var(--reader-scale));
+    }
+
+  
+    .scripture-quote {
+      margin: 24px 0;
+      padding: 24px;
+      border-left: 4px solid var(--gold);
+      background: rgba(215, 173, 81, 0.08);
+      color: var(--cream);
+      font-size: calc(21px * var(--reader-scale));
+      font-style: italic;
+      line-height: 1.65;
+    }
+
+    .test-question,
+    .formula-line,
+    .deserve-line,
+    .imagine-line {
+      margin-bottom: 0.85em !important;
+      padding: 12px 16px;
+      border-left: 3px solid var(--gold);
+      background: rgba(215, 173, 81, 0.055);
+      color: var(--cream);
+    }
+
+    .test-question.contrast {
+      border-left-color: #8d7042;
+      color: #d8ccb4;
+      font-style: italic;
+    }
+
+    .central-question {
+      margin: 48px 0;
+      padding: 42px 25px;
+      border: 1px solid var(--gold);
+      background:
+        radial-gradient(
+          circle at 50% 0%,
+          rgba(215, 173, 81, 0.2),
+          transparent 320px
+        ),
+        var(--panel);
+      box-shadow: var(--shadow);
+      color: var(--bright-gold);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: calc(34px * var(--reader-scale));
+      font-weight: bold;
+      line-height: 1.25;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+  
+    .unique-symbol-art {
+      overflow: hidden;
+      background:
+        radial-gradient(
+          circle at 50% 15%,
+          rgba(243, 212, 125, 0.14),
+          transparent 300px
+        ),
+        #070604;
+    }
+
+    .chapter-symbol {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 760 / 820;
+    }
+
+    .scripture-quote {
+      margin: 24px 0;
+      padding: 24px;
+      border-left: 4px solid var(--gold);
+      background: rgba(215, 173, 81, 0.08);
+      color: var(--cream);
+      font-size: calc(21px * var(--reader-scale));
+      font-style: italic;
+      line-height: 1.65;
+    }
+
+    .truth-source,
+    .test-line,
+    .warning-line {
+      margin-bottom: 0.8em !important;
+      padding-left: 18px;
+      border-left: 3px solid var(--gold);
+      color: var(--cream);
+    }
+
+    .warning-line {
+      border-left-color: #80683d;
+      color: #d6cab1;
+    }
+
+    .discernment-prayer {
+      margin: 48px 0;
+      padding: 34px 25px;
+      border: 1px solid var(--gold);
+      background:
+        radial-gradient(
+          circle at 50% 0%,
+          rgba(215, 173, 81, 0.2),
+          transparent 320px
+        ),
+        var(--panel);
+      box-shadow: var(--shadow);
+      text-align: center;
+    }
+
+    .discernment-prayer p,
+    .prayer-line {
+      margin-bottom: 0.65em !important;
+      color: var(--cream);
+      font-size: calc(22px * var(--reader-scale));
+      font-style: italic;
+      font-weight: bold;
+    }
+
+    .discernment-prayer p:last-child {
+      margin-bottom: 0 !important;
+      color: var(--bright-gold);
+    }
+
+  
+    .unique-symbol-art {
+      overflow: hidden;
+      background:
+        radial-gradient(
+          circle at 50% 25%,
+          rgba(243, 212, 125, 0.13),
+          transparent 320px
+        ),
+        #070604;
+    }
+
+    .chapter-symbol {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 760 / 820;
+    }
+
+    .voice-line,
+    .test-line,
+    .reject-line,
+    .inventory-line {
+      margin-bottom: 0.8em !important;
+      padding-left: 18px;
+      border-left: 3px solid var(--gold);
+      color: var(--cream);
+    }
+
+    .voice-line.warning {
+      border-left-color: #765d33;
+      color: #d0c2a8;
+      font-style: italic;
+    }
+
+    .voice-line.wisdom {
+      background: rgba(215, 173, 81, 0.07);
+      padding-top: 10px;
+      padding-bottom: 10px;
+      font-weight: bold;
+    }
+
+    .reject-line {
+      border-left-color: #a47a32;
+      background: rgba(215, 173, 81, 0.045);
+      padding-top: 10px;
+      padding-bottom: 10px;
+    }
+
+    .inventory-line {
+      margin-bottom: 0.45em !important;
+      color: #d9ceb7;
+    }
+
+    .scripture-quote {
+      margin: 28px 0;
+      padding: 24px;
+      border-left: 4px solid var(--gold);
+      background: rgba(215, 173, 81, 0.08);
+      color: var(--cream);
+      font-size: calc(21px * var(--reader-scale));
+      font-style: italic;
+      line-height: 1.65;
+    }
+
+    .text-section-heading {
+      margin: 2.2em 0 1em;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--gold);
+      color: var(--bright-gold);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: calc(30px * var(--reader-scale));
+      line-height: 1.25;
+    }
+
+  
+    .unique-symbol-art {
+      overflow: hidden;
+      background:
+        radial-gradient(
+          circle at 50% 45%,
+          rgba(243, 212, 125, 0.14),
+          transparent 330px
+        ),
+        #070604;
+    }
+
+    .chapter-symbol {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 760 / 820;
+    }
+
+    .central-declaration,
+    .closing-declaration {
+      margin: 50px 0;
+      padding: 42px 25px;
+      border: 1px solid var(--gold);
+      background:
+        radial-gradient(
+          circle at 50% 0%,
+          rgba(215, 173, 81, 0.22),
+          transparent 330px
+        ),
+        var(--panel);
+      box-shadow: var(--shadow);
+      color: var(--bright-gold);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: calc(34px * var(--reader-scale));
+      font-weight: bold;
+      line-height: 1.25;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    .closing-declaration {
+      font-size: calc(40px * var(--reader-scale));
+    }
+
+    .false-fruit,
+    .true-fruit,
+    .seen-line,
+    .warning-line,
+    .danger-line,
+    .tear-line,
+    .alive-line,
+    .look-line {
+      margin-bottom: 0.8em !important;
+      padding-left: 18px;
+      border-left: 3px solid var(--gold);
+      color: var(--cream);
+    }
+
+    .false-fruit,
+    .warning-line,
+    .danger-line {
+      border-left-color: #7c6234;
+      color: #d6cab1;
+    }
+
+    .true-fruit,
+    .seen-line,
+    .alive-line,
+    .look-line {
+      background: rgba(215, 173, 81, 0.05);
+      padding-top: 9px;
+      padding-bottom: 9px;
+      font-weight: bold;
+    }
+
+    .tear-line {
+      border-left-width: 4px;
+      font-weight: bold;
+    }
+
+  
+    .unique-symbol-art {
+      overflow: hidden;
+      background:
+        radial-gradient(
+          circle at 50% 36%,
+          rgba(243, 212, 125, 0.17),
+          transparent 350px
+        ),
+        #050403;
+    }
+
+    .chapter-symbol {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 760 / 820;
+    }
+
+    .opening-command,
+    .central-declaration,
+    .point-bow-fall,
+    .closing-command {
+      margin: 50px 0;
+      padding: 42px 25px;
+      border: 1px solid var(--gold);
+      background:
+        radial-gradient(
+          circle at 50% 0%,
+          rgba(215, 173, 81, 0.24),
+          transparent 340px
+        ),
+        var(--panel);
+      box-shadow: var(--shadow);
+      color: var(--bright-gold);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: calc(39px * var(--reader-scale));
+      font-weight: bold;
+      line-height: 1.2;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    .central-declaration {
+      font-size: calc(43px * var(--reader-scale));
+    }
+
+    .point-bow-fall {
+      font-size: calc(32px * var(--reader-scale));
+    }
+
+    .closing-command {
+      display: grid;
+      gap: 12px;
+      font-size: calc(42px * var(--reader-scale));
+    }
+
+    .closing-command strong {
+      color: var(--white);
+      font-size: calc(54px * var(--reader-scale));
+    }
+
+    .tear-line,
+    .test-line,
+    .reject-line,
+    .seek-line,
+    .warning-line,
+    .return-line,
+    .kingdom-line,
+    .identity-line,
+    .stop-line,
+    .let-line,
+    .run-line {
+      margin-bottom: 0.8em !important;
+      padding-left: 18px;
+      border-left: 3px solid var(--gold);
+      color: var(--cream);
+    }
+
+    .reject-line,
+    .warning-line,
+    .stop-line {
+      border-left-color: #7d6235;
+      color: #d5c8ae;
+    }
+
+    .return-line,
+    .identity-line,
+    .run-line,
+    .let-line {
+      background: rgba(215, 173, 81, 0.05);
+      padding-top: 9px;
+      padding-bottom: 9px;
+      font-weight: bold;
+    }
+
+    .tear-line {
+      border-left-width: 4px;
+      font-weight: bold;
+    }
+
+  
+    .unique-symbol-art {
+      overflow: hidden;
+      background:
+        radial-gradient(
+          circle at 50% 38%,
+          rgba(243, 212, 125, 0.16),
+          transparent 340px
+        ),
+        #050403;
+    }
+
+    .chapter-symbol {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 760 / 820;
+    }
+
+    .support-scripture {
+      margin: 10px 0 42px;
+      padding: 30px;
+      border-left: 4px solid var(--gold);
+      background: rgba(215, 173, 81, 0.08);
+      color: var(--cream);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: calc(23px * var(--reader-scale));
+      font-style: italic;
+      line-height: 1.65;
+    }
+
+    .support-invitation {
+      padding: 24px;
+      border: 1px solid rgba(215, 173, 81, 0.45);
+      background: rgba(215, 173, 81, 0.05);
+    }
+
+    .payment-line {
+      margin-bottom: 0.7em !important;
+      padding-left: 18px;
+      border-left: 3px solid var(--gold);
+      color: var(--cream);
+      font-weight: bold;
+    }
+
+    .legal-note,
+    .support-disclaimer {
+      margin: 30px 0;
+      padding: 20px;
+      border: 1px solid #7c6234;
+      background: rgba(124, 98, 52, 0.11);
+      color: #d7cab0;
+      font-size: calc(16px * var(--reader-scale));
+      line-height: 1.65;
+    }
+
+    .mission-declaration {
+      margin: 45px 0;
+      padding: 35px 25px;
+      border: 1px solid var(--gold);
+      background:
+        radial-gradient(
+          circle at 50% 0%,
+          rgba(215, 173, 81, 0.22),
+          transparent 340px
+        ),
+        var(--panel);
+      color: var(--bright-gold);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: calc(29px * var(--reader-scale));
+      font-weight: bold;
+      line-height: 1.4;
+      text-align: center;
+    }
+
+    .direct-support-card {
+      margin: 55px 0 10px;
+      padding: 38px 30px;
+      border: 1px solid var(--gold);
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      text-align: center;
+    }
+
+    .direct-support-card h2 {
+      margin: 10px 0 18px;
+      color: var(--cream);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: calc(31px * var(--reader-scale));
+    }
+
+    .direct-support-card p {
+      max-width: 720px;
+      margin-right: auto;
+      margin-left: auto;
+    }
+
+  
+    .unique-symbol-art {
+      overflow: hidden;
+      background:
+        radial-gradient(
+          circle at 50% 35%,
+          rgba(243, 212, 125, 0.16),
+          transparent 350px
+        ),
+        #050403;
+    }
+
+    .chapter-symbol {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 760 / 820;
+    }
+
+    .author-statement {
+      padding: 38px 30px;
+      border: 1px solid rgba(215, 173, 81, 0.42);
+      background: rgba(215, 173, 81, 0.045);
+    }
+
+    .author-statement p:first-child::first-letter {
+      float: left;
+      margin: 6px 10px 0 0;
+      color: var(--bright-gold);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: calc(68px * var(--reader-scale));
+      font-weight: bold;
+      line-height: 0.8;
+    }
+
+    .author-core-message {
+      margin: 50px 0 10px;
+      padding: 38px 30px;
+      border: 1px solid var(--gold);
+      background:
+        radial-gradient(
+          circle at 50% 0%,
+          rgba(215, 173, 81, 0.22),
+          transparent 340px
+        ),
+        var(--panel);
+      box-shadow: var(--shadow);
+      text-align: center;
+    }
+
+    .author-core-message p {
+      margin: 12px auto;
+      max-width: 780px;
+      color: var(--cream);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: calc(25px * var(--reader-scale));
+      font-weight: bold;
+      line-height: 1.45;
+    }
+
+    .author-core-message p:last-child {
+      color: var(--bright-gold);
+    }
+
+  
+    .unique-symbol-art {
+      overflow: hidden;
+      background:
+        radial-gradient(
+          circle at 50% 34%,
+          rgba(243, 212, 125, 0.16),
+          transparent 350px
+        ),
+        #050403;
+    }
+
+    .chapter-symbol {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 760 / 820;
+    }
+
+    .appendix-purpose,
+    .fact-anchor,
+    .interpretive-note,
+    .source-note {
+      margin: 28px 0;
+      padding: 24px;
+      border-left: 4px solid var(--gold);
+      background: rgba(215, 173, 81, 0.06);
+      color: var(--cream);
+      line-height: 1.7;
+    }
+
+    .fact-anchor {
+      border: 1px solid var(--gold);
+      background:
+        radial-gradient(
+          circle at 50% 0%,
+          rgba(215, 173, 81, 0.18),
+          transparent 330px
+        ),
+        var(--panel);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: calc(24px * var(--reader-scale));
+      font-weight: bold;
+    }
+
+    .interpretive-note {
+      border-left-color: #a7803b;
+      color: #ddd1b9;
+      font-style: italic;
+    }
+
+    .source-note {
+      border-left-color: #7d6235;
+      color: #cfc2aa;
+      font-size: calc(16px * var(--reader-scale));
+    }
+
+    .key-line {
+      margin: 44px 0;
+      padding: 34px 26px;
+      border: 1px solid var(--gold);
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      text-align: center;
+    }
+
+    .key-line span {
+      display: block;
+      margin-bottom: 12px;
+      color: var(--gold);
+      font-size: 13px;
+      font-weight: bold;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+
+    .key-line strong {
+      display: block;
+      color: var(--bright-gold);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: calc(31px * var(--reader-scale));
+      line-height: 1.35;
+    }
+
+    .text-section-heading {
+      margin: 2.1em 0 0.8em;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--gold);
+      color: var(--bright-gold);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: calc(29px * var(--reader-scale));
+      line-height: 1.25;
+    }
+
+  
+    .unique-symbol-art {
+      overflow: hidden;
+      background:
+        radial-gradient(
+          circle at 50% 34%,
+          rgba(243, 212, 125, 0.16),
+          transparent 350px
+        ),
+        #050403;
+    }
+
+    .chapter-symbol {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 760 / 820;
+    }
+
+    .appendix-purpose,
+    .interpretive-note,
+    .source-note {
+      margin: 28px 0;
+      padding: 24px;
+      border-left: 4px solid var(--gold);
+      background: rgba(215, 173, 81, 0.06);
+      color: var(--cream);
+      line-height: 1.7;
+    }
+
+    .interpretive-note {
+      border-left-color: #a7803b;
+      color: #ddd1b9;
+      font-style: italic;
+    }
+
+    .source-note {
+      border-left-color: #7d6235;
+      color: #cfc2aa;
+      font-size: calc(16px * var(--reader-scale));
+    }
+
+    .appendix-principle {
+      margin: 46px 0 10px;
+      padding: 35px 28px;
+      border: 1px solid var(--gold);
+      background:
+        radial-gradient(
+          circle at 50% 0%,
+          rgba(215, 173, 81, 0.2),
+          transparent 340px
+        ),
+        var(--panel);
+      box-shadow: var(--shadow);
+      text-align: center;
+    }
+
+    .appendix-principle span {
+      display: block;
+      margin-bottom: 14px;
+      color: var(--gold);
+      font-size: 13px;
+      font-weight: bold;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+
+    .appendix-principle strong {
+      display: block;
+      color: var(--cream);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: calc(29px * var(--reader-scale));
+      line-height: 1.4;
+    }
+
+    .appendix-principle p {
+      margin: 18px 0 0;
+      color: var(--bright-gold);
+      font-weight: bold;
+    }
+
+    .text-section-heading {
+      margin: 2.1em 0 0.8em;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--gold);
+      color: var(--bright-gold);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: calc(29px * var(--reader-scale));
+      line-height: 1.25;
+    }
+
+  
+    .unique-symbol-art {
+      overflow: hidden;
+      background:
+        radial-gradient(
+          circle at 50% 35%,
+          rgba(243, 212, 125, 0.16),
+          transparent 350px
+        ),
+        #050403;
+    }
+
+    .chapter-symbol {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 760 / 820;
+    }
+
+    .historical-timeline {
+      position: relative;
+      display: grid;
+      gap: 0;
+      margin: 10px 0;
+      padding-left: 28px;
+    }
+
+    .historical-timeline::before {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 8px;
+      width: 3px;
+      background: linear-gradient(
+        var(--bright-gold),
+        var(--gold),
+        #76551f
+      );
+      content: "";
+    }
+
+    .timeline-entry {
+      position: relative;
+      display: grid;
+      grid-template-columns: minmax(115px, 165px) 1fr;
+      gap: 24px;
+      padding: 0 0 34px 25px;
+    }
+
+    .timeline-entry::before {
+      position: absolute;
+      top: 9px;
+      left: -27px;
+      width: 15px;
+      height: 15px;
+      border: 3px solid var(--gold);
+      border-radius: 50%;
+      background: var(--black);
+      content: "";
+    }
+
+    .timeline-date {
+      color: var(--bright-gold);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: calc(22px * var(--reader-scale));
+      font-weight: bold;
+      line-height: 1.35;
+    }
+
+    .timeline-content {
+      padding: 20px 22px;
+      border: 1px solid rgba(215, 173, 81, 0.34);
+      background: rgba(215, 173, 81, 0.045);
+    }
+
+    .timeline-content p {
+      margin: 0;
+    }
+
+    @media (max-width: 640px) {
+      .timeline-entry {
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+    }
+
+  
+    .unique-symbol-art {
+      overflow: hidden;
+      background:
+        radial-gradient(
+          circle at 50% 34%,
+          rgba(243, 212, 125, 0.16),
+          transparent 350px
+        ),
+        #050403;
+    }
+
+    .chapter-symbol {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 760 / 820;
+    }
+
+    .index-introduction {
+      margin: 0 0 34px;
+      padding: 26px;
+      border-left: 4px solid var(--gold);
+      background: rgba(215, 173, 81, 0.06);
+      color: var(--cream);
+      font-size: calc(18px * var(--reader-scale));
+      line-height: 1.75;
+    }
+
+    .reference-index-grid {
+      display: grid;
+      gap: 24px;
+    }
+
+    .reference-card {
+      padding: 28px;
+      border: 1px solid rgba(215, 173, 81, 0.38);
+      background:
+        linear-gradient(
+          135deg,
+          rgba(215, 173, 81, 0.06),
+          rgba(0, 0, 0, 0)
+        ),
+        var(--panel);
+      box-shadow: 0 15px 38px rgba(0, 0, 0, 0.28);
+    }
+
+    .reference-card-header {
+      display: grid;
+      grid-template-columns: 62px 1fr;
+      gap: 18px;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .reference-number {
+      display: grid;
+      width: 58px;
+      height: 58px;
+      place-items: center;
+      border: 1px solid var(--gold);
+      border-radius: 50%;
+      color: var(--bright-gold);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 21px;
+      font-weight: bold;
+    }
+
+    .reference-type {
+      margin-bottom: 5px;
+      color: var(--gold);
+      font-size: 11px;
+      font-weight: bold;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    .reference-card h2 {
+      margin: 0;
+      color: var(--cream);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: calc(27px * var(--reader-scale));
+      line-height: 1.3;
+    }
+
+    .reference-list {
+      margin: 0 !important;
+      color: #d9ceb8;
+      font-size: calc(17px * var(--reader-scale)) !important;
+      line-height: 1.8 !important;
+      overflow-wrap: anywhere;
+    }
+
+    @media (max-width: 600px) {
+      .reference-card {
+        padding: 22px 18px;
+      }
+
+      .reference-card-header {
+        grid-template-columns: 48px 1fr;
+      }
+
+      .reference-number {
+        width: 46px;
+        height: 46px;
+        font-size: 17px;
+      }
+    }
+
+  
+    .unique-symbol-art {
+      overflow: hidden;
+      background:
+        radial-gradient(
+          circle at 50% 34%,
+          rgba(243, 212, 125, 0.16),
+          transparent 350px
+        ),
+        #050403;
+    }
+
+    .chapter-symbol {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 760 / 820;
+    }
+
+    .source-group {
+      margin: 0 0 58px;
+    }
+
+    .source-group-heading {
+      margin: 0 0 24px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid var(--gold);
+    }
+
+    .source-group-heading h2 {
+      margin: 7px 0 0;
+      color: var(--cream);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: calc(31px * var(--reader-scale));
+      line-height: 1.3;
+    }
+
+    .source-grid {
+      display: grid;
+      gap: 18px;
+    }
+
+    .source-card {
+      display: grid;
+      grid-template-columns: 54px 1fr;
+      gap: 18px;
+      padding: 23px;
+      border: 1px solid rgba(215, 173, 81, 0.34);
+      background:
+        linear-gradient(
+          135deg,
+          rgba(215, 173, 81, 0.055),
+          rgba(0, 0, 0, 0)
+        ),
+        var(--panel);
+    }
+
+    .source-number {
+      display: grid;
+      width: 48px;
+      height: 48px;
+      place-items: center;
+      border: 1px solid var(--gold);
+      border-radius: 50%;
+      color: var(--bright-gold);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 17px;
+      font-weight: bold;
+    }
+
+    .source-organization {
+      color: var(--gold);
+      font-size: 12px;
+      font-weight: bold;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+
+    .source-card h3 {
+      margin: 6px 0 9px;
+      color: var(--cream);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: calc(23px * var(--reader-scale));
+      line-height: 1.35;
+    }
+
+    .source-domain {
+      margin-bottom: 13px;
+      color: #b9aa8e;
+      font-family: monospace;
+      font-size: 13px;
+      overflow-wrap: anywhere;
+    }
+
+    .source-link {
+      display: inline-flex;
+      align-items: center;
+      min-height: 40px;
+      padding: 9px 14px;
+      border: 1px solid var(--gold);
+      border-radius: 4px;
+      color: var(--bright-gold);
+      font-size: 13px;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    .source-link:hover,
+    .source-link:focus-visible {
+      background: rgba(215, 173, 81, 0.12);
+    }
+
+    .source-link.static {
+      border-color: #6e5932;
+      color: #cfc1a7;
+      cursor: default;
+    }
+
+    .use-note {
+      margin: 48px 0 10px;
+      padding: 34px 28px;
+      border: 1px solid var(--gold);
+      background:
+        radial-gradient(
+          circle at 50% 0%,
+          rgba(215, 173, 81, 0.2),
+          transparent 340px
+        ),
+        var(--panel);
+      box-shadow: var(--shadow);
+      text-align: center;
+    }
+
+    .use-note span {
+      display: block;
+      margin-bottom: 12px;
+      color: var(--gold);
+      font-size: 13px;
+      font-weight: bold;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+
+    .use-note p {
+      margin: 0;
+      color: var(--cream);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: calc(24px * var(--reader-scale));
+      font-weight: bold;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 600px) {
+      .source-card {
+        grid-template-columns: 42px 1fr;
+        gap: 13px;
+        padding: 20px 16px;
+      }
+
+      .source-number {
+        width: 40px;
+        height: 40px;
+        font-size: 15px;
+      }
+    }
+
+  /* PROPHECY JOURNEY — APPENDIX E EVIDENCE STATION */
+    body {
+      background:
+        radial-gradient(circle at 77% 12%, rgba(243, 212, 125, 0.17), transparent 430px),
+        radial-gradient(circle at 18% 20%, rgba(133, 87, 32, 0.17), transparent 500px),
+        repeating-linear-gradient(
+          32deg,
+          transparent 0,
+          transparent 94px,
+          rgba(215, 173, 81, 0.025) 95px,
+          transparent 96px
+        ),
+        linear-gradient(180deg, #050403 0%, #0d0906 48%, #050403 100%);
+    }
+
+    .site-header {
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.42);
+    }
+
+    .chapter-hero {
+      position: relative;
+      isolation: isolate;
+      overflow: hidden;
+      min-height: calc(100vh - 128px);
+      display: flex;
+      align-items: center;
+    }
+
+    .chapter-hero::before {
+      inset: 0;
+      background:
+        linear-gradient(90deg, rgba(5, 4, 3, 0.2), transparent 48%),
+        radial-gradient(circle at 20% 72%, rgba(215, 173, 81, 0.12), transparent 320px);
+      opacity: 1;
+    }
+
+    .chapter-hero::after {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      left: 5%;
+      right: 5%;
+      bottom: 42px;
+      height: 1px;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(215, 173, 81, 0.24),
+        rgba(243, 212, 125, 0.72),
+        rgba(215, 173, 81, 0.24),
+        transparent
+      );
+    }
+
+    .hero-grid {
+      position: relative;
+      z-index: 1;
+      grid-template-columns: minmax(0, 0.88fr) minmax(440px, 1.12fr);
+      gap: clamp(38px, 6vw, 86px);
+    }
+
+    .chapter-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 15px;
+      padding: 7px 11px;
+      border: 1px solid rgba(215, 173, 81, 0.48);
+      background: rgba(7, 5, 3, 0.72);
+      color: var(--bright-gold);
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 2.4px;
+      text-transform: uppercase;
+    }
+
+    .chapter-label::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border: 2px solid var(--bright-gold);
+      border-radius: 50%;
+      box-shadow: 0 0 16px rgba(243, 212, 125, 0.72);
+    }
+
+    .chapter-hero h1 {
+      max-width: 700px;
+      text-wrap: balance;
+    }
+
+    .hero-lead {
+      max-width: 660px;
+    }
+
+    .journey-art {
+      position: relative;
+      margin: 0;
+      overflow: hidden;
+      border: 1px solid rgba(215, 173, 81, 0.62);
+      background: #080604;
+      box-shadow:
+        0 34px 90px rgba(0, 0, 0, 0.72),
+        0 0 0 1px rgba(243, 212, 125, 0.07) inset;
+    }
+
+    .journey-art::before {
+      content: "";
+      position: absolute;
+      z-index: 2;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(180deg, rgba(5, 4, 3, 0.04) 48%, rgba(5, 4, 3, 0.88) 100%),
+        radial-gradient(circle at 50% 22%, transparent 30%, rgba(5, 4, 3, 0.32) 100%);
+    }
+
+    .journey-art img {
+      width: 100%;
+      min-height: 560px;
+      max-height: 720px;
+      object-fit: cover;
+      object-position: center;
+      transform: scale(1.01);
+    }
+
+    .journey-kicker {
+      position: absolute;
+      z-index: 3;
+      top: 18px;
+      left: 18px;
+      padding: 8px 11px;
+      border: 1px solid rgba(243, 212, 125, 0.58);
+      background: rgba(5, 4, 3, 0.84);
+      color: var(--cream);
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: 2.2px;
+      text-transform: uppercase;
+    }
+
+    .journey-caption {
+      position: absolute;
+      z-index: 3;
+      left: 24px;
+      right: 24px;
+      bottom: 23px;
+      margin: 0;
+      color: var(--cream);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(21px, 2.1vw, 30px);
+      line-height: 1.15;
+      text-shadow: 0 3px 20px #000;
+    }
+
+    .journey-route {
+      position: absolute;
+      z-index: 3;
+      left: 25px;
+      right: 25px;
+      bottom: 94px;
+      height: 28px;
+    }
+
+    .journey-route::before {
+      content: "";
+      position: absolute;
+      top: 13px;
+      left: 4px;
+      right: 4px;
+      height: 1px;
+      background: linear-gradient(90deg, #76501d, var(--bright-gold), #76501d);
+    }
+
+    .journey-route span {
+      position: absolute;
+      top: 8px;
+      width: 11px;
+      height: 11px;
+      border: 2px solid var(--bright-gold);
+      border-radius: 50%;
+      background: #080604;
+      box-shadow: 0 0 12px rgba(243, 212, 125, 0.55);
+    }
+
+    .journey-route span:nth-child(1) { left: 0; }
+    .journey-route span:nth-child(2) { left: 32%; }
+    .journey-route span:nth-child(3) {
+      left: 65%;
+      background: var(--bright-gold);
+    }
+    .journey-route span:nth-child(4) { right: 0; }
+
+    .art-label {
+      margin-top: 13px;
+      color: #9e927b;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    .edition-notice {
+      border-color: rgba(215, 173, 81, 0.62);
+      background:
+        linear-gradient(90deg, rgba(215, 173, 81, 0.08), transparent 52%),
+        rgba(13, 10, 6, 0.82);
+    }
+
+    .chapter-reading {
+      position: relative;
+    }
+
+    .chapter-reading::before {
+      content: "EVIDENCE STATION E · HISTORICAL RECORD";
+      display: block;
+      width: min(calc(100% - 34px), var(--reading-width));
+      margin: 0 auto 42px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(215, 173, 81, 0.34);
+      color: var(--bright-gold);
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+
+    @media (max-width: 900px) {
+      .chapter-hero {
+        min-height: 0;
+      }
+
+      .hero-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .journey-art img {
+        min-height: 420px;
+      }
+    }
+
+    @media (max-width: 650px) {
+      .chapter-hero {
+        padding-top: 58px;
+      }
+
+      .journey-art img {
+        min-height: 390px;
+        max-height: 520px;
+      }
+
+      .journey-caption {
+        left: 17px;
+        right: 17px;
+        bottom: 17px;
+      }
+
+      .journey-route {
+        left: 18px;
+        right: 18px;
+        bottom: 78px;
+      }
+
+      .journey-kicker {
+        top: 13px;
+        left: 13px;
+      }
+    }
+
+    /* EVIDENCE STATION A */
+    .evidence-art {
+      position: relative;
+      margin: 0;
+      overflow: hidden;
+      border: 1px solid rgba(215, 173, 81, 0.62);
+      background: #080604;
+      box-shadow:
+        0 34px 90px rgba(0, 0, 0, 0.72),
+        0 0 0 1px rgba(243, 212, 125, 0.07) inset;
+    }
+
+    .evidence-art::after {
+      display: none;
+    }
+
+    .evidence-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 6px;
+      padding: 6px;
+    }
+
+    .evidence-scene {
+      position: relative;
+      min-height: 250px;
+      overflow: hidden;
+      border: 1px solid rgba(215, 173, 81, 0.3);
+      background: #060504;
+    }
+
+    .evidence-scene img {
+      width: 100%;
+      height: 100%;
+      min-height: 250px;
+      object-fit: cover;
+      object-position: center;
+      filter: saturate(0.88) contrast(1.06);
+      transition: transform 0.35s ease;
+    }
+
+    .evidence-scene:hover img {
+      transform: scale(1.025);
+    }
+
+    .evidence-scene span {
+      position: absolute;
+      z-index: 2;
+      left: 10px;
+      top: 10px;
+      bottom: auto;
+      max-width: calc(100% - 20px);
+      padding: 6px 8px;
+      border: 1px solid rgba(243, 212, 125, 0.5);
+      background: rgba(5, 4, 3, 0.88);
+      color: var(--cream);
+      font-size: 9px;
+      font-weight: 900;
+      letter-spacing: 1.15px;
+      line-height: 1.25;
+      text-transform: uppercase;
+    }
+
+    .evidence-kicker {
+      position: absolute;
+      z-index: 3;
+      top: 18px;
+      left: 18px;
+      padding: 8px 11px;
+      border: 1px solid rgba(243, 212, 125, 0.58);
+      background: rgba(5, 4, 3, 0.88);
+      color: var(--cream);
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: 2.2px;
+      text-transform: uppercase;
+    }
+
+    .evidence-caption {
+      position: static;
+      z-index: 3;
+      margin: 0;
+      padding: 10px 24px 24px;
+      border-top: 1px solid rgba(215, 173, 81, 0.26);
+      background: rgba(5, 4, 3, 0.94);
+      color: var(--cream);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(20px, 2vw, 29px);
+      line-height: 1.3;
+      text-align: center;
+      text-shadow: 0 3px 20px #000;
+    }
+
+    .evidence-route {
+      position: relative;
+      z-index: 3;
+      left: auto;
+      right: auto;
+      bottom: auto;
+      height: 28px;
+      margin: 18px 24px 4px;
+    }
+
+    .evidence-route::before {
+      content: "";
+      position: absolute;
+      top: 13px;
+      left: 4px;
+      right: 4px;
+      height: 1px;
+      background: linear-gradient(90deg, #76501d, var(--bright-gold), #76501d);
+    }
+
+    .evidence-route span {
+      position: absolute;
+      top: 8px;
+      width: 11px;
+      height: 11px;
+      border: 2px solid var(--bright-gold);
+      border-radius: 50%;
+      background: #080604;
+      box-shadow: 0 0 12px rgba(243, 212, 125, 0.55);
+    }
+
+    .evidence-route span:nth-child(1) { left: 0; }
+    .evidence-route span:nth-child(2) { left: 33%; }
+    .evidence-route span:nth-child(3) { left: 66%; }
+    .evidence-route span:nth-child(4) {
+      right: 0;
+      background: var(--bright-gold);
+    }
+
+    @media (max-width: 650px) {
+      .evidence-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .evidence-scene,
+      .evidence-scene img {
+        min-height: 235px;
+      }
+      .evidence-route {
+        margin-left: 18px;
+        margin-right: 18px;
+      }
+    }
+  </style>
+
+  <!-- PROJECT UNVEILED SAFE SEO METADATA: artwork body is untouched -->
+  <link rel="canonical" href="https://bobsome1.com/book/read/appendix-e.html">
+  <link rel="sitemap" type="application/xml" href="/sitemap.xml">
+  <meta name="author" content="Robert J. Hayes">
+  <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+  <meta name="theme-color" content="#050403">
+
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Project Unveiled">
+  <meta property="og:title" content="Appendix E: Works Consulted | Project Unveiled">
+  <meta property="og:description" content="Appendix E of Project Unveiled: the complete Works Consulted list for biblical text, Arius, Athanasius, Nicaea, the fourth century, Nag Hammadi, and noncanonical texts.">
+  <meta property="og:url" content="https://bobsome1.com/book/read/appendix-e.html">
+  <meta property="og:image" content="https://bobsome1.com/book/images/timeline/timeline-08-athanasius-festal-letter.png">
+  <meta property="og:image:alt" content="Project Unveiled symbolic artwork">
+  <meta property="article:author" content="Robert J. Hayes">
+  <meta property="article:modified_time" content="2026-07-20">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Appendix E: Works Consulted | Project Unveiled">
+  <meta name="twitter:description" content="Appendix E of Project Unveiled: the complete Works Consulted list for biblical text, Arius, Athanasius, Nicaea, the fourth century, Nag Hammadi, and noncanonical texts.">
+  <meta name="twitter:image" content="https://bobsome1.com/book/images/timeline/timeline-08-athanasius-festal-letter.png">
+
+  <script type="application/ld+json" data-project-unveiled-safe-seo="true">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Person",
+      "@id": "https://bobsome1.com/#robert-j-hayes",
+      "name": "Robert J. Hayes",
+      "url": "https://bobsome1.com/book/read/about-author.html"
+    },
+    {
+      "@type": "Book",
+      "@id": "https://bobsome1.com/book/#project-unveiled",
+      "name": "Project Unveiled",
+      "author": {
+        "@id": "https://bobsome1.com/#robert-j-hayes"
+      },
+      "url": "https://bobsome1.com/book/read/",
+      "inLanguage": "en-US",
+      "bookFormat": "https://schema.org/EBook",
+      "isAccessibleForFree": true
+    },
+    {
+      "@type": "CreativeWork",
+      "@id": "https://bobsome1.com/book/read/appendix-e.html#page",
+      "url": "https://bobsome1.com/book/read/appendix-e.html",
+      "name": "Appendix E: Works Consulted",
+      "description": "Appendix E of Project Unveiled: the complete Works Consulted list for biblical text, Arius, Athanasius, Nicaea, the fourth century, Nag Hammadi, and noncanonical texts.",
+      "inLanguage": "en-US",
+      "dateModified": "2026-07-25",
+      "isAccessibleForFree": true,
+      "author": {
+        "@id": "https://bobsome1.com/#robert-j-hayes"
+      },
+      "isPartOf": {
+        "@id": "https://bobsome1.com/book/#project-unveiled"
+      },
+      "image": "https://bobsome1.com/book/images/timeline/timeline-08-athanasius-festal-letter.png"
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://bobsome1.com/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Project Unveiled",
+          "item": "https://bobsome1.com/book/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Complete Reader",
+          "item": "https://bobsome1.com/book/read/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 4,
+          "name": "Appendix E",
+          "item": "https://bobsome1.com/book/read/appendix-e.html"
+        }
+      ]
+    }
+  ]
+}
+  </script>
+
+<style id="project-unveiled-traffic-layer-styles">
+/* PROJECT-UNVEILED-TRAFFIC-DONATION-LAYER */
+.pu-support-footer{max-width:1100px;margin:18px auto 0;padding:14px 18px;border-top:1px solid rgba(215,173,81,.4);display:flex;gap:12px;justify-content:center;align-items:center;flex-wrap:wrap;font-family:Arial,sans-serif;font-size:14px}.pu-support-footer a{color:#f3d47d;text-decoration:underline;text-underline-offset:3px}.pu-support-footer span{color:#8d7b55}.pu-final-support-cta,.pu-reader-support-cta{max-width:980px;margin:34px auto;padding:26px;border:1px solid #d7ad51;background:linear-gradient(135deg,#15110b,#080706);color:#f4ead2;text-align:center;box-shadow:0 18px 55px rgba(0,0,0,.35)}.pu-final-support-cta h2,.pu-reader-support-cta h2{margin:.2rem 0 .7rem;color:#f3d47d;font-family:Georgia,"Times New Roman",serif}.pu-final-support-cta p,.pu-reader-support-cta p{max-width:760px;margin:.6rem auto}.pu-conversion-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:18px}.pu-conversion-actions a{display:inline-flex;align-items:center;justify-content:center;padding:12px 18px;border:1px solid #d7ad51;background:#d7ad51;color:#090806!important;font-weight:800;text-decoration:none!important}.pu-conversion-actions a.secondary{background:transparent;color:#f3d47d!important}.pu-support-legal{font-size:13px;color:#bdb49f}.pu-support-float{position:fixed;right:15px;bottom:15px;z-index:9998;padding:10px 14px;border:1px solid #d7ad51;border-radius:999px;background:rgba(8,7,6,.95);color:#f3d47d!important;text-decoration:none!important;font:700 13px Arial,sans-serif;box-shadow:0 8px 28px rgba(0,0,0,.5)}@media(max-width:650px){.pu-final-support-cta,.pu-reader-support-cta{margin:24px 14px;padding:21px 16px}.pu-support-float{right:10px;bottom:10px;padding:9px 12px}}
+</style>
+</head>
+
+<body>
+
+  <div
+    class="reading-progress"
+    id="readingProgress"
+    aria-hidden="true"
+  ></div>
+
+  <header class="site-header">
+
+    <div class="container nav">
+
+      <a class="brand" href="/">
+        <span>PROJECT</span> UNVEILED
+      </a>
+
+      <nav class="nav-links" aria-label="Primary navigation"><a href="/">Home</a><a href="/book/read/">Reader</a><a href="/book/">Book</a><a href="/book/timeline.html">Timeline</a><a href="/book/research.html">Research</a><a href="/book/updates.html">Updates</a><a href="/book/read/support-right-hand.html">Support</a></nav>
+
+    </div>
+
+  </header>
+
+  <div class="reader-toolbar">
+
+    <div class="container toolbar-inner">
+
+      <div class="chapter-position">
+        Book Back Matter
+      </div>
+
+      <div
+        class="text-controls"
+        aria-label="Reading text-size controls"
+      >
+
+        <button
+          class="text-control"
+          type="button"
+          onclick="changeReaderSize(-0.1)"
+          aria-label="Decrease reading text size"
+        >
+          A−
+        </button>
+
+        <button
+          class="text-control"
+          type="button"
+          onclick="resetReaderSize()"
+          aria-label="Reset reading text size"
+        >
+          A
+        </button>
+
+        <button
+          class="text-control"
+          type="button"
+          onclick="changeReaderSize(0.1)"
+          aria-label="Increase reading text size"
+        >
+          A+
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <main>
+
+    <section class="chapter-hero">
+
+      <div class="container hero-grid">
+
+        <div class="hero-copy">
+
+          <div class="chapter-label">
+            Evidence Station E · Works Consulted
+          </div>
+
+          <div class="eyebrow">
+            Sources · Records · Context · Correction
+          </div>
+
+          <h1>
+            Works
+            <span class="gold">Consulted.</span>
+          </h1>
+
+          <p class="hero-lead">
+            The source record supporting the book’s biblical references,
+            fourth-century historical notes, canon discussion,
+            Nag Hammadi material, and noncanonical-text analysis.
+          </p>
+
+          <div class="hero-actions">
+
+            <a
+              class="button"
+              href="#works-consulted"
+            >
+              Review the Sources
+            </a>
+
+            <a
+              class="button secondary"
+              href="/book/research.html"
+            >
+              Open Research Page
+            </a>
+
+          </div>
+
+        </div>
+
+        <div>
+
+          
+          <figure class="evidence-art">
+            <div class="evidence-grid">
+              <div class="evidence-scene">
+                <img
+                  src="/book/images/timeline/timeline-08-athanasius-festal-letter.webp"
+                  alt="Project Unveiled historical scene: Festal Letter"
+                  width="1536"
+                  height="1024"
+                  loading="eager"
+                  decoding="async"
+                >
+                <span>Festal Letter</span>
+              </div>
+              <div class="evidence-scene">
+                <img
+                  src="/book/images/timeline/timeline-06-council-of-nicea.webp"
+                  alt="Project Unveiled historical scene: Council Record"
+                  width="1536"
+                  height="1024"
+                  loading="eager"
+                  decoding="async"
+                >
+                <span>Council Record</span>
+              </div>
+              <div class="evidence-scene">
+                <img
+                  src="/book/images/timeline/timeline-09-state-backed-orthodoxy.webp"
+                  alt="Project Unveiled historical scene: Imperial Orthodoxy"
+                  width="1536"
+                  height="1024"
+                  loading="eager"
+                  decoding="async"
+                >
+                <span>Imperial Orthodoxy</span>
+              </div>
+              <div class="evidence-scene">
+                <img
+                  src="/book/images/timeline/timeline-10-nag-hammadi-discovery.webp"
+                  alt="Project Unveiled historical scene: Nag Hammadi"
+                  width="1536"
+                  height="1024"
+                  loading="eager"
+                  decoding="async"
+                >
+                <span>Nag Hammadi</span>
+              </div>
+            </div>
+
+            <div class="evidence-kicker">
+              The Prophecy Journey · Evidence Station E
+            </div>
+
+            <div class="evidence-route" aria-hidden="true">
+              <span></span><span></span><span></span><span></span>
+            </div>
+
+            <figcaption class="evidence-caption">
+              Claims should stand where readers can inspect the sources beneath them.
+            </figcaption>
+          </figure>
+
+          <p class="art-label">
+            Project Unveiled historical evidence gallery · Appendix E
+          </p>
+
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <section class="edition-wrap">
+
+      <div class="reading-container">
+
+        <div class="edition-notice">
+
+          <div class="edition-symbol">
+            ◆
+          </div>
+
+          <p>
+            <strong>Complete Public Edition.</strong>
+            Appendix E is published as part of the complete online reader.
+            Documented corrections, fuller context, and stronger
+            source evidence remain welcome.
+          </p>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <article
+      class="chapter-reading"
+      id="works-consulted"
+    >
+
+      <div class="reading-container">
+
+        <section class="source-group">
+
+          <div class="source-group-heading">
+            <div class="eyebrow">Biblical Text</div>
+            <h2>Primary Biblical Edition</h2>
+          </div>
+
+          <div class="source-grid">
+            
+      <article class="source-card">
+
+        <div class="source-number">
+          01
+        </div>
+
+        <div class="source-card-content">
+
+          <div class="source-organization">
+            King James Version (KJV)
+          </div>
+
+          <h3>
+            Public domain in the United States.
+          </h3>
+
+          <div class="source-domain">Biblical text</div>
+
+          <span class="source-link static">Public-domain biblical text</span>
+
+        </div>
+
+      </article>
+    
+          </div>
+
+        </section>
+
+        <section class="source-group">
+
+          <div class="source-group-heading">
+            <div class="eyebrow">Historical Research</div>
+            <h2>Arius, Athanasius, Nicaea and the Fourth Century</h2>
+          </div>
+
+          <div class="source-grid">
+            
+      <article class="source-card">
+
+        <div class="source-number">
+          02
+        </div>
+
+        <div class="source-card-content">
+
+          <div class="source-organization">
+            Christian History Institute
+          </div>
+
+          <h3>
+            Council of Nicea.
+          </h3>
+
+          <div class="source-domain">christianhistoryinstitute.org</div>
+
+          
+          <a
+            class="source-link"
+            href="https://christianhistoryinstitute.org/study/module/nicea"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Open source ↗
+          </a>
+        
+
+        </div>
+
+      </article>
+    
+      <article class="source-card">
+
+        <div class="source-number">
+          03
+        </div>
+
+        <div class="source-card-content">
+
+          <div class="source-organization">
+            Christian History Institute
+          </div>
+
+          <h3>
+            A Hammer Struck at Heresy.
+          </h3>
+
+          <div class="source-domain">christianhistoryinstitute.org</div>
+
+          
+          <a
+            class="source-link"
+            href="https://christianhistoryinstitute.org/magazine/article/hammer-struck-at-heresy"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Open source ↗
+          </a>
+        
+
+        </div>
+
+      </article>
+    
+      <article class="source-card">
+
+        <div class="source-number">
+          04
+        </div>
+
+        <div class="source-card-content">
+
+          <div class="source-organization">
+            Christian History Institute
+          </div>
+
+          <h3>
+            367 Athanasius Defines the New Testament.
+          </h3>
+
+          <div class="source-domain">christianhistoryinstitute.org</div>
+
+          
+          <a
+            class="source-link"
+            href="https://christianhistoryinstitute.org/magazine/article/athanasius-defines-new-testament"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Open source ↗
+          </a>
+        
+
+        </div>
+
+      </article>
+    
+      <article class="source-card">
+
+        <div class="source-number">
+          05
+        </div>
+
+        <div class="source-card-content">
+
+          <div class="source-organization">
+            FourthCentury.com
+          </div>
+
+          <h3>
+            Imperial Edict Against Arius and His Followers.
+          </h3>
+
+          <div class="source-domain">fourthcentury.com</div>
+
+          
+          <a
+            class="source-link"
+            href="https://www.fourthcentury.com/urkunde-33/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Open source ↗
+          </a>
+        
+
+        </div>
+
+      </article>
+    
+      <article class="source-card">
+
+        <div class="source-number">
+          06
+        </div>
+
+        <div class="source-card-content">
+
+          <div class="source-organization">
+            FourthCentury.com
+          </div>
+
+          <h3>
+            Documents of the Early Arian Controversy.
+          </h3>
+
+          <div class="source-domain">fourthcentury.com</div>
+
+          
+          <a
+            class="source-link"
+            href="https://www.fourthcentury.com/documents-of-the-early-arian-controversy/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Open source ↗
+          </a>
+        
+
+        </div>
+
+      </article>
+    
+      <article class="source-card">
+
+        <div class="source-number">
+          07
+        </div>
+
+        <div class="source-card-content">
+
+          <div class="source-organization">
+            Early Church Texts
+          </div>
+
+          <h3>
+            Athanasius: 39th Festal Letter.
+          </h3>
+
+          <div class="source-domain">earlychurchtexts.com</div>
+
+          
+          <a
+            class="source-link"
+            href="https://earlychurchtexts.com/public/athanasius_39th_festal_letter.htm"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Open source ↗
+          </a>
+        
+
+        </div>
+
+      </article>
+    
+      <article class="source-card">
+
+        <div class="source-number">
+          08
+        </div>
+
+        <div class="source-card-content">
+
+          <div class="source-organization">
+            New Advent
+          </div>
+
+          <h3>
+            Letter 39 (Athanasius).
+          </h3>
+
+          <div class="source-domain">newadvent.org</div>
+
+          
+          <a
+            class="source-link"
+            href="https://www.newadvent.org/fathers/2806039.htm"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Open source ↗
+          </a>
+        
+
+        </div>
+
+      </article>
+    
+      <article class="source-card">
+
+        <div class="source-number">
+          09
+        </div>
+
+        <div class="source-card-content">
+
+          <div class="source-organization">
+            Text &amp; Canon Institute
+          </div>
+
+          <h3>
+            Did Nicaea Really Create the Bible?
+          </h3>
+
+          <div class="source-domain">textandcanon.org</div>
+
+          
+          <a
+            class="source-link"
+            href="https://textandcanon.org/the-council-of-nicea-and-the-biblical-canon/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Open source ↗
+          </a>
+        
+
+        </div>
+
+      </article>
+    
+      <article class="source-card">
+
+        <div class="source-number">
+          10
+        </div>
+
+        <div class="source-card-content">
+
+          <div class="source-organization">
+            History Today
+          </div>
+
+          <h3>
+            The Edict of Thessalonica.
+          </h3>
+
+          <div class="source-domain">historytoday.com</div>
+
+          
+          <a
+            class="source-link"
+            href="https://www.historytoday.com/archive/months-past/edict-thessalonica"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Open source ↗
+          </a>
+        
+
+        </div>
+
+      </article>
+    
+      <article class="source-card">
+
+        <div class="source-number">
+          11
+        </div>
+
+        <div class="source-card-content">
+
+          <div class="source-organization">
+            EBSCO Research Starters
+          </div>
+
+          <h3>
+            Edict of Milan.
+          </h3>
+
+          <div class="source-domain">ebsco.com</div>
+
+          
+          <a
+            class="source-link"
+            href="https://www.ebsco.com/research-starters/history/edict-milan"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Open source ↗
+          </a>
+        
+
+        </div>
+
+      </article>
+    
+      <article class="source-card">
+
+        <div class="source-number">
+          12
+        </div>
+
+        <div class="source-card-content">
+
+          <div class="source-organization">
+            EBSCO Research Starters
+          </div>
+
+          <h3>
+            Theodosius's Edicts Promote Christian Orthodoxy.
+          </h3>
+
+          <div class="source-domain">ebsco.com</div>
+
+          
+          <a
+            class="source-link"
+            href="https://www.ebsco.com/research-starters/religion-and-philosophy/theodosiuss-edicts-promote-christian-orthodoxy"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Open source ↗
+          </a>
+        
+
+        </div>
+
+      </article>
+    
+          </div>
+
+        </section>
+
+        <section class="source-group">
+
+          <div class="source-group-heading">
+            <div class="eyebrow">Texts Beyond the Shelf</div>
+            <h2>Nag Hammadi and Noncanonical Texts</h2>
+          </div>
+
+          <div class="source-grid">
+            
+      <article class="source-card">
+
+        <div class="source-number">
+          13
+        </div>
+
+        <div class="source-card-content">
+
+          <div class="source-organization">
+            Yale Open Courses
+          </div>
+
+          <h3>
+            RLST 152 - Lecture 8 - The Gospel of Thomas.
+          </h3>
+
+          <div class="source-domain">oyc.yale.edu</div>
+
+          
+          <a
+            class="source-link"
+            href="https://oyc.yale.edu/religious-studies/rlst-152/lecture-8"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Open source ↗
+          </a>
+        
+
+        </div>
+
+      </article>
+    
+      <article class="source-card">
+
+        <div class="source-number">
+          14
+        </div>
+
+        <div class="source-card-content">
+
+          <div class="source-organization">
+            The Gnostic Society Library
+          </div>
+
+          <h3>
+            The Nag Hammadi Library.
+          </h3>
+
+          <div class="source-domain">gnosis.org</div>
+
+          
+          <a
+            class="source-link"
+            href="https://www.gnosis.org/naghamm/nhl.html"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Open source ↗
+          </a>
+        
+
+        </div>
+
+      </article>
+    
+      <article class="source-card">
+
+        <div class="source-number">
+          15
+        </div>
+
+        <div class="source-card-content">
+
+          <div class="source-organization">
+            The Gnostic Society Library
+          </div>
+
+          <h3>
+            The Gospel of Thomas.
+          </h3>
+
+          <div class="source-domain">gnosis.org</div>
+
+          
+          <a
+            class="source-link"
+            href="https://www.gnosis.org/naghamm/gosthom.html"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Open source ↗
+          </a>
+        
+
+        </div>
+
+      </article>
+    
+      <article class="source-card">
+
+        <div class="source-number">
+          16
+        </div>
+
+        <div class="source-card-content">
+
+          <div class="source-organization">
+            The Gnostic Society Library
+          </div>
+
+          <h3>
+            The Gospel of Truth.
+          </h3>
+
+          <div class="source-domain">gnosis.org</div>
+
+          
+          <a
+            class="source-link"
+            href="https://gnosis.org/naghamm/got.html"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Open source ↗
+          </a>
+        
+
+        </div>
+
+      </article>
+    
+      <article class="source-card">
+
+        <div class="source-number">
+          17
+        </div>
+
+        <div class="source-card-content">
+
+          <div class="source-organization">
+            The Gnostic Society Library
+          </div>
+
+          <h3>
+            The Gospel of Philip.
+          </h3>
+
+          <div class="source-domain">gnosis.org</div>
+
+          
+          <a
+            class="source-link"
+            href="https://www.gnosis.org/naghamm/gop.html"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Open source ↗
+          </a>
+        
+
+        </div>
+
+      </article>
+    
+      <article class="source-card">
+
+        <div class="source-number">
+          18
+        </div>
+
+        <div class="source-card-content">
+
+          <div class="source-organization">
+            Gospels.net
+          </div>
+
+          <h3>
+            Gospel of Truth.
+          </h3>
+
+          <div class="source-domain">gospels.net</div>
+
+          
+          <a
+            class="source-link"
+            href="https://www.gospels.net/truth"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Open source ↗
+          </a>
+        
+
+        </div>
+
+      </article>
+    
+      <article class="source-card">
+
+        <div class="source-number">
+          19
+        </div>
+
+        <div class="source-card-content">
+
+          <div class="source-organization">
+            Gospels.net
+          </div>
+
+          <h3>
+            Gospel of Philip.
+          </h3>
+
+          <div class="source-domain">gospels.net</div>
+
+          
+          <a
+            class="source-link"
+            href="https://www.gospels.net/philip"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Open source ↗
+          </a>
+        
+
+        </div>
+
+      </article>
+    
+      <article class="source-card">
+
+        <div class="source-number">
+          20
+        </div>
+
+        <div class="source-card-content">
+
+          <div class="source-organization">
+            PBS Frontline
+          </div>
+
+          <h3>
+            The Gnostic Gospels.
+          </h3>
+
+          <div class="source-domain">pbs.org</div>
+
+          
+          <a
+            class="source-link"
+            href="https://www.pbs.org/wgbh/frontline/article/gnostic-gospels/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Open source ↗
+          </a>
+        
+
+        </div>
+
+      </article>
+    
+      <article class="source-card">
+
+        <div class="source-number">
+          21
+        </div>
+
+        <div class="source-card-content">
+
+          <div class="source-organization">
+            Biblical Archaeology Society
+          </div>
+
+          <h3>
+            The Nag Hammadi Codices and Gnostic Christianity.
+          </h3>
+
+          <div class="source-domain">biblicalarchaeology.org</div>
+
+          
+          <a
+            class="source-link"
+            href="https://www.biblicalarchaeology.org/daily/biblical-artifacts/the-nag-hammadi-codices/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Open source ↗
+          </a>
+        
+
+        </div>
+
+      </article>
+    
+      <article class="source-card">
+
+        <div class="source-number">
+          22
+        </div>
+
+        <div class="source-card-content">
+
+          <div class="source-organization">
+            Claremont Colleges Digital Library
+          </div>
+
+          <h3>
+            Nag Hammadi Archive.
+          </h3>
+
+          <div class="source-domain">ccdl.claremont.edu</div>
+
+          
+          <a
+            class="source-link"
+            href="https://ccdl.claremont.edu/digital/collection/nha"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Open source ↗
+          </a>
+        
+
+        </div>
+
+      </article>
+    
+          </div>
+
+        </section>
+
+        <div class="use-note">
+          <span>Use Note</span>
+          <p>The appendices separate sourced historical claims from interpretation. Historical claims are presented cautiously; interpretive questions remain the author's.</p>
+        </div>
+
+      </div>
+
+    </article>
+
+        
+
+          <article class="reference-card" id="chapter-2-references">
+
+            <div class="reference-card-header">
+
+              <div class="reference-number">
+                02
+              </div>
+
+              <div>
+
+                <div class="reference-type">
+                  Scripture and Text References
+                </div>
+
+                <h2>
+                  The Way Before the Machine
+                </h2>
+
+              </div>
+
+            </div>
+
+            <p class="reference-list">
+              Acts 9:1-2; Acts 22:4-5
+            </p>
+
+          </article>
+        
+
+          <article class="reference-card" id="chapter-3-references">
+
+            <div class="reference-card-header">
+
+              <div class="reference-number">
+                03
+              </div>
+
+              <div>
+
+                <div class="reference-type">
+                  Historical Notes
+                </div>
+
+                <h2>
+                  When Rome Put Its Hand on the Cross
+                </h2>
+
+              </div>
+
+            </div>
+
+            <p class="reference-list">
+              Historical source notes for Constantine, Nicaea, Arius, and Theodosius are listed in Appendices A, C, and E.
+            </p>
+
+          </article>
+        
+
+          <article class="reference-card" id="chapter-4-references">
+
+            <div class="reference-card-header">
+
+              <div class="reference-number">
+                04
+              </div>
+
+              <div>
+
+                <div class="reference-type">
+                  Historical Notes
+                </div>
+
+                <h2>
+                  The Approved Shelf
+                </h2>
+
+              </div>
+
+            </div>
+
+            <p class="reference-list">
+              Historical source notes for Arius, Athanasius, Nicaea, canon formation, and the approved shelf are listed in Appendices A and E.
+            </p>
+
+          </article>
+        
+
+          <article class="reference-card" id="chapter-5-references">
+
+            <div class="reference-card-header">
+
+              <div class="reference-number">
+                05
+              </div>
+
+              <div>
+
+                <div class="reference-type">
+                  Scripture and Text References
+                </div>
+
+                <h2>
+                  Who Hung the Veil Back Up?
+                </h2>
+
+              </div>
+
+            </div>
+
+            <p class="reference-list">
+              Matthew 27:51; Mark 15:38; Luke 23:45; Isaiah 29:13; Mark 7:6-9; Matthew 23; Matthew 7:21-23
+            </p>
+
+          </article>
+        
+
+          <article class="reference-card" id="chapter-6-references">
+
+            <div class="reference-card-header">
+
+              <div class="reference-number">
+                06
+              </div>
+
+              <div>
+
+                <div class="reference-type">
+                  Scripture and Text References
+                </div>
+
+                <h2>
+                  Having Eyes to See
+                </h2>
+
+              </div>
+
+            </div>
+
+            <p class="reference-list">
+              Matthew 27:51; Mark 15:38; Luke 23:45; John 10:9; Hebrews 10:19-22; John 8:32; Romans 1:25; Matthew 13:13-16; Mark 8:18; Ephesians 1:18; John 5:39-40; Matthew 23:13; Isaiah 29:13; Mark 7:6-9; Matthew 23:27-28; John 1:10-11; Luke 19:41-44; Jeremiah 5:21; Ezekiel 12:2; Galatians 3:24; 2 Corinthians 3:14-18; Proverbs 14:12; Proverbs 16:25; Galatians 5:1; Colossians 2:8; John 3:19-21; Acts 5:29; Matthew 28:19-20; Matthew 4:19; John 10:27; Matthew 11:29; Matthew 7:7-8; James 1:5; Hebrews 12:6; Proverbs 3:11-12; Luke 9:23; Matthew 13:16; Acts 17:24-25; John 18:36; Luke 17:20-21; Acts 17:11; Genesis 2:7; Job 33:4; John 20:22; 2 Corinthians 10:4-5; 1 Samuel 16:7; John 7:24; Psalm 139:23-24; 2 Corinthians 13:5; Galatians 1:10; John 9:39-41; Hebrews 4:12-13; Psalm 119:18; James 1:5; Ephesians 5:14; Galatians 4:6-7; Romans 8:15; 2 Timothy 1:7; Luke 4:18; John 14:6; 1 John 5:21; Jeremiah 24:7; Hosea 6:1; 1 Peter 2:9; John 9:25; John 1:39; John 1:46; Hebrews 6:19; Proverbs 16:18; James 4:6; Matthew 9:36; John 8:44; Ephesians 5:11; Luke 19:10; Jude 1:22-23; Ezekiel 37:4-6; Proverbs 18:21; Isaiah 42:3; Matthew 12:20; Luke 15:20-24; 2 Corinthians 4:4; Mark 7:8-13; Luke 8:17; Ephesians 5:13; Micah 6:8; Galatians 5:22-23; 1 Timothy 2:5; Hebrews 4:16; John 8:12; 1 John 1:5; Isaiah 29:13
+            </p>
+
+          </article>
+        
+
+          <article class="reference-card" id="chapter-7-references">
+
+            <div class="reference-card-header">
+
+              <div class="reference-number">
+                07
+              </div>
+
+              <div>
+
+                <div class="reference-type">
+                  Scripture and Text References
+                </div>
+
+                <h2>
+                  The Traditions of Men
+                </h2>
+
+              </div>
+
+            </div>
+
+            <p class="reference-list">
+              2 Timothy 3:5; Isaiah 29:13; Matthew 15:7-9; Mark 7:6-7; Mark 7:7-13; Matthew 6:1-6; Matthew 23:5; Matthew 23:25-28; Matthew 23:13; Matthew 7:15-20; Mark 7:8; Isaiah 1:13-17; Matthew 7:21-23; Romans 14:17
+            </p>
+
+          </article>
+        
+
+          <article class="reference-card" id="chapter-8-references">
+
+            <div class="reference-card-header">
+
+              <div class="reference-number">
+                08
+              </div>
+
+              <div>
+
+                <div class="reference-type">
+                  Scripture and Text References
+                </div>
+
+                <h2>
+                  Sons and Daughters of the Light, Come Alive and Align with the One
+                </h2>
+
+              </div>
+
+            </div>
+
+            <p class="reference-list">
+              Isaiah 61:1-3; Luke 4:18-21; Hebrews 10:19-22; Genesis 2:7; Job 33:4; John 20:22; John 10:27; Romans 8:1; Romans 8:15-16; Hebrews 13:5; Romans 8:38-39; 1 John 3:1; John 1:12; Psalm 139:23-24; John 8:32; Ephesians 5:8; 1 John 4:19; Ephesians 1:18; Isaiah 61:3
+            </p>
+
+          </article>
+        
+
+          <article class="reference-card" id="chapter-9-references">
+
+            <div class="reference-card-header">
+
+              <div class="reference-number">
+                09
+              </div>
+
+              <div>
+
+                <div class="reference-type">
+                  Scripture and Text References
+                </div>
+
+                <h2>
+                  The Prayer Was Never the Gate
+                </h2>
+
+              </div>
+
+            </div>
+
+            <p class="reference-list">
+              Romans 10:9; Romans 10:10; John 14:13-14; John 16:23-24; 1 John 5:14-15; Hebrews 10:19-22; Matthew 7:21; Matthew 7:22-23; Luke 18:13-14; Romans 8:27; Jeremiah 17:10; Psalm 139:1-4; Hebrews 4:12-13; Romans 8:26; Romans 8:26-27; Matthew 6:7-8; Luke 17:21; Matthew 10:32; John 15:4-5; Matthew 7:16-20; James 2:17; Ephesians 2:8-10; Matthew 21:12-13; Revelation 3:15-16; John 6:44; Proverbs 23:26; Psalm 51:6
+            </p>
+
+          </article>
+        
+
+          <article class="reference-card" id="chapter-10-references">
+
+            <div class="reference-card-header">
+
+              <div class="reference-number">
+                10
+              </div>
+
+              <div>
+
+                <div class="reference-type">
+                  Scripture and Text References
+                </div>
+
+                <h2>
+                  Rightly Divide the Truth
+                </h2>
+
+              </div>
+
+            </div>
+
+            <p class="reference-list">
+              1 Thessalonians 5:21; 1 John 4:1; 2 Timothy 2:15; John 14:6; Matthew 7:15-20; Matthew 5:48; John 16:13
+            </p>
+
+          </article>
+        
+
+          <article class="reference-card" id="chapter-11-references">
+
+            <div class="reference-card-header">
+
+              <div class="reference-number">
+                11
+              </div>
+
+              <div>
+
+                <div class="reference-type">
+                  Scripture and Text References
+                </div>
+
+                <h2>
+                  Voices Beyond the Shelf
+                </h2>
+
+              </div>
+
+            </div>
+
+            <p class="reference-list">
+              2 Timothy 2:15; 1 John 4:1; 1 Thessalonians 5:21; Hosea 4:6; 1 Corinthians 8:1; John 17:3; Matthew 24:4; Colossians 2:8; Gospel of Thomas, Saying 2; Romans 8:15; John 5:39-40; Matthew 4:5-7; 1 John 4:18; 2 Corinthians 3:17; Matthew 5:48; Gospel of Truth; Gospel of Philip; Nag Hammadi Library
+            </p>
+
+          </article>
+        
+
+          <article class="reference-card" id="chapter-12-references">
+
+            <div class="reference-card-header">
+
+              <div class="reference-number">
+                12
+              </div>
+
+              <div>
+
+                <div class="reference-type">
+                  Scripture and Text References
+                </div>
+
+                <h2>
+                  The Body Was Meant to Be Alive
+                </h2>
+
+              </div>
+
+            </div>
+
+            <p class="reference-list">
+              John 13:35; 1 Corinthians 13:1-2; Matthew 7:21-23; 2 Timothy 3:5; Matthew 7:16-20; Matthew 19:23-24; Mark 10:23-25; Luke 18:24-25; 1 Timothy 6:10; Galatians 5:22-23; Matthew 25:35-40; John 21:15-17; Matthew 25:35; James 1:27; Acts 2:42-47; Acts 4:32-33; Revelation 3:15-17; Revelation 3:20
+            </p>
+
+          </article>
+        
+
+          <article class="reference-card" id="chapter-13-references">
+
+            <div class="reference-card-header">
+
+              <div class="reference-number">
+                13
+              </div>
+
+              <div>
+
+                <div class="reference-type">
+                  Scripture and Text References
+                </div>
+
+                <h2>
+                  Tear the Veil
+                </h2>
+
+              </div>
+
+            </div>
+
+            <p class="reference-list">
+              Matthew 27:51; Mark 15:38; Luke 23:45; Hosea 4:6; Matthew 7:7-8; Matthew 7:21-23; 2 Timothy 3:5; Matthew 19:23-24; Mark 10:23-25; Luke 18:24-25; 1 John 4:18; Romans 8:15-16; Hebrews 10:19-22; 2 Timothy 2:15; 1 Thessalonians 5:21; 1 John 4:1; John 8:32; John 14:6; John 16:13; Genesis 2:7; Job 33:4; Romans 8:38-39; 1 John 3:1; John 17:21-23
+            </p>
+
+          </article>
+        
+        </div>
+
+      </div>
+
+    </article>
+
+        
+
+          <article class="timeline-entry">
+
+            <div class="timeline-date">
+              64 CE
+            </div>
+
+            <div class="timeline-content">
+              <p>Nero used Christians as scapegoats after the Great Fire of Rome; Tacitus records punishments under Nero.</p>
+            </div>
+
+          </article>
+        
+
+          <article class="timeline-entry">
+
+            <div class="timeline-date">
+              250 CE
+            </div>
+
+            <div class="timeline-content">
+              <p>Under Decius, empire-wide sacrifice was pressed as a test of loyalty.</p>
+            </div>
+
+          </article>
+        
+
+          <article class="timeline-entry">
+
+            <div class="timeline-date">
+              303 CE
+            </div>
+
+            <div class="timeline-content">
+              <p>Under Diocletian, the last and most severe imperial persecution of Christians began.</p>
+            </div>
+
+          </article>
+        
+
+          <article class="timeline-entry">
+
+            <div class="timeline-date">
+              313 CE
+            </div>
+
+            <div class="timeline-content">
+              <p>Constantine and Licinius issued the Edict of Milan, granting legal protection and return of confiscated Christian property.</p>
+            </div>
+
+          </article>
+        
+
+          <article class="timeline-entry">
+
+            <div class="timeline-date">
+              325 CE
+            </div>
+
+            <div class="timeline-content">
+              <p>Constantine called the Council of Nicaea to address division, especially the Arian controversy over Christ's divine status and relationship to the Father.</p>
+            </div>
+
+          </article>
+        
+
+          <article class="timeline-entry">
+
+            <div class="timeline-date">
+              After Nicaea
+            </div>
+
+            <div class="timeline-content">
+              <p>Constantine ordered Arius's writings burned.</p>
+            </div>
+
+          </article>
+        
+
+          <article class="timeline-entry">
+
+            <div class="timeline-date">
+              367 CE
+            </div>
+
+            <div class="timeline-content">
+              <p>Athanasius's Thirty-Ninth Festal Letter listed the twenty-seven New Testament books recognized today and warned against apocryphal writings associated with heretics.</p>
+            </div>
+
+          </article>
+        
+
+          <article class="timeline-entry">
+
+            <div class="timeline-date">
+              380 CE
+            </div>
+
+            <div class="timeline-content">
+              <p>The Edict of Thessalonica threatened divine punishment and imperial retribution for those who rejected the Nicene creed and helped establish Nicene Christianity as the state-backed orthodoxy of the Roman Empire.</p>
+            </div>
+
+          </article>
+        
+
+          <article class="timeline-entry">
+
+            <div class="timeline-date">
+              1945 CE
+            </div>
+
+            <div class="timeline-content">
+              <p>The Nag Hammadi Library was discovered near Nag Hammadi in upper Egypt.</p>
+            </div>
+
+          </article>
+        
+        </div>
+
+      </div>
+
+    </article>
+
+    <section class="connections">
+
+      <div class="container">
+
+        <div class="section-heading">
+
+          <div class="eyebrow">
+            Source Architecture
+          </div>
+
+          <h2>
+            How the Evidence Is Organized
+          </h2>
+
+          <p>
+            The consulted works support distinct parts of the book
+            and should be evaluated according to their purpose and authority.
+          </p>
+
+        </div>
+
+        <div class="connection-grid">
+
+          <article class="connection-card">
+
+            <div class="status-tag">
+              Biblical Text
+            </div>
+
+            <h3>
+              King James Version
+            </h3>
+
+            <p>
+              The KJV is identified as the manuscript’s default
+              biblical edition and is public domain in the United States.
+            </p>
+
+          </article>
+
+          <article class="connection-card">
+
+            <div class="status-tag">
+              Historical Sources
+            </div>
+
+            <h3>
+              Fourth-Century Record
+            </h3>
+
+            <p>
+              These works support the material concerning Nicaea,
+              Arius, Athanasius, Constantine, the Edict of Milan,
+              Theodosius, and state-backed orthodoxy.
+            </p>
+
+          </article>
+
+          <article class="connection-card">
+
+            <div class="status-tag">
+              Primary Text Access
+            </div>
+
+            <h3>
+              Nag Hammadi and Related Texts
+            </h3>
+
+            <p>
+              Course material, translations, archives, and historical
+              overviews provide access to Thomas, Truth, Philip,
+              and the Nag Hammadi collection.
+            </p>
+
+          </article>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <section class="response-section">
+
+      <div class="container">
+
+        <div class="response-panel">
+
+          <div class="eyebrow">
+            Source Audit
+          </div>
+
+          <h2>
+            The Bibliography Must Remain Open to Improvement
+          </h2>
+
+          <p>
+            Readers may submit corrected links, archived copies,
+            stronger primary sources, peer-reviewed research,
+            or evidence that a consulted source is unreliable or outdated.
+          </p>
+
+          <div class="response-actions">
+
+            <a
+              class="button"
+              href="mailto:thebobsomest1@gmail.com?subject=Project%20Unveiled%20Appendix%20E%20Source%20Correction"
+            >
+              Submit a Source Correction
+            </a>
+
+            <a
+              class="button secondary"
+              href="/book/research.html"
+            >
+              Review the Research
+            </a>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <section class="chapter-navigation">
+
+      <div class="reading-container">
+
+        <div class="chapter-nav-inner">
+
+          <a
+            class="button secondary"
+            href="/book/read/appendix-d.html"
+          >
+            ← Appendix D
+          </a>
+
+          <a
+            class="button"
+            href="/book/read/"
+          >
+            Complete — Return to Reader Home
+          </a>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </main>
+
+  <footer>
+
+    <div class="container">
+
+      <strong>Project Unveiled</strong>
+      by Robert J. Hayes
+
+      <br>
+
+      Appendix E —
+      Works Consulted
+
+      <br>
+
+      © 2026 Bobsome1.com
+
+    </div>
+
+  <div class="pu-support-footer" aria-label="Project support and privacy links"><a href="/book/read/support-right-hand.html" data-pu-event="support_page_click">Support the Work</a><span aria-hidden="true">◆</span><a href="/privacy.html">Privacy</a></div>
+</footer>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <script>
+    let readerScale =
+      parseFloat(
+        localStorage.getItem("projectUnveiledReaderScale")
+      ) || 1;
+
+    function applyReaderSize() {
+      document.documentElement.style.setProperty(
+        "--reader-scale",
+        readerScale
+      );
+
+      localStorage.setItem(
+        "projectUnveiledReaderScale",
+        readerScale
+      );
+    }
+
+    function changeReaderSize(amount) {
+      readerScale = Math.min(
+        1.4,
+        Math.max(0.8, readerScale + amount)
+      );
+
+      readerScale =
+        Math.round(readerScale * 10) / 10;
+
+      applyReaderSize();
+    }
+
+    function resetReaderSize() {
+      readerScale = 1;
+      applyReaderSize();
+    }
+
+    function updateReadingProgress() {
+      const scrollTop =
+        window.scrollY ||
+        document.documentElement.scrollTop;
+
+      const documentHeight =
+        document.documentElement.scrollHeight -
+        document.documentElement.clientHeight;
+
+      const progress =
+        documentHeight > 0
+          ? (scrollTop / documentHeight) * 100
+          : 0;
+
+      document.getElementById(
+        "readingProgress"
+      ).style.width = progress + "%";
+    }
+
+    function shareChapter() {
+      const shareData = {
+        title:
+          "About Robert J. Hayes | Project Unveiled",
+        text:
+          "Support the practical work connected to Project Unveiled and Right Hand Ministry.",
+        url: window.location.href
+      };
+
+      if (navigator.share) {
+        navigator.share(shareData);
+        return;
+      }
+
+      navigator.clipboard
+        .writeText(window.location.href)
+        .then(function () {
+          alert("Chapter link copied.");
+        })
+        .catch(function () {
+          alert(window.location.href);
+        });
+    }
+
+    applyReaderSize();
+
+    window.addEventListener(
+      "scroll",
+      updateReadingProgress
+    );
+
+    updateReadingProgress();
+  </script>
+
+<script id="project-unveiled-traffic-tracker" src="/project-unveiled-analytics/tracker.js?v=2" defer></script>
+<a class="pu-support-float" href="/book/read/support-right-hand.html" data-pu-event="support_page_click" aria-label="Support Project Unveiled and Right Hand Ministry">Support the Work</a>
+<!-- PU_READER_SIGNUP_START -->
+<section id="pu-signup" aria-labelledby="pu-signup-title" data-version="7.3.1">
+  <h2 id="pu-signup-title">Stay connected to Project Unveiled</h2>
+  <p>Receive new chapter highlights, evidence updates, and occasional reader invitations. No daily spam.</p>
+  <div class="pu-signup-promise">We do not sell, rent, or trade your personal information. Ever.</div>
+  <form id="pu-signup-form" novalidate>
+    <div class="pu-signup-grid">
+      <div class="pu-signup-field"><label for="pu-first-name">First name</label><input id="pu-first-name" name="first_name" maxlength="80" autocomplete="given-name" required></div>
+      <div class="pu-signup-field"><label for="pu-email">Email address</label><input id="pu-email" name="email" type="email" maxlength="190" autocomplete="email" required></div>
+      <button class="pu-signup-button" type="submit">Join the reader list</button>
+    </div>
+    <label class="pu-signup-consent"><input type="checkbox" name="consent" value="yes" required><span>I agree to receive Project Unveiled email updates. I can unsubscribe at any time.</span></label>
+    <div class="pu-signup-hp" aria-hidden="true"><label>Website<input name="website" tabindex="-1" autocomplete="off"></label></div>
+    <input type="hidden" name="consent_version" value="2026-07-v2">
+    <p class="pu-signup-small">We collect your first name, email address, signup time, source page, campaign tags, and privacy-safe abuse-prevention hashes. Read the <a href="/privacy.html">Privacy Policy</a>.</p>
+    <div class="pu-signup-status" role="status" aria-live="polite"></div>
+  </form>
+</section>
+<link rel="stylesheet" href="/book/signup-widget.css?v=731">
+<script src="/book/signup-widget.js?v=731" defer></script>
+<!-- PU_READER_SIGNUP_END -->
+
+</body>
+</html>

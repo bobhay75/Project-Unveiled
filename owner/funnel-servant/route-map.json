@@ -1,0 +1,18 @@
+{
+  "version": "7.1",
+  "base": "/owner/funnel-servant/",
+  "routes": {
+    "command_center": "command-center.php",
+    "search": "search.php",
+    "notifications": "notifications.php",
+    "autopilot": "autopilot",
+    "campaign-studio": "drafts",
+    "post-now": "publisher",
+    "publishing-report": "activity",
+    "reader-community": "community",
+    "analytics": "dashboard",
+    "direct-chat": "chat",
+    "system-log": "logs"
+  },
+  "canonical": true
+}

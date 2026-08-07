@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Bobsome1 Private Workspace</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      padding: 30px 18px;
+      background: #0b1218;
+      color: white;
+      font-family: Arial, sans-serif;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .label {
+      color: #e2bd63;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    h1 {
+      margin: 10px 0;
+      font-size: clamp(38px, 8vw, 68px);
+    }
+
+    .intro {
+      color: #b8c3ca;
+      font-size: 19px;
+      margin-bottom: 35px;
+    }
+
+    .projects {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
+    }
+
+    .card {
+      display: block;
+      min-height: 210px;
+      padding: 25px;
+      border: 1px solid #2c3b45;
+      border-radius: 18px;
+      background: #111c25;
+      color: white;
+      text-decoration: none;
+    }
+
+    .card:hover {
+      border-color: #e2bd63;
+      transform: translateY(-2px);
+    }
+
+    .card h2 {
+      margin: 12px 0;
+      font-size: 28px;
+    }
+
+    .card p {
+      color: #b8c3ca;
+      line-height: 1.6;
+    }
+
+    .private {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 20px;
+      background: #263640;
+      color: #e2bd63;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    footer {
+      margin-top: 35px;
+      color: #7f909a;
+      font-size: 14px;
+    }
+
+    @media (max-width: 650px) {
+      .projects {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="container">
+
+    <div class="label">Bobsome1 Private Area</div>
+
+    <h1>Owner Workspace</h1>
+
+    <p class="intro">
+      Private control center for projects, builds, records, research,
+      development notes, and secured information.
+    </p>
+
+    <section class="projects">
+
+      <a class="card" href="watch-dawg/">
+        <span class="private">PRIVATE PROJECT</span>
+        <h2>Watch-Dawg AI</h2>
+        <p>
+          Worksite accountability, time records, project evidence,
+          payroll review, materials, safety, photos, and owner oversight.
+        </p>
+      </a>
+
+      <a class="card" href="paleo-mapper/">
+        <span class="private">PRIVATE PROJECT</span>
+        <h2>Paleo Mapper</h2>
+        <p>
+          Private mapping, photographs, locations, field observations,
+          artifact records, geographic evidence, and research notes.
+        </p>
+      </a>
+
+    </section>
+
+    <footer>
+      Protected owner access — Bobsome1.com
+    </footer>
+
+  </main>
+</body>
+</html>

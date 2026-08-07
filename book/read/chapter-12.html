@@ -1,0 +1,2176 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="Read Chapter Twelve of Project Unveiled by Robert J. Hayes: The Body Was Meant to Be Alive." name="description"/>
+<title>Chapter Twelve: The Body Was Meant to Be Alive | Project Unveiled</title>
+<style>
+    :root {
+      --black: #050505;
+      --deep-black: #090909;
+      --panel: #11100d;
+      --panel-light: #191711;
+      --gold: #d7ad51;
+      --bright-gold: #f3d47d;
+      --cream: #f4ead2;
+      --white: #fffdf7;
+      --muted: #c5bda9;
+      --line: rgba(215, 173, 81, 0.38);
+      --shadow: 0 25px 70px rgba(0, 0, 0, 0.65);
+      --max-width: 1180px;
+      --reading-width: 790px;
+      --reader-scale: 1;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      overflow-x: hidden;
+      background:
+        radial-gradient(
+          circle at 50% 0%,
+          rgba(215, 173, 81, 0.16),
+          transparent 540px
+        ),
+        linear-gradient(
+          180deg,
+          #050505 0%,
+          #0d0906 45%,
+          #050505 100%
+        );
+      color: var(--white);
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.7;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .container {
+      width: min(calc(100% - 34px), var(--max-width));
+      margin: 0 auto;
+    }
+
+    .reading-container {
+      width: min(calc(100% - 34px), var(--reading-width));
+      margin: 0 auto;
+    }
+
+    .gold {
+      color: var(--bright-gold);
+    }
+
+    .eyebrow {
+      margin-bottom: 13px;
+      color: var(--bright-gold);
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+    }
+
+    .button {
+      display: inline-flex;
+      min-height: 48px;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 21px;
+      border: 1px solid var(--gold);
+      border-radius: 999px;
+      background:
+        linear-gradient(
+          135deg,
+          var(--bright-gold),
+          #b88a34
+        );
+      color: #140e05;
+      text-decoration: none;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .button.secondary {
+      background: rgba(5, 5, 5, 0.7);
+      color: var(--cream);
+    }
+
+    .button.disabled {
+      border-color: rgba(215, 173, 81, 0.3);
+      background: rgba(255, 255, 255, 0.03);
+      color: #827968;
+      cursor: default;
+    }
+
+    .button:hover:not(.disabled) {
+      transform: translateY(-2px);
+    }
+
+    .reading-progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 1000;
+      width: 0;
+      height: 4px;
+      background:
+        linear-gradient(
+          90deg,
+          #9d7227,
+          var(--bright-gold)
+        );
+      box-shadow:
+        0 0 15px rgba(243, 212, 125, 0.6);
+    }
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid var(--line);
+      background: rgba(5, 5, 5, 0.94);
+      backdrop-filter: blur(14px);
+    }
+
+    .nav {
+      min-height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .brand {
+      color: var(--cream);
+      text-decoration: none;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 17px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      white-space: nowrap;
+    }
+
+    .brand span {
+      color: var(--bright-gold);
+    }
+
+    .nav-links {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 18px;
+    }
+
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .nav-links a:hover {
+      color: var(--bright-gold);
+    }
+
+    .reader-toolbar {
+      border-bottom: 1px solid var(--line);
+      background: rgba(17, 16, 13, 0.96);
+    }
+
+    .toolbar-inner {
+      min-height: 54px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .chapter-position {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .text-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .text-control {
+      min-width: 40px;
+      min-height: 36px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: #090806;
+      color: var(--cream);
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .text-control:hover {
+      border-color: var(--gold);
+      color: var(--bright-gold);
+    }
+
+    .chapter-hero {
+      position: relative;
+      padding: 72px 0 88px;
+    }
+
+    .chapter-hero::before {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      content: "";
+      background:
+        radial-gradient(
+          circle at 18% 30%,
+          rgba(243, 212, 125, 0.13),
+          transparent 400px
+        );
+    }
+
+    .hero-grid {
+      position: relative;
+      display: grid;
+      grid-template-columns: 1fr 0.9fr;
+      align-items: center;
+      gap: 56px;
+    }
+
+    .chapter-label {
+      display: inline-block;
+      margin-bottom: 19px;
+      padding: 7px 12px;
+      border: 1px solid var(--gold);
+      border-radius: 999px;
+      color: var(--bright-gold);
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .chapter-hero h1 {
+      margin: 0 0 22px;
+      color: var(--cream);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(46px, 7.5vw, 92px);
+      line-height: 0.95;
+      letter-spacing: -3px;
+      text-transform: uppercase;
+    }
+
+    .hero-lead {
+      max-width: 700px;
+      margin: 0 0 26px;
+      color: var(--muted);
+      font-size: clamp(18px, 2.2vw, 22px);
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .hero-art {
+      position: relative;
+      padding: 9px;
+      border: 1px solid var(--gold);
+      background: #050505;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-art::before,
+    .hero-art::after {
+      position: absolute;
+      width: 64px;
+      height: 64px;
+      content: "";
+    }
+
+    .hero-art::before {
+      top: -5px;
+      left: -5px;
+      border-top: 3px solid var(--bright-gold);
+      border-left: 3px solid var(--bright-gold);
+    }
+
+    .hero-art::after {
+      right: -5px;
+      bottom: -5px;
+      border-right: 3px solid var(--bright-gold);
+      border-bottom: 3px solid var(--bright-gold);
+    }
+
+    .art-label {
+      margin: 12px 0 0;
+      color: #918875;
+      font-size: 12px;
+      text-align: center;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .edition-wrap {
+      padding: 28px 0;
+      border-block: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .edition-notice {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 17px;
+      align-items: start;
+      padding: 22px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+    }
+
+    .edition-symbol {
+      color: var(--bright-gold);
+      font-size: 25px;
+    }
+
+    .edition-notice strong {
+      color: var(--cream);
+    }
+
+    .edition-notice p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .chapter-reading {
+      padding: 78px 0;
+    }
+
+    .chapter-text {
+      color: #e8dfca;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: calc(20px * var(--reader-scale));
+      line-height: 1.88;
+    }
+
+    .chapter-text p {
+      margin: 0 0 1.45em;
+    }
+
+    .short-line {
+      margin-bottom: 0.55em !important;
+      color: var(--cream);
+      font-size: calc(22px * var(--reader-scale));
+      font-weight: bold;
+    }
+
+    .question {
+      color: var(--cream);
+      font-size: calc(21px * var(--reader-scale));
+      font-style: italic;
+    }
+
+    .central-question {
+      margin: 48px 0;
+      padding: 42px 25px;
+      border: 1px solid var(--gold);
+      background:
+        radial-gradient(
+          circle at 50% 0%,
+          rgba(215, 173, 81, 0.2),
+          transparent 320px
+        ),
+        var(--panel);
+      box-shadow: var(--shadow);
+      color: var(--bright-gold);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: calc(34px * var(--reader-scale));
+      font-weight: bold;
+      line-height: 1.25;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    .tradition-line {
+      margin-bottom: 0.85em !important;
+      padding-left: 18px;
+      border-left: 2px solid #8d7042;
+      color: #ded2ba;
+    }
+
+    .fruit-line {
+      margin-bottom: 0.65em !important;
+      color: var(--cream);
+      font-size: calc(21px * var(--reader-scale));
+      font-weight: bold;
+    }
+
+    .king-test {
+      margin-bottom: 0.85em !important;
+      padding: 12px 16px;
+      border-left: 3px solid var(--gold);
+      background: rgba(215, 173, 81, 0.06);
+      color: var(--cream);
+    }
+
+    .tear-line {
+      margin-bottom: 0.75em !important;
+      padding-left: 18px;
+      border-left: 3px solid var(--gold);
+      color: var(--cream);
+      font-weight: bold;
+    }
+
+    .connections {
+      padding: 78px 0;
+      border-block: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .section-heading {
+      max-width: 830px;
+      margin-bottom: 38px;
+    }
+
+    .section-heading h2 {
+      margin: 0 0 17px;
+      color: var(--cream);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(37px, 5.5vw, 64px);
+      line-height: 1;
+      text-transform: uppercase;
+    }
+
+    .section-heading p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 18px;
+    }
+
+    .connection-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 19px;
+    }
+
+    .connection-card {
+      padding: 28px;
+      border: 1px solid var(--line);
+      background:
+        linear-gradient(
+          145deg,
+          var(--panel-light),
+          var(--deep-black)
+        );
+    }
+
+    .connection-card h3 {
+      margin: 0 0 12px;
+      color: var(--cream);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 24px;
+      text-transform: uppercase;
+    }
+
+    .connection-card p {
+      margin: 0 0 15px;
+      color: var(--muted);
+    }
+
+    .connection-card p:last-child {
+      margin-bottom: 0;
+    }
+
+    .status-tag {
+      display: inline-block;
+      margin-bottom: 16px;
+      padding: 6px 10px;
+      border: 1px solid var(--gold);
+      color: var(--bright-gold);
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .response-section {
+      padding: 78px 0;
+    }
+
+    .response-panel {
+      padding: 42px 30px;
+      border: 1px solid var(--gold);
+      background:
+        radial-gradient(
+          circle at 50% 0%,
+          rgba(215, 173, 81, 0.17),
+          transparent 380px
+        ),
+        var(--panel);
+      box-shadow: var(--shadow);
+      text-align: center;
+    }
+
+    .response-panel h2 {
+      margin: 0 0 16px;
+      color: var(--cream);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(36px, 5.5vw, 62px);
+      line-height: 1;
+      text-transform: uppercase;
+    }
+
+    .response-panel p {
+      max-width: 760px;
+      margin: 0 auto 25px;
+      color: var(--muted);
+      font-size: 18px;
+    }
+
+    .response-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .chapter-navigation {
+      padding: 36px 0 70px;
+    }
+
+    .chapter-nav-inner {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 14px;
+      padding-top: 30px;
+      border-top: 1px solid var(--line);
+    }
+
+    footer {
+      padding: 35px 0;
+      border-top: 1px solid var(--line);
+      color: #8e8675;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    footer strong {
+      color: var(--gold);
+    }
+
+    @media (max-width: 900px) {
+      .hero-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-copy {
+        text-align: center;
+      }
+
+      .hero-actions {
+        justify-content: center;
+      }
+
+      .hero-art {
+        max-width: 600px;
+        margin: 0 auto;
+      }
+
+      .connection-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .chapter-hero h1 {
+        letter-spacing: -2px;
+      }
+    }
+
+    @media (max-width: 650px) {
+      .nav {
+        padding: 14px 0;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .nav-links {
+        justify-content: flex-start;
+        gap: 12px 16px;
+      }
+
+      .toolbar-inner {
+        padding: 9px 0;
+      }
+
+      .chapter-hero {
+        padding: 57px 0 68px;
+      }
+
+      .chapter-hero h1 {
+        font-size: 43px;
+      }
+
+      .edition-notice {
+        grid-template-columns: 1fr;
+      }
+
+      .chapter-reading,
+      .connections,
+      .response-section {
+        padding: 62px 0;
+      }
+
+      .chapter-text {
+        font-size: calc(18px * var(--reader-scale));
+        line-height: 1.78;
+      }
+
+      .central-question {
+        font-size: calc(27px * var(--reader-scale));
+      }
+
+      .connection-card,
+      .response-panel {
+        padding: 24px 20px;
+      }
+
+      .chapter-nav-inner {
+        flex-direction: column;
+      }
+
+      .chapter-nav-inner .button {
+        width: 100%;
+      }
+    }
+  
+    .opening-scripture {
+      margin: 0 0 48px;
+      padding: 32px;
+      border-top: 1px solid var(--gold);
+      border-bottom: 1px solid var(--gold);
+      background:
+        radial-gradient(
+          circle at 50% 0%,
+          rgba(215, 173, 81, 0.14),
+          transparent 300px
+        );
+      color: var(--cream);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: calc(21px * var(--reader-scale));
+      font-style: italic;
+      line-height: 1.7;
+      text-align: center;
+    }
+
+    .calling-line,
+    .one-line,
+    .come-out-line {
+      margin-bottom: 0.85em !important;
+      padding-left: 18px;
+      border-left: 3px solid var(--gold);
+      color: var(--cream);
+    }
+
+    .lie-line {
+      margin-bottom: 0.65em !important;
+      color: #cdbd9c;
+      font-style: italic;
+    }
+
+    .truth-line {
+      margin-bottom: 1em !important;
+      padding: 12px 16px;
+      border-left: 3px solid var(--gold);
+      background: rgba(215, 173, 81, 0.06);
+      color: var(--cream);
+      font-weight: bold;
+    }
+
+    .identity-declaration {
+      margin: 50px 0;
+      padding: 35px 25px;
+      border: 1px solid var(--gold);
+      background:
+        radial-gradient(
+          circle at 50% 0%,
+          rgba(215, 173, 81, 0.21),
+          transparent 340px
+        ),
+        var(--panel);
+      box-shadow: var(--shadow);
+      text-align: center;
+    }
+
+    .identity-declaration p,
+    .identity-line {
+      margin-bottom: 0.65em !important;
+      color: var(--cream);
+      font-size: calc(21px * var(--reader-scale));
+      font-weight: bold;
+    }
+
+    .identity-declaration p:last-child {
+      margin-bottom: 0 !important;
+      color: var(--bright-gold);
+      font-size: calc(26px * var(--reader-scale));
+    }
+
+  
+    .scripture-quote {
+      margin: 24px 0;
+      padding: 24px;
+      border-left: 4px solid var(--gold);
+      background: rgba(215, 173, 81, 0.08);
+      color: var(--cream);
+      font-size: calc(21px * var(--reader-scale));
+      font-style: italic;
+      line-height: 1.65;
+    }
+
+    .test-question,
+    .formula-line,
+    .deserve-line,
+    .imagine-line {
+      margin-bottom: 0.85em !important;
+      padding: 12px 16px;
+      border-left: 3px solid var(--gold);
+      background: rgba(215, 173, 81, 0.055);
+      color: var(--cream);
+    }
+
+    .test-question.contrast {
+      border-left-color: #8d7042;
+      color: #d8ccb4;
+      font-style: italic;
+    }
+
+    .central-question {
+      margin: 48px 0;
+      padding: 42px 25px;
+      border: 1px solid var(--gold);
+      background:
+        radial-gradient(
+          circle at 50% 0%,
+          rgba(215, 173, 81, 0.2),
+          transparent 320px
+        ),
+        var(--panel);
+      box-shadow: var(--shadow);
+      color: var(--bright-gold);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: calc(34px * var(--reader-scale));
+      font-weight: bold;
+      line-height: 1.25;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+  
+    .unique-symbol-art {
+      overflow: hidden;
+      background:
+        radial-gradient(
+          circle at 50% 15%,
+          rgba(243, 212, 125, 0.14),
+          transparent 300px
+        ),
+        #070604;
+    }
+
+    .chapter-symbol {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 760 / 820;
+    }
+
+    .scripture-quote {
+      margin: 24px 0;
+      padding: 24px;
+      border-left: 4px solid var(--gold);
+      background: rgba(215, 173, 81, 0.08);
+      color: var(--cream);
+      font-size: calc(21px * var(--reader-scale));
+      font-style: italic;
+      line-height: 1.65;
+    }
+
+    .truth-source,
+    .test-line,
+    .warning-line {
+      margin-bottom: 0.8em !important;
+      padding-left: 18px;
+      border-left: 3px solid var(--gold);
+      color: var(--cream);
+    }
+
+    .warning-line {
+      border-left-color: #80683d;
+      color: #d6cab1;
+    }
+
+    .discernment-prayer {
+      margin: 48px 0;
+      padding: 34px 25px;
+      border: 1px solid var(--gold);
+      background:
+        radial-gradient(
+          circle at 50% 0%,
+          rgba(215, 173, 81, 0.2),
+          transparent 320px
+        ),
+        var(--panel);
+      box-shadow: var(--shadow);
+      text-align: center;
+    }
+
+    .discernment-prayer p,
+    .prayer-line {
+      margin-bottom: 0.65em !important;
+      color: var(--cream);
+      font-size: calc(22px * var(--reader-scale));
+      font-style: italic;
+      font-weight: bold;
+    }
+
+    .discernment-prayer p:last-child {
+      margin-bottom: 0 !important;
+      color: var(--bright-gold);
+    }
+
+  
+    .unique-symbol-art {
+      overflow: hidden;
+      background:
+        radial-gradient(
+          circle at 50% 25%,
+          rgba(243, 212, 125, 0.13),
+          transparent 320px
+        ),
+        #070604;
+    }
+
+    .chapter-symbol {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 760 / 820;
+    }
+
+    .voice-line,
+    .test-line,
+    .reject-line,
+    .inventory-line {
+      margin-bottom: 0.8em !important;
+      padding-left: 18px;
+      border-left: 3px solid var(--gold);
+      color: var(--cream);
+    }
+
+    .voice-line.warning {
+      border-left-color: #765d33;
+      color: #d0c2a8;
+      font-style: italic;
+    }
+
+    .voice-line.wisdom {
+      background: rgba(215, 173, 81, 0.07);
+      padding-top: 10px;
+      padding-bottom: 10px;
+      font-weight: bold;
+    }
+
+    .reject-line {
+      border-left-color: #a47a32;
+      background: rgba(215, 173, 81, 0.045);
+      padding-top: 10px;
+      padding-bottom: 10px;
+    }
+
+    .inventory-line {
+      margin-bottom: 0.45em !important;
+      color: #d9ceb7;
+    }
+
+    .scripture-quote {
+      margin: 28px 0;
+      padding: 24px;
+      border-left: 4px solid var(--gold);
+      background: rgba(215, 173, 81, 0.08);
+      color: var(--cream);
+      font-size: calc(21px * var(--reader-scale));
+      font-style: italic;
+      line-height: 1.65;
+    }
+
+    .text-section-heading {
+      margin: 2.2em 0 1em;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--gold);
+      color: var(--bright-gold);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: calc(30px * var(--reader-scale));
+      line-height: 1.25;
+    }
+
+  
+    .unique-symbol-art {
+      overflow: hidden;
+      background:
+        radial-gradient(
+          circle at 50% 45%,
+          rgba(243, 212, 125, 0.14),
+          transparent 330px
+        ),
+        #070604;
+    }
+
+    .chapter-symbol {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 760 / 820;
+    }
+
+    .central-declaration,
+    .closing-declaration {
+      margin: 50px 0;
+      padding: 42px 25px;
+      border: 1px solid var(--gold);
+      background:
+        radial-gradient(
+          circle at 50% 0%,
+          rgba(215, 173, 81, 0.22),
+          transparent 330px
+        ),
+        var(--panel);
+      box-shadow: var(--shadow);
+      color: var(--bright-gold);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: calc(34px * var(--reader-scale));
+      font-weight: bold;
+      line-height: 1.25;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    .closing-declaration {
+      font-size: calc(40px * var(--reader-scale));
+    }
+
+    .false-fruit,
+    .true-fruit,
+    .seen-line,
+    .warning-line,
+    .danger-line,
+    .tear-line,
+    .alive-line,
+    .look-line {
+      margin-bottom: 0.8em !important;
+      padding-left: 18px;
+      border-left: 3px solid var(--gold);
+      color: var(--cream);
+    }
+
+    .false-fruit,
+    .warning-line,
+    .danger-line {
+      border-left-color: #7c6234;
+      color: #d6cab1;
+    }
+
+    .true-fruit,
+    .seen-line,
+    .alive-line,
+    .look-line {
+      background: rgba(215, 173, 81, 0.05);
+      padding-top: 9px;
+      padding-bottom: 9px;
+      font-weight: bold;
+    }
+
+    .tear-line {
+      border-left-width: 4px;
+      font-weight: bold;
+    }
+
+  /* PROPHECY JOURNEY — CHAPTER 12 */
+    body {
+      background:
+        radial-gradient(circle at 77% 12%, rgba(243, 212, 125, 0.17), transparent 430px),
+        radial-gradient(circle at 18% 20%, rgba(133, 87, 32, 0.17), transparent 500px),
+        repeating-linear-gradient(
+          32deg,
+          transparent 0,
+          transparent 94px,
+          rgba(215, 173, 81, 0.025) 95px,
+          transparent 96px
+        ),
+        linear-gradient(180deg, #050403 0%, #0d0906 48%, #050403 100%);
+    }
+
+    .site-header {
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.42);
+    }
+
+    .chapter-hero {
+      position: relative;
+      isolation: isolate;
+      overflow: hidden;
+      min-height: calc(100vh - 128px);
+      display: flex;
+      align-items: center;
+    }
+
+    .chapter-hero::before {
+      inset: 0;
+      background:
+        linear-gradient(90deg, rgba(5, 4, 3, 0.2), transparent 48%),
+        radial-gradient(circle at 20% 72%, rgba(215, 173, 81, 0.12), transparent 320px);
+      opacity: 1;
+    }
+
+    .chapter-hero::after {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      left: 5%;
+      right: 5%;
+      bottom: 42px;
+      height: 1px;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(215, 173, 81, 0.24),
+        rgba(243, 212, 125, 0.72),
+        rgba(215, 173, 81, 0.24),
+        transparent
+      );
+    }
+
+    .hero-grid {
+      position: relative;
+      z-index: 1;
+      grid-template-columns: minmax(0, 0.88fr) minmax(440px, 1.12fr);
+      gap: clamp(38px, 6vw, 86px);
+    }
+
+    .chapter-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 15px;
+      padding: 7px 11px;
+      border: 1px solid rgba(215, 173, 81, 0.48);
+      background: rgba(7, 5, 3, 0.72);
+      color: var(--bright-gold);
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 2.4px;
+      text-transform: uppercase;
+    }
+
+    .chapter-label::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border: 2px solid var(--bright-gold);
+      border-radius: 50%;
+      box-shadow: 0 0 16px rgba(243, 212, 125, 0.72);
+    }
+
+    .chapter-hero h1 {
+      max-width: 700px;
+      text-wrap: balance;
+    }
+
+    .hero-lead {
+      max-width: 660px;
+    }
+
+    .journey-art {
+      position: relative;
+      margin: 0;
+      overflow: hidden;
+      border: 1px solid rgba(215, 173, 81, 0.62);
+      background: #080604;
+      box-shadow:
+        0 34px 90px rgba(0, 0, 0, 0.72),
+        0 0 0 1px rgba(243, 212, 125, 0.07) inset;
+    }
+
+    .journey-art::before {
+      content: "";
+      position: absolute;
+      z-index: 2;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(180deg, rgba(5, 4, 3, 0.04) 48%, rgba(5, 4, 3, 0.88) 100%),
+        radial-gradient(circle at 50% 22%, transparent 30%, rgba(5, 4, 3, 0.32) 100%);
+    }
+
+    .journey-art img {
+      width: 100%;
+      min-height: 560px;
+      max-height: 720px;
+      object-fit: cover;
+      object-position: center;
+      transform: scale(1.01);
+    }
+
+    .journey-kicker {
+      position: absolute;
+      z-index: 3;
+      top: 18px;
+      left: 18px;
+      padding: 8px 11px;
+      border: 1px solid rgba(243, 212, 125, 0.58);
+      background: rgba(5, 4, 3, 0.84);
+      color: var(--cream);
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: 2.2px;
+      text-transform: uppercase;
+    }
+
+    .journey-caption {
+      position: absolute;
+      z-index: 3;
+      left: 24px;
+      right: 24px;
+      bottom: 23px;
+      margin: 0;
+      color: var(--cream);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(21px, 2.1vw, 30px);
+      line-height: 1.15;
+      text-shadow: 0 3px 20px #000;
+    }
+
+    .journey-route {
+      position: absolute;
+      z-index: 3;
+      left: 25px;
+      right: 25px;
+      bottom: 94px;
+      height: 28px;
+    }
+
+    .journey-route::before {
+      content: "";
+      position: absolute;
+      top: 13px;
+      left: 4px;
+      right: 4px;
+      height: 1px;
+      background: linear-gradient(90deg, #76501d, var(--bright-gold), #76501d);
+    }
+
+    .journey-route span {
+      position: absolute;
+      top: 8px;
+      width: 11px;
+      height: 11px;
+      border: 2px solid var(--bright-gold);
+      border-radius: 50%;
+      background: #080604;
+      box-shadow: 0 0 12px rgba(243, 212, 125, 0.55);
+    }
+
+    .journey-route span:nth-child(1) { left: 0; }
+    .journey-route span:nth-child(2) { left: 32%; }
+    .journey-route span:nth-child(3) {
+      left: 65%;
+      background: var(--bright-gold);
+    }
+    .journey-route span:nth-child(4) { right: 0; }
+
+    .art-label {
+      margin-top: 13px;
+      color: #9e927b;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    .edition-notice {
+      border-color: rgba(215, 173, 81, 0.62);
+      background:
+        linear-gradient(90deg, rgba(215, 173, 81, 0.08), transparent 52%),
+        rgba(13, 10, 6, 0.82);
+    }
+
+    .chapter-reading {
+      position: relative;
+    }
+
+    .chapter-reading::before {
+      content: "WAYPOINT 12 · LIFE";
+      display: block;
+      width: min(calc(100% - 34px), var(--reading-width));
+      margin: 0 auto 42px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(215, 173, 81, 0.34);
+      color: var(--bright-gold);
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+
+    @media (max-width: 900px) {
+      .chapter-hero {
+        min-height: 0;
+      }
+
+      .hero-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .journey-art img {
+        min-height: 420px;
+      }
+    }
+
+    @media (max-width: 650px) {
+      .chapter-hero {
+        padding-top: 58px;
+      }
+
+      .journey-art img {
+        min-height: 390px;
+        max-height: 520px;
+      }
+
+      .journey-caption {
+        left: 17px;
+        right: 17px;
+        bottom: 17px;
+      }
+
+      .journey-route {
+        left: 18px;
+        right: 18px;
+        bottom: 78px;
+      }
+
+      .journey-kicker {
+        top: 13px;
+        left: 13px;
+      }
+    }
+  
+    .interpretive-note {
+      margin: 34px 0;
+      padding: 22px 24px;
+      border: 1px solid var(--gold);
+      border-left: 4px solid var(--bright-gold);
+      background: rgba(215, 173, 81, 0.08);
+      color: var(--muted);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: calc(15px * var(--reader-scale));
+      line-height: 1.65;
+    }
+    .interpretive-note strong { color: var(--cream); }
+
+    /* PROJECT-UNVEILED-HERO-CAPTION-FINAL-FIX
+       Preserve the complete artwork and place HTML journey details below it. */
+    .journey-art {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .journey-art::before {
+      display: none;
+    }
+
+    .journey-art img {
+      display: block;
+      width: 100%;
+      height: auto;
+      min-height: 0;
+      max-height: none;
+      object-fit: contain;
+      object-position: center;
+      transform: none;
+    }
+
+    .journey-route {
+      position: relative;
+      z-index: 3;
+      left: auto;
+      right: auto;
+      bottom: auto;
+      width: auto;
+      height: 28px;
+      margin: 16px 24px 0;
+    }
+
+    .journey-caption {
+      position: relative;
+      z-index: 3;
+      left: auto;
+      right: auto;
+      bottom: auto;
+      display: block;
+      margin: 0;
+      padding: 12px 24px 22px;
+      border-bottom: 0;
+      background: #080604;
+      color: var(--cream);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(19px, 1.8vw, 26px);
+      line-height: 1.3;
+      text-align: center;
+      text-shadow: none;
+    }
+
+    @media (max-width: 650px) {
+      .journey-art img {
+        min-height: 0;
+        max-height: none;
+      }
+
+      .journey-route {
+        left: auto;
+        right: auto;
+        bottom: auto;
+        margin: 14px 18px 0;
+      }
+
+      .journey-caption {
+        left: auto;
+        right: auto;
+        bottom: auto;
+        padding: 10px 18px 18px;
+        font-size: 18px;
+      }
+    }
+  </style>
+<!-- PROJECT UNVEILED SAFE SEO METADATA: artwork body is untouched -->
+<link href="https://bobsome1.com/book/read/chapter-12.html" rel="canonical"/>
+<link href="/sitemap.xml" rel="sitemap" type="application/xml"/>
+<meta content="Robert J. Hayes" name="author"/>
+<meta content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" name="robots"/>
+<meta content="#050403" name="theme-color"/>
+<meta content="article" property="og:type"/>
+<meta content="Project Unveiled" property="og:site_name"/>
+<meta content="Chapter Twelve: The Body Was Meant to Be Alive | Project Unveiled" property="og:title"/>
+<meta content="Read Chapter Twelve of Project Unveiled by Robert J. Hayes: The Body Was Meant to Be Alive." property="og:description"/>
+<meta content="https://bobsome1.com/book/read/chapter-12.html" property="og:url"/>
+<meta content="https://bobsome1.com/images/chapter-12-body-alive.png" property="og:image"/>
+<meta content="Project Unveiled symbolic artwork" property="og:image:alt"/>
+<meta content="Robert J. Hayes" property="article:author"/>
+<meta content="2026-07-22" property="article:modified_time"/>
+<meta content="summary_large_image" name="twitter:card"/>
+<meta content="Chapter Twelve: The Body Was Meant to Be Alive | Project Unveiled" name="twitter:title"/>
+<meta content="Read Chapter Twelve of Project Unveiled by Robert J. Hayes: The Body Was Meant to Be Alive." name="twitter:description"/>
+<meta content="https://bobsome1.com/images/chapter-12-body-alive.png" name="twitter:image"/>
+<script data-project-unveiled-safe-seo="true" type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Person",
+      "@id": "https://bobsome1.com/#robert-j-hayes",
+      "name": "Robert J. Hayes",
+      "url": "https://bobsome1.com/book/read/about-author.html"
+    },
+    {
+      "@type": "Book",
+      "@id": "https://bobsome1.com/book/#project-unveiled",
+      "name": "Project Unveiled",
+      "author": {
+        "@id": "https://bobsome1.com/#robert-j-hayes"
+      },
+      "url": "https://bobsome1.com/book/read/",
+      "inLanguage": "en-US",
+      "bookFormat": "https://schema.org/EBook",
+      "isAccessibleForFree": true
+    },
+    {
+      "@type": "Chapter",
+      "@id": "https://bobsome1.com/book/read/chapter-12.html#page",
+      "url": "https://bobsome1.com/book/read/chapter-12.html",
+      "name": "The Body Was Meant to Be Alive",
+      "description": "Read Chapter Twelve of Project Unveiled by Robert J. Hayes: The Body Was Meant to Be Alive.",
+      "inLanguage": "en-US",
+      "dateModified": "2026-07-22",
+      "isAccessibleForFree": true,
+      "author": {
+        "@id": "https://bobsome1.com/#robert-j-hayes"
+      },
+      "isPartOf": {
+        "@id": "https://bobsome1.com/book/#project-unveiled"
+      },
+      "image": "https://bobsome1.com/images/support-right-hand.jpg",
+      "position": 12,
+      "headline": "The Body Was Meant to Be Alive"
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://bobsome1.com/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Project Unveiled",
+          "item": "https://bobsome1.com/book/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Complete Reader",
+          "item": "https://bobsome1.com/book/read/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 4,
+          "name": "Chapter Twelve: The Body Was Meant to Be Alive",
+          "item": "https://bobsome1.com/book/read/chapter-12.html"
+        }
+      ]
+    }
+  ]
+}</script>
+
+<style id="project-unveiled-traffic-layer-styles">
+/* PROJECT-UNVEILED-TRAFFIC-DONATION-LAYER */
+.pu-support-footer{max-width:1100px;margin:18px auto 0;padding:14px 18px;border-top:1px solid rgba(215,173,81,.4);display:flex;gap:12px;justify-content:center;align-items:center;flex-wrap:wrap;font-family:Arial,sans-serif;font-size:14px}.pu-support-footer a{color:#f3d47d;text-decoration:underline;text-underline-offset:3px}.pu-support-footer span{color:#8d7b55}.pu-final-support-cta,.pu-reader-support-cta{max-width:980px;margin:34px auto;padding:26px;border:1px solid #d7ad51;background:linear-gradient(135deg,#15110b,#080706);color:#f4ead2;text-align:center;box-shadow:0 18px 55px rgba(0,0,0,.35)}.pu-final-support-cta h2,.pu-reader-support-cta h2{margin:.2rem 0 .7rem;color:#f3d47d;font-family:Georgia,"Times New Roman",serif}.pu-final-support-cta p,.pu-reader-support-cta p{max-width:760px;margin:.6rem auto}.pu-conversion-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:18px}.pu-conversion-actions a{display:inline-flex;align-items:center;justify-content:center;padding:12px 18px;border:1px solid #d7ad51;background:#d7ad51;color:#090806!important;font-weight:800;text-decoration:none!important}.pu-conversion-actions a.secondary{background:transparent;color:#f3d47d!important}.pu-support-legal{font-size:13px;color:#bdb49f}.pu-support-float{position:fixed;right:15px;bottom:15px;z-index:9998;padding:10px 14px;border:1px solid #d7ad51;border-radius:999px;background:rgba(8,7,6,.95);color:#f3d47d!important;text-decoration:none!important;font:700 13px Arial,sans-serif;box-shadow:0 8px 28px rgba(0,0,0,.5)}@media(max-width:650px){.pu-final-support-cta,.pu-reader-support-cta{margin:24px 14px;padding:21px 16px}.pu-support-float{right:10px;bottom:10px;padding:9px 12px}}
+</style>
+</head>
+<body>
+<div aria-hidden="true" class="reading-progress" id="readingProgress"></div>
+<header class="site-header">
+<div class="container nav">
+<a class="brand" href="/">
+<span>PROJECT</span> UNVEILED
+      </a>
+<nav class="nav-links" aria-label="Primary navigation"><a href="/">Home</a><a href="/book/read/">Reader</a><a href="/book/">Book</a><a href="/book/timeline.html">Timeline</a><a href="/book/research.html">Research</a><a href="/book/updates.html">Updates</a><a href="/book/read/support-right-hand.html">Support</a></nav>
+</div>
+</header>
+<div class="reader-toolbar">
+<div class="container toolbar-inner">
+<div class="chapter-position">
+        Chapter 12 of 13
+      </div>
+<div aria-label="Reading text-size controls" class="text-controls">
+<button aria-label="Decrease reading text size" class="text-control" onclick="changeReaderSize(-0.1)" type="button">
+          A−
+        </button>
+<button aria-label="Reset reading text size" class="text-control" onclick="resetReaderSize()" type="button">
+          A
+        </button>
+<button aria-label="Increase reading text size" class="text-control" onclick="changeReaderSize(0.1)" type="button">
+          A+
+        </button>
+</div>
+</div>
+</div>
+<main>
+<section class="chapter-hero">
+<div class="container hero-grid">
+<div class="hero-copy">
+<div class="chapter-label">
+            Waypoint 12 · Life
+          </div>
+<div class="eyebrow">
+            The Body Must Become What It Proclaims
+          </div>
+<h1>
+            The Body Was Meant
+            <span class="gold">to Be Alive.</span>
+</h1>
+<p class="hero-lead">
+            Riches are not righteousness. Noise is not power.
+            A full building is not proof of a living body.
+            Judge the tree by its fruit—love, mercy, truth,
+            justice, service, freedom, and food in hungry hands.
+          </p>
+<div class="hero-actions">
+<a class="button" href="#start-reading">
+              Begin Chapter Twelve
+            </a>
+<button class="button secondary" onclick="shareChapter()" type="button">
+              Share This Chapter
+            </button>
+</div>
+</div>
+<div>
+<figure class="journey-art">
+<img alt="Jesus breaks bread among a gathered community, representing mercy, nourishment, service, and a living body" decoding="async" height="1402" loading="eager" src="/images/chapter-12-body-alive.webp" width="1122"/>
+<div class="journey-kicker">
+              The Prophecy Journey · Waypoint 12
+            </div>
+<div aria-hidden="true" class="journey-route">
+<span></span><span></span><span></span><span></span>
+</div>
+<figcaption class="journey-caption">A living body feeds, serves, restores, and makes love visible.</figcaption>
+</figure>
+<p class="art-label">
+            Project Unveiled journey artwork · Chapter 12
+          </p>
+</div>
+</div>
+</section>
+<section class="edition-wrap">
+<div class="reading-container">
+<div class="edition-notice">
+<div class="edition-symbol">
+            ◆
+          </div>
+<p>
+<strong>Complete Public Edition.</strong>
+            This chapter is published in the complete online reader.
+            Documented corrections, fuller context, and stronger supporting
+            evidence remain welcome.
+          </p>
+</div>
+</div>
+</section>
+<article class="chapter-reading" id="start-reading">
+<div class="reading-container">
+<div class="chapter-text">
+<p class="question">Why does so much of the church feel spiritually bankrupt?</p>
+<p class="short-line">Not every believer.</p>
+<p class="short-line">Not every gathering.</p>
+<p class="short-line">Not every pastor.</p>
+<p class="short-line">Not every church.</p>
+<p class="short-line">But the system.</p>
+<p class="short-line">The machine.</p>
+<p class="short-line">The thing that kept the name but lost the life.</p>
+<p>The thing that kept the language of Jesus but lost the love of Jesus.</p>
+<p class="short-line">The thing that kept the building but lost the body.</p>
+<p class="short-line">That is the question.</p>
+<p class="question">Why does the body not operate in love and power?</p>
+<p class="question">Why are so many hungry while so many buildings sit full?</p>
+<p class="question">Why are so many lonely while so many people sing about family?</p>
+<p class="question">Why are so many wounded while so many pulpits talk about healing?</p>
+<p class="question">Why are so many afraid while so many claim to know perfect love?</p>
+<p class="question">Why are so many still begging outside the door when Jesus already opened the way?</p>
+<p class="short-line">Something is wrong.</p>
+<p>And pretending it is not wrong does not make it holy.</p>
+<p>Jesus said the world would know His disciples by their love. [John 13:35]</p>
+<p class="short-line">Not by their branding.</p>
+<p class="short-line">Not by their buildings.</p>
+<p class="short-line">Not by their signs.</p>
+<p class="short-line">Not by their conferences.</p>
+<p class="short-line">Not by their social media pages.</p>
+<p>Not by their ability to quote verses while stepping over hungry people.</p>
+<p class="short-line">By love.</p>
+<p class="short-line">That is the test.</p>
+<p class="short-line">And Paul made it even sharper.</p>
+<p>He said a person could speak with tongues, understand mysteries, have knowledge, and even have faith strong enough to move mountains — but without love, he is nothing. [1 Corinthians 13:1–2]</p>
+<p class="short-line">Nothing.</p>
+<p class="short-line">That should shake the costume.</p>
+<p>Because it means a church can sound spiritual and still be empty.</p>
+<p class="short-line">A man can preach truth and still miss love.</p>
+<p class="short-line">A ministry can look powerful and still be bankrupt.</p>
+<p class="short-line">A body can have activity without life.</p>
+<p class="short-line">Noise without fruit.</p>
+<p class="short-line">Doctrine without mercy.</p>
+<p class="short-line">Knowledge without love.</p>
+<p class="short-line">Power talk without power.</p>
+<p class="short-line">Faith language without faith that actually feeds anyone.</p>
+<p class="short-line">That is spiritual bankruptcy.</p>
+<p class="short-line">Not having nothing.</p>
+<p>Having everything except the one thing that proves life is there.</p>
+<p class="short-line">Love.</p>
+<p class="short-line">The danger is not just atheism outside the building.</p>
+<p class="short-line">The danger is dead religion inside it.</p>
+<p class="short-line">The danger is a body with no heartbeat.</p>
+<p>The danger is a church with a stage but no table.</p>
+<p>The danger is a room full of songs and a parking lot full of hungry people.</p>
+<p>The danger is a people who know how to say “Lord” but forgot how to love their neighbor.</p>
+<p class="short-line">Jesus already warned us.</p>
+<p>Not everyone who says, “Lord, Lord,” is known by Him. [Matthew 7:21–23]</p>
+<p class="short-line">That is terrifying.</p>
+<p class="short-line">Not because God is cruel.</p>
+<p>Because religious performance can look alive while being dead.</p>
+<p>Paul warned about people having a form of godliness but denying the power. [2 Timothy 3:5]</p>
+<p class="short-line">A form.</p>
+<p class="short-line">A shape.</p>
+<p class="short-line">A costume.</p>
+<p class="short-line">The outside appearance of faith.</p>
+<p class="short-line">But no life moving through it.</p>
+<p class="short-line">No power.</p>
+<p class="short-line">No love.</p>
+<p class="short-line">No mercy.</p>
+<p class="short-line">No freedom.</p>
+<p class="short-line">No courage.</p>
+<p class="short-line">No fruit.</p>
+<p>And Jesus said we would know the tree by its fruit. [Matthew 7:16–20]</p>
+<p class="short-line">Not by its sign.</p>
+<p class="short-line">Not by its title.</p>
+<p class="short-line">Not by its size.</p>
+<p class="short-line">Not by its sound system.</p>
+<p class="short-line">Not by its budget.</p>
+<p class="short-line">Not by its history.</p>
+<p class="short-line">Not by its costume.</p>
+<p class="short-line">By its fruit.</p>
+<p class="short-line">And let us be clear.</p>
+<p class="short-line">Fruit is not money.</p>
+<p class="short-line">Fruit is not worldly prosperity.</p>
+<p class="false-fruit">Fruit is not the size of the building.</p>
+<p class="false-fruit">Fruit is not the number of people in the seats.</p>
+<p class="false-fruit">Fruit is not the reach of the platform.</p>
+<p class="false-fruit">Fruit is not the budget.</p>
+<p class="false-fruit">Fruit is not the brand.</p>
+<p class="false-fruit">Fruit is not how polished the machine looks from the outside.</p>
+<p class="short-line">Riches are not righteousness.</p>
+<p class="short-line">Success is not holiness.</p>
+<p class="short-line">A full room does not prove a living body.</p>
+<p class="short-line">A rich ministry does not prove a clean heart.</p>
+<p class="short-line">A popular preacher does not prove a true witness.</p>
+<p class="short-line">A wealthy church does not prove God is pleased.</p>
+<p>If money were the proof of righteousness, Jesus would not have warned the rich man the way He did.</p>
+<p>Jesus said it is hard for a rich man to enter the Kingdom of heaven.</p>
+<p>Then He said it is easier for a camel to go through the eye of a needle than for a rich man to enter the Kingdom of God. [Matthew 19:23–24; Mark 10:23–25; Luke 18:24–25]</p>
+<p class="short-line">That should silence the prosperity costume.</p>
+<p class="short-line">Jesus did not say riches automatically prove blessing.</p>
+<p class="short-line">He warned that riches can become a trap.</p>
+<p>Paul said the love of money is the root of all kinds of evil, and that some have pierced themselves through with many sorrows because of it. [1 Timothy 6:10]</p>
+<p class="short-line">So stop calling greed fruit.</p>
+<p class="short-line">Stop calling wealth anointing.</p>
+<p class="short-line">Stop calling popularity proof.</p>
+<p class="short-line">Stop calling expansion obedience.</p>
+<p class="short-line">Stop calling a bigger building revival.</p>
+<p class="short-line">Stop calling worldly success the blessing of God.</p>
+<p class="short-line">Fruit is not what the machine can count.</p>
+<p class="short-line">Fruit is what the Spirit produces.</p>
+<p class="short-line">Love.</p>
+<p class="short-line">Joy.</p>
+<p class="short-line">Peace.</p>
+<p class="short-line">Longsuffering.</p>
+<p class="short-line">Gentleness.</p>
+<p class="short-line">Goodness.</p>
+<p class="short-line">Faith.</p>
+<p class="short-line">Meekness.</p>
+<p class="short-line">Temperance. [Galatians 5:22–23]</p>
+<p class="short-line">That is fruit.</p>
+<p class="short-line">Mercy is fruit.</p>
+<p class="short-line">Humility is fruit.</p>
+<p class="short-line">Truth is fruit.</p>
+<p class="short-line">Freedom is fruit.</p>
+<p class="short-line">Compassion is fruit.</p>
+<p class="short-line">Justice is fruit.</p>
+<p class="short-line">Faithfulness is fruit.</p>
+<p class="true-fruit">Feeding the hungry is fruit.</p>
+<p class="true-fruit">Clothing the naked is fruit.</p>
+<p class="true-fruit">Visiting the forgotten is fruit.</p>
+<p class="true-fruit">Caring for the wounded is fruit.</p>
+<p class="true-fruit">Forgiving when pride wants revenge is fruit.</p>
+<p class="true-fruit">Correcting without crushing is fruit.</p>
+<p class="true-fruit">Serving without needing applause is fruit.</p>
+<p class="true-fruit">Showing up when nobody is filming is fruit.</p>
+<p class="short-line">That is how we judge the tree.</p>
+<p class="short-line">Not by gold on the walls.</p>
+<p class="short-line">Not by numbers on a screen.</p>
+<p class="short-line">Not by the preacher’s car.</p>
+<p class="short-line">Not by the size of the offering.</p>
+<p class="short-line">Not by how many people know the name.</p>
+<p class="short-line">By fruit.</p>
+<p>Jesus said the tree is known by its fruit. [Matthew 7:16–20]</p>
+<p>And in Matthew 25, the dividing line was not who had the biggest ministry.</p>
+<p class="short-line">It was who fed the hungry.</p>
+<p class="short-line">Who gave drink to the thirsty.</p>
+<p class="short-line">Who welcomed the stranger.</p>
+<p class="short-line">Who clothed the naked.</p>
+<p class="short-line">Who visited the sick and imprisoned. [Matthew 25:35–40]</p>
+<p class="short-line">That is the fruit Jesus named.</p>
+<p>So if a church is rich but the hungry stay hungry, do not call that fruit.</p>
+<p class="warning-line">If a ministry is famous but the wounded are stepped over, do not call that fruit.</p>
+<p class="warning-line">If a preacher is wealthy but people are kept afraid, ashamed, and dependent, do not call that fruit.</p>
+<p class="warning-line">If a system grows while love dies, do not call that fruit.</p>
+<p class="short-line">That is not Kingdom.</p>
+<p class="short-line">That is empire with worship music.</p>
+<p class="short-line">So let me make this plain.</p>
+<p>There is a woman who comes by the hotel at least five nights a week.</p>
+<p class="short-line">She buys the food herself.</p>
+<p class="short-line">She cooks it herself.</p>
+<p class="short-line">She drives through and feeds whoever is hungry.</p>
+<p>She makes plates for people who may not have eaten otherwise.</p>
+<p class="short-line">No stage.</p>
+<p class="short-line">No spotlight.</p>
+<p class="short-line">No church banner.</p>
+<p class="short-line">No food bank partnership.</p>
+<p class="short-line">No microphone.</p>
+<p class="short-line">No offering bucket.</p>
+<p class="short-line">No religious announcement.</p>
+<p class="short-line">Just obedience.</p>
+<p class="short-line">Just love.</p>
+<p>Just a woman feeding hungry people because she loves God and she loves His children.</p>
+<p class="short-line">That is fruit.</p>
+<p class="short-line">That is the body working.</p>
+<p>That is what love looks like when it stops talking and starts moving.</p>
+<p class="short-line">Jesus said, “Feed my sheep.” [John 21:15–17]</p>
+<p class="short-line">She is doing it.</p>
+<p>Jesus said, “I was an hungred, and ye gave me meat.” [Matthew 25:35]</p>
+<p class="short-line">She is doing it.</p>
+<p>James said pure religion is to care for the vulnerable in their affliction and to keep oneself clean from the world. [James 1:27]</p>
+<p>She is closer to that than many buildings with crosses on them.</p>
+<p class="short-line">And that should make us honest.</p>
+<p>Because if a woman with no platform, no program, no official backing, and no religious spotlight can feed hungry people five nights a week, then maybe the problem was never that the body lacked resources.</p>
+<p>Maybe the problem is that the body forgot what it was for.</p>
+<p class="short-line">Maybe the problem is not that love is impossible.</p>
+<p class="short-line">Maybe the problem is that love became optional.</p>
+<p>Maybe the problem is that service became a department instead of a way of life.</p>
+<p>Maybe the problem is that mercy became a ministry title instead of food in someone’s hands.</p>
+<p class="short-line">That woman does not need a pulpit to preach.</p>
+<p class="short-line">Her life is already speaking.</p>
+<p class="short-line">She does not need a title to serve.</p>
+<p class="short-line">Her fruit already testifies.</p>
+<p class="short-line">She does not need a church program to obey God.</p>
+<p class="short-line">She heard the Father and moved.</p>
+<p class="short-line">That is love with legs on it.</p>
+<p class="short-line">That is faith with food in its hands.</p>
+<p class="short-line">That is power without performance.</p>
+<p class="short-line">And that is why the machine should tremble.</p>
+<p>Because while some argue doctrine with empty hands, she is feeding Christ in the hungry.</p>
+<p class="short-line">While some defend the costume, she is living the Kingdom.</p>
+<p>While some ask who authorized her, heaven already sees the fruit.</p>
+<p class="short-line">While some build platforms, she is building plates.</p>
+<p>While some talk about revival, she is keeping somebody alive long enough to see tomorrow.</p>
+<p class="short-line">Judge the tree by its fruit.</p>
+<p class="short-line">Her fruit is love.</p>
+<p class="short-line">Her fruit is mercy.</p>
+<p class="short-line">Her fruit is obedience.</p>
+<p class="true-fruit">Her fruit is food in the hands of hungry people.</p>
+<p class="short-line">Her fruit is movement.</p>
+<p class="short-line">Her fruit is care.</p>
+<p class="true-fruit">Her fruit is doing what many only preach about.</p>
+<p class="short-line">And I tell you plainly:</p>
+<p class="short-line">God sees that.</p>
+<p class="seen-line">God sees the hidden meal.</p>
+<p class="seen-line">God sees the money spent.</p>
+<p class="seen-line">God sees the time given.</p>
+<p class="seen-line">God sees the tired hands still serving.</p>
+<p class="seen-line">God sees the plates made in love.</p>
+<p class="seen-line">God sees the hungry fed when nobody was filming.</p>
+<p class="seen-line">God sees the servant nobody gave a title to.</p>
+<p>And if men want to talk about calling, let the fruit speak.</p>
+<p>If men want to talk about anointing, let the hungry testify.</p>
+<p class="short-line">If men want to talk about authority, let mercy answer.</p>
+<p class="short-line">Because love carries authority that titles cannot fake.</p>
+<p class="short-line">The body was never meant to be a religious audience.</p>
+<p class="short-line">The body was meant to move.</p>
+<p class="short-line">Hands feeding.</p>
+<p class="short-line">Feet going.</p>
+<p class="short-line">Mouths speaking truth.</p>
+<p class="short-line">Arms carrying the weak.</p>
+<p class="short-line">Eyes seeing the forgotten.</p>
+<p class="short-line">Hearts refusing to become numb.</p>
+<p class="short-line">That is body.</p>
+<p class="short-line">A body that does not move is sick.</p>
+<p class="short-line">A body that does not feel is numb.</p>
+<p class="short-line">A body that does not feed is failing.</p>
+<p>A body that does not love is not operating from the life of Christ.</p>
+<p class="short-line">This is why so much of the church feels powerless.</p>
+<p class="short-line">Because power was never given so people could perform.</p>
+<p class="short-line">Power was given so people could witness.</p>
+<p class="short-line">Heal.</p>
+<p class="short-line">Serve.</p>
+<p class="short-line">Love.</p>
+<p class="short-line">Tell the truth.</p>
+<p class="short-line">Cast out fear.</p>
+<p class="short-line">Lift the broken.</p>
+<p class="short-line">Feed the hungry.</p>
+<p class="short-line">Set captives free.</p>
+<p>Jesus did not give His people life so they could build a religious brand.</p>
+<p>He gave them life so they could become a living witness.</p>
+<p class="short-line">The early body understood this.</p>
+<p>They continued in teaching, fellowship, breaking bread, and prayer.</p>
+<p class="short-line">They shared.</p>
+<p class="short-line">They gave.</p>
+<p class="short-line">They ate together.</p>
+<p class="short-line">They cared for needs.</p>
+<p>They moved with gladness and singleness of heart. [Acts 2:42–47]</p>
+<p>They were of one heart and one soul, and great grace was upon them. [Acts 4:32–33]</p>
+<p class="short-line">That was body.</p>
+<p class="short-line">Not business.</p>
+<p class="short-line">Not branding.</p>
+<p class="short-line">Not empire.</p>
+<p class="short-line">Body.</p>
+<p class="short-line">A living people.</p>
+<p class="short-line">A shared life.</p>
+<p class="short-line">A witness with love and power.</p>
+<p>But when the body becomes a business, people become customers.</p>
+<p class="short-line">When the body becomes a stage, people become spectators.</p>
+<p class="short-line">When the body becomes a machine, people become parts.</p>
+<p>When the body becomes a hierarchy, sons and daughters become servants of the system.</p>
+<p>When the body becomes a costume, power leaves and performance remains.</p>
+<p class="short-line">That is why the warning to Laodicea matters.</p>
+<p class="short-line">Jesus said:</p>
+<p>“I know thy works, that thou art neither cold nor hot: I would thou wert cold or hot.”</p>
+<p class="short-line">Then He said:</p>
+<p>“Because thou art lukewarm, and neither cold nor hot, I will spue thee out of my mouth.” [Revelation 3:15–16]</p>
+<p class="short-line">That is not soft.</p>
+<p class="short-line">That is not decoration.</p>
+<p class="short-line">That is danger.</p>
+<p>The lukewarm church was not warned because it had no activity.</p>
+<p class="short-line">It had works.</p>
+<p class="short-line">It had confidence.</p>
+<p class="short-line">It had resources.</p>
+<p>It said, “I am rich, and increased with goods, and have need of nothing.”</p>
+<p>But Jesus said it was wretched, miserable, poor, blind, and naked. [Revelation 3:17]</p>
+<p class="short-line">That is spiritual bankruptcy.</p>
+<p class="short-line">Having money but lacking mercy.</p>
+<p class="short-line">Having confidence but lacking sight.</p>
+<p class="short-line">Having religion but lacking reality.</p>
+<p class="short-line">Having works but lacking fire.</p>
+<p class="short-line">Having a name but lacking truth.</p>
+<p class="short-line">Having a form but denying the power.</p>
+<p class="short-line">So the question is not, “Can the church survive?”</p>
+<p class="short-line">The question is:</p>
+<p class="question">Will the church wake up before it becomes useless to the One it claims to serve?</p>
+<p class="question">Will it return to love?</p>
+<p class="question">Will it return to truth?</p>
+<p class="question">Will it return to humility?</p>
+<p class="question">Will it return to the Father?</p>
+<p class="question">Will it return to the Spirit?</p>
+<p class="question">Will it return to the Christ who stands at the door and knocks? [Revelation 3:20]</p>
+<p class="short-line">Because the danger is plain.</p>
+<p class="short-line">A church can be busy and still be bankrupt.</p>
+<p class="short-line">A church can be rich and still be poor.</p>
+<p class="short-line">A church can be loud and still be dead.</p>
+<p class="short-line">A church can quote Scripture and still resist the Spirit.</p>
+<p class="short-line">A church can claim Jesus and still refuse His way.</p>
+<p>A church can call itself body and still not operate in love.</p>
+<p>And if the body does not operate in love, it is not functioning as His body.</p>
+<p>If it does not operate in truth, it is not walking in His light.</p>
+<p>If it does not operate in freedom, it is not showing His Spirit.</p>
+<p>If it does not operate in mercy, it is not reflecting His Father.</p>
+<p>If it does not operate in power, it is not living from His life.</p>
+<p class="short-line">So where is the fruit?</p>
+<p class="short-line">Where is the love?</p>
+<p class="short-line">Where is the mercy?</p>
+<p class="short-line">Where is the plate of food?</p>
+<p class="short-line">Where is the hand on the shoulder?</p>
+<p class="short-line">Where is the visit?</p>
+<p class="question">Where is the prayer that does not perform?</p>
+<p class="question">Where is the truth that does not crush?</p>
+<p class="question">Where is the correction that restores?</p>
+<p class="short-line">Where is the table?</p>
+<p class="short-line">Where is the family?</p>
+<p class="short-line">Where is the body?</p>
+<p>The church should not need a program to notice hungry people.</p>
+<p>The church should not need a committee to love its neighbor.</p>
+<p>The church should not need a brand strategy to obey Jesus.</p>
+<p class="short-line">The church should not need applause to serve.</p>
+<p class="short-line">The church should not need a camera to feed someone.</p>
+<p>The church should not need permission from the machine to move in love.</p>
+<p class="short-line">If love is real, it moves.</p>
+<p class="short-line">If faith is alive, it works.</p>
+<p class="short-line">If the Spirit is present, fruit grows.</p>
+<p>And if there is no fruit, we need to stop defending the tree.</p>
+<p class="short-line">This is not condemnation.</p>
+<p class="short-line">This is warning.</p>
+<p class="short-line">This is mercy telling the truth before the collapse.</p>
+<p class="short-line">Because Jesus did not warn Laodicea because He hated them.</p>
+<p>He warned them because they were blind and did not know it.</p>
+<p class="short-line">That is mercy.</p>
+<p class="short-line">Hard mercy.</p>
+<p class="short-line">Clear mercy.</p>
+<p>The kind of mercy that tells the truth while there is still time to wake up.</p>
+<p class="short-line">So hear the warning.</p>
+<p class="danger-line">If we keep the name but lose the love, we are in danger.</p>
+<p class="danger-line">If we keep the book but miss the One, we are in danger.</p>
+<p class="danger-line">If we keep the form but deny the power, we are in danger.</p>
+<p class="danger-line">If we keep the worship but ignore the wounded, we are in danger.</p>
+<p class="danger-line">If we keep the doctrine but lose the Father’s heart, we are in danger.</p>
+<p class="danger-line">If we keep the church but lose the body, we are in danger.</p>
+<p class="short-line">The costume cannot heal anyone.</p>
+<p class="short-line">The machine cannot raise the dead.</p>
+<p class="short-line">The shelf cannot love your neighbor.</p>
+<p class="short-line">The brand cannot cast out fear.</p>
+<p class="short-line">The system cannot replace the Spirit.</p>
+<p class="short-line">And dead religion cannot carry the living Christ.</p>
+<p class="short-line">So let the veil tear here too.</p>
+<p class="tear-line">Tear the veil off the powerless church.</p>
+<p class="tear-line">Tear the veil off religious performance.</p>
+<p class="tear-line">Tear the veil off empty activity.</p>
+<p class="tear-line">Tear the veil off loveless doctrine.</p>
+<p class="tear-line">Tear the veil off prosperity pretending to be righteousness.</p>
+<p class="tear-line">Tear the veil off greed dressed up as blessing.</p>
+<p class="tear-line">Tear the veil off the lie that money proves God is pleased.</p>
+<p class="tear-line">Tear the veil off the lie that a building is alive just because people gather in it.</p>
+<p class="tear-line">Tear the veil off the idea that God is impressed by noise without love.</p>
+<p class="tear-line">Tear the veil off the comfort that says, “We have need of nothing,” while Jesus says we are poor, blind, and naked.</p>
+<p class="short-line">The body was meant to be alive.</p>
+<p class="short-line">Alive with love.</p>
+<p class="short-line">Alive with truth.</p>
+<p class="short-line">Alive with mercy.</p>
+<p class="short-line">Alive with courage.</p>
+<p class="short-line">Alive with power.</p>
+<p class="short-line">Alive with the Spirit.</p>
+<p class="alive-line">Alive enough to see hunger and move.</p>
+<p class="alive-line">Alive enough to see pain and care.</p>
+<p class="alive-line">Alive enough to hear the Father and obey.</p>
+<p class="alive-line">Alive enough to feed His sheep.</p>
+<p>So if you want to know where God is moving, do not only look at the stage.</p>
+<p class="short-line">Look for the fruit.</p>
+<p class="look-line">Look for love when nobody is filming.</p>
+<p class="look-line">Look for mercy when nobody is clapping.</p>
+<p class="look-line">Look for food handed to hungry people.</p>
+<p class="look-line">Look for the servant who keeps showing up.</p>
+<p class="look-line">Look for the person who does not need permission to obey God.</p>
+<p class="short-line">Look for the tree.</p>
+<p class="short-line">Then judge it by its fruit.</p>
+<p>Because the body was never meant to be spiritually bankrupt.</p>
+<p class="short-line">The body was meant to be alive.</p>
+<p class="short-line">And love is the proof.</p>
+</div>
+</div>
+</article>
+<section class="connections">
+<div class="container">
+<div class="section-heading">
+<div class="eyebrow">
+            Chapter Connections
+          </div>
+<h2>
+            Fruit, Service and a Living Body
+          </h2>
+<p>
+            Chapter Twelve rejects money, popularity, platforms,
+            expansion, and polished appearances as proof of righteousness.
+            The measure is living fruit.
+          </p>
+</div>
+<div class="connection-grid">
+<article class="connection-card">
+<div class="status-tag">
+              Fruit
+            </div>
+<h3>
+              Riches Are Not Righteousness
+            </h3>
+<p>
+              Wealth, attendance, buildings, branding, and reach
+              are not spiritual fruit. The chapter measures fruit
+              by love, mercy, truth, justice, humility, and faithfulness.
+            </p>
+</article>
+<article class="connection-card">
+<div class="status-tag">
+              Living Witness
+            </div>
+<h3>
+              Faith With Food
+            </h3>
+<p>
+              The woman feeding hungry people at the hotel becomes
+              the chapter’s concrete picture of obedience:
+              service without stage, title, applause, or camera.
+            </p>
+</article>
+<article class="connection-card">
+<div class="status-tag">
+              Final Warning
+            </div>
+<h3>
+              Wake Up, Body
+            </h3>
+<p>
+              The warning to Laodicea exposes the danger of having
+              resources, confidence, activity, and religion while
+              remaining poor in love, sight, mercy, and living power.
+            </p>
+</article>
+</div>
+</div>
+</section>
+<section class="response-section">
+<div class="container">
+<div class="response-panel">
+<div class="eyebrow">
+            Reader Response
+          </div>
+<h2>
+            Where Is Love Moving Through Your Hands?
+          </h2>
+<p>
+            Reader responses remain private until approved.
+            Scripture context, corrections, evidence, and competing
+            interpretations are reviewed separately from personal testimony.
+          </p>
+<div class="response-actions">
+<a class="button" href="mailto:thebobsomest1@gmail.com?subject=Project%20Unveiled%20Chapter%20Twelve%20Reader%20Response">
+              Submit a Reader Response
+            </a>
+<a class="button secondary" href="mailto:thebobsomest1@gmail.com?subject=Project%20Unveiled%20Chapter%20Twelve%20Correction%20or%20Source">
+              Submit Evidence or a Correction
+            </a>
+</div>
+</div>
+</div>
+</section>
+<section class="chapter-navigation">
+<div class="reading-container">
+<div class="chapter-nav-inner"><a class="button secondary" href="/book/read/chapter-11.html">← Chapter Eleven</a><a class="button" href="/book/read/chapter-13.html">Chapter Thirteen →</a></div>
+</div>
+</section>
+</main>
+<footer>
+<div class="container">
+<strong>Project Unveiled</strong>
+      by Robert J. Hayes
+
+      <br/>
+
+      Chapter Twelve —
+      The Body Was Meant to Be Alive
+
+      <br/>
+
+      © 2026 Bobsome1.com
+
+    </div>
+<div class="pu-support-footer" aria-label="Project support and privacy links"><a href="/book/read/support-right-hand.html" data-pu-event="support_page_click">Support the Work</a><span aria-hidden="true">◆</span><a href="/privacy.html">Privacy</a></div>
+</footer>
+<script>
+    let readerScale =
+      parseFloat(
+        localStorage.getItem("projectUnveiledReaderScale")
+      ) || 1;
+
+    function applyReaderSize() {
+      document.documentElement.style.setProperty(
+        "--reader-scale",
+        readerScale
+      );
+
+      localStorage.setItem(
+        "projectUnveiledReaderScale",
+        readerScale
+      );
+    }
+
+    function changeReaderSize(amount) {
+      readerScale = Math.min(
+        1.4,
+        Math.max(0.8, readerScale + amount)
+      );
+
+      readerScale =
+        Math.round(readerScale * 10) / 10;
+
+      applyReaderSize();
+    }
+
+    function resetReaderSize() {
+      readerScale = 1;
+      applyReaderSize();
+    }
+
+    function updateReadingProgress() {
+      const scrollTop =
+        window.scrollY ||
+        document.documentElement.scrollTop;
+
+      const documentHeight =
+        document.documentElement.scrollHeight -
+        document.documentElement.clientHeight;
+
+      const progress =
+        documentHeight > 0
+          ? (scrollTop / documentHeight) * 100
+          : 0;
+
+      document.getElementById(
+        "readingProgress"
+      ).style.width = progress + "%";
+    }
+
+    function shareChapter() {
+      const shareData = {
+        title: "The Body Was Meant to Be Alive | Project Unveiled",
+        text: "Read Chapter Twelve of Project Unveiled by Robert J. Hayes.",
+        url: window.location.href
+      };
+
+      if (navigator.share) {
+        navigator.share(shareData);
+        return;
+      }
+
+      navigator.clipboard
+        .writeText(window.location.href)
+        .then(function () {
+          alert("Chapter link copied.");
+        })
+        .catch(function () {
+          alert(window.location.href);
+        });
+    }
+
+    applyReaderSize();
+
+    window.addEventListener(
+      "scroll",
+      updateReadingProgress
+    );
+
+    updateReadingProgress();
+  </script>
+<script id="project-unveiled-traffic-tracker" src="/project-unveiled-analytics/tracker.js?v=2" defer></script>
+<a class="pu-support-float" href="/book/read/support-right-hand.html" data-pu-event="support_page_click" aria-label="Support Project Unveiled and Right Hand Ministry">Support the Work</a>
+
+<!-- PROJECT UNVEILED READER COMMUNITY v6 START -->
+<div data-pu-community data-kind="comment" data-chapter="chapter-12"></div>
+<link rel="stylesheet" href="/book/reader-community.css?v=7">
+<script defer src="/book/reader-community.js?v=7"></script>
+<!-- PROJECT UNVEILED READER COMMUNITY v6 END -->
+<!-- PU_READER_SIGNUP_START -->
+<section id="pu-signup" aria-labelledby="pu-signup-title" data-version="7.3.1">
+  <h2 id="pu-signup-title">Stay connected to Project Unveiled</h2>
+  <p>Receive new chapter highlights, evidence updates, and occasional reader invitations. No daily spam.</p>
+  <div class="pu-signup-promise">We do not sell, rent, or trade your personal information. Ever.</div>
+  <form id="pu-signup-form" novalidate>
+    <div class="pu-signup-grid">
+      <div class="pu-signup-field"><label for="pu-first-name">First name</label><input id="pu-first-name" name="first_name" maxlength="80" autocomplete="given-name" required></div>
+      <div class="pu-signup-field"><label for="pu-email">Email address</label><input id="pu-email" name="email" type="email" maxlength="190" autocomplete="email" required></div>
+      <button class="pu-signup-button" type="submit">Join the reader list</button>
+    </div>
+    <label class="pu-signup-consent"><input type="checkbox" name="consent" value="yes" required><span>I agree to receive Project Unveiled email updates. I can unsubscribe at any time.</span></label>
+    <div class="pu-signup-hp" aria-hidden="true"><label>Website<input name="website" tabindex="-1" autocomplete="off"></label></div>
+    <input type="hidden" name="consent_version" value="2026-07-v2">
+    <p class="pu-signup-small">We collect your first name, email address, signup time, source page, campaign tags, and privacy-safe abuse-prevention hashes. Read the <a href="/privacy.html">Privacy Policy</a>.</p>
+    <div class="pu-signup-status" role="status" aria-live="polite"></div>
+  </form>
+</section>
+<link rel="stylesheet" href="/book/signup-widget.css?v=731">
+<script src="/book/signup-widget.js?v=731" defer></script>
+<!-- PU_READER_SIGNUP_END -->
+
+</body>
+</html>

@@ -1,0 +1,1452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <meta
+    name="description"
+    content="Research standards, source policy, corrections, open questions, and transparency disclosures for Project Unveiled by Robert J. Hayes."
+  >
+
+  <title>Research & Corrections | Project Unveiled</title>
+
+  <style>
+    :root {
+      --black: #050505;
+      --deep-black: #090909;
+      --panel: #11100d;
+      --panel-light: #191711;
+      --gold: #d7ad51;
+      --bright-gold: #f3d47d;
+      --cream: #f4ead2;
+      --white: #fffdf7;
+      --muted: #c5bda9;
+      --line: rgba(215, 173, 81, 0.38);
+      --shadow: 0 25px 70px rgba(0, 0, 0, 0.65);
+      --max-width: 1180px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      overflow-x: hidden;
+      background:
+        radial-gradient(
+          circle at 50% 0%,
+          rgba(215, 173, 81, 0.15),
+          transparent 500px
+        ),
+        linear-gradient(
+          180deg,
+          #050505 0%,
+          #0c0906 48%,
+          #050505 100%
+        );
+      color: var(--white);
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.65;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    .container {
+      width: min(calc(100% - 34px), var(--max-width));
+      margin: 0 auto;
+    }
+
+    .eyebrow {
+      margin-bottom: 12px;
+      color: var(--bright-gold);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+    }
+
+    .gold {
+      color: var(--bright-gold);
+    }
+
+    .section {
+      padding: 92px 0;
+    }
+
+    .section-dark {
+      border-block: 1px solid var(--line);
+      background:
+        linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.025),
+          rgba(255, 255, 255, 0.008)
+        );
+    }
+
+    .section-heading {
+      max-width: 850px;
+      margin-bottom: 42px;
+    }
+
+    .section-heading.center {
+      margin-right: auto;
+      margin-left: auto;
+      text-align: center;
+    }
+
+    .section-heading h2 {
+      margin: 0 0 18px;
+      color: var(--cream);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(38px, 6vw, 70px);
+      line-height: 1;
+      letter-spacing: -2px;
+      text-transform: uppercase;
+    }
+
+    .section-heading p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 19px;
+    }
+
+    .button {
+      display: inline-flex;
+      min-height: 49px;
+      align-items: center;
+      justify-content: center;
+      padding: 13px 22px;
+      border: 1px solid var(--gold);
+      border-radius: 999px;
+      background:
+        linear-gradient(
+          135deg,
+          var(--bright-gold),
+          #b88a34
+        );
+      box-shadow:
+        0 8px 28px rgba(215, 173, 81, 0.18);
+      color: #140e05;
+      text-decoration: none;
+      font-weight: 900;
+    }
+
+    .button.secondary {
+      background: rgba(5, 5, 5, 0.58);
+      color: var(--cream);
+    }
+
+    .button:hover {
+      transform: translateY(-2px);
+    }
+
+    /* HEADER */
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid var(--line);
+      background: rgba(5, 5, 5, 0.92);
+      backdrop-filter: blur(14px);
+    }
+
+    .nav {
+      min-height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 22px;
+    }
+
+    .brand {
+      color: var(--cream);
+      text-decoration: none;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: 2px;
+    }
+
+    .brand span {
+      color: var(--bright-gold);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 21px;
+    }
+
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .nav-links a:hover {
+      color: var(--bright-gold);
+    }
+
+    .nav-links .correction-link {
+      padding: 9px 15px;
+      border: 1px solid var(--gold);
+      border-radius: 999px;
+    }
+
+    /* HERO */
+
+    .research-hero {
+      position: relative;
+      padding: 76px 0 92px;
+    }
+
+    .research-hero::before {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      content: "";
+      background:
+        radial-gradient(
+          circle at 18% 30%,
+          rgba(243, 212, 125, 0.12),
+          transparent 390px
+        );
+    }
+
+    .hero-grid {
+      position: relative;
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      align-items: center;
+      gap: 56px;
+    }
+
+    .research-hero h1 {
+      margin: 0 0 22px;
+      color: var(--cream);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(52px, 8vw, 104px);
+      line-height: 0.92;
+      letter-spacing: -4px;
+      text-transform: uppercase;
+    }
+
+    .hero-lead {
+      max-width: 720px;
+      margin: 0 0 28px;
+      color: var(--muted);
+      font-size: clamp(18px, 2.3vw, 22px);
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .hero-art {
+      position: relative;
+      padding: 9px;
+      border: 1px solid var(--gold);
+      background: #050505;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-art::before,
+    .hero-art::after {
+      position: absolute;
+      width: 64px;
+      height: 64px;
+      content: "";
+    }
+
+    .hero-art::before {
+      top: -5px;
+      left: -5px;
+      border-top: 3px solid var(--bright-gold);
+      border-left: 3px solid var(--bright-gold);
+    }
+
+    .hero-art::after {
+      right: -5px;
+      bottom: -5px;
+      border-right: 3px solid var(--bright-gold);
+      border-bottom: 3px solid var(--bright-gold);
+    }
+
+    /* PROMISE */
+
+    .promise-grid {
+      display: grid;
+      grid-template-columns: 0.92fr 1.08fr;
+      align-items: center;
+      gap: 54px;
+    }
+
+    .framed-image {
+      padding: 8px;
+      border: 1px solid var(--gold);
+      background: #050505;
+      box-shadow: var(--shadow);
+    }
+
+    .promise-copy {
+      padding: 36px;
+      border: 1px solid var(--line);
+      background:
+        linear-gradient(
+          145deg,
+          rgba(31, 26, 16, 0.96),
+          rgba(10, 10, 10, 0.96)
+        );
+      box-shadow: var(--shadow);
+    }
+
+    .promise-copy h2 {
+      margin: 0 0 21px;
+      color: var(--cream);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(38px, 5vw, 62px);
+      line-height: 1;
+      text-transform: uppercase;
+    }
+
+    .promise-copy p {
+      color: var(--muted);
+      font-size: 18px;
+    }
+
+    .promise-quote {
+      padding-left: 22px;
+      border-left: 4px solid var(--gold);
+      color: var(--cream) !important;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 21px !important;
+      font-style: italic;
+    }
+
+    /* CLAIM LABELS */
+
+    .label-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
+    }
+
+    .label-card {
+      padding: 29px;
+      border: 1px solid var(--line);
+      background:
+        linear-gradient(
+          160deg,
+          var(--panel-light),
+          var(--deep-black)
+        );
+      box-shadow:
+        0 15px 45px rgba(0, 0, 0, 0.38);
+    }
+
+    .label-name {
+      display: inline-block;
+      margin-bottom: 16px;
+      padding: 7px 11px;
+      border: 1px solid var(--gold);
+      color: var(--bright-gold);
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .label-card h3 {
+      margin: 0 0 12px;
+      color: var(--cream);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 25px;
+      text-transform: uppercase;
+    }
+
+    .label-card p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    /* SOURCE LADDER */
+
+    .source-list {
+      display: grid;
+      gap: 16px;
+    }
+
+    .source-level {
+      display: grid;
+      grid-template-columns: 72px 1fr;
+      gap: 20px;
+      padding: 25px;
+      border: 1px solid var(--line);
+      background:
+        linear-gradient(
+          145deg,
+          rgba(25, 23, 17, 0.95),
+          rgba(7, 7, 7, 0.95)
+        );
+    }
+
+    .source-number {
+      color: var(--bright-gold);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 36px;
+      font-weight: bold;
+      line-height: 1;
+    }
+
+    .source-level h3 {
+      margin: 0 0 9px;
+      color: var(--cream);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 23px;
+      text-transform: uppercase;
+    }
+
+    .source-level p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    /* RESEARCH AREAS */
+
+    .topic-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .topic-card {
+      padding: 28px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+    }
+
+    .topic-card h3 {
+      margin: 0 0 12px;
+      color: var(--cream);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 23px;
+      line-height: 1.1;
+      text-transform: uppercase;
+    }
+
+    .topic-card p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    /* CORRECTIONS */
+
+    .corrections-panel {
+      padding: 38px;
+      border: 1px solid var(--gold);
+      background:
+        radial-gradient(
+          circle at 85% 15%,
+          rgba(215, 173, 81, 0.16),
+          transparent 320px
+        ),
+        var(--panel);
+      box-shadow: var(--shadow);
+    }
+
+    .corrections-panel h2 {
+      margin: 0 0 18px;
+      color: var(--cream);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(38px, 5vw, 62px);
+      line-height: 1;
+      text-transform: uppercase;
+    }
+
+    .corrections-panel p {
+      color: var(--muted);
+      font-size: 18px;
+    }
+
+    .correction-status {
+      display: inline-block;
+      margin: 9px 0 20px;
+      padding: 8px 13px;
+      border: 1px solid var(--gold);
+      border-radius: 999px;
+      color: var(--bright-gold);
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .correction-rules {
+      margin: 24px 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .correction-rules li {
+      position: relative;
+      margin-bottom: 12px;
+      padding-left: 28px;
+      color: var(--cream);
+      font-weight: 700;
+    }
+
+    .correction-rules li::before {
+      position: absolute;
+      left: 0;
+      color: var(--gold);
+      content: "◆";
+    }
+
+    /* AI DISCLOSURE */
+
+    .ai-grid {
+      display: grid;
+      grid-template-columns: 1fr 0.92fr;
+      align-items: center;
+      gap: 48px;
+    }
+
+    .ai-copy h2 {
+      margin: 0 0 18px;
+      color: var(--cream);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(38px, 5vw, 62px);
+      line-height: 1;
+      text-transform: uppercase;
+    }
+
+    .ai-copy p {
+      color: var(--muted);
+      font-size: 18px;
+    }
+
+    .ai-box {
+      padding: 30px;
+      border: 1px solid var(--line);
+      background:
+        linear-gradient(
+          145deg,
+          #1b170f,
+          #090909
+        );
+    }
+
+    .ai-box h3 {
+      margin: 0 0 14px;
+      color: var(--cream);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 25px;
+      text-transform: uppercase;
+    }
+
+    .ai-box ul {
+      margin: 0;
+      padding-left: 21px;
+      color: var(--muted);
+    }
+
+    .ai-box li {
+      margin-bottom: 10px;
+    }
+
+    /* CONTACT */
+
+    .contact-panel {
+      padding: 49px 31px;
+      border: 1px solid var(--gold);
+      background:
+        radial-gradient(
+          circle at 50% 0%,
+          rgba(215, 173, 81, 0.18),
+          transparent 390px
+        ),
+        var(--panel);
+      text-align: center;
+      box-shadow: var(--shadow);
+    }
+
+    .contact-panel h2 {
+      margin: 0 0 16px;
+      color: var(--cream);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(38px, 6vw, 66px);
+      line-height: 1;
+      text-transform: uppercase;
+    }
+
+    .contact-panel p {
+      max-width: 760px;
+      margin: 0 auto 25px;
+      color: var(--muted);
+      font-size: 18px;
+    }
+
+    /* FOOTER */
+
+    footer {
+      padding: 36px 0;
+      border-top: 1px solid var(--line);
+      color: #8e8675;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    footer strong {
+      color: var(--gold);
+    }
+
+    /* MOBILE */
+
+    @media (max-width: 850px) {
+      .hero-grid,
+      .promise-grid,
+      .ai-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .research-hero .hero-copy {
+        text-align: center;
+      }
+
+      .hero-actions {
+        justify-content: center;
+      }
+
+      .hero-art {
+        max-width: 600px;
+        margin: 0 auto;
+      }
+
+      .label-grid,
+      .topic-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .nav-links a:not(.correction-link) {
+        display: none;
+      }
+
+      .research-hero h1 {
+        letter-spacing: -2px;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .section {
+        padding: 70px 0;
+      }
+
+      .promise-copy,
+      .label-card,
+      .source-level,
+      .topic-card,
+      .corrections-panel,
+      .ai-box,
+      .contact-panel {
+        padding: 24px 20px;
+      }
+
+      .research-hero h1 {
+        font-size: 51px;
+      }
+
+      .brand {
+        font-size: 15px;
+      }
+
+      .source-level {
+        grid-template-columns: 48px 1fr;
+      }
+
+      .source-number {
+        font-size: 29px;
+      }
+    }
+  </style>
+
+  <link rel="canonical" href="https://bobsome1.com/book/research.html">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Research &amp; Corrections | Project Unveiled">
+  <meta property="og:description" content="See how Project Unveiled evaluates claims, ranks sources, labels uncertainty, uses AI responsibly, and records meaningful factual corrections publicly.">
+  <meta property="og:url" content="https://bobsome1.com/book/research.html">
+  <meta property="og:image" content="https://bobsome1.com/images/open-your-eyes.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Research &amp; Corrections | Project Unveiled">
+  <meta name="twitter:description" content="See how Project Unveiled evaluates claims, ranks sources, labels uncertainty, uses AI responsibly, and records meaningful factual corrections publicly.">
+  <meta name="twitter:image" content="https://bobsome1.com/images/open-your-eyes.jpg">
+
+<style id="project-unveiled-traffic-layer-styles">
+/* PROJECT-UNVEILED-TRAFFIC-DONATION-LAYER */
+.pu-support-footer{max-width:1100px;margin:18px auto 0;padding:14px 18px;border-top:1px solid rgba(215,173,81,.4);display:flex;gap:12px;justify-content:center;align-items:center;flex-wrap:wrap;font-family:Arial,sans-serif;font-size:14px}.pu-support-footer a{color:#f3d47d;text-decoration:underline;text-underline-offset:3px}.pu-support-footer span{color:#8d7b55}.pu-final-support-cta,.pu-reader-support-cta{max-width:980px;margin:34px auto;padding:26px;border:1px solid #d7ad51;background:linear-gradient(135deg,#15110b,#080706);color:#f4ead2;text-align:center;box-shadow:0 18px 55px rgba(0,0,0,.35)}.pu-final-support-cta h2,.pu-reader-support-cta h2{margin:.2rem 0 .7rem;color:#f3d47d;font-family:Georgia,"Times New Roman",serif}.pu-final-support-cta p,.pu-reader-support-cta p{max-width:760px;margin:.6rem auto}.pu-conversion-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:18px}.pu-conversion-actions a{display:inline-flex;align-items:center;justify-content:center;padding:12px 18px;border:1px solid #d7ad51;background:#d7ad51;color:#090806!important;font-weight:800;text-decoration:none!important}.pu-conversion-actions a.secondary{background:transparent;color:#f3d47d!important}.pu-support-legal{font-size:13px;color:#bdb49f}.pu-support-float{position:fixed;right:15px;bottom:15px;z-index:9998;padding:10px 14px;border:1px solid #d7ad51;border-radius:999px;background:rgba(8,7,6,.95);color:#f3d47d!important;text-decoration:none!important;font:700 13px Arial,sans-serif;box-shadow:0 8px 28px rgba(0,0,0,.5)}@media(max-width:650px){.pu-final-support-cta,.pu-reader-support-cta{margin:24px 14px;padding:21px 16px}.pu-support-float{right:10px;bottom:10px;padding:9px 12px}}
+</style>
+</head>
+
+<body>
+
+  <header class="site-header">
+
+    <div class="container nav">
+
+      <a class="brand" href="/">
+        <span>PROJECT</span> UNVEILED
+      </a>
+
+      <nav class="nav-links" aria-label="Primary navigation"><a href="/">Home</a><a href="/book/read/">Reader</a><a href="/book/">Book</a><a href="/book/timeline.html">Timeline</a><a href="/book/research.html">Research</a><a href="/book/updates.html">Updates</a><a href="/book/read/support-right-hand.html">Support</a></nav>
+
+    </div>
+
+  </header>
+
+  <main>
+
+    <!-- HERO -->
+
+    <section class="research-hero">
+
+      <div class="container hero-grid">
+
+        <div class="hero-copy">
+
+          <div class="eyebrow">
+            Project Unveiled Transparency Hub
+          </div>
+
+          <h1>
+            Research &
+            <span class="gold">Corrections.</span>
+          </h1>
+
+          <p class="hero-lead">
+            This page explains how claims are evaluated, how sources
+            are ranked, how uncertainty is labeled, and how meaningful
+            factual corrections will be handled publicly.
+          </p>
+
+          <div class="hero-actions">
+
+            <a
+              class="button"
+              href="#standards"
+            >
+              Read the Standards
+            </a>
+
+            <a
+              class="button secondary"
+              href="/book/"
+            >
+              Return to the Book
+            </a>
+
+          </div>
+
+        </div>
+
+        <div class="hero-art">
+
+          <img
+            src="/images/open-your-eyes.jpg"
+            alt="Open your eyes and seek truth"
+          >
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- RESEARCH PROMISE -->
+
+    <section
+      class="section section-dark"
+      id="standards"
+    >
+
+      <div class="container promise-grid">
+
+        <div class="framed-image">
+
+          <img
+            src="/images/tear-the-veil.jpg"
+            alt="Tear the Veil Project Unveiled artwork"
+            loading="lazy"
+          >
+
+        </div>
+
+        <div class="promise-copy">
+
+          <div class="eyebrow">
+            The Research Promise
+          </div>
+
+          <h2>
+            Evidence Before Certainty.
+          </h2>
+
+          <p class="promise-quote">
+            Facts will be stated as facts. Interpretation will be
+            labeled as interpretation. Uncertainty will not be
+            disguised as proof.
+          </p>
+
+          <p>
+            Project Unveiled is built to withstand honest scrutiny.
+            The goal is not to defend every early draft or personal
+            theory. The goal is to identify what can be supported,
+            correct what cannot, and make the reasoning visible.
+          </p>
+
+          <p>
+            When the evidence is incomplete, conflicting, translated
+            differently, or dependent on later tradition, that
+            limitation belongs in the discussion.
+          </p>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- CLAIM LABELS -->
+
+    <section
+      class="section"
+      id="labels"
+    >
+
+      <div class="container">
+
+        <div class="section-heading center">
+
+          <div class="eyebrow">
+            Claim Classification
+          </div>
+
+          <h2>
+            Every Claim Has a Type
+          </h2>
+
+          <p>
+            These labels prevent documented history, reasonable
+            interpretation, theology, and speculation from being
+            blended into one category.
+          </p>
+
+        </div>
+
+        <div class="label-grid">
+
+          <article class="label-card">
+
+            <div class="label-name">
+              Documented Fact
+            </div>
+
+            <h3>
+              Directly Supported
+            </h3>
+
+            <p>
+              A claim supported by identifiable primary evidence,
+              reliable documentation, or strong agreement among
+              qualified sources.
+            </p>
+
+          </article>
+
+          <article class="label-card">
+
+            <div class="label-name">
+              Historical Interpretation
+            </div>
+
+            <h3>
+              Evidence-Based Reading
+            </h3>
+
+            <p>
+              A conclusion drawn from evidence but still dependent
+              on interpretation, context, assumptions, or competing
+              scholarly explanations.
+            </p>
+
+          </article>
+
+          <article class="label-card">
+
+            <div class="label-name">
+              Theological Belief
+            </div>
+
+            <h3>
+              Faith Claim
+            </h3>
+
+            <p>
+              A spiritual or theological conviction that may be
+              meaningful and important but is not presented as
+              independently proven historical fact.
+            </p>
+
+          </article>
+
+          <article class="label-card">
+
+            <div class="label-name">
+              Open Question
+            </div>
+
+            <h3>
+              Not Yet Established
+            </h3>
+
+            <p>
+              A possibility, suspicion, disputed issue, or unresolved
+              question that requires more evidence before a conclusion
+              is justified.
+            </p>
+
+          </article>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- SOURCE LADDER -->
+
+    <section
+      class="section section-dark"
+      id="sources"
+    >
+
+      <div class="container">
+
+        <div class="section-heading">
+
+          <div class="eyebrow">
+            Source Policy
+          </div>
+
+          <h2>
+            The Evidence Ladder
+          </h2>
+
+          <p>
+            Sources are not equal merely because they appear in print,
+            online, in a documentary, or in a confident presentation.
+          </p>
+
+        </div>
+
+        <div class="source-list">
+
+          <article class="source-level">
+
+            <div class="source-number">
+              01
+            </div>
+
+            <div>
+
+              <h3>
+                Primary Evidence
+              </h3>
+
+              <p>
+                Ancient manuscripts, inscriptions, archaeological
+                records, official documents, contemporary witnesses,
+                letters, legal records, and original-language texts.
+              </p>
+
+            </div>
+
+          </article>
+
+          <article class="source-level">
+
+            <div class="source-number">
+              02
+            </div>
+
+            <div>
+
+              <h3>
+                Qualified Scholarly Analysis
+              </h3>
+
+              <p>
+                Peer-reviewed research, academic monographs, critical
+                editions, recognized historians, archaeologists,
+                linguists, manuscript specialists, and subject experts.
+              </p>
+
+            </div>
+
+          </article>
+
+          <article class="source-level">
+
+            <div class="source-number">
+              03
+            </div>
+
+            <div>
+
+              <h3>
+                Responsible Secondary Sources
+              </h3>
+
+              <p>
+                Encyclopedias, university resources, museum materials,
+                reputable historical summaries, and publications that
+                clearly identify their sources.
+              </p>
+
+            </div>
+
+          </article>
+
+          <article class="source-level">
+
+            <div class="source-number">
+              04
+            </div>
+
+            <div>
+
+              <h3>
+                Leads Requiring Verification
+              </h3>
+
+              <p>
+                Videos, social-media posts, unsourced websites,
+                documentaries, sermons, podcasts, personal testimony,
+                and AI-generated summaries may provide leads but are
+                not final authorities.
+              </p>
+
+            </div>
+
+          </article>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ACTIVE RESEARCH -->
+
+    <section class="section">
+
+      <div class="container">
+
+        <div class="section-heading center">
+
+          <div class="eyebrow">
+            Active Research Areas
+          </div>
+
+          <h2>
+            Questions Under Examination
+          </h2>
+
+          <p>
+            Inclusion here does not mean a conclusion has already
+            been reached. These areas require careful source review.
+          </p>
+
+        </div>
+
+        <div class="topic-grid">
+
+          <article class="topic-card">
+
+            <h3>
+              Canon and the Shelf
+            </h3>
+
+            <p>
+              How writings were preserved, circulated, debated,
+              accepted, excluded, translated, and later treated
+              as authoritative.
+            </p>
+
+          </article>
+
+          <article class="topic-card">
+
+            <h3>
+              Rome and Imperial Power
+            </h3>
+
+            <p>
+              The relationship between Christianity, emperors,
+              councils, political unity, law, patronage, and public
+              religious authority.
+            </p>
+
+          </article>
+
+          <article class="topic-card">
+
+            <h3>
+              Early Christian Disputes
+            </h3>
+
+            <p>
+              Arius, Athanasius, competing Christologies, doctrinal
+              conflict, council decisions, and later historical memory.
+            </p>
+
+          </article>
+
+          <article class="topic-card">
+
+            <h3>
+              Voices Beyond the Shelf
+            </h3>
+
+            <p>
+              Dead Sea Scrolls, Nag Hammadi writings, apocrypha,
+              pseudepigrapha, manuscript discoveries, and what those
+              texts can and cannot establish.
+            </p>
+
+          </article>
+
+          <article class="topic-card">
+
+            <h3>
+              Translation and Tradition
+            </h3>
+
+            <p>
+              How language, doctrine, custom, interpretation, and
+              institutional interests can influence how texts are read.
+            </p>
+
+          </article>
+
+          <article class="topic-card">
+
+            <h3>
+              Fruit and Authority
+            </h3>
+
+            <p>
+              Whether power, wealth, platform, success, mercy, justice,
+              humility, freedom, and love reveal the character of a
+              teaching or institution.
+            </p>
+
+          </article>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- PUBLIC QUESTION FILES -->
+
+    <section class="section section-dark" id="question-files">
+
+      <div class="container">
+
+        <div class="section-heading center">
+
+          <div class="eyebrow">
+            Public Question Files
+          </div>
+
+          <h2>
+            Follow a Claim From Search to Source
+          </h2>
+
+          <p>
+            These compact investigations answer the common question first,
+            expose the evidence trail, and connect readers to the deeper chapters.
+          </p>
+
+        </div>
+
+        <div class="topic-grid">
+
+          <article class="topic-card">
+
+            <h3>
+              What Did Nicaea Actually Decide?
+            </h3>
+
+            <p>
+              The creed, Arius, Easter, disciplinary canons, imperial involvement,
+              and the missing evidence behind the claim that Nicaea created the Bible.
+            </p>
+
+            <p><a href="/questions/what-did-nicaea-decide.html">Open Question File 01 →</a></p>
+
+          </article>
+
+          <article class="topic-card">
+
+            <h3>
+              Who Decided Which Books Belong in the Bible?
+            </h3>
+
+            <p>
+              Trace circulation, accepted and disputed books, Athanasius’s 367 list,
+              regional councils, and the collections inherited by different traditions.
+            </p>
+
+            <p><a href="/questions/who-decided-bible-canon.html">Open Question File 02 →</a></p>
+
+          </article>
+
+          <article class="topic-card">
+
+            <h3>
+              Claim-Level Evidence Desks
+            </h3>
+
+            <p>
+              Chapters Three, Four, and Eleven now label documented record,
+              source-critical caution, Project interpretation, and open questions.
+            </p>
+
+            <p><a href="/book/read/chapter-04.html#chapter-four-evidence-title">Inspect the Chapter Four evidence →</a></p>
+
+          </article>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- CORRECTIONS -->
+
+    <section
+      class="section section-dark"
+      id="corrections"
+    >
+
+      <div class="container">
+
+        <div class="corrections-panel">
+
+          <div class="eyebrow">
+            Public Corrections Log
+          </div>
+
+          <h2>
+            Errors Will Be Corrected Openly.
+          </h2>
+
+          <div class="correction-status">
+            No Published Corrections Yet
+          </div>
+
+          <p>
+            This log will record meaningful factual corrections made
+            to publicly released Project Unveiled material. Minor
+            spelling, formatting, or punctuation edits may be corrected
+            without a formal entry.
+          </p>
+
+          <ul class="correction-rules">
+
+            <li>
+              The original claim will be identified.
+            </li>
+
+            <li>
+              The corrected information will be stated clearly.
+            </li>
+
+            <li>
+              The reason for the change will be explained.
+            </li>
+
+            <li>
+              Supporting sources will be identified when available.
+            </li>
+
+            <li>
+              Corrections will not be hidden merely to protect pride.
+            </li>
+
+          </ul>
+
+          <a
+            class="button"
+            href="mailto:thebobsomest1@gmail.com?subject=Project%20Unveiled%20Correction%20or%20Source&body=Page%20or%20claim%20in%20question%3A%0A%0ASuggested%20correction%3A%0A%0ASupporting%20source%20or%20evidence%3A%0A"
+          >
+            Submit Evidence or a Correction
+          </a>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- AI DISCLOSURE -->
+
+    <section class="section">
+
+      <div class="container ai-grid">
+
+        <div class="ai-copy">
+
+          <div class="eyebrow">
+            Transparency Disclosure
+          </div>
+
+          <h2>
+            How AI Is Used
+          </h2>
+
+          <p>
+            AI tools may assist with organization, comparison,
+            outlining, editing, coding, source discovery, and
+            research planning.
+          </p>
+
+          <p>
+            AI output is not treated as historical evidence or as
+            an authority merely because it sounds confident.
+            Important claims must be checked against identifiable
+            sources before final publication.
+          </p>
+
+        </div>
+
+        <div class="ai-box">
+
+          <h3>
+            AI May Assist With
+          </h3>
+
+          <ul>
+
+            <li>
+              Organizing research questions
+            </li>
+
+            <li>
+              Comparing competing explanations
+            </li>
+
+            <li>
+              Drafting and editing language
+            </li>
+
+            <li>
+              Building the public website
+            </li>
+
+            <li>
+              Locating possible sources for review
+            </li>
+
+            <li>
+              Identifying claims requiring verification
+            </li>
+
+          </ul>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- CONTACT -->
+
+    <section class="section section-dark">
+
+      <div class="container">
+
+        <div class="contact-panel">
+
+          <div class="eyebrow">
+            Truth Can Withstand Examination
+          </div>
+
+          <h2>
+            Bring the Evidence.
+          </h2>
+
+          <p>
+            Serious criticism, stronger sources, factual corrections,
+            competing interpretations, and documented challenges are
+            welcome when offered honestly.
+          </p>
+
+          <a
+            class="button"
+            href="mailto:thebobsomest1@gmail.com?subject=Project%20Unveiled%20Research"
+          >
+            Contact Robert J. Hayes
+          </a>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <footer>
+
+    <div class="container">
+
+      <strong>Project Unveiled</strong>
+      by Robert J. Hayes
+
+      <br>
+
+      © 2026 Bobsome1.com —
+      Facts as facts, interpretations labeled, uncertainty admitted.
+
+    </div>
+
+  <div class="pu-support-footer" aria-label="Project support and privacy links"><a href="/book/read/support-right-hand.html" data-pu-event="support_page_click">Support the Work</a><span aria-hidden="true">◆</span><a href="/privacy.html">Privacy</a></div>
+</footer>
+
+<script id="project-unveiled-traffic-tracker" src="/project-unveiled-analytics/tracker.js?v=2" defer></script>
+<a class="pu-support-float" href="/book/read/support-right-hand.html" data-pu-event="support_page_click" aria-label="Support Project Unveiled and Right Hand Ministry">Support the Work</a>
+</body>
+</html>

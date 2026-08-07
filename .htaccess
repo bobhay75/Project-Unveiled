@@ -1,0 +1,39 @@
+# Bobsome1 public-root security layer — 2026-08-02
+# Prevent directory browsing.
+Options -Indexes
+
+# Block downloadable deployment packages, database files, checksums, logs, and backups.
+<FilesMatch "(?i)\.(zip|sha256|sql|bak|old|log)$">
+  Require all denied
+</FilesMatch>
+
+# Block setup and deployment artifacts that should never be public.
+<FilesMatch "(?i)(installer\.php|install-project-unveiled-structured-data\.php|README-FIRST\.txt|AUDIT-RESULTS\.txt|INSTALL-MANIFEST\.json|VALIDATION-MANIFEST\.json|UPLOAD-INSTRUCTIONS\.txt)$">
+  Require all denied
+</FilesMatch>
+
+RewriteEngine On
+
+# Keep one secure, indexable public origin.
+RewriteCond %{HTTPS} !=on [OR]
+RewriteCond %{HTTP_HOST} ^www\.bobsome1\.com$ [NC]
+RewriteRule ^ https://bobsome1.com%{REQUEST_URI} [R=301,L,NE]
+
+# Block old installer payloads and test application folders while leaving the live site alone.
+RewriteRule ^(?:_pu_[^/]+|pu-signup-v73|truth-unveiled-os-0\.0\.1)(?:/|$) - [F,L,NC]
+
+# Block dated HTML backup copies from direct public access.
+RewriteRule (^|/)[^/]*BACKUP[^/]*\.html$ - [F,L,NC]
+
+# Block internal delivery notes and server logs that have no public purpose.
+<FilesMatch "(?i)^(?:CHANGELOG|INSTALL|SOURCE_NOTES|VALIDATION|SHA256SUMS)(?:\.[^.]+)?$|^error_log$">
+  Require all denied
+</FilesMatch>
+
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=()"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set Strict-Transport-Security "max-age=31536000"
+</IfModule>

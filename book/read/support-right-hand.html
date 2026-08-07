@@ -1,0 +1,2104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta name="description" content="Support the practical outreach, printing, distribution, technology, education, and continued writing connected to Project Unveiled and Right Hand Ministry.">
+
+  <title>Support Right Hand Ministry | Project Unveiled</title>
+
+  <style>
+    :root {
+      --black: #050505;
+      --deep-black: #090909;
+      --panel: #11100d;
+      --panel-light: #191711;
+      --gold: #d7ad51;
+      --bright-gold: #f3d47d;
+      --cream: #f4ead2;
+      --white: #fffdf7;
+      --muted: #c5bda9;
+      --line: rgba(215, 173, 81, 0.38);
+      --shadow: 0 25px 70px rgba(0, 0, 0, 0.65);
+      --max-width: 1180px;
+      --reading-width: 790px;
+      --reader-scale: 1;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      overflow-x: hidden;
+      background:
+        radial-gradient(
+          circle at 50% 0%,
+          rgba(215, 173, 81, 0.16),
+          transparent 540px
+        ),
+        linear-gradient(
+          180deg,
+          #050505 0%,
+          #0d0906 45%,
+          #050505 100%
+        );
+      color: var(--white);
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.7;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .container {
+      width: min(calc(100% - 34px), var(--max-width));
+      margin: 0 auto;
+    }
+
+    .reading-container {
+      width: min(calc(100% - 34px), var(--reading-width));
+      margin: 0 auto;
+    }
+
+    .gold {
+      color: var(--bright-gold);
+    }
+
+    .eyebrow {
+      margin-bottom: 13px;
+      color: var(--bright-gold);
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+    }
+
+    .button {
+      display: inline-flex;
+      min-height: 48px;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 21px;
+      border: 1px solid var(--gold);
+      border-radius: 999px;
+      background:
+        linear-gradient(
+          135deg,
+          var(--bright-gold),
+          #b88a34
+        );
+      color: #140e05;
+      text-decoration: none;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .button.secondary {
+      background: rgba(5, 5, 5, 0.7);
+      color: var(--cream);
+    }
+
+    .button.disabled {
+      border-color: rgba(215, 173, 81, 0.3);
+      background: rgba(255, 255, 255, 0.03);
+      color: #827968;
+      cursor: default;
+    }
+
+    .button:hover:not(.disabled) {
+      transform: translateY(-2px);
+    }
+
+    .reading-progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 1000;
+      width: 0;
+      height: 4px;
+      background:
+        linear-gradient(
+          90deg,
+          #9d7227,
+          var(--bright-gold)
+        );
+      box-shadow:
+        0 0 15px rgba(243, 212, 125, 0.6);
+    }
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid var(--line);
+      background: rgba(5, 5, 5, 0.94);
+      backdrop-filter: blur(14px);
+    }
+
+    .nav {
+      min-height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .brand {
+      color: var(--cream);
+      text-decoration: none;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 17px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      white-space: nowrap;
+    }
+
+    .brand span {
+      color: var(--bright-gold);
+    }
+
+    .nav-links {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 18px;
+    }
+
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .nav-links a:hover {
+      color: var(--bright-gold);
+    }
+
+    .reader-toolbar {
+      border-bottom: 1px solid var(--line);
+      background: rgba(17, 16, 13, 0.96);
+    }
+
+    .toolbar-inner {
+      min-height: 54px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .chapter-position {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .text-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .text-control {
+      min-width: 40px;
+      min-height: 36px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: #090806;
+      color: var(--cream);
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .text-control:hover {
+      border-color: var(--gold);
+      color: var(--bright-gold);
+    }
+
+    .chapter-hero {
+      position: relative;
+      padding: 72px 0 88px;
+    }
+
+    .chapter-hero::before {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      content: "";
+      background:
+        radial-gradient(
+          circle at 18% 30%,
+          rgba(243, 212, 125, 0.13),
+          transparent 400px
+        );
+    }
+
+    .hero-grid {
+      position: relative;
+      display: grid;
+      grid-template-columns: 1fr 0.9fr;
+      align-items: center;
+      gap: 56px;
+    }
+
+    .chapter-label {
+      display: inline-block;
+      margin-bottom: 19px;
+      padding: 7px 12px;
+      border: 1px solid var(--gold);
+      border-radius: 999px;
+      color: var(--bright-gold);
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .chapter-hero h1 {
+      margin: 0 0 22px;
+      color: var(--cream);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(46px, 7.5vw, 92px);
+      line-height: 0.95;
+      letter-spacing: -3px;
+      text-transform: uppercase;
+    }
+
+    .hero-lead {
+      max-width: 700px;
+      margin: 0 0 26px;
+      color: var(--muted);
+      font-size: clamp(18px, 2.2vw, 22px);
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .hero-art {
+      position: relative;
+      padding: 9px;
+      border: 1px solid var(--gold);
+      background: #050505;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-art::before,
+    .hero-art::after {
+      position: absolute;
+      width: 64px;
+      height: 64px;
+      content: "";
+    }
+
+    .hero-art::before {
+      top: -5px;
+      left: -5px;
+      border-top: 3px solid var(--bright-gold);
+      border-left: 3px solid var(--bright-gold);
+    }
+
+    .hero-art::after {
+      right: -5px;
+      bottom: -5px;
+      border-right: 3px solid var(--bright-gold);
+      border-bottom: 3px solid var(--bright-gold);
+    }
+
+    .art-label {
+      margin: 12px 0 0;
+      color: #918875;
+      font-size: 12px;
+      text-align: center;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .edition-wrap {
+      padding: 28px 0;
+      border-block: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .edition-notice {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 17px;
+      align-items: start;
+      padding: 22px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+    }
+
+    .edition-symbol {
+      color: var(--bright-gold);
+      font-size: 25px;
+    }
+
+    .edition-notice strong {
+      color: var(--cream);
+    }
+
+    .edition-notice p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .chapter-reading {
+      padding: 78px 0;
+    }
+
+    .chapter-text {
+      color: #e8dfca;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: calc(20px * var(--reader-scale));
+      line-height: 1.88;
+    }
+
+    .chapter-text p {
+      margin: 0 0 1.45em;
+    }
+
+    .short-line {
+      margin-bottom: 0.55em !important;
+      color: var(--cream);
+      font-size: calc(22px * var(--reader-scale));
+      font-weight: bold;
+    }
+
+    .question {
+      color: var(--cream);
+      font-size: calc(21px * var(--reader-scale));
+      font-style: italic;
+    }
+
+    .central-question {
+      margin: 48px 0;
+      padding: 42px 25px;
+      border: 1px solid var(--gold);
+      background:
+        radial-gradient(
+          circle at 50% 0%,
+          rgba(215, 173, 81, 0.2),
+          transparent 320px
+        ),
+        var(--panel);
+      box-shadow: var(--shadow);
+      color: var(--bright-gold);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: calc(34px * var(--reader-scale));
+      font-weight: bold;
+      line-height: 1.25;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    .tradition-line {
+      margin-bottom: 0.85em !important;
+      padding-left: 18px;
+      border-left: 2px solid #8d7042;
+      color: #ded2ba;
+    }
+
+    .fruit-line {
+      margin-bottom: 0.65em !important;
+      color: var(--cream);
+      font-size: calc(21px * var(--reader-scale));
+      font-weight: bold;
+    }
+
+    .king-test {
+      margin-bottom: 0.85em !important;
+      padding: 12px 16px;
+      border-left: 3px solid var(--gold);
+      background: rgba(215, 173, 81, 0.06);
+      color: var(--cream);
+    }
+
+    .tear-line {
+      margin-bottom: 0.75em !important;
+      padding-left: 18px;
+      border-left: 3px solid var(--gold);
+      color: var(--cream);
+      font-weight: bold;
+    }
+
+    .connections {
+      padding: 78px 0;
+      border-block: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .section-heading {
+      max-width: 830px;
+      margin-bottom: 38px;
+    }
+
+    .section-heading h2 {
+      margin: 0 0 17px;
+      color: var(--cream);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(37px, 5.5vw, 64px);
+      line-height: 1;
+      text-transform: uppercase;
+    }
+
+    .section-heading p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 18px;
+    }
+
+    .connection-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 19px;
+    }
+
+    .connection-card {
+      padding: 28px;
+      border: 1px solid var(--line);
+      background:
+        linear-gradient(
+          145deg,
+          var(--panel-light),
+          var(--deep-black)
+        );
+    }
+
+    .connection-card h3 {
+      margin: 0 0 12px;
+      color: var(--cream);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 24px;
+      text-transform: uppercase;
+    }
+
+    .connection-card p {
+      margin: 0 0 15px;
+      color: var(--muted);
+    }
+
+    .connection-card p:last-child {
+      margin-bottom: 0;
+    }
+
+    .status-tag {
+      display: inline-block;
+      margin-bottom: 16px;
+      padding: 6px 10px;
+      border: 1px solid var(--gold);
+      color: var(--bright-gold);
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .response-section {
+      padding: 78px 0;
+    }
+
+    .response-panel {
+      padding: 42px 30px;
+      border: 1px solid var(--gold);
+      background:
+        radial-gradient(
+          circle at 50% 0%,
+          rgba(215, 173, 81, 0.17),
+          transparent 380px
+        ),
+        var(--panel);
+      box-shadow: var(--shadow);
+      text-align: center;
+    }
+
+    .response-panel h2 {
+      margin: 0 0 16px;
+      color: var(--cream);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(36px, 5.5vw, 62px);
+      line-height: 1;
+      text-transform: uppercase;
+    }
+
+    .response-panel p {
+      max-width: 760px;
+      margin: 0 auto 25px;
+      color: var(--muted);
+      font-size: 18px;
+    }
+
+    .response-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .chapter-navigation {
+      padding: 36px 0 70px;
+    }
+
+    .chapter-nav-inner {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 14px;
+      padding-top: 30px;
+      border-top: 1px solid var(--line);
+    }
+
+    footer {
+      padding: 35px 0;
+      border-top: 1px solid var(--line);
+      color: #8e8675;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    footer strong {
+      color: var(--gold);
+    }
+
+    @media (max-width: 900px) {
+      .hero-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-copy {
+        text-align: center;
+      }
+
+      .hero-actions {
+        justify-content: center;
+      }
+
+      .hero-art {
+        max-width: 600px;
+        margin: 0 auto;
+      }
+
+      .connection-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .chapter-hero h1 {
+        letter-spacing: -2px;
+      }
+    }
+
+    @media (max-width: 650px) {
+      .nav {
+        padding: 14px 0;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .nav-links {
+        justify-content: flex-start;
+        gap: 12px 16px;
+      }
+
+      .toolbar-inner {
+        padding: 9px 0;
+      }
+
+      .chapter-hero {
+        padding: 57px 0 68px;
+      }
+
+      .chapter-hero h1 {
+        font-size: 43px;
+      }
+
+      .edition-notice {
+        grid-template-columns: 1fr;
+      }
+
+      .chapter-reading,
+      .connections,
+      .response-section {
+        padding: 62px 0;
+      }
+
+      .chapter-text {
+        font-size: calc(18px * var(--reader-scale));
+        line-height: 1.78;
+      }
+
+      .central-question {
+        font-size: calc(27px * var(--reader-scale));
+      }
+
+      .connection-card,
+      .response-panel {
+        padding: 24px 20px;
+      }
+
+      .chapter-nav-inner {
+        flex-direction: column;
+      }
+
+      .chapter-nav-inner .button {
+        width: 100%;
+      }
+    }
+  
+    .opening-scripture {
+      margin: 0 0 48px;
+      padding: 32px;
+      border-top: 1px solid var(--gold);
+      border-bottom: 1px solid var(--gold);
+      background:
+        radial-gradient(
+          circle at 50% 0%,
+          rgba(215, 173, 81, 0.14),
+          transparent 300px
+        );
+      color: var(--cream);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: calc(21px * var(--reader-scale));
+      font-style: italic;
+      line-height: 1.7;
+      text-align: center;
+    }
+
+    .calling-line,
+    .one-line,
+    .come-out-line {
+      margin-bottom: 0.85em !important;
+      padding-left: 18px;
+      border-left: 3px solid var(--gold);
+      color: var(--cream);
+    }
+
+    .lie-line {
+      margin-bottom: 0.65em !important;
+      color: #cdbd9c;
+      font-style: italic;
+    }
+
+    .truth-line {
+      margin-bottom: 1em !important;
+      padding: 12px 16px;
+      border-left: 3px solid var(--gold);
+      background: rgba(215, 173, 81, 0.06);
+      color: var(--cream);
+      font-weight: bold;
+    }
+
+    .identity-declaration {
+      margin: 50px 0;
+      padding: 35px 25px;
+      border: 1px solid var(--gold);
+      background:
+        radial-gradient(
+          circle at 50% 0%,
+          rgba(215, 173, 81, 0.21),
+          transparent 340px
+        ),
+        var(--panel);
+      box-shadow: var(--shadow);
+      text-align: center;
+    }
+
+    .identity-declaration p,
+    .identity-line {
+      margin-bottom: 0.65em !important;
+      color: var(--cream);
+      font-size: calc(21px * var(--reader-scale));
+      font-weight: bold;
+    }
+
+    .identity-declaration p:last-child {
+      margin-bottom: 0 !important;
+      color: var(--bright-gold);
+      font-size: calc(26px * var(--reader-scale));
+    }
+
+  
+    .scripture-quote {
+      margin: 24px 0;
+      padding: 24px;
+      border-left: 4px solid var(--gold);
+      background: rgba(215, 173, 81, 0.08);
+      color: var(--cream);
+      font-size: calc(21px * var(--reader-scale));
+      font-style: italic;
+      line-height: 1.65;
+    }
+
+    .test-question,
+    .formula-line,
+    .deserve-line,
+    .imagine-line {
+      margin-bottom: 0.85em !important;
+      padding: 12px 16px;
+      border-left: 3px solid var(--gold);
+      background: rgba(215, 173, 81, 0.055);
+      color: var(--cream);
+    }
+
+    .test-question.contrast {
+      border-left-color: #8d7042;
+      color: #d8ccb4;
+      font-style: italic;
+    }
+
+    .central-question {
+      margin: 48px 0;
+      padding: 42px 25px;
+      border: 1px solid var(--gold);
+      background:
+        radial-gradient(
+          circle at 50% 0%,
+          rgba(215, 173, 81, 0.2),
+          transparent 320px
+        ),
+        var(--panel);
+      box-shadow: var(--shadow);
+      color: var(--bright-gold);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: calc(34px * var(--reader-scale));
+      font-weight: bold;
+      line-height: 1.25;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+  
+    .unique-symbol-art {
+      overflow: hidden;
+      background:
+        radial-gradient(
+          circle at 50% 15%,
+          rgba(243, 212, 125, 0.14),
+          transparent 300px
+        ),
+        #070604;
+    }
+
+    .chapter-symbol {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 760 / 820;
+    }
+
+    .scripture-quote {
+      margin: 24px 0;
+      padding: 24px;
+      border-left: 4px solid var(--gold);
+      background: rgba(215, 173, 81, 0.08);
+      color: var(--cream);
+      font-size: calc(21px * var(--reader-scale));
+      font-style: italic;
+      line-height: 1.65;
+    }
+
+    .truth-source,
+    .test-line,
+    .warning-line {
+      margin-bottom: 0.8em !important;
+      padding-left: 18px;
+      border-left: 3px solid var(--gold);
+      color: var(--cream);
+    }
+
+    .warning-line {
+      border-left-color: #80683d;
+      color: #d6cab1;
+    }
+
+    .discernment-prayer {
+      margin: 48px 0;
+      padding: 34px 25px;
+      border: 1px solid var(--gold);
+      background:
+        radial-gradient(
+          circle at 50% 0%,
+          rgba(215, 173, 81, 0.2),
+          transparent 320px
+        ),
+        var(--panel);
+      box-shadow: var(--shadow);
+      text-align: center;
+    }
+
+    .discernment-prayer p,
+    .prayer-line {
+      margin-bottom: 0.65em !important;
+      color: var(--cream);
+      font-size: calc(22px * var(--reader-scale));
+      font-style: italic;
+      font-weight: bold;
+    }
+
+    .discernment-prayer p:last-child {
+      margin-bottom: 0 !important;
+      color: var(--bright-gold);
+    }
+
+  
+    .unique-symbol-art {
+      overflow: hidden;
+      background:
+        radial-gradient(
+          circle at 50% 25%,
+          rgba(243, 212, 125, 0.13),
+          transparent 320px
+        ),
+        #070604;
+    }
+
+    .chapter-symbol {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 760 / 820;
+    }
+
+    .voice-line,
+    .test-line,
+    .reject-line,
+    .inventory-line {
+      margin-bottom: 0.8em !important;
+      padding-left: 18px;
+      border-left: 3px solid var(--gold);
+      color: var(--cream);
+    }
+
+    .voice-line.warning {
+      border-left-color: #765d33;
+      color: #d0c2a8;
+      font-style: italic;
+    }
+
+    .voice-line.wisdom {
+      background: rgba(215, 173, 81, 0.07);
+      padding-top: 10px;
+      padding-bottom: 10px;
+      font-weight: bold;
+    }
+
+    .reject-line {
+      border-left-color: #a47a32;
+      background: rgba(215, 173, 81, 0.045);
+      padding-top: 10px;
+      padding-bottom: 10px;
+    }
+
+    .inventory-line {
+      margin-bottom: 0.45em !important;
+      color: #d9ceb7;
+    }
+
+    .scripture-quote {
+      margin: 28px 0;
+      padding: 24px;
+      border-left: 4px solid var(--gold);
+      background: rgba(215, 173, 81, 0.08);
+      color: var(--cream);
+      font-size: calc(21px * var(--reader-scale));
+      font-style: italic;
+      line-height: 1.65;
+    }
+
+    .text-section-heading {
+      margin: 2.2em 0 1em;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--gold);
+      color: var(--bright-gold);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: calc(30px * var(--reader-scale));
+      line-height: 1.25;
+    }
+
+  
+    .unique-symbol-art {
+      overflow: hidden;
+      background:
+        radial-gradient(
+          circle at 50% 45%,
+          rgba(243, 212, 125, 0.14),
+          transparent 330px
+        ),
+        #070604;
+    }
+
+    .chapter-symbol {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 760 / 820;
+    }
+
+    .central-declaration,
+    .closing-declaration {
+      margin: 50px 0;
+      padding: 42px 25px;
+      border: 1px solid var(--gold);
+      background:
+        radial-gradient(
+          circle at 50% 0%,
+          rgba(215, 173, 81, 0.22),
+          transparent 330px
+        ),
+        var(--panel);
+      box-shadow: var(--shadow);
+      color: var(--bright-gold);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: calc(34px * var(--reader-scale));
+      font-weight: bold;
+      line-height: 1.25;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    .closing-declaration {
+      font-size: calc(40px * var(--reader-scale));
+    }
+
+    .false-fruit,
+    .true-fruit,
+    .seen-line,
+    .warning-line,
+    .danger-line,
+    .tear-line,
+    .alive-line,
+    .look-line {
+      margin-bottom: 0.8em !important;
+      padding-left: 18px;
+      border-left: 3px solid var(--gold);
+      color: var(--cream);
+    }
+
+    .false-fruit,
+    .warning-line,
+    .danger-line {
+      border-left-color: #7c6234;
+      color: #d6cab1;
+    }
+
+    .true-fruit,
+    .seen-line,
+    .alive-line,
+    .look-line {
+      background: rgba(215, 173, 81, 0.05);
+      padding-top: 9px;
+      padding-bottom: 9px;
+      font-weight: bold;
+    }
+
+    .tear-line {
+      border-left-width: 4px;
+      font-weight: bold;
+    }
+
+  
+    .unique-symbol-art {
+      overflow: hidden;
+      background:
+        radial-gradient(
+          circle at 50% 36%,
+          rgba(243, 212, 125, 0.17),
+          transparent 350px
+        ),
+        #050403;
+    }
+
+    .chapter-symbol {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 760 / 820;
+    }
+
+    .opening-command,
+    .central-declaration,
+    .point-bow-fall,
+    .closing-command {
+      margin: 50px 0;
+      padding: 42px 25px;
+      border: 1px solid var(--gold);
+      background:
+        radial-gradient(
+          circle at 50% 0%,
+          rgba(215, 173, 81, 0.24),
+          transparent 340px
+        ),
+        var(--panel);
+      box-shadow: var(--shadow);
+      color: var(--bright-gold);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: calc(39px * var(--reader-scale));
+      font-weight: bold;
+      line-height: 1.2;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    .central-declaration {
+      font-size: calc(43px * var(--reader-scale));
+    }
+
+    .point-bow-fall {
+      font-size: calc(32px * var(--reader-scale));
+    }
+
+    .closing-command {
+      display: grid;
+      gap: 12px;
+      font-size: calc(42px * var(--reader-scale));
+    }
+
+    .closing-command strong {
+      color: var(--white);
+      font-size: calc(54px * var(--reader-scale));
+    }
+
+    .tear-line,
+    .test-line,
+    .reject-line,
+    .seek-line,
+    .warning-line,
+    .return-line,
+    .kingdom-line,
+    .identity-line,
+    .stop-line,
+    .let-line,
+    .run-line {
+      margin-bottom: 0.8em !important;
+      padding-left: 18px;
+      border-left: 3px solid var(--gold);
+      color: var(--cream);
+    }
+
+    .reject-line,
+    .warning-line,
+    .stop-line {
+      border-left-color: #7d6235;
+      color: #d5c8ae;
+    }
+
+    .return-line,
+    .identity-line,
+    .run-line,
+    .let-line {
+      background: rgba(215, 173, 81, 0.05);
+      padding-top: 9px;
+      padding-bottom: 9px;
+      font-weight: bold;
+    }
+
+    .tear-line {
+      border-left-width: 4px;
+      font-weight: bold;
+    }
+
+  
+    .unique-symbol-art {
+      overflow: hidden;
+      background:
+        radial-gradient(
+          circle at 50% 38%,
+          rgba(243, 212, 125, 0.16),
+          transparent 340px
+        ),
+        #050403;
+    }
+
+    .chapter-symbol {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 760 / 820;
+    }
+
+    .support-scripture {
+      margin: 10px 0 42px;
+      padding: 30px;
+      border-left: 4px solid var(--gold);
+      background: rgba(215, 173, 81, 0.08);
+      color: var(--cream);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: calc(23px * var(--reader-scale));
+      font-style: italic;
+      line-height: 1.65;
+    }
+
+    .support-invitation {
+      padding: 24px;
+      border: 1px solid rgba(215, 173, 81, 0.45);
+      background: rgba(215, 173, 81, 0.05);
+    }
+
+    .payment-line {
+      margin-bottom: 0.7em !important;
+      padding-left: 18px;
+      border-left: 3px solid var(--gold);
+      color: var(--cream);
+      font-weight: bold;
+    }
+
+    .legal-note,
+    .support-disclaimer {
+      margin: 30px 0;
+      padding: 20px;
+      border: 1px solid #7c6234;
+      background: rgba(124, 98, 52, 0.11);
+      color: #d7cab0;
+      font-size: calc(16px * var(--reader-scale));
+      line-height: 1.65;
+    }
+
+    .mission-declaration {
+      margin: 45px 0;
+      padding: 35px 25px;
+      border: 1px solid var(--gold);
+      background:
+        radial-gradient(
+          circle at 50% 0%,
+          rgba(215, 173, 81, 0.22),
+          transparent 340px
+        ),
+        var(--panel);
+      color: var(--bright-gold);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: calc(29px * var(--reader-scale));
+      font-weight: bold;
+      line-height: 1.4;
+      text-align: center;
+    }
+
+    .direct-support-card {
+      margin: 55px 0 10px;
+      padding: 38px 30px;
+      border: 1px solid var(--gold);
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      text-align: center;
+    }
+
+    .direct-support-card h2 {
+      margin: 10px 0 18px;
+      color: var(--cream);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: calc(31px * var(--reader-scale));
+    }
+
+    .direct-support-card p {
+      max-width: 720px;
+      margin-right: auto;
+      margin-left: auto;
+    }
+
+  /* PROPHECY JOURNEY — SUPPORT RIGHT HAND */
+    body {
+      background:
+        radial-gradient(circle at 77% 12%, rgba(243, 212, 125, 0.17), transparent 430px),
+        radial-gradient(circle at 18% 20%, rgba(133, 87, 32, 0.17), transparent 500px),
+        repeating-linear-gradient(
+          32deg,
+          transparent 0,
+          transparent 94px,
+          rgba(215, 173, 81, 0.025) 95px,
+          transparent 96px
+        ),
+        linear-gradient(180deg, #050403 0%, #0d0906 48%, #050403 100%);
+    }
+
+    .site-header {
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.42);
+    }
+
+    .chapter-hero {
+      position: relative;
+      isolation: isolate;
+      overflow: hidden;
+      min-height: calc(100vh - 128px);
+      display: flex;
+      align-items: center;
+    }
+
+    .chapter-hero::before {
+      inset: 0;
+      background:
+        linear-gradient(90deg, rgba(5, 4, 3, 0.2), transparent 48%),
+        radial-gradient(circle at 20% 72%, rgba(215, 173, 81, 0.12), transparent 320px);
+      opacity: 1;
+    }
+
+    .chapter-hero::after {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      left: 5%;
+      right: 5%;
+      bottom: 42px;
+      height: 1px;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(215, 173, 81, 0.24),
+        rgba(243, 212, 125, 0.72),
+        rgba(215, 173, 81, 0.24),
+        transparent
+      );
+    }
+
+    .hero-grid {
+      position: relative;
+      z-index: 1;
+      grid-template-columns: minmax(0, 0.88fr) minmax(440px, 1.12fr);
+      gap: clamp(38px, 6vw, 86px);
+    }
+
+    .chapter-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 15px;
+      padding: 7px 11px;
+      border: 1px solid rgba(215, 173, 81, 0.48);
+      background: rgba(7, 5, 3, 0.72);
+      color: var(--bright-gold);
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 2.4px;
+      text-transform: uppercase;
+    }
+
+    .chapter-label::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border: 2px solid var(--bright-gold);
+      border-radius: 50%;
+      box-shadow: 0 0 16px rgba(243, 212, 125, 0.72);
+    }
+
+    .chapter-hero h1 {
+      max-width: 700px;
+      text-wrap: balance;
+    }
+
+    .hero-lead {
+      max-width: 660px;
+    }
+
+    .journey-art {
+      position: relative;
+      margin: 0;
+      overflow: hidden;
+      border: 1px solid rgba(215, 173, 81, 0.62);
+      background: #080604;
+      box-shadow:
+        0 34px 90px rgba(0, 0, 0, 0.72),
+        0 0 0 1px rgba(243, 212, 125, 0.07) inset;
+    }
+
+    .journey-art::before {
+      content: "";
+      position: absolute;
+      z-index: 2;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(180deg, rgba(5, 4, 3, 0.04) 48%, rgba(5, 4, 3, 0.88) 100%),
+        radial-gradient(circle at 50% 22%, transparent 30%, rgba(5, 4, 3, 0.32) 100%);
+    }
+
+    .journey-art img {
+      width: 100%;
+      min-height: 560px;
+      max-height: 720px;
+      object-fit: cover;
+      object-position: center;
+      transform: scale(1.01);
+    }
+
+    .journey-kicker {
+      position: absolute;
+      z-index: 3;
+      top: 18px;
+      left: 18px;
+      padding: 8px 11px;
+      border: 1px solid rgba(243, 212, 125, 0.58);
+      background: rgba(5, 4, 3, 0.84);
+      color: var(--cream);
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: 2.2px;
+      text-transform: uppercase;
+    }
+
+    .journey-caption {
+      position: absolute;
+      z-index: 3;
+      left: 24px;
+      right: 24px;
+      bottom: 23px;
+      margin: 0;
+      color: var(--cream);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(21px, 2.1vw, 30px);
+      line-height: 1.15;
+      text-shadow: 0 3px 20px #000;
+    }
+
+    .journey-route {
+      position: absolute;
+      z-index: 3;
+      left: 25px;
+      right: 25px;
+      bottom: 94px;
+      height: 28px;
+    }
+
+    .journey-route::before {
+      content: "";
+      position: absolute;
+      top: 13px;
+      left: 4px;
+      right: 4px;
+      height: 1px;
+      background: linear-gradient(90deg, #76501d, var(--bright-gold), #76501d);
+    }
+
+    .journey-route span {
+      position: absolute;
+      top: 8px;
+      width: 11px;
+      height: 11px;
+      border: 2px solid var(--bright-gold);
+      border-radius: 50%;
+      background: #080604;
+      box-shadow: 0 0 12px rgba(243, 212, 125, 0.55);
+    }
+
+    .journey-route span:nth-child(1) { left: 0; }
+    .journey-route span:nth-child(2) { left: 32%; }
+    .journey-route span:nth-child(3) {
+      left: 65%;
+      background: var(--bright-gold);
+    }
+    .journey-route span:nth-child(4) { right: 0; }
+
+    .art-label {
+      margin-top: 13px;
+      color: #9e927b;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    .edition-notice {
+      border-color: rgba(215, 173, 81, 0.62);
+      background:
+        linear-gradient(90deg, rgba(215, 173, 81, 0.08), transparent 52%),
+        rgba(13, 10, 6, 0.82);
+    }
+
+    .chapter-reading {
+      position: relative;
+    }
+
+    .chapter-reading::before {
+      content: "SUPPORT RIGHT HAND";
+      display: block;
+      width: min(calc(100% - 34px), var(--reading-width));
+      margin: 0 auto 42px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(215, 173, 81, 0.34);
+      color: var(--bright-gold);
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+
+    @media (max-width: 900px) {
+      .chapter-hero {
+        min-height: 0;
+      }
+
+      .hero-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .journey-art img {
+        min-height: 420px;
+      }
+    }
+
+    @media (max-width: 650px) {
+      .chapter-hero {
+        padding-top: 58px;
+      }
+
+      .journey-art img {
+        min-height: 390px;
+        max-height: 520px;
+      }
+
+      .journey-caption {
+        left: 17px;
+        right: 17px;
+        bottom: 17px;
+      }
+
+      .journey-route {
+        left: 18px;
+        right: 18px;
+        bottom: 78px;
+      }
+
+      .journey-kicker {
+        top: 13px;
+        left: 13px;
+      }
+    }
+
+    /* ABOUT / SUPPORT JOURNEY STATIONS */
+    .station-art {position:relative;margin:0;overflow:hidden;border:1px solid rgba(215,173,81,.62);background:#080604;box-shadow:0 34px 90px rgba(0,0,0,.72),0 0 0 1px rgba(243,212,125,.07) inset;}
+    .station-art img {display:block;width:100%;min-height:560px;max-height:760px;object-fit:contain;object-position:center;background:#050403;}
+    .station-kicker {position:absolute;z-index:3;top:18px;left:18px;padding:8px 11px;border:1px solid rgba(243,212,125,.58);background:rgba(5,4,3,.88);color:var(--cream);font-size:10px;font-weight:900;letter-spacing:2.2px;text-transform:uppercase;}
+    .station-route {position:relative;z-index:3;height:28px;margin:18px 24px 4px;}
+    .station-route::before {content:"";position:absolute;top:13px;left:4px;right:4px;height:1px;background:linear-gradient(90deg,#76501d,var(--bright-gold),#76501d);}
+    .station-route span {position:absolute;top:8px;width:11px;height:11px;border:2px solid var(--bright-gold);border-radius:50%;background:#080604;box-shadow:0 0 12px rgba(243,212,125,.55);}
+    .station-route span:nth-child(1){left:0}.station-route span:nth-child(2){left:33%}.station-route span:nth-child(3){left:66%}.station-route span:nth-child(4){right:0;background:var(--bright-gold)}
+    .station-caption {position:static;margin:0;padding:10px 24px 24px;border-top:1px solid rgba(215,173,81,.26);background:rgba(5,4,3,.94);color:var(--cream);font-family:Georgia,"Times New Roman",serif;font-size:clamp(20px,2vw,29px);line-height:1.3;text-align:center;text-shadow:0 3px 20px #000;}
+    @media(max-width:650px){.station-art img{min-height:420px;max-height:620px}.station-route{margin-left:18px;margin-right:18px}}
+
+  </style>
+
+  <!-- PROJECT UNVEILED SAFE SEO METADATA: artwork body is untouched -->
+  <link rel="canonical" href="https://bobsome1.com/book/read/support-right-hand.html">
+  <link rel="sitemap" type="application/xml" href="/sitemap.xml">
+  <meta name="author" content="Robert J. Hayes">
+  <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+  <meta name="theme-color" content="#050403">
+
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Project Unveiled">
+  <meta property="og:title" content="Support Right Hand Ministry | Project Unveiled">
+  <meta property="og:description" content="Support the practical outreach, printing, distribution, technology, education, and continued writing connected to Project Unveiled and Right Hand Ministry.">
+  <meta property="og:url" content="https://bobsome1.com/book/read/support-right-hand.html">
+  <meta property="og:image" content="https://bobsome1.com/images/support-right-hand.jpg">
+  <meta property="og:image:alt" content="Project Unveiled symbolic artwork">
+  <meta property="article:author" content="Robert J. Hayes">
+  <meta property="article:modified_time" content="2026-07-20">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Support Right Hand Ministry | Project Unveiled">
+  <meta name="twitter:description" content="Support the practical outreach, printing, distribution, technology, education, and continued writing connected to Project Unveiled and Right Hand Ministry.">
+  <meta name="twitter:image" content="https://bobsome1.com/images/support-right-hand.jpg">
+
+  <script type="application/ld+json" data-project-unveiled-safe-seo="true">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Person",
+      "@id": "https://bobsome1.com/#robert-j-hayes",
+      "name": "Robert J. Hayes",
+      "url": "https://bobsome1.com/book/read/about-author.html"
+    },
+    {
+      "@type": "Book",
+      "@id": "https://bobsome1.com/book/#project-unveiled",
+      "name": "Project Unveiled",
+      "author": {
+        "@id": "https://bobsome1.com/#robert-j-hayes"
+      },
+      "url": "https://bobsome1.com/book/read/",
+      "inLanguage": "en-US",
+      "bookFormat": "https://schema.org/EBook",
+      "isAccessibleForFree": true
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://bobsome1.com/book/read/support-right-hand.html#page",
+      "url": "https://bobsome1.com/book/read/support-right-hand.html",
+      "name": "Support Right Hand Ministry",
+      "description": "Support the practical outreach, printing, distribution, technology, education, and continued writing connected to Project Unveiled and Right Hand Ministry.",
+      "inLanguage": "en-US",
+      "dateModified": "2026-07-25",
+      "isAccessibleForFree": true,
+      "author": {
+        "@id": "https://bobsome1.com/#robert-j-hayes"
+      },
+      "isPartOf": {
+        "@id": "https://bobsome1.com/book/#project-unveiled"
+      },
+      "image": "https://bobsome1.com/images/support-right-hand.jpg"
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://bobsome1.com/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Project Unveiled",
+          "item": "https://bobsome1.com/book/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Complete Reader",
+          "item": "https://bobsome1.com/book/read/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 4,
+          "name": "Support Right Hand Ministry",
+          "item": "https://bobsome1.com/book/read/support-right-hand.html"
+        }
+      ]
+    }
+  ]
+}
+  </script>
+
+<style id="project-unveiled-traffic-layer-styles">
+/* PROJECT-UNVEILED-TRAFFIC-DONATION-LAYER */
+.pu-support-footer{max-width:1100px;margin:18px auto 0;padding:14px 18px;border-top:1px solid rgba(215,173,81,.4);display:flex;gap:12px;justify-content:center;align-items:center;flex-wrap:wrap;font-family:Arial,sans-serif;font-size:14px}.pu-support-footer a{color:#f3d47d;text-decoration:underline;text-underline-offset:3px}.pu-support-footer span{color:#8d7b55}.pu-final-support-cta,.pu-reader-support-cta{max-width:980px;margin:34px auto;padding:26px;border:1px solid #d7ad51;background:linear-gradient(135deg,#15110b,#080706);color:#f4ead2;text-align:center;box-shadow:0 18px 55px rgba(0,0,0,.35)}.pu-final-support-cta h2,.pu-reader-support-cta h2{margin:.2rem 0 .7rem;color:#f3d47d;font-family:Georgia,"Times New Roman",serif}.pu-final-support-cta p,.pu-reader-support-cta p{max-width:760px;margin:.6rem auto}.pu-conversion-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:18px}.pu-conversion-actions a{display:inline-flex;align-items:center;justify-content:center;padding:12px 18px;border:1px solid #d7ad51;background:#d7ad51;color:#090806!important;font-weight:800;text-decoration:none!important}.pu-conversion-actions a.secondary{background:transparent;color:#f3d47d!important}.pu-support-legal{font-size:13px;color:#bdb49f}.pu-support-float{position:fixed;right:15px;bottom:15px;z-index:9998;padding:10px 14px;border:1px solid #d7ad51;border-radius:999px;background:rgba(8,7,6,.95);color:#f3d47d!important;text-decoration:none!important;font:700 13px Arial,sans-serif;box-shadow:0 8px 28px rgba(0,0,0,.5)}@media(max-width:650px){.pu-final-support-cta,.pu-reader-support-cta{margin:24px 14px;padding:21px 16px}.pu-support-float{right:10px;bottom:10px;padding:9px 12px}}
+</style>
+</head>
+
+<body>
+
+  <div
+    class="reading-progress"
+    id="readingProgress"
+    aria-hidden="true"
+  ></div>
+
+  <header class="site-header">
+
+    <div class="container nav">
+
+      <a class="brand" href="/">
+        <span>PROJECT</span> UNVEILED
+      </a>
+
+      <nav class="nav-links" aria-label="Primary navigation"><a href="/">Home</a><a href="/book/read/">Reader</a><a href="/book/">Book</a><a href="/book/timeline.html">Timeline</a><a href="/book/research.html">Research</a><a href="/book/updates.html">Updates</a><a href="/book/read/support-right-hand.html">Support</a></nav>
+
+    </div>
+
+  </header>
+
+  <div class="reader-toolbar">
+
+    <div class="container toolbar-inner">
+
+      <div class="chapter-position">
+        Book Back Matter
+      </div>
+
+      <div
+        class="text-controls"
+        aria-label="Reading text-size controls"
+      >
+
+        <button
+          class="text-control"
+          type="button"
+          onclick="changeReaderSize(-0.1)"
+          aria-label="Decrease reading text size"
+        >
+          A−
+        </button>
+
+        <button
+          class="text-control"
+          type="button"
+          onclick="resetReaderSize()"
+          aria-label="Reset reading text size"
+        >
+          A
+        </button>
+
+        <button
+          class="text-control"
+          type="button"
+          onclick="changeReaderSize(0.1)"
+          aria-label="Increase reading text size"
+        >
+          A+
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <main>
+
+    <section class="chapter-hero">
+
+      <div class="container hero-grid">
+
+        <div class="hero-copy">
+
+          <div class="chapter-label">
+            Mission Station · Truth in Print, Love in Action
+          </div>
+
+          <div class="eyebrow">
+            Serve · Feed · Build · Restore
+          </div>
+
+          <h1>
+            Support
+            <span class="gold">Right Hand Ministry.</span>
+          </h1>
+
+          <p class="hero-lead">
+            Help extend the work through printing, distribution,
+            outreach, education, technology, continued writing,
+            feeding the hungry, lifting the wounded, and practical service.
+          </p>
+
+          <div class="hero-actions">
+
+            <a
+              class="button"
+              href="https://paypal.me/Bobsome1975"
+              target="_blank"
+              rel="noopener noreferrer"
+             data-pu-event="paypal_click">
+              Support Through PayPal
+            </a>
+
+            <a
+              class="button secondary"
+              href="#support-reading"
+            >
+              Read the Ministry Statement
+            </a>
+
+          </div>
+
+        </div>
+
+        <div>
+
+          
+          <figure class="station-art">
+            <img src="/images/support-right-hand.jpg" alt="Official Right Hand Ministry support artwork with donation information and QR code" width="1536" height="1536" loading="eager" decoding="async">
+            <div class="station-kicker">The Prophecy Journey · SUPPORT RIGHT HAND</div>
+            <div class="station-route" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+            <figcaption class="station-caption">Project Unveiled speaks the truth. Right Hand Ministry puts that truth into working hands.</figcaption>
+          </figure>
+          <p class="art-label">Project Unveiled official page artwork · SUPPORT RIGHT HAND</p>
+
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+
+
+
+
+
+
+    <section class="edition-wrap">
+
+      <div class="reading-container">
+
+        <div class="edition-notice">
+
+          <div class="edition-symbol">
+            ◆
+          </div>
+
+          <p>
+            <strong>Complete Public Edition.</strong>
+            The ministry and support page is published as part of the complete online reader.
+            Documented corrections, fuller context, and stronger supporting evidence remain welcome.
+
+      </div>
+
+    </section>
+
+    <article
+      class="chapter-reading"
+      id="support-reading"
+    >
+
+      <div class="reading-container">
+
+        <div class="chapter-text">
+<blockquote class="support-scripture">"Fear thou not; for I am with thee: be not dismayed; for I am thy God: I will strengthen thee; yea, I will help thee; yea, I will uphold thee with the right hand of my righteousness." — Isaiah 41:10, KJV</blockquote>
+<p>Project Unveiled was written to wake sincere faith, tear down fear, and point people back to the True One. Right Hand Ministry is the hands-and-feet extension of that work: truth in print, love in action, and practical help wherever God opens the door.</p>
+<p class="support-invitation">If this book stirred something alive in you and you want to support printing, distribution, outreach, school, technology, and continued writing, support gifts may be sent to Robert J. Hayes / Right Hand Ministry.</p>
+<p class="payment-line">Scan the PayPal Seller QR code below to support Robert J. Hayes.</p>
+<p class="payment-line">PayPal support / tip jar: Robert J. Hayes</p>
+<div class="legal-note">Important note: Gifts are personal support for this work and are not represented as tax-deductible charitable contributions unless and until Right Hand Ministry is legally organized and recognized as a tax-exempt nonprofit. The goal is simple: tear the veil, feed the hungry, lift the wounded, tell the truth, and help sons and daughters remember who they are.</div>
+        </div>
+
+        <div class="direct-support-card">
+
+          <div class="eyebrow">
+            Personal Support
+          </div>
+
+          <h2>
+            Help Put Truth and Practical Love Into Motion
+          </h2>
+
+          <p>
+            Support may assist printing, distribution, outreach,
+            school, technology, continued writing, and direct practical work.
+          </p>
+
+          <a
+            class="button"
+            href="https://paypal.me/Bobsome1975"
+            target="_blank"
+            rel="noopener noreferrer"
+           data-pu-event="paypal_click">
+            Open PayPal Support Page
+          </a>
+
+          <p class="support-disclaimer">
+            Personal support gifts are not represented as tax-deductible
+            charitable donations unless formal tax-exempt status is established.
+          </p>
+
+        </div>
+
+      </div>
+
+    </article>
+
+    <section class="connections">
+
+      <div class="container">
+
+        <div class="section-heading">
+
+          <div class="eyebrow">
+            The Work
+          </div>
+
+          <h2>
+            What Support Helps Move Forward
+          </h2>
+
+          <p>
+            Right Hand Ministry joins the written message of
+            Project Unveiled with direct, practical service.
+          </p>
+
+        </div>
+
+        <div class="connection-grid">
+
+          <article class="connection-card">
+
+            <div class="status-tag">
+              Publish
+            </div>
+
+            <h3>
+              Printing and Distribution
+            </h3>
+
+            <p>
+              Prepare physical copies, reader materials,
+              research packets, and public distribution
+              without placing the message behind a paywall.
+            </p>
+
+          </article>
+
+          <article class="connection-card">
+
+            <div class="status-tag">
+              Build
+            </div>
+
+            <h3>
+              School and Technology
+            </h3>
+
+            <p>
+              Support the education, equipment, hosting,
+              research tools, and technology required to keep
+              the work accurate, available, and sustainable.
+            </p>
+
+          </article>
+
+          <article class="connection-card">
+
+            <div class="status-tag">
+              Serve
+            </div>
+
+            <h3>
+              Love in Action
+            </h3>
+
+            <p>
+              Feed the hungry, lift the wounded, tell the truth,
+              and offer practical help wherever a door opens.
+            </p>
+
+          </article>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <section class="response-section">
+
+      <div class="container">
+
+        <div class="response-panel">
+
+          <div class="eyebrow">
+            Beyond Financial Support
+          </div>
+
+          <h2>
+            Share the Work, Check the Evidence, Serve Someone
+          </h2>
+
+          <p>
+            Support also means sharing the book responsibly,
+            submitting corrections, helping verify sources,
+            and putting love into motion where you live.
+          </p>
+
+          <div class="response-actions">
+
+            <a
+              class="button"
+              href="mailto:thebobsomest1@gmail.com?subject=Right%20Hand%20Ministry%20Support"
+            >
+              Contact Right Hand Ministry
+            </a>
+
+            <a
+              class="button secondary"
+              href="/book/research.html"
+            >
+              Review the Research
+            </a>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <section class="chapter-navigation">
+
+      <div class="reading-container">
+
+        <div class="chapter-nav-inner">
+
+          <a
+            class="button secondary"
+            href="/book/read/chapter-13.html"
+          >
+            ← Chapter Thirteen
+          </a>
+
+          <a class="button" href="/book/read/about-author.html">About the Author →</a>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+
+
+
+
+
+
+  </main>
+
+  <footer>
+
+    <div class="container">
+
+      <strong>Project Unveiled</strong>
+      by Robert J. Hayes
+
+      <br>
+
+      Support Right Hand Ministry
+
+      <br>
+
+      © 2026 Bobsome1.com
+
+    </div>
+
+  <div class="pu-support-footer" aria-label="Project support and privacy links"><a href="/book/read/support-right-hand.html" data-pu-event="support_page_click">Support the Work</a><span aria-hidden="true">◆</span><a href="/privacy.html">Privacy</a></div>
+</footer>
+
+
+
+
+
+
+
+
+  <script>
+    let readerScale =
+      parseFloat(
+        localStorage.getItem("projectUnveiledReaderScale")
+      ) || 1;
+
+    function applyReaderSize() {
+      document.documentElement.style.setProperty(
+        "--reader-scale",
+        readerScale
+      );
+
+      localStorage.setItem(
+        "projectUnveiledReaderScale",
+        readerScale
+      );
+    }
+
+    function changeReaderSize(amount) {
+      readerScale = Math.min(
+        1.4,
+        Math.max(0.8, readerScale + amount)
+      );
+
+      readerScale =
+        Math.round(readerScale * 10) / 10;
+
+      applyReaderSize();
+    }
+
+    function resetReaderSize() {
+      readerScale = 1;
+      applyReaderSize();
+    }
+
+    function updateReadingProgress() {
+      const scrollTop =
+        window.scrollY ||
+        document.documentElement.scrollTop;
+
+      const documentHeight =
+        document.documentElement.scrollHeight -
+        document.documentElement.clientHeight;
+
+      const progress =
+        documentHeight > 0
+          ? (scrollTop / documentHeight) * 100
+          : 0;
+
+      document.getElementById(
+        "readingProgress"
+      ).style.width = progress + "%";
+    }
+
+    function shareChapter() {
+      const shareData = {
+        title:
+          "Support Right Hand Ministry | Project Unveiled",
+        text:
+          "Support the practical work connected to Project Unveiled and Right Hand Ministry.",
+        url: window.location.href
+      };
+
+      if (navigator.share) {
+        navigator.share(shareData);
+        return;
+      }
+
+      navigator.clipboard
+        .writeText(window.location.href)
+        .then(function () {
+          alert("Chapter link copied.");
+        })
+        .catch(function () {
+          alert(window.location.href);
+        });
+    }
+
+    applyReaderSize();
+
+    window.addEventListener(
+      "scroll",
+      updateReadingProgress
+    );
+
+    updateReadingProgress();
+  </script>
+
+<script id="project-unveiled-traffic-tracker" src="/project-unveiled-analytics/tracker.js?v=2" defer></script>
+<!-- PU_READER_SIGNUP_START -->
+<section id="pu-signup" aria-labelledby="pu-signup-title" data-version="7.3.1">
+  <h2 id="pu-signup-title">Stay connected to Project Unveiled</h2>
+  <p>Receive new chapter highlights, evidence updates, and occasional reader invitations. No daily spam.</p>
+  <div class="pu-signup-promise">We do not sell, rent, or trade your personal information. Ever.</div>
+  <form id="pu-signup-form" novalidate>
+    <div class="pu-signup-grid">
+      <div class="pu-signup-field"><label for="pu-first-name">First name</label><input id="pu-first-name" name="first_name" maxlength="80" autocomplete="given-name" required></div>
+      <div class="pu-signup-field"><label for="pu-email">Email address</label><input id="pu-email" name="email" type="email" maxlength="190" autocomplete="email" required></div>
+      <button class="pu-signup-button" type="submit">Join the reader list</button>
+    </div>
+    <label class="pu-signup-consent"><input type="checkbox" name="consent" value="yes" required><span>I agree to receive Project Unveiled email updates. I can unsubscribe at any time.</span></label>
+    <div class="pu-signup-hp" aria-hidden="true"><label>Website<input name="website" tabindex="-1" autocomplete="off"></label></div>
+    <input type="hidden" name="consent_version" value="2026-07-v2">
+    <p class="pu-signup-small">We collect your first name, email address, signup time, source page, campaign tags, and privacy-safe abuse-prevention hashes. Read the <a href="/privacy.html">Privacy Policy</a>.</p>
+    <div class="pu-signup-status" role="status" aria-live="polite"></div>
+  </form>
+</section>
+<link rel="stylesheet" href="/book/signup-widget.css?v=731">
+<script src="/book/signup-widget.js?v=731" defer></script>
+<!-- PU_READER_SIGNUP_END -->
+
+</body>
+</html>

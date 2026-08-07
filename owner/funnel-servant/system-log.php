@@ -1,0 +1,1 @@
+<?php declare(strict_types=1);header('Location:/owner/funnel-servant/?tab=logs',true,302);exit;

@@ -1,0 +1,1382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <meta
+    name="description"
+    content="Project updates, manuscript progress, research milestones, corrections, and publication news for Project Unveiled by Robert J. Hayes."
+  >
+
+  <title>Updates & Progress | Project Unveiled</title>
+
+  <style>
+    :root {
+      --black: #050505;
+      --deep-black: #090909;
+      --panel: #11100d;
+      --panel-light: #191711;
+      --gold: #d7ad51;
+      --bright-gold: #f3d47d;
+      --cream: #f4ead2;
+      --white: #fffdf7;
+      --muted: #c5bda9;
+      --line: rgba(215, 173, 81, 0.38);
+      --shadow: 0 25px 70px rgba(0, 0, 0, 0.65);
+      --max-width: 1180px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      overflow-x: hidden;
+      background:
+        radial-gradient(
+          circle at 50% 0%,
+          rgba(215, 173, 81, 0.15),
+          transparent 500px
+        ),
+        linear-gradient(
+          180deg,
+          #050505 0%,
+          #0c0906 48%,
+          #050505 100%
+        );
+      color: var(--white);
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.65;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    .container {
+      width: min(calc(100% - 34px), var(--max-width));
+      margin: 0 auto;
+    }
+
+    .eyebrow {
+      margin-bottom: 12px;
+      color: var(--bright-gold);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+    }
+
+    .gold {
+      color: var(--bright-gold);
+    }
+
+    .section {
+      padding: 92px 0;
+    }
+
+    .section-dark {
+      border-block: 1px solid var(--line);
+      background:
+        linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.025),
+          rgba(255, 255, 255, 0.008)
+        );
+    }
+
+    .section-heading {
+      max-width: 850px;
+      margin-bottom: 42px;
+    }
+
+    .section-heading.center {
+      margin-right: auto;
+      margin-left: auto;
+      text-align: center;
+    }
+
+    .section-heading h2 {
+      margin: 0 0 18px;
+      color: var(--cream);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(38px, 6vw, 70px);
+      line-height: 1;
+      letter-spacing: -2px;
+      text-transform: uppercase;
+    }
+
+    .section-heading p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 19px;
+    }
+
+    .button {
+      display: inline-flex;
+      min-height: 49px;
+      align-items: center;
+      justify-content: center;
+      padding: 13px 22px;
+      border: 1px solid var(--gold);
+      border-radius: 999px;
+      background:
+        linear-gradient(
+          135deg,
+          var(--bright-gold),
+          #b88a34
+        );
+      box-shadow:
+        0 8px 28px rgba(215, 173, 81, 0.18);
+      color: #140e05;
+      text-decoration: none;
+      font-weight: 900;
+    }
+
+    .button.secondary {
+      background: rgba(5, 5, 5, 0.58);
+      color: var(--cream);
+    }
+
+    .button:hover {
+      transform: translateY(-2px);
+    }
+
+    /* HEADER */
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid var(--line);
+      background: rgba(5, 5, 5, 0.92);
+      backdrop-filter: blur(14px);
+    }
+
+    .nav {
+      min-height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 22px;
+    }
+
+    .brand {
+      color: var(--cream);
+      text-decoration: none;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: 2px;
+    }
+
+    .brand span {
+      color: var(--bright-gold);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 21px;
+    }
+
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .nav-links a:hover {
+      color: var(--bright-gold);
+    }
+
+    .nav-links .support-link {
+      padding: 9px 15px;
+      border: 1px solid var(--gold);
+      border-radius: 999px;
+    }
+
+    /* HERO */
+
+    .updates-hero {
+      position: relative;
+      padding: 76px 0 92px;
+    }
+
+    .updates-hero::before {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      content: "";
+      background:
+        radial-gradient(
+          circle at 18% 30%,
+          rgba(243, 212, 125, 0.12),
+          transparent 390px
+        );
+    }
+
+    .hero-grid {
+      position: relative;
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      align-items: center;
+      gap: 56px;
+    }
+
+    .updates-hero h1 {
+      margin: 0 0 22px;
+      color: var(--cream);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(52px, 8vw, 104px);
+      line-height: 0.92;
+      letter-spacing: -4px;
+      text-transform: uppercase;
+    }
+
+    .hero-lead {
+      max-width: 720px;
+      margin: 0 0 28px;
+      color: var(--muted);
+      font-size: clamp(18px, 2.3vw, 22px);
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .hero-art {
+      position: relative;
+      padding: 9px;
+      border: 1px solid var(--gold);
+      background: #050505;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-art::before,
+    .hero-art::after {
+      position: absolute;
+      width: 64px;
+      height: 64px;
+      content: "";
+    }
+
+    .hero-art::before {
+      top: -5px;
+      left: -5px;
+      border-top: 3px solid var(--bright-gold);
+      border-left: 3px solid var(--bright-gold);
+    }
+
+    .hero-art::after {
+      right: -5px;
+      bottom: -5px;
+      border-right: 3px solid var(--bright-gold);
+      border-bottom: 3px solid var(--bright-gold);
+    }
+
+    /* CURRENT STATUS */
+
+    .status-grid {
+      display: grid;
+      grid-template-columns: 1fr 0.9fr;
+      align-items: center;
+      gap: 50px;
+    }
+
+    .status-card {
+      padding: 38px;
+      border: 1px solid var(--gold);
+      background:
+        radial-gradient(
+          circle at 85% 15%,
+          rgba(215, 173, 81, 0.16),
+          transparent 320px
+        ),
+        var(--panel);
+      box-shadow: var(--shadow);
+    }
+
+    .status-label {
+      display: inline-block;
+      margin-bottom: 18px;
+      padding: 8px 13px;
+      border: 1px solid var(--gold);
+      border-radius: 999px;
+      color: var(--bright-gold);
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .status-card h2 {
+      margin: 0 0 18px;
+      color: var(--cream);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(38px, 5vw, 62px);
+      line-height: 1;
+      text-transform: uppercase;
+    }
+
+    .status-card p {
+      color: var(--muted);
+      font-size: 18px;
+    }
+
+    .progress-bar {
+      height: 18px;
+      margin: 26px 0 10px;
+      overflow: hidden;
+      border: 1px solid var(--gold);
+      border-radius: 999px;
+      background: #080705;
+    }
+
+    .progress-fill {
+      width: 45%;
+      height: 100%;
+      background:
+        linear-gradient(
+          90deg,
+          #9d7227,
+          var(--bright-gold)
+        );
+    }
+
+    .progress-note {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .framed-image {
+      padding: 8px;
+      border: 1px solid var(--gold);
+      background: #050505;
+      box-shadow: var(--shadow);
+    }
+
+    /* TIMELINE */
+
+    .timeline {
+      position: relative;
+      display: grid;
+      gap: 22px;
+    }
+
+    .timeline::before {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 30px;
+      width: 1px;
+      content: "";
+      background: var(--line);
+    }
+
+    .timeline-item {
+      position: relative;
+      display: grid;
+      grid-template-columns: 62px 1fr;
+      gap: 22px;
+    }
+
+    .timeline-marker {
+      position: relative;
+      z-index: 2;
+      width: 61px;
+      height: 61px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--gold);
+      border-radius: 50%;
+      background: #0d0b07;
+      color: var(--bright-gold);
+      font-family: Georgia, "Times New Roman", serif;
+      font-weight: bold;
+    }
+
+    .timeline-card {
+      padding: 28px;
+      border: 1px solid var(--line);
+      background:
+        linear-gradient(
+          145deg,
+          rgba(25, 23, 17, 0.95),
+          rgba(7, 7, 7, 0.95)
+        );
+    }
+
+    .timeline-date {
+      margin-bottom: 8px;
+      color: var(--bright-gold);
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .timeline-card h3 {
+      margin: 0 0 10px;
+      color: var(--cream);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 25px;
+      text-transform: uppercase;
+    }
+
+    .timeline-card p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    /* CURRENT WORK */
+
+    .work-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .work-card {
+      padding: 29px;
+      border: 1px solid var(--line);
+      background:
+        linear-gradient(
+          160deg,
+          var(--panel-light),
+          var(--deep-black)
+        );
+      box-shadow:
+        0 15px 45px rgba(0, 0, 0, 0.38);
+    }
+
+    .work-number {
+      margin-bottom: 14px;
+      color: var(--gold);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 36px;
+      font-weight: bold;
+    }
+
+    .work-card h3 {
+      margin: 0 0 12px;
+      color: var(--cream);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 24px;
+      line-height: 1.1;
+      text-transform: uppercase;
+    }
+
+    .work-card p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    /* ROADMAP */
+
+    .roadmap-list {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
+    }
+
+    .roadmap-card {
+      padding: 28px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+    }
+
+    .roadmap-card h3 {
+      margin: 0 0 12px;
+      color: var(--cream);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 24px;
+      text-transform: uppercase;
+    }
+
+    .roadmap-card p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .roadmap-status {
+      display: inline-block;
+      margin-bottom: 15px;
+      padding: 6px 10px;
+      border: 1px solid var(--gold);
+      color: var(--bright-gold);
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    /* FOLLOW */
+
+    .follow-panel {
+      padding: 49px 31px;
+      border: 1px solid var(--gold);
+      background:
+        radial-gradient(
+          circle at 50% 0%,
+          rgba(215, 173, 81, 0.18),
+          transparent 390px
+        ),
+        var(--panel);
+      text-align: center;
+      box-shadow: var(--shadow);
+    }
+
+    .follow-panel h2 {
+      margin: 0 0 16px;
+      color: var(--cream);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(38px, 6vw, 66px);
+      line-height: 1;
+      text-transform: uppercase;
+    }
+
+    .follow-panel p {
+      max-width: 760px;
+      margin: 0 auto 25px;
+      color: var(--muted);
+      font-size: 18px;
+    }
+
+    .follow-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .disclaimer {
+      max-width: 720px;
+      margin: 25px auto 0 !important;
+      padding: 16px;
+      border: 1px solid var(--line);
+      color: #a99f8a !important;
+      font-size: 13px !important;
+    }
+
+    /* FOOTER */
+
+    footer {
+      padding: 36px 0;
+      border-top: 1px solid var(--line);
+      color: #8e8675;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    footer strong {
+      color: var(--gold);
+    }
+
+    /* MOBILE */
+
+    @media (max-width: 850px) {
+      .hero-grid,
+      .status-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .updates-hero .hero-copy {
+        text-align: center;
+      }
+
+      .hero-actions {
+        justify-content: center;
+      }
+
+      .hero-art {
+        max-width: 600px;
+        margin: 0 auto;
+      }
+
+      .work-grid,
+      .roadmap-list {
+        grid-template-columns: 1fr;
+      }
+
+      .nav-links a:not(.support-link) {
+        display: none;
+      }
+
+      .updates-hero h1 {
+        letter-spacing: -2px;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .section {
+        padding: 70px 0;
+      }
+
+      .status-card,
+      .timeline-card,
+      .work-card,
+      .roadmap-card,
+      .follow-panel {
+        padding: 24px 20px;
+      }
+
+      .updates-hero h1 {
+        font-size: 51px;
+      }
+
+      .brand {
+        font-size: 15px;
+      }
+
+      .timeline {
+        gap: 18px;
+      }
+
+      .timeline::before {
+        left: 22px;
+      }
+
+      .timeline-item {
+        grid-template-columns: 46px 1fr;
+        gap: 14px;
+      }
+
+      .timeline-marker {
+        width: 45px;
+        height: 45px;
+        font-size: 13px;
+      }
+    }
+  </style>
+
+  <link rel="canonical" href="https://bobsome1.com/book/updates.html">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Updates &amp; Progress | Project Unveiled">
+  <meta property="og:description" content="Follow Project Unveiled milestones, source verification, website development, editorial progress, corrections, and preparation for print and digital release.">
+  <meta property="og:url" content="https://bobsome1.com/book/updates.html">
+  <meta property="og:image" content="https://bobsome1.com/images/project-unveiled.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Updates &amp; Progress | Project Unveiled">
+  <meta name="twitter:description" content="Follow Project Unveiled milestones, source verification, website development, editorial progress, corrections, and preparation for print and digital release.">
+  <meta name="twitter:image" content="https://bobsome1.com/images/project-unveiled.jpg">
+
+<style id="project-unveiled-traffic-layer-styles">
+/* PROJECT-UNVEILED-TRAFFIC-DONATION-LAYER */
+.pu-support-footer{max-width:1100px;margin:18px auto 0;padding:14px 18px;border-top:1px solid rgba(215,173,81,.4);display:flex;gap:12px;justify-content:center;align-items:center;flex-wrap:wrap;font-family:Arial,sans-serif;font-size:14px}.pu-support-footer a{color:#f3d47d;text-decoration:underline;text-underline-offset:3px}.pu-support-footer span{color:#8d7b55}.pu-final-support-cta,.pu-reader-support-cta{max-width:980px;margin:34px auto;padding:26px;border:1px solid #d7ad51;background:linear-gradient(135deg,#15110b,#080706);color:#f4ead2;text-align:center;box-shadow:0 18px 55px rgba(0,0,0,.35)}.pu-final-support-cta h2,.pu-reader-support-cta h2{margin:.2rem 0 .7rem;color:#f3d47d;font-family:Georgia,"Times New Roman",serif}.pu-final-support-cta p,.pu-reader-support-cta p{max-width:760px;margin:.6rem auto}.pu-conversion-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:18px}.pu-conversion-actions a{display:inline-flex;align-items:center;justify-content:center;padding:12px 18px;border:1px solid #d7ad51;background:#d7ad51;color:#090806!important;font-weight:800;text-decoration:none!important}.pu-conversion-actions a.secondary{background:transparent;color:#f3d47d!important}.pu-support-legal{font-size:13px;color:#bdb49f}.pu-support-float{position:fixed;right:15px;bottom:15px;z-index:9998;padding:10px 14px;border:1px solid #d7ad51;border-radius:999px;background:rgba(8,7,6,.95);color:#f3d47d!important;text-decoration:none!important;font:700 13px Arial,sans-serif;box-shadow:0 8px 28px rgba(0,0,0,.5)}@media(max-width:650px){.pu-final-support-cta,.pu-reader-support-cta{margin:24px 14px;padding:21px 16px}.pu-support-float{right:10px;bottom:10px;padding:9px 12px}}
+</style>
+</head>
+
+<body>
+
+  <header class="site-header">
+
+    <div class="container nav">
+
+      <a class="brand" href="/">
+        <span>PROJECT</span> UNVEILED
+      </a>
+
+      <nav class="nav-links" aria-label="Primary navigation"><a href="/">Home</a><a href="/book/read/">Reader</a><a href="/book/">Book</a><a href="/book/timeline.html">Timeline</a><a href="/book/research.html">Research</a><a href="/book/updates.html">Updates</a><a href="/book/read/support-right-hand.html">Support</a></nav>
+
+    </div>
+
+  </header>
+
+  <main><section id="publication-status-final" style="max-width:1100px;margin:28px auto;padding:24px;border:1px solid #d7ad51;background:#11100d;color:#f4ead2"><strong style="color:#f3d47d">Publication status: Complete public edition.</strong><p style="margin:.6rem 0 0;color:#c5bda9">All 13 chapters, the reader directory, timeline, research material, and evidence stations are live. Ongoing work means corrections, source strengthening, professional review, performance improvements, and distribution—not unfinished chapter publication.</p></section>
+
+    <!-- HERO -->
+
+    <section class="updates-hero">
+
+      <div class="container hero-grid">
+
+        <div class="hero-copy">
+
+          <div class="eyebrow">
+            Project Unveiled Public Record
+          </div>
+
+          <h1>
+            Updates &
+            <span class="gold">Progress.</span>
+          </h1>
+
+          <p class="hero-lead">
+            Follow the manuscript, research, website, corrections,
+            publishing preparation, and major milestones as
+            Project Unveiled moves forward.
+          </p>
+
+          <div class="hero-actions">
+
+            <a
+              class="button"
+              href="#timeline"
+            >
+              View the Timeline
+            </a>
+
+            <a
+              class="button secondary"
+              href="/book/"
+            >
+              Return to the Book
+            </a>
+
+          </div>
+
+        </div>
+
+        <div class="hero-art">
+
+          <img
+            src="/images/project-unveiled.jpg"
+            alt="Project Unveiled artwork by Robert J. Hayes"
+          >
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- CURRENT STATUS -->
+
+    <section class="section section-dark">
+
+      <div class="container status-grid">
+
+        <div class="status-card">
+
+          <div class="status-label">
+            Current Phase — August 2026
+          </div>
+
+          <h2>
+            Complete Public Edition and Source Hardening
+          </h2>
+
+          <p>
+            The chapter structure, central themes, closing message,
+            public identity, research standards, and website foundation
+            are now established.
+          </p>
+
+          <p>
+            The first claim-level evidence desks are now complete for
+            Chapters Three, Four, and Eleven. Two public question files
+            now trace Nicaea and canon formation from common search claims
+            to primary-source doors.
+          </p>
+
+          <div
+            class="progress-bar"
+            role="progressbar"
+            aria-label="Estimated overall project progress"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            aria-valuenow="52"
+          >
+            <div class="progress-fill"></div>
+          </div>
+
+          <div class="progress-note">
+            The complete public edition is live. The first evidence-hardening release is complete; remaining chapters, editorial review, corrections, and print/digital preparation remain active.
+          </div>
+
+        </div>
+
+        <div class="framed-image">
+
+          <img
+            src="/images/tear-the-veil.jpg"
+            alt="Tear the Veil artwork"
+            loading="lazy"
+          >
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- TIMELINE -->
+
+    <section
+      class="section"
+      id="timeline"
+    >
+
+      <div class="container">
+
+        <div class="section-heading">
+
+          <div class="eyebrow">
+            Public Milestones
+          </div>
+
+          <h2>
+            The Project Timeline
+          </h2>
+
+          <p>
+            This timeline records major public steps. New milestones
+            will be added as the manuscript and publication process advance.
+          </p>
+
+        </div>
+
+        <div class="timeline">
+
+          <article class="timeline-item">
+
+            <div class="timeline-marker">
+              01
+            </div>
+
+            <div class="timeline-card">
+
+              <div class="timeline-date">
+                Manuscript Foundation
+              </div>
+
+              <h3>
+                Central Message Established
+              </h3>
+
+              <p>
+                Project Unveiled was shaped around truth, historical
+                examination, the torn veil, the difference between
+                Kingdom and costume, and the call to test inherited claims.
+              </p>
+
+            </div>
+
+          </article>
+
+          <article class="timeline-item">
+
+            <div class="timeline-marker">
+              02
+            </div>
+
+            <div class="timeline-card">
+
+              <div class="timeline-date">
+                Chapter Structure
+              </div>
+
+              <h3>
+                Major Chapter Map Established
+              </h3>
+
+              <p>
+                The manuscript’s principal chapter themes were organized,
+                including Rome, Arius and Athanasius, traditions of men,
+                voices beyond the shelf, and the final chapter,
+                Tear the Veil.
+              </p>
+
+            </div>
+
+          </article>
+
+          <article class="timeline-item">
+
+            <div class="timeline-marker">
+              03
+            </div>
+
+            <div class="timeline-card">
+
+              <div class="timeline-date">
+                July 2026
+              </div>
+
+              <h3>
+                Bobsome1.com Launched
+              </h3>
+
+              <p>
+                The domain, Namecheap hosting, HTTPS security,
+                public homepage, private owner workspace,
+                Watch-Dawg area, and Paleo Mapper area went live.
+              </p>
+
+            </div>
+
+          </article>
+
+          <article class="timeline-item">
+
+            <div class="timeline-marker">
+              04
+            </div>
+
+            <div class="timeline-card">
+
+              <div class="timeline-date">
+                July 2026
+              </div>
+
+              <h3>
+                Public Book Page Published
+              </h3>
+
+              <p>
+                The Project Unveiled book page launched with the mission,
+                core themes, chapter map, research standards,
+                manuscript status, and support information.
+              </p>
+
+            </div>
+
+          </article>
+
+          <article class="timeline-item">
+
+            <div class="timeline-marker">
+              05
+            </div>
+
+            <div class="timeline-card">
+
+              <div class="timeline-date">
+                July 2026
+              </div>
+
+              <h3>
+                Research and Corrections Hub Published
+              </h3>
+
+              <p>
+                The public source policy, claim classifications,
+                evidence ladder, active research areas, AI disclosure,
+                and corrections process were placed online.
+              </p>
+
+            </div>
+
+          </article>
+
+          <article class="timeline-item">
+
+            <div class="timeline-marker">
+              06
+            </div>
+
+            <div class="timeline-card">
+
+              <div class="timeline-date">
+                Current
+              </div>
+
+              <h3>
+                Historical Verification Underway
+              </h3>
+
+              <p>
+                The manuscript is being reviewed so historical claims,
+                quotations, dates, manuscript evidence, council history,
+                political influence, and disputed interpretations
+                can withstand serious examination.
+              </p>
+
+            </div>
+
+          </article>
+
+          <article class="timeline-item">
+
+            <div class="timeline-marker">
+              07
+            </div>
+
+            <div class="timeline-card">
+
+              <div class="timeline-date">
+                August 2026
+              </div>
+
+              <h3>
+                First Evidence Desks and Question Files Published
+              </h3>
+
+              <p>
+                Chapters Three, Four, and Eleven received visible claim labels
+                and direct source doors. Public investigations of Nicaea and
+                canon formation were added as search entry points into the book.
+              </p>
+
+            </div>
+
+          </article>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- CURRENT WORK -->
+
+    <section class="section section-dark">
+
+      <div class="container">
+
+        <div class="section-heading center">
+
+          <div class="eyebrow">
+            Work in Progress
+          </div>
+
+          <h2>
+            What Is Being Built Now
+          </h2>
+
+          <p>
+            These are the main active work areas behind the public site
+            and manuscript.
+          </p>
+
+        </div>
+
+        <div class="work-grid">
+
+          <article class="work-card">
+
+            <div class="work-number">
+              01
+            </div>
+
+            <h3>
+              Source Verification
+            </h3>
+
+            <p>
+              Identifying stronger primary and scholarly sources for
+              historical claims, quotations, councils, manuscripts,
+              translation history, and political influence.
+            </p>
+
+          </article>
+
+          <article class="work-card">
+
+            <div class="work-number">
+              02
+            </div>
+
+            <h3>Chapter-Level Source Hardening</h3>
+
+            <p>Strengthening chapter-level claims with clearer sourcing, quotation checks, historical context, competing interpretations, and visible uncertainty labels.</p>
+
+          </article>
+
+          <article class="work-card">
+
+            <div class="work-number">
+              03
+            </div>
+
+            <h3>
+              Public Website
+            </h3>
+
+            <p>
+              Strengthening the complete public reader with claim-level evidence,
+              clearer entry paths, faster media, progress updates, corrections,
+              and practical tools that help readers test what they encounter.
+            </p>
+
+          </article>
+
+          <article class="work-card">
+
+            <div class="work-number">
+              04
+            </div>
+
+            <h3>
+              Publication Planning
+            </h3>
+
+            <p>
+              Reviewing editing, formatting, copyright, print,
+              digital release, distribution, and reader-access options.
+            </p>
+
+          </article>
+
+          <article class="work-card">
+
+            <div class="work-number">
+              05
+            </div>
+
+            <h3>
+              Visual Identity
+            </h3>
+
+            <p>
+              Building a consistent black, antique-gold, torn-veil,
+              breaking-chains, and radiant-light identity across
+              the book and public materials.
+            </p>
+
+          </article>
+
+          <article class="work-card">
+
+            <div class="work-number">
+              06
+            </div>
+
+            <h3>
+              Open Correction Process
+            </h3>
+
+            <p>
+              Creating a public record that allows factual errors
+              and stronger evidence to be acknowledged rather than hidden.
+            </p>
+
+          </article>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ROADMAP -->
+
+    <section class="section">
+
+      <div class="container">
+
+        <div class="section-heading">
+
+          <div class="eyebrow">
+            Forward Roadmap
+          </div>
+
+          <h2>
+            What Comes Next
+          </h2>
+
+          <p>
+            Dates will be announced only when the work is ready.
+            Accuracy takes priority over rushing a release.
+          </p>
+
+        </div>
+
+        <div class="roadmap-list">
+
+          <article class="roadmap-card">
+
+            <div class="roadmap-status">
+              In Progress
+            </div>
+
+            <h3>
+              Complete Historical Source Review
+            </h3>
+
+            <p>
+              Review the book’s most important historical claims
+              against primary documents, recognized scholarship,
+              and competing interpretations.
+            </p>
+
+          </article>
+
+          <article class="roadmap-card">
+
+            <div class="roadmap-status">
+              Planned
+            </div>
+
+            <h3>
+              Add Chapter-Level Source Notes
+            </h3>
+
+            <p>Connect each chapter to organized source notes, quotation checks, competing interpretations, contextual evidence, and documented corrections.</p>
+
+          </article>
+
+          <article class="roadmap-card">
+
+            <div class="roadmap-status">
+              Planned
+            </div>
+
+            <h3>
+              Build Public Source Notes
+            </h3>
+
+            <p>
+              Add organized source lists, reading recommendations,
+              quotation notes, and supporting historical context.
+            </p>
+
+          </article>
+
+          <article class="roadmap-card">
+
+            <div class="roadmap-status">
+              Planned
+            </div>
+
+            <h3>
+              Professional Manuscript Edit
+            </h3>
+
+            <p>
+              Complete structural, factual, citation, clarity,
+              grammar, and final-copy review before publication.
+            </p>
+
+          </article>
+
+          <article class="roadmap-card">
+
+            <div class="roadmap-status">
+              Future
+            </div>
+
+            <h3>
+              Print and Digital Release
+            </h3>
+
+            <p>
+              Prepare ebook, print, direct-distribution,
+              and reader-access options after the final manuscript
+              passes source and editorial review.
+            </p>
+
+          </article>
+
+          <article class="roadmap-card">
+
+            <div class="roadmap-status">
+              Future
+            </div>
+
+            <h3>
+              Reader Discussion and Response
+            </h3>
+
+            <p>
+              Create a responsible way for readers to submit evidence,
+              corrections, questions, testimony, and documented challenges.
+            </p>
+
+          </article>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- FOLLOW AND SUPPORT -->
+
+    <section
+      class="section section-dark"
+      id="support"
+    >
+
+      <div class="container">
+
+        <div class="follow-panel">
+
+          <div class="eyebrow">
+            Follow and Support the Work
+          </div>
+
+          <h2>
+            Stay Connected to Project Unveiled.
+          </h2>
+
+          <p>
+            Contact Robert J. Hayes for research sources,
+            corrections, publishing conversations, collaboration,
+            ministry support, or questions about the project.
+          </p>
+
+          <div class="follow-actions">
+
+            <a
+              class="button"
+              href="mailto:thebobsomest1@gmail.com?subject=Project%20Unveiled%20Update"
+            >
+              Contact Robert J. Hayes
+            </a>
+
+            <a
+              class="button secondary"
+              href="https://paypal.me/Bobsome1975"
+              target="_blank"
+              rel="noopener noreferrer"
+             data-pu-event="paypal_click">
+              Support Through PayPal
+            </a>
+
+          </div>
+
+          <p class="disclaimer">
+            Personal support gifts are not represented as
+            tax-deductible charitable donations unless formal
+            tax-exempt status is established.
+          </p>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <footer>
+
+    <div class="container">
+
+      <strong>Project Unveiled</strong>
+      by Robert J. Hayes
+
+      <br>
+
+      © 2026 Bobsome1.com —
+      Progress documented, evidence tested, corrections welcomed.
+
+    </div>
+
+  <div class="pu-support-footer" aria-label="Project support and privacy links"><a href="/book/read/support-right-hand.html" data-pu-event="support_page_click">Support the Work</a><span aria-hidden="true">◆</span><a href="/privacy.html">Privacy</a></div>
+</footer>
+
+<script id="project-unveiled-traffic-tracker" src="/project-unveiled-analytics/tracker.js?v=2" defer></script>
+<a class="pu-support-float" href="/book/read/support-right-hand.html" data-pu-event="support_page_click" aria-label="Support Project Unveiled and Right Hand Ministry">Support the Work</a>
+</body>
+</html>
