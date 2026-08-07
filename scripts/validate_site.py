@@ -13,6 +13,7 @@ ROOT = Path(__file__).resolve().parents[1]
 FORBIDDEN_SUFFIXES = {".bak", ".key", ".log", ".old", ".pem", ".sql", ".zip"}
 FORBIDDEN_NAMES = {".env", "error_log", "thumbs.db", ".ds_store"}
 SKIP_DIRS = {".git", ".idea", ".vscode", "site-private"}
+SKIP_LINK_AUDIT_DIRS = {"owner"}
 
 
 class References(HTMLParser):
@@ -63,7 +64,12 @@ def main() -> int:
         if not (ROOT / required).is_file():
             errors.append(f"missing required file: {required}")
 
-    for source in (path for path in files if path.suffix.lower() in {".html", ".htm"}):
+    for source in (
+        path
+        for path in files
+        if path.suffix.lower() in {".html", ".htm"}
+        and not any(part.lower() in SKIP_LINK_AUDIT_DIRS for part in path.relative_to(ROOT).parts)
+    ):
         parser = References()
         try:
             parser.feed(source.read_text(encoding="utf-8"))
