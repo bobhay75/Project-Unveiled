@@ -485,7 +485,7 @@ footer{padding:3rem 0;border-top:1px solid var(--line);color:#8f846f;background:
 
 <style id="project-unveiled-traffic-layer-styles">
 /* PROJECT-UNVEILED-TRAFFIC-DONATION-LAYER */
-.pu-support-footer{max-width:1100px;margin:18px auto 0;padding:14px 18px;border-top:1px solid rgba(215,173,81,.4);display:flex;gap:12px;justify-content:center;align-items:center;flex-wrap:wrap;font-family:Arial,sans-serif;font-size:14px}.pu-support-footer a{color:#f3d47d;text-decoration:underline;text-underline-offset:3px}.pu-support-footer span{color:#8d7b55}.pu-final-support-cta,.pu-reader-support-cta{max-width:980px;margin:34px auto;padding:26px;border:1px solid #d7ad51;background:linear-gradient(135deg,#15110b,#080706);color:#f4ead2;text-align:center;box-shadow:0 18px 55px rgba(0,0,0,.35)}.pu-final-support-cta h2,.pu-reader-support-cta h2{margin:.2rem 0 .7rem;color:#f3d47d;font-family:Georgia,"Times New Roman",serif}.pu-final-support-cta p,.pu-reader-support-cta p{max-width:760px;margin:.6rem auto}.pu-conversion-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:18px}.pu-conversion-actions a{display:inline-flex;align-items:center;justify-content:center;padding:12px 18px;border:1px solid #d7ad51;background:#d7ad51;color:#090806!important;font-weight:800;text-decoration:none!important}.pu-conversion-actions a.secondary{background:transparent;color:#f3d47d!important}.pu-support-legal{font-size:13px;color:#bdb49f}.pu-support-float{position:fixed;right:15px;bottom:15px;z-index:9998;padding:10px 14px;border:1px solid #d7ad51;border-radius:999px;background:rgba(8,7,6,.95);color:#f3d47d!important;text-decoration:none!important;font:700 13px Arial,sans-serif;box-shadow:0 8px 28px rgba(0,0,0,.5)}@media(max-width:650px){.pu-final-support-cta,.pu-reader-support-cta{margin:24px 14px;padding:21px 16px}.pu-support-float{right:10px;bottom:10px;padding:9px 12px}}
+.pu-support-footer{max-width:1100px;margin:18px auto 0;padding:14px 18px;border-top:1px solid rgba(215,173,81,.4);display:flex;gap:12px;justify-content:center;align-items:center;flex-wrap:wrap;font-family:Arial,sans-serif;font-size:14px}.pu-support-footer a{color:#f3d47d;text-decoration:underline;text-underline-offset:3px}.pu-support-footer span{color:#8d7b55}.pu-final-support-cta,.pu-reader-support-cta{max-width:980px;margin:34px auto;padding:26px;border:1px solid #d7ad51;background:linear-gradient(135deg,#15110b,#080706);color:#f4ead2;text-align:center;box-shadow:0 18px 55px rgba(0,0,0,.35)}.pu-final-support-cta h2,.pu-reader-support-cta h2{margin:.2rem 0 .7rem;color:#f3d47d;font-family:Georgia,"Times New Roman",serif}.pu-final-support-cta p,.pu-reader-support-cta p{max-width:760px;margin:.6rem auto}.pu-conversion-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:18px}.pu-conversion-actions a{display:inline-flex;align-items:center;justify-content:center;padding:12px 18px;border:1px solid #d7ad51;background:#d7ad51;color:#090806!important;font-weight:800;text-decoration:none!important}.pu-conversion-actions a.secondary{background:transparent;color:#f3d47d!important}.pu-support-legal{font-size:13px;color:#bdb49f}.pu-support-float{position:fixed;right:15px;bottom:76px;z-index:9998;padding:10px 14px;border:1px solid #d7ad51;border-radius:999px;background:rgba(8,7,6,.95);color:#f3d47d!important;text-decoration:none!important;font:700 13px Arial,sans-serif;box-shadow:0 8px 28px rgba(0,0,0,.5)}@media(max-width:650px){.pu-final-support-cta,.pu-reader-support-cta{margin:24px 14px;padding:21px 16px}.pu-support-float{right:10px;bottom:68px;padding:9px 12px}}
 </style>
 </head>
 <body>
@@ -672,6 +672,23 @@ footer{padding:3rem 0;border-top:1px solid var(--line);color:#8f846f;background:
 </div>
 </div>
 </section>
+<section id="pu-signup" aria-labelledby="pu-signup-title" data-version="7.3.1">
+  <h2 id="pu-signup-title">Stay connected to Project Unveiled</h2>
+  <p>Receive new chapter highlights, evidence updates, and occasional reader invitations. No daily spam.</p>
+  <div class="pu-signup-promise">We do not sell, rent, or trade your personal information. Ever.</div>
+  <form id="pu-signup-form" novalidate>
+    <div class="pu-signup-grid">
+      <div class="pu-signup-field"><label for="pu-first-name">First name</label><input id="pu-first-name" name="first_name" maxlength="80" autocomplete="given-name" required></div>
+      <div class="pu-signup-field"><label for="pu-email">Email address</label><input id="pu-email" name="email" type="email" maxlength="190" autocomplete="email" required></div>
+      <button class="pu-signup-button" type="submit">Join the reader list</button>
+    </div>
+    <label class="pu-signup-consent"><input type="checkbox" name="consent" value="yes" required><span>I agree to receive Project Unveiled email updates. I can unsubscribe at any time.</span></label>
+    <div class="pu-signup-hp" aria-hidden="true"><label>Website<input name="website" tabindex="-1" autocomplete="off"></label></div>
+    <input type="hidden" name="consent_version" value="2026-07-v2">
+    <p class="pu-signup-small">We collect your first name, email address, signup time, source page, campaign tags, and privacy-safe abuse-prevention hashes. Read the <a href="/privacy.html">Privacy Policy</a>.</p>
+    <div class="pu-signup-status" role="status" aria-live="polite"></div>
+  </form>
+</section>
 </main>
 <footer>
 <div class="container footer-grid">
@@ -694,23 +711,7 @@ footer{padding:3rem 0;border-top:1px solid var(--line);color:#8f846f;background:
 <script id="project-unveiled-traffic-tracker" src="/project-unveiled-analytics/tracker.js?v=2" defer></script>
 <a class="pu-support-float" href="/book/read/support-right-hand.html" data-pu-event="support_page_click" aria-label="Support Project Unveiled and Right Hand Ministry">Support the Work</a>
 <!-- PU_READER_SIGNUP_START -->
-<section id="pu-signup" aria-labelledby="pu-signup-title" data-version="7.3.1">
-  <h2 id="pu-signup-title">Stay connected to Project Unveiled</h2>
-  <p>Receive new chapter highlights, evidence updates, and occasional reader invitations. No daily spam.</p>
-  <div class="pu-signup-promise">We do not sell, rent, or trade your personal information. Ever.</div>
-  <form id="pu-signup-form" novalidate>
-    <div class="pu-signup-grid">
-      <div class="pu-signup-field"><label for="pu-first-name">First name</label><input id="pu-first-name" name="first_name" maxlength="80" autocomplete="given-name" required></div>
-      <div class="pu-signup-field"><label for="pu-email">Email address</label><input id="pu-email" name="email" type="email" maxlength="190" autocomplete="email" required></div>
-      <button class="pu-signup-button" type="submit">Join the reader list</button>
-    </div>
-    <label class="pu-signup-consent"><input type="checkbox" name="consent" value="yes" required><span>I agree to receive Project Unveiled email updates. I can unsubscribe at any time.</span></label>
-    <div class="pu-signup-hp" aria-hidden="true"><label>Website<input name="website" tabindex="-1" autocomplete="off"></label></div>
-    <input type="hidden" name="consent_version" value="2026-07-v2">
-    <p class="pu-signup-small">We collect your first name, email address, signup time, source page, campaign tags, and privacy-safe abuse-prevention hashes. Read the <a href="/privacy.html">Privacy Policy</a>.</p>
-    <div class="pu-signup-status" role="status" aria-live="polite"></div>
-  </form>
-</section>
+
 <link rel="stylesheet" href="/book/signup-widget.css?v=731">
 <script src="/book/signup-widget.js?v=731" defer></script>
 <!-- PU_READER_SIGNUP_END -->
