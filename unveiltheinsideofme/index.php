@@ -1,0 +1,40 @@
+<?php
+header('X-Robots-Tag: noindex, nofollow, noarchive', true);
+header('Cache-Control: no-store, max-age=0', true);
+?>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#0b1020">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <title>Inside of Me — Private Beta</title>
+  <meta name="description" content="A private, guided life-story reflection experience that helps you tell your story, see possible patterns, and shape a cinematic story arc.">
+  <link rel="stylesheet" href="app.css?v=1">
+</head>
+<body>
+<a class="skip" href="#main">Skip to app</a>
+<header class="topbar">
+  <div class="brand-wrap"><div class="mark" aria-hidden="true">I</div><div><strong>Inside of Me</strong><span>Private founder beta</span></div></div>
+  <div class="privacy-chip" title="Your story is stored in this browser unless you explicitly request Deep AI Reflection.">Local-first · no server story storage</div>
+</header>
+<main id="main" class="shell">
+  <section class="hero panel">
+    <p class="eyebrow">There’s a story inside all of us.</p><h1>What’s the story <em>inside of me?</em></h1>
+    <p class="lead">Tell what happened in your own words. Inside of Me helps organize the timeline, surface possible patterns without diagnosing you, identify strengths that grew beside the scars, and turn the story into a cinematic arc.</p>
+    <div class="hero-actions"><button class="primary" data-go="tell">Tell my story</button><button class="secondary" id="loadDemo">Load founder-style demo</button></div>
+    <div class="promise-grid"><div><strong>Truth before drama</strong><span>You can correct chronology and reject any interpretation.</span></div><div><strong>Patterns, not diagnoses</strong><span>The system uses possibility language and shows its evidence.</span></div><div><strong>Your next chapter matters</strong><span>Strengths and choices are mapped alongside pain.</span></div></div>
+  </section>
+  <nav class="stepper" aria-label="Inside of Me workflow"><button class="step active" data-step="tell"><b>1</b><span>Tell</span></button><button class="step" data-step="timeline"><b>2</b><span>Timeline</span></button><button class="step" data-step="patterns"><b>3</b><span>Patterns</span></button><button class="step" data-step="film"><b>4</b><span>Film</span></button></nav>
+  <section id="tell" class="workspace active"><div class="section-head"><div><p class="eyebrow">Step 1</p><h2>Tell it your way.</h2></div><span id="saveStatus" class="status">Not saved yet</span></div>
+    <div class="two-col"><div class="panel editor-panel"><label for="story">Your story</label><textarea id="story" maxlength="60000" placeholder="Start anywhere. You can say: ‘The part of my life I keep coming back to is…’"></textarea><div class="editor-tools"><button id="voiceBtn" class="secondary" type="button">Start voice dictation</button><button id="saveBtn" class="secondary" type="button">Save on this device</button><button id="clearBtn" class="ghost danger" type="button">Clear</button><span id="counter">0 characters</span></div><p class="microcopy">Voice dictation uses your browser’s speech-recognition support when available. Deep AI Reflection is optional; the basic reflection engine runs locally in your browser.</p></div>
+      <aside class="panel prompts"><p class="eyebrow">Story guide</p><h3>When you get stuck, choose a doorway.</h3><div id="promptList" class="prompt-list"></div></aside></div>
+    <div class="callout"><strong>You are the authority on your story.</strong><span>This tool can suggest connections. It cannot know your inner life with certainty and is not a substitute for a qualified mental-health professional.</span></div><div class="next-row"><button class="primary" data-go="timeline">Build my timeline</button></div>
+  </section>
+  <section id="timeline" class="workspace"><div class="section-head"><div><p class="eyebrow">Step 2</p><h2>Put the story in the right order.</h2></div><button id="extractBtn" class="secondary">Rebuild from story</button></div><p class="section-copy">Automatic extraction is intentionally conservative. Correct it. Reorder it. The film and reflections should follow <strong>your</strong> chronology, not an AI guess.</p><div id="timelineList" class="timeline"></div><div class="event-add panel"><input id="eventWhen" placeholder="Age 15 / 2004 / later"><input id="eventText" placeholder="What happened?"><button id="addEventBtn" class="secondary">Add event</button></div><div class="next-row"><button class="secondary" data-go="tell">Back</button><button class="primary" data-go="patterns">Show me the patterns</button></div></section>
+  <section id="patterns" class="workspace"><div class="section-head"><div><p class="eyebrow">Step 3</p><h2>How might I have become me?</h2></div><span id="aiStatus" class="status">Local reflection ready</span></div><p class="section-copy">Inside of Me looks for repeated themes and possible adaptations. A suggestion is never a diagnosis or a fact until it fits your experience.</p><div class="pattern-actions"><button id="localReflectBtn" class="primary">Run local reflection</button><button id="deepReflectBtn" class="secondary">Try Deep AI Reflection</button></div><div id="patternSummary" class="summary-card panel hidden"></div><div id="patternGrid" class="pattern-grid"></div><div id="deepPanel" class="deep-panel panel hidden"></div><div class="next-row"><button class="secondary" data-go="timeline">Back</button><button class="primary" data-go="film">Shape my film</button></div></section>
+  <section id="film" class="workspace"><div class="section-head"><div><p class="eyebrow">Step 4</p><h2>Once Upon a Life</h2></div><span class="status">Storyboard MVP</span></div><p class="section-copy">This private beta creates the truthful story structure before expensive video generation. Each scene stays tied to your words or a correction you made.</p><div class="film-title panel"><label for="filmName">Film title</label><input id="filmName" value="Inside of Me: How I Became Me"><label for="filmTheme">What should someone understand when the film ends?</label><textarea id="filmTheme" maxlength="1000" placeholder="Example: What kept me alive also shaped how I learned to love, trust, work, and keep going."></textarea></div><div id="storyArc" class="arc-grid"></div><div id="storyboard" class="storyboard"></div><div class="export-row panel"><div><strong>Take your story with you.</strong><span>Export the private project as JSON or a readable text brief.</span></div><div><button id="exportJsonBtn" class="secondary">Export project</button><button id="exportTextBtn" class="secondary">Export story brief</button></div></div><div class="next-row"><button class="secondary" data-go="patterns">Back</button><button id="restartBtn" class="ghost">Start another story</button></div></section>
+  <section class="guardrails panel"><p class="eyebrow">Built-in guardrails</p><h2>Reflection should increase agency, not take it away.</h2><div class="guard-grid"><div><strong>No diagnosis</strong><span>We do not label disorders or claim a single cause for behavior.</span></div><div><strong>Evidence visible</strong><span>Pattern cards point back to the story signals that triggered them.</span></div><div><strong>Reject any pattern</strong><span>If a reflection does not fit, dismiss it.</span></div><div><strong>Local by default</strong><span>The MVP stores story text in your browser, not a site database.</span></div></div></section>
+</main>
+<footer><strong>Inside of Me</strong> · private founder build at bobsome1.com · <span id="version">v0.1.0</span></footer><div id="toast" class="toast" role="status" aria-live="polite"></div><script src="app.js?v=1" defer></script></body></html>
