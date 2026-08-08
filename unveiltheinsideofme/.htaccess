@@ -1,7 +1,7 @@
 Options -Indexes
 AuthType Basic
 AuthName "Inside of Me private beta"
-AuthUserFile "/home/bobsocdw/.htpasswds/public_html/owner/passwd"
+AuthUserFile "/home/bobsocdw/.htpasswds/public_html/unveiltheinsideofme/passwd"
 Require valid-user
 <IfModule mod_headers.c>
 Header always set X-Robots-Tag "noindex, nofollow, noarchive"
