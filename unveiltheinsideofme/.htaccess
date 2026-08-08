@@ -1,0 +1,18 @@
+Options -Indexes
+AuthType Basic
+AuthName "Inside of Me private beta"
+AuthUserFile "/home/bobsocdw/.htpasswds/public_html/owner/passwd"
+Require valid-user
+<IfModule mod_headers.c>
+Header always set X-Robots-Tag "noindex, nofollow, noarchive"
+Header always set Cache-Control "no-store, max-age=0"
+Header always set Pragma "no-cache"
+Header always set Permissions-Policy "camera=(), microphone=(self), geolocation=(), payment=()"
+Header always set X-Content-Type-Options "nosniff"
+Header always set X-Frame-Options "SAMEORIGIN"
+Header always set Referrer-Policy "no-referrer"
+Header always set Content-Security-Policy "default-src 'self'; img-src 'self' data: blob:; media-src 'self' blob:; style-src 'self'; script-src 'self'; connect-src 'self'; base-uri 'none'; form-action 'self'; frame-ancestors 'self'"
+</IfModule>
+<FilesMatch "(?i)\.(?:bak|old|log|sql|zip|jsonl)$">
+Require all denied
+</FilesMatch>
