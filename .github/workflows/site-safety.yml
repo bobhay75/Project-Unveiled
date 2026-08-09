@@ -25,5 +25,13 @@ jobs:
             php -l "$file"
           done < <(find . -path './.git' -prune -o -type f -name '*.php' -print0)
 
+      - name: Validate JavaScript syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          while IFS= read -r -d '' file; do
+            node --check "$file"
+          done < <(find . -path './.git' -prune -o -type f -name '*.js' -print0)
+
       - name: Validate public files and local links
         run: python3 scripts/validate_site.py
