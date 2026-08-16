@@ -62,6 +62,30 @@
       const fill = progress.querySelector('.progress-fill');
       if (fill) fill.style.width = `${value}%`;
     }
+
+    if (/\/book\/updates\.html$/i.test(window.location.pathname)) {
+      document.querySelectorAll('.roadmap-card').forEach((card) => {
+        const heading = card.querySelector('h3');
+        if (!heading || !/Reader Discussion and Response/i.test(heading.textContent || '')) return;
+        const status = card.querySelector('.roadmap-status');
+        const copy = card.querySelector('p');
+        if (status) status.textContent = 'Live';
+        if (copy) {
+          copy.textContent = 'The public Reader Reviews & Scholarly Review desk is live, with verified attribution, explicit publication permission, expert-credential checks, and a separate path for factual corrections and stronger evidence.';
+        }
+        if (!card.querySelector('a[href="/book/reviews.html"]')) {
+          const link = document.createElement('a');
+          link.href = '/book/reviews.html';
+          link.textContent = 'Open the Review Desk →';
+          link.setAttribute('data-pu-event', 'reviews_page_click');
+          link.style.display = 'inline-block';
+          link.style.marginTop = '14px';
+          link.style.color = '#f3d47d';
+          link.style.fontWeight = '800';
+          card.appendChild(link);
+        }
+      });
+    }
   };
 
   const prepareUi = () => {
