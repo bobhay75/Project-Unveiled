@@ -39,10 +39,40 @@
     window.addEventListener('scroll', checkDepth, { passive: true });
     window.setTimeout(reveal, 45000);
   };
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', prepareSupportPrompt, { once: true });
-  } else {
+
+  const preparePublicReviewLinks = () => {
+    const reviewsHref = '/book/reviews.html';
+    const addLink = (container, className = '') => {
+      if (!container || container.querySelector(`a[href="${reviewsHref}"]`)) return;
+      const link = document.createElement('a');
+      link.href = reviewsHref;
+      link.textContent = 'Reviews';
+      link.setAttribute('data-pu-event', 'reviews_page_click');
+      if (className) link.className = className;
+      container.appendChild(link);
+    };
+
+    document.querySelectorAll('.nav-links').forEach((nav) => addLink(nav));
+    document.querySelectorAll('.footer-links').forEach((footer) => addLink(footer));
+    document.querySelectorAll('.pu-support-footer').forEach((footer) => addLink(footer));
+
+    const progress = document.querySelector('[role="progressbar"][aria-valuenow]');
+    if (progress) {
+      const value = Math.max(0, Math.min(100, Number(progress.getAttribute('aria-valuenow')) || 0));
+      const fill = progress.querySelector('.progress-fill');
+      if (fill) fill.style.width = `${value}%`;
+    }
+  };
+
+  const prepareUi = () => {
     prepareSupportPrompt();
+    preparePublicReviewLinks();
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', prepareUi, { once: true });
+  } else {
+    prepareUi();
   }
 
   const dnt = navigator.doNotTrack === '1' || window.doNotTrack === '1';
