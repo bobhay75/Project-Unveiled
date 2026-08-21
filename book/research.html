@@ -1308,12 +1308,14 @@
 
           </ul>
 
-          <a
-            class="button"
-            href="mailto:thebobsomest1@gmail.com?subject=Project%20Unveiled%20Correction%20or%20Source&body=Page%20or%20claim%20in%20question%3A%0A%0ASuggested%20correction%3A%0A%0ASupporting%20source%20or%20evidence%3A%0A"
-          >
-            Submit Evidence or a Correction
-          </a>
+          <form id="submit-correction" action="/book/correction-submit.php" method="post" novalidate style="margin-top:28px;display:grid;gap:12px;max-width:780px">
+<label>Your name (optional)<input name="name" maxlength="100" style="width:100%;padding:12px;margin-top:5px"></label>
+<label>Email for follow-up (optional)<input name="email" type="email" maxlength="190" style="width:100%;padding:12px;margin-top:5px"></label>
+<label>Page or claim in question<textarea name="claim" required maxlength="1200" rows="3" style="width:100%;padding:12px;margin-top:5px"></textarea></label>
+<label>Suggested correction or challenge<textarea name="correction" required maxlength="5000" rows="6" style="width:100%;padding:12px;margin-top:5px"></textarea></label>
+<label>Supporting source or evidence (optional)<textarea name="source" maxlength="1500" rows="3" style="width:100%;padding:12px;margin-top:5px"></textarea></label>
+<label style="position:absolute;left:-9999px">Website<input name="website" tabindex="-1" autocomplete="off"></label><input type="hidden" name="opened_at" value="">
+<button class="button" type="submit" style="justify-self:start">Submit Evidence or a Correction</button><p id="correction-result" aria-live="polite"></p></form>
 
         </div>
 
@@ -1448,5 +1450,5 @@
 
 <script id="project-unveiled-traffic-tracker" src="/project-unveiled-analytics/tracker.js?v=2" defer></script>
 <a class="pu-support-float" href="/book/read/support-right-hand.html" data-pu-event="support_page_click" aria-label="Support Project Unveiled and Right Hand Ministry">Support the Work</a>
-</body>
+<script>document.querySelector('#submit-correction')?.addEventListener('submit',async e=>{e.preventDefault();const f=e.currentTarget,r=document.querySelector('#correction-result');r.textContent='Submitting…';try{const d=new URLSearchParams(new FormData(f));const x=await fetch(f.action,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'},body:d});const j=await x.json();r.textContent=j.message;if(j.ok)f.reset();}catch(_){r.textContent='Your submission could not be sent. Please try again.';}});document.querySelector('#submit-correction [name="opened_at"]')?.setAttribute('value',String(Math.floor(Date.now()/1000)));</script></body>
 </html>
