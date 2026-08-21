@@ -9,7 +9,7 @@
   const email = document.getElementById("email-address");
   const consent = document.getElementById("email-consent");
 
-  if (!form || !button || !status) return;
+  if (!form || !button || !status || !firstName || !email || !consent) return;
 
   button.disabled = true;
 
@@ -19,92 +19,36 @@
   }
 
   function addHidden(name, value) {
-    if (!name || value === undefined || value === null || value === "") return;
-    const existing = Array.from(form.elements).find((field) => field.name === name);
-    if (existing) {
-      if (existing.type === "hidden") existing.value = String(value);
-      return;
+    if (!name || value === undefined || value === null) return;
+    let input = Array.from(form.elements).find((field) => field.name === name);
+    if (!input) {
+      input = document.createElement("input");
+      input.type = "hidden";
+      input.name = name;
+      form.appendChild(input);
     }
-    const input = document.createElement("input");
-    input.type = "hidden";
-    input.name = name;
-    input.value = String(value);
-    form.appendChild(input);
+    if (input.type === "hidden") input.value = String(value);
   }
 
   function addCampaignFields() {
     const query = new URLSearchParams(window.location.search);
     ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term"].forEach((key) => {
-      addHidden(key, query.get(key));
+      addHidden(key, query.get(key) || "");
     });
     addHidden("journey", config.journeyTag || "7-day-unveiled");
-    addHidden("source_page", window.location.pathname);
-    addHidden("referrer", document.referrer ? new URL(document.referrer).hostname : "direct");
+    addHidden("source_url", window.location.href);
+    addHidden("consent_version", "2026-08-unveiled-v1");
+    addHidden("started_ms", Date.now());
+    addHidden("website", "");
   }
 
-  function configureKit() {
-    if (!config.kitFormAction || config.kitFormAction.includes("PASTE_")) {
-      throw new Error("The Kit form action has not been added yet.");
-    }
-    form.action = config.kitFormAction;
+  function configureExistingSite() {
+    form.action = new URL(config.existingFormAction || "/book/subscribe.php", window.location.origin).toString();
     form.method = "post";
-    firstName.name = "fields[first_name]";
-    email.name = "email_address";
+    firstName.name = "first_name";
+    email.name = "email";
     consent.name = "consent";
-    addHidden("redirect", config.successUrl);
-    addCampaignFields();
-  }
-
-  function scoreForm(candidate) {
-    if (!candidate.querySelector('input[type="email"]')) return -1;
-    const text = (candidate.textContent || "").toLowerCase();
-    let score = 1;
-    if (text.includes("reader list")) score += 4;
-    if (text.includes("unsubscribe")) score += 2;
-    if (text.includes("project unveiled")) score += 1;
-    return score;
-  }
-
-  async function configureExistingSite() {
-    const sourceUrl = new URL(config.existingFormPage || "/book/", window.location.origin);
-    const response = await fetch(sourceUrl.toString(), { credentials: "same-origin" });
-    if (!response.ok) throw new Error("The existing reader-list form could not be loaded.");
-
-    const html = await response.text();
-    const page = new DOMParser().parseFromString(html, "text/html");
-    const candidates = Array.from(page.querySelectorAll("form")).sort((a, b) => scoreForm(b) - scoreForm(a));
-    const sourceForm = candidates.find((candidate) => scoreForm(candidate) > 0);
-    if (!sourceForm) throw new Error("No existing reader-list form was found.");
-
-    const rawAction = sourceForm.getAttribute("action");
-    if (!rawAction) throw new Error("The existing form depends on page-specific code and needs a direct endpoint before launch.");
-
-    form.action = new URL(rawAction, sourceUrl).toString();
-    form.method = (sourceForm.getAttribute("method") || "post").toLowerCase();
-    if (sourceForm.enctype) form.enctype = sourceForm.enctype;
-
-    const sourceEmail = sourceForm.querySelector('input[type="email"]');
-    const sourceCheckbox = sourceForm.querySelector('input[type="checkbox"]');
-    const sourceTextFields = Array.from(sourceForm.querySelectorAll('input[type="text"], input:not([type])'));
-    const sourceFirstName = sourceTextFields.find((field) => {
-      const marker = ((field.name || "") + " " + (field.id || "") + " " + (field.autocomplete || "")).toLowerCase();
-      return /first|given|name/.test(marker) && !/website|url|company/.test(marker);
-    }) || sourceTextFields.find((field) => !/website|url|company/.test((field.name || "").toLowerCase()));
-
-    if (sourceEmail && sourceEmail.name) email.name = sourceEmail.name;
-    if (sourceFirstName && sourceFirstName.name) firstName.name = sourceFirstName.name;
-    if (sourceCheckbox && sourceCheckbox.name) {
-      consent.name = sourceCheckbox.name;
-      consent.value = sourceCheckbox.value || "yes";
-    }
-
-    Array.from(sourceForm.elements).forEach((field) => {
-      if (!field.name || field === sourceEmail || field === sourceFirstName || field === sourceCheckbox) return;
-      const marker = ((field.name || "") + " " + (field.id || "") + " " + (field.autocomplete || "")).toLowerCase();
-      if (field.type === "hidden") addHidden(field.name, field.value);
-      if (/website|honeypot|company|url/.test(marker)) addHidden(field.name, "");
-    });
-
+    consent.value = "yes";
     addCampaignFields();
   }
 
@@ -116,34 +60,57 @@
     return form.reportValidity();
   }
 
-  form.addEventListener("submit", function (event) {
+  async function submitExistingSite() {
+    const response = await fetch(form.action, {
+      method: "POST",
+      body: new FormData(form),
+      credentials: "same-origin",
+      headers: { "Accept": "application/json" }
+    });
+    let result = {};
+    try { result = await response.json(); } catch (error) { result = {}; }
+    if (!response.ok || !result.ok) {
+      throw new Error(result.message || "Signup could not be completed. Please try again.");
+    }
+    window.location.assign(config.successUrl || "/unveiled/confirmed.html");
+  }
+
+  form.addEventListener("submit", async function (event) {
     if (!validate()) {
       event.preventDefault();
       setStatus("Please complete all three fields.", "error");
       return;
     }
+
     button.disabled = true;
     button.textContent = "Opening the journey…";
     setStatus("Submitting securely. Please wait…", "ready");
+
+    event.preventDefault();
+
+    try {
+      await submitExistingSite();
+    } catch (error) {
+      button.disabled = false;
+      button.textContent = "Send Me Day One →";
+      setStatus(error.message || "Signup could not be completed. Please try again.", "error");
+    }
   });
 
-  (async function initialize() {
-    try {
-      if (config.mode === "kit") configureKit();
-      else await configureExistingSite();
-      button.disabled = false;
-      setStatus("Ready. Your information is sent through the secure Project Unveiled signup system.", "ready");
-    } catch (error) {
-      console.error("Project Unveiled form setup:", error);
-      button.disabled = true;
-      setStatus("Signup connection is awaiting final setup. Please use the reader-list form on the main book page for now.", "error");
-      const link = document.createElement("a");
-      link.href = config.fallbackSignupUrl || "/book/";
-      link.textContent = "Open the current signup form";
-      link.style.display = "inline-block";
-      link.style.marginTop = ".35rem";
-      status.appendChild(document.createElement("br"));
-      status.appendChild(link);
-    }
-  })();
+  try {
+    configureExistingSite();
+    button.disabled = false;
+    setStatus("Ready. We will email you a private confirmation link.", "ready");
+  } catch (error) {
+    console.error("Project Unveiled form setup:", error);
+    button.disabled = true;
+    setStatus("Signup connection is temporarily unavailable.", "error");
+    const link = document.createElement("a");
+    link.href = config.fallbackSignupUrl || "/book/";
+    link.textContent = "Open the reader-list signup";
+    link.style.display = "inline-block";
+    link.style.marginTop = ".35rem";
+    status.appendChild(document.createElement("br"));
+    status.appendChild(link);
+  }
 })();
