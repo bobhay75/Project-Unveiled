@@ -26,15 +26,17 @@ Trust-Worthy therefore distinguishes **ontological truth** from **epistemic acce
 1. **No protected conclusions.** Project Unveiled claims receive the same scrutiny as any other claim.
 2. **Primary evidence first.** Prefer original documents, manuscripts, inscriptions, archival records, critical editions, direct data, and contemporary records where available.
 3. **No authority substitution.** No institution, paper, scholar, church, empire, government, denomination, publisher, majority view, fact-check organization, or AI answer establishes truth merely by status. All such material is treated as evidence or interpretation to be examined, not as a verdict to inherit.
-4. **No fact-checker dependency.** Third-party fact-check verdicts are not accepted as authority. If referenced at all, they are treated as claims whose sources can be independently examined.
-5. **Independent research every time.** Trust-Worthy must perform its own fresh investigation for every substantive case, challenge, and Theology Battle turn. It must not simply reuse a prior verdict, contestant summary, institutional conclusion, or cached interpretation as the answer.
-6. **Trace provenance.** Repetition is not corroboration. Follow citations backward to determine whether apparent sources are independent.
-7. **Separate evidence from inference.** Every case must distinguish documented evidence, inference, interpretation, speculation, and unresolved uncertainty.
-8. **Attack the preliminary conclusion.** A dedicated adversarial pass must search for evidence capable of overturning the working hypothesis.
-9. **Steelman competing explanations.** Present the strongest credible case for material alternatives, not straw men.
-10. **Never confuse unknown with gray truth.** If the evidence cannot resolve which contradictory proposition is true, state that our knowledge is unresolved; do not imply that reality has multiple incompatible truths.
-11. **Version every finding.** Findings are provisional records with a permanent public history.
-12. **Let the seeker decide.** Trust-Worthy may state what appears most strongly supported; it must not tell a user what they are required to believe.
+4. **No automatic anti-authority bias.** A source is not false merely because it was produced by, funded by, preserved by, or associated with a powerful institution or empire. Institutional ties are relevant evidence about incentives and possible bias, not a substitute for testing the source itself.
+5. **No fact-checker dependency.** Third-party fact-check verdicts are not accepted as authority. If referenced at all, they are treated as claims whose sources can be independently examined.
+6. **Independent research every time.** Trust-Worthy must perform its own fresh investigation for every substantive case, challenge, and Theology Battle turn. It must not simply reuse a prior verdict, contestant summary, institutional conclusion, or cached interpretation as the answer.
+7. **Trace provenance.** Repetition is not corroboration. Follow citations backward to determine whether apparent sources are independent.
+8. **Consider incentives and power relationships.** Authorship, patronage, funding, censorship, political power, institutional affiliation, legal exposure, intended audience, and material benefit may affect evidentiary weight when a plausible mechanism connects those interests to the claim. Such relationships must be documented rather than assumed.
+9. **Separate evidence from inference.** Every case must distinguish documented evidence, inference, interpretation, speculation, and unresolved uncertainty.
+10. **Attack the preliminary conclusion.** A dedicated adversarial pass must search for evidence capable of overturning the working hypothesis.
+11. **Steelman competing explanations.** Present the strongest credible case for material alternatives, not straw men.
+12. **Never confuse unknown with gray truth.** If the evidence cannot resolve which contradictory proposition is true, state that our knowledge is unresolved; do not imply that reality has multiple incompatible truths.
+13. **Version every finding.** Findings are provisional records with a permanent public history.
+14. **Let the seeker decide.** Trust-Worthy may state what appears most strongly supported; it must not tell a user what they are required to believe.
 
 ## Investigation Pipeline
 
@@ -54,15 +56,23 @@ Search backward toward the earliest, strongest, and most direct surviving eviden
 
 Human-authored materials may be necessary historical evidence, but their authority comes only from what can be established about their provenance, proximity, internal coherence, external corroboration, and relationship to the proposition under investigation.
 
-### 4. Provenance
+### 4. Provenance, Incentive, and Power Audit
 
-For every material source, record:
-- author or creator when known;
+For every material source, record when reasonably knowable:
+- author or creator;
 - approximate date;
 - relationship to the event or claim;
-- transmission history where relevant;
-- whether the source is primary, secondary, tertiary, or derivative;
-- known disputes over authenticity, dating, interpolation, or attribution.
+- transmission history;
+- primary, secondary, tertiary, or derivative status;
+- known disputes over authenticity, dating, interpolation, or attribution;
+- patron, funder, commissioner, employer, publisher, or controlling institution;
+- political, religious, commercial, military, or imperial relationships relevant to the claim;
+- intended audience and purpose;
+- plausible benefits or penalties attached to advancing or suppressing the claim;
+- known censorship, coercion, access restrictions, or selection effects;
+- whether opposing voices survived independently or were disproportionately lost.
+
+These factors may increase or decrease confidence only when Trust-Worthy can explain the causal relevance. `Associated with empire` is not itself evidence of falsity, just as `opposed to empire` is not itself evidence of truth.
 
 ### 5. Source Lineage
 
@@ -78,21 +88,23 @@ When wording materially affects the case, examine the relevant original language
 
 ### 8. Independent Corroboration
 
-Determine which sources are genuinely independent. Record convergent and conflicting evidence separately.
+Determine which sources are genuinely independent. Record convergent and conflicting evidence separately. Seek evidence from parties with different incentives where possible; convergence among independently situated sources can be especially informative.
 
 ### 9. Adversarial Pass
 
 A separate research pass receives the instruction: **Find the strongest credible evidence that the preliminary conclusion is wrong.**
 
-This pass must not merely repeat the initial search. It should seek contrary sources, alternative dating, translation disputes, methodological criticism, and competing causal explanations.
+This pass must not merely repeat the initial search. It should seek contrary sources, alternative dating, translation disputes, methodological criticism, competing causal explanations, and evidence from sources outside the dominant institutional lineage.
 
 ### 10. Alternative Hypotheses
 
 Construct the strongest material competing explanations and state what evidence each explains well or poorly. Alternatives are candidate descriptions of one reality, not separate personal truths.
 
-### 11. Logic Audit
+### 11. Logic and Explanatory-Coherence Audit
 
-Test whether conclusions actually follow from premises. Flag:
+Trust-Worthy must reason across the whole evidentiary record rather than count citations. The preferred explanation should account for the greatest amount of reliable evidence with the fewest unsupported assumptions while surviving contradiction and adversarial testing.
+
+Test and flag:
 - contradiction and failure to distinguish sense/context/time;
 - circular reasoning;
 - false dichotomies;
@@ -102,7 +114,11 @@ Test whether conclusions actually follow from premises. Flag:
 - equivocation;
 - cherry-picking;
 - source laundering;
-- unsupported certainty.
+- unsupported certainty;
+- special pleading;
+- explanations that require ignoring material contrary facts.
+
+A conclusion should `rhyme with reason`: it must be logically coherent, fit the established facts better than its alternatives, and explicitly account for material evidence that appears inconvenient to it.
 
 ### 12. Christ-Consistency Analysis — Theology Mode Only
 
@@ -146,7 +162,8 @@ Every public finding ends with **Challenge This Finding**. A challenge must targ
 - logic;
 - counterevidence;
 - assumption;
-- omitted alternative hypothesis.
+- omitted alternative hypothesis;
+- incentive/power analysis.
 
 Successful challenges trigger a new investigation version rather than silently editing the existing record.
 
@@ -178,6 +195,7 @@ Each substantive turn is scored on published standards. Suggested 0–5 dimensio
 - **Language accuracy** — where relevant, does original-language evidence support the usage?
 - **Logical force** — how strongly does the evidence actually bear on `P` or `not-P`?
 - **Adversarial survival** — how well does the evidence survive Trust-Worthy's attempt to disconfirm or weaken it?
+- **Incentive/power resilience** — after documented authorship, patronage, institutional ties, coercion, censorship, and material incentives are considered, how well does the evidence retain its force?
 
 The public UI may show dimension scores and explanations, but the tally must not be presented as a numerical probability that a proposition is true. Scores measure **evidentiary performance in the battle**, not truth itself.
 
@@ -188,10 +206,11 @@ When both participants are out of material evidence:
 1. Trust-Worthy re-runs the source lineage map so repeated sources are not double-counted.
 2. Trust-Worthy conducts new independent research beyond both contestants' submissions.
 3. Trust-Worthy searches specifically for evidence that could defeat the apparent leader.
-4. Trust-Worthy audits contradictions, translation disputes, chronology, context, and assumptions.
-5. Trust-Worthy publishes the final evidentiary tally by category.
-6. Trust-Worthy issues an epistemic assessment: supports `P`, leans `P`, insufficient, leans `not-P`, or supports `not-P`.
-7. The complete turn history, research notes, source lineage, and final rationale are preserved.
+4. Trust-Worthy audits contradictions, translation disputes, chronology, context, assumptions, incentives, patronage, censorship, and relevant power relationships.
+5. Trust-Worthy tests which explanation accounts for the total reliable evidence with the fewest unsupported assumptions.
+6. Trust-Worthy publishes the final evidentiary tally by category.
+7. Trust-Worthy issues an epistemic assessment: supports `P`, leans `P`, insufficient, leans `not-P`, or supports `not-P`.
+8. The complete turn history, research notes, source lineage, power/incentive audit, and final rationale are preserved.
 
 The winner of a Theology Battle is the position that performed better under the published evidence protocol in that battle. That result is not immune from future challenge and does not become true merely because it won a tally.
 
@@ -207,6 +226,7 @@ Every Truth Trial receives a permanent identifier such as `TW-CASE-000001` and c
 - evidence against;
 - alternatives;
 - logic audit;
+- incentive/power audit where relevant;
 - Christ-consistency analysis when applicable;
 - epistemic status / uncertainty register;
 - current finding;
