@@ -4,6 +4,42 @@
 
 Build one public, auditable Truth Trial on bobsome1.com that demonstrates the full investigation loop without requiring a new application stack.
 
+## Primary Interface Decision — Live Voice First
+
+Trust-Worthy is primarily a **live conversational investigator**, not a text chatbot. Users should be able to speak naturally, interrupt, challenge, ask for sources, and move deeper without typing. Text remains essential for accessibility, transcripts, citations, source review, challenge records, and the permanent public Truth Trial.
+
+The product loop is:
+
+```text
+LIVE VOICE CONVERSATION
+        ↓
+question / claim detected
+        ↓
+provisional conversational response
+        ↓
+DEEP RESEARCH MODE when warranted
+        ↓
+source trail + provenance + competing explanations
+        ↓
+spoken challenge / interruption
+        ↓
+re-investigation
+        ↓
+structured Truth Trial record
+        ↓
+public finding + revision history
+```
+
+The interface should visibly distinguish conversational analysis from completed research. Suggested states:
+
+- `TALKING` — natural live conversation;
+- `INVESTIGATING` — deeper source research is running;
+- `SOURCES VERIFIED` — cited material has been checked for provenance/context;
+- `ADVERSARIAL REVIEW` — the preliminary finding is being attacked;
+- `FINDING READY` — a structured case record can be published.
+
+Trust-Worthy must never imply that an instant voice response is equivalent to exhaustive historical research.
+
 ## First Demo Case
 
 **TW-CASE-000001 — Did Jesus teach the modern concept commonly presented as a specific salvation prayer or formula?**
@@ -60,9 +96,28 @@ Before challenge intake is enabled in production, confirm PHP can create/write t
 
 If the directory cannot be created or written safely, the form fails closed with a 503-style message rather than storing challenge data in public web space.
 
+## Voice Architecture — Phase 2 Priority
+
+Phase 2 should prioritize a provider-agnostic live-voice layer instead of building the product around typed chat.
+
+Minimum capabilities:
+
+1. browser microphone capture with explicit consent;
+2. streaming speech-to-text;
+3. low-latency conversational response;
+4. interruption / barge-in support;
+5. text transcript kept visible and correctable;
+6. source cards surfaced on screen while the conversation continues;
+7. a clear `Deep Dive` action that moves from conversational analysis into the full research protocol;
+8. ability to turn a completed deep-dive conversation into a versioned Truth Trial;
+9. text fallback for accessibility and unsupported browsers;
+10. no API secrets exposed client-side.
+
+Because production is Namecheap shared hosting, the web application should remain PHP/static where practical. Real-time model connections should be abstracted behind server-side endpoints or a narrowly scoped external realtime service so the public site is not locked to one model vendor and can migrate later.
+
 ## Research Orchestrator — Phase 2
 
-The initial research engine can be manual/semi-automated. A future server-side orchestrator should execute distinct research passes without exposing API keys client-side:
+The research engine executes distinct passes without exposing API keys client-side:
 
 1. Claim Decomposer
 2. Archivist / Source Hunter
@@ -85,17 +140,20 @@ Published records are immutable versions. A successful challenge creates v2, v3,
 
 For v0.1, public cases are structured JSON records. Challenge submissions stay private and outside Git/public_html. If scale or concurrent editing becomes material, migrate case/challenge storage to SQLite or MySQL without changing the public schema.
 
+Live voice transcripts must be treated as private by default. A conversation becomes public only through an explicit publish/Truth-Trial action. Sensitive raw audio should not be retained by default unless a later feature has a clear reason and informed user consent.
+
 ## Contest Demo Flow
 
-1. Judge sees a provocative but precise claim.
-2. Trust-Worthy exposes the source trail and reasoning, not just an answer.
-3. Judge clicks **Challenge This Finding**.
-4. New evidence is submitted.
-5. Trust-Worthy independently investigates the challenge.
-6. If material, the finding changes and a new version is published.
-7. The public history shows exactly why Trust-Worthy changed its mind.
+1. Judge speaks a provocative but precise question to Trust-Worthy.
+2. Trust-Worthy converses naturally and identifies the claim or hidden assumption.
+3. Judge says **Go deeper** / activates Deep Dive.
+4. Trust-Worthy exposes the source trail and reasoning while continuing the conversation.
+5. Judge interrupts with counterevidence or a challenge.
+6. Trust-Worthy independently investigates the challenge instead of defending itself reflexively.
+7. If material, the finding changes.
+8. The conversation becomes a public Truth Trial with a permanent version history.
 
-The memorable demo moment is not the AI being right. It is the AI being **correctable in public**.
+The memorable demo moment is not the AI sounding smart. It is a live AI investigator being **challenged, researching the objection, and correcting itself in public**.
 
 ## Phase Sequence
 
@@ -111,17 +169,21 @@ The memorable demo moment is not the AI being right. It is the AI being **correc
 - version-history UI;
 - public method page.
 
-### Phase 2 — Assisted Research
+### Phase 2 — Live Voice + Assisted Research
+- live browser voice interface;
+- streaming transcript and interruption support;
+- conversational vs deep-research state separation;
 - server-side research orchestrator;
 - source/provenance extraction;
 - adversarial pass;
-- structured draft generation.
+- structured draft generation;
+- convert a conversation into a Truth Trial.
 
 ### Phase 3 — Community
 - accounts;
 - contributor attribution;
 - challenge reputation;
-- theology battles / Truth Trials;
+- live theology battles / Truth Trials;
 - Unveiled, Bunk Book, Mystery Book indexes.
 
 ### Phase 4 — Evidence Graph + API
@@ -139,5 +201,12 @@ The MVP succeeds if a first-time visitor can answer all five questions without e
 3. What evidence challenges it?
 4. Why does Trust-Worthy currently lean one way?
 5. How can I challenge or improve the finding?
+
+The voice-first prototype adds five more tests:
+1. Can a user begin without typing?
+2. Can the user interrupt Trust-Worthy naturally?
+3. Can Trust-Worthy clearly signal when it is doing deeper research rather than giving a provisional response?
+4. Can the user inspect sources without ending the conversation?
+5. Can the resulting investigation become a permanent, auditable Truth Trial?
 
 If those are obvious, the core product is working.
