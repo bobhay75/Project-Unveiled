@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bobsome1.com/trust-worthy/schema/book-edition-v0.1.json",
+  "title": "Trust-Worthy Numbered Book Edition v0.1",
+  "type": "object",
+  "required": ["edition_id", "member_id", "book_title", "edition_name", "edition_size", "status", "copies", "created_at"],
+  "properties": {
+    "edition_id": {"type": "string", "pattern": "^TW-BOOK-[A-Z0-9-]+-E[0-9]{2}$"},
+    "member_id": {"type": "string"},
+    "book_title": {"type": "string"},
+    "edition_name": {"type": "string"},
+    "edition_size": {"type": "integer", "minimum": 1},
+    "status": {"type": "string", "enum": ["reserved", "open", "closed", "retired"]},
+    "book_snapshot_id": {"type": ["string", "null"]},
+    "content_hash": {"type": ["string", "null"]},
+    "copies": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["serial", "registry_id", "status"],
+        "properties": {
+          "serial": {"type": "integer", "minimum": 1},
+          "registry_id": {"type": "string"},
+          "status": {"type": "string", "enum": ["reserved", "issued", "replacement", "retired"]},
+          "issued_at": {"type": ["string", "null"], "format": "date-time"},
+          "recipient_member_id": {"type": ["string", "null"]},
+          "replacement_for": {"type": ["string", "null"]},
+          "verification_path": {"type": ["string", "null"]}
+        }
+      }
+    },
+    "created_at": {"type": "string", "format": "date-time"},
+    "closed_at": {"type": ["string", "null"], "format": "date-time"}
+  }
+}

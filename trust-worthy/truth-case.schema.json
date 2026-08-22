@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bobsome1.com/trust-worthy/schema/truth-case-v0.2.json",
+  "title": "Trust-Worthy Truth Case v0.2",
+  "description": "A versioned investigation record. Truth is not modeled as graded or plural; epistemic assessment records what the available evidence permits the investigator to know about a proposition and its contradiction.",
+  "type": "object",
+  "required": ["case_id", "title", "claim", "status", "version", "propositions", "finding", "sources", "updated_at"],
+  "properties": {
+    "case_id": {"type": "string", "pattern": "^TW-CASE-[0-9]{6}$"},
+    "title": {"type": "string", "minLength": 5},
+    "claim": {"type": "string", "minLength": 5},
+    "mode": {"type": "string", "enum": ["historical", "theology", "textual", "scientific", "public-claim", "mixed"]},
+    "status": {"type": "string", "enum": ["open", "investigating", "published", "challenged", "reopened", "archived"]},
+    "version": {"type": "integer", "minimum": 1},
+    "propositions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["proposition_id", "p"],
+        "properties": {
+          "proposition_id": {"type": "string"},
+          "p": {"type": "string", "minLength": 1},
+          "not_p": {"type": ["string", "null"]},
+          "scope_notes": {"type": ["string", "null"]},
+          "epistemic_status": {
+            "type": "string",
+            "enum": ["supports-p", "leans-p", "insufficient", "leans-not-p", "supports-not-p", "not-yet-investigated"]
+          }
+        }
+      }
+    },
+    "assumptions": {"type": "array", "items": {"type": "string"}},
+    "finding": {
+      "type": "object",
+      "required": ["truth_proposition", "epistemic_assessment", "summary"],
+      "properties": {
+        "truth_proposition": {"type": "string", "minLength": 1},
+        "contradiction": {"type": ["string", "null"]},
+        "epistemic_assessment": {
+          "type": "string",
+          "enum": ["supports-p", "leans-p", "insufficient", "leans-not-p", "supports-not-p"]
+        },
+        "summary": {"type": "string"},
+        "strongest_objection": {"type": "string"},
+        "what_would_change_it": {"type": "array", "items": {"type": "string"}},
+        "destination": {"type": "string", "enum": ["unveiled", "bunk-book", "mystery-book", "none"]}
+      }
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["source_id", "title", "source_type", "position"],
+        "properties": {
+          "source_id": {"type": "string"},
+          "title": {"type": "string"},
+          "creator": {"type": ["string", "null"]},
+          "date": {"type": ["string", "null"]},
+          "source_type": {"type": "string", "enum": ["primary", "secondary", "tertiary", "derivative", "data", "artifact"]},
+          "position": {"type": "string", "enum": ["supports-p", "supports-not-p", "context", "neutral"]},
+          "url": {"type": ["string", "null"]},
+          "citation": {"type": ["string", "null"]},
+          "provenance_notes": {"type": ["string", "null"]},
+          "lineage_parent": {"type": ["string", "null"]},
+          "authenticity_dispute": {"type": "boolean", "default": false},
+          "independent": {"type": ["boolean", "null"]}
+        }
+      }
+    },
+    "evidence_for_p": {"type": "array", "items": {"type": "string"}},
+    "evidence_for_not_p": {"type": "array", "items": {"type": "string"}},
+    "alternative_hypotheses": {"type": "array", "items": {"type": "string"}},
+    "logic_audit": {"type": "array", "items": {"type": "string"}},
+    "christ_consistency": {"type": ["object", "null"]},
+    "epistemic_limits": {"type": "array", "items": {"type": "string"}},
+    "challenges": {"type": "array", "items": {"type": "object"}},
+    "history": {"type": "array", "items": {"type": "object"}},
+    "created_at": {"type": "string", "format": "date-time"},
+    "updated_at": {"type": "string", "format": "date-time"}
+  }
+}

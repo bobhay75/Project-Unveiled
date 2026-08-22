@@ -1,5 +1,13 @@
 # Evidence Phase 2 Changelog
 
+## 2026-08-22 — Trust-Worthy AI Phase 1
+
+- Added the Trust-Worthy AI v0.1 investigation protocol and machine-readable Truth Case schema.
+- Added `/trust-worthy/` landing page, public method page, JSON-backed Truth Trial renderer, and structured challenge intake.
+- Added `TW-CASE-000001-v1`, testing whether Jesus taught a specific prescribed salvation prayer or formula.
+- Added immutable case-version presentation and a challenge workflow designed to keep pending submissions private and out of the published record until independently reviewed.
+- No production deployment included.
+
 ## New Search Entry Pages
 
 - `questions/what-did-nicaea-decide.html`
@@ -28,6 +36,7 @@
 - Added both pages to the XML sitemap, bringing the public sitemap to 29 URLs.
 - Updated the August progress page with milestone 07 and Phase 2 completion language.
 - Reused the existing privacy-first signup and analytics systems without changing their endpoints.
+
 # Production Hardening — August 6, 2026
 
 - Enforced the canonical HTTPS non-`www` origin.
@@ -37,4 +46,3 @@
 - Fixed unsubscribe temporary-file collisions and failed-write handling.
 - Reset signup timing correctly after a successful submission.
 - Added repository safety rules, documentation, and verification guidance.
-

@@ -1,0 +1,163 @@
+{
+  "case_id": "TW-CASE-000001",
+  "title": "Did Jesus teach a specific salvation prayer or formula?",
+  "claim": "The modern idea that salvation is secured by repeating a specific prescribed prayer is not presented by Jesus as a required formula in the Gospel accounts.",
+  "mode": "theology",
+  "status": "published",
+  "version": 1,
+  "propositions": [
+    {
+      "proposition_id": "P1",
+      "p": "Jesus taught that repeating a specific prescribed verbal prayer is required for salvation.",
+      "not_p": "Jesus did not teach that repeating a specific prescribed verbal prayer is required for salvation.",
+      "scope_notes": "This proposition concerns the recorded teaching of Jesus in the Gospel accounts, not whether prayer, confession, repentance, trust, baptism, or public profession may be important in Christian practice.",
+      "epistemic_status": "supports-not-p"
+    },
+    {
+      "proposition_id": "P2",
+      "p": "The Gospel accounts present one fixed verbal formula that a person must repeat to be saved.",
+      "not_p": "The Gospel accounts do not present one fixed verbal formula that a person must repeat to be saved.",
+      "scope_notes": "This tests the existence of a required fixed recitation, not the broader biblical importance of spoken confession or prayer.",
+      "epistemic_status": "supports-not-p"
+    },
+    {
+      "proposition_id": "P3",
+      "p": "Romans 10 itself prescribes the later standardized evangelistic salvation prayer as a fixed saving formula.",
+      "not_p": "Romans 10 connects heart-belief and spoken confession with salvation without prescribing the later standardized evangelistic salvation prayer as a fixed formula.",
+      "scope_notes": "This proposition distinguishes Paul's wording and argument from later evangelistic packaging of selected verses.",
+      "epistemic_status": "supports-not-p"
+    }
+  ],
+  "assumptions": [
+    "A modern devotional or evangelistic practice should not be attributed directly to Jesus unless the relevant texts support that attribution.",
+    "Absence of a fixed formula does not by itself prove that prayer, confession, repentance, trust, baptism, or public profession are unimportant."
+  ],
+  "finding": {
+    "truth_proposition": "Jesus taught that repeating a specific prescribed verbal prayer is required for salvation.",
+    "contradiction": "Jesus did not teach that repeating a specific prescribed verbal prayer is required for salvation.",
+    "epistemic_assessment": "supports-not-p",
+    "summary": "The Gospel accounts contain repeated calls to repent, believe, follow, endure, love God and neighbor, receive the Kingdom, and acknowledge allegiance, but the evidence reviewed does not show Jesus prescribing one fixed verbal prayer as the required mechanism of salvation. The modern salvation prayer is better understood as a later evangelistic practice that attempts to express repentance and faith rather than as a verbatim saving formula taught by Jesus.",
+    "strongest_objection": "Romans 10:9-13 strongly connects confession and belief with salvation, and later Christian practice can reasonably turn those themes into prayer. That may support such a prayer as a pastoral tool even though it does not establish that Jesus mandated one fixed formula.",
+    "what_would_change_it": [
+      "Early textual evidence showing Jesus or the earliest disciples prescribed a specific verbal formula as a necessary condition of salvation.",
+      "A stronger contextual case that one or more Gospel passages function as a fixed initiation formula rather than a broader call to trust, repentance, allegiance, and discipleship.",
+      "Primary evidence demonstrating that the modern formula substantially predates the modern evangelistic movements with which it is commonly associated."
+    ],
+    "destination": "unveiled"
+  },
+  "sources": [
+    {
+      "source_id": "S1",
+      "title": "Gospel according to Mark 1:14-15",
+      "creator": "Markan tradition",
+      "date": "1st century CE",
+      "source_type": "primary",
+      "position": "supports-not-p",
+      "url": null,
+      "citation": "Mark 1:14-15",
+      "provenance_notes": "Early Gospel proclamation associates response with repentance and belief in the good news; no fixed prayer is stated.",
+      "lineage_parent": null,
+      "authenticity_dispute": false,
+      "independent": true
+    },
+    {
+      "source_id": "S2",
+      "title": "Gospel according to John 3",
+      "creator": "Johannine tradition",
+      "date": "1st century CE",
+      "source_type": "primary",
+      "position": "supports-not-p",
+      "url": null,
+      "citation": "John 3:1-21",
+      "provenance_notes": "Uses new birth, belief, light, and coming to the light language rather than a prescribed salvation prayer.",
+      "lineage_parent": null,
+      "authenticity_dispute": false,
+      "independent": true
+    },
+    {
+      "source_id": "S3",
+      "title": "Gospel according to Matthew 19",
+      "creator": "Matthean tradition",
+      "date": "1st century CE",
+      "source_type": "primary",
+      "position": "supports-not-p",
+      "url": null,
+      "citation": "Matthew 19:16-30",
+      "provenance_notes": "The rich young man asks about eternal life; Jesus' response concerns commandments, attachment, following, and the difficulty of wealth, not a verbal formula.",
+      "lineage_parent": null,
+      "authenticity_dispute": false,
+      "independent": true
+    },
+    {
+      "source_id": "S4",
+      "title": "Paul's letter to the Romans 10",
+      "creator": "Paul of Tarsus",
+      "date": "1st century CE",
+      "source_type": "primary",
+      "position": "supports-p",
+      "url": null,
+      "citation": "Romans 10:9-13",
+      "provenance_notes": "Connects believing in the heart and confessing with the mouth with salvation and is often used in modern evangelistic formulas. The passage does not itself supply a fixed prayer text.",
+      "lineage_parent": null,
+      "authenticity_dispute": false,
+      "independent": true
+    },
+    {
+      "source_id": "S5",
+      "title": "Acts 2",
+      "creator": "Lukan tradition",
+      "date": "1st century CE",
+      "source_type": "primary",
+      "position": "context",
+      "url": null,
+      "citation": "Acts 2:37-42",
+      "provenance_notes": "The response to 'What shall we do?' emphasizes repentance, baptism, reception of the Spirit, and entry into the community rather than repetition of a fixed prayer.",
+      "lineage_parent": null,
+      "authenticity_dispute": false,
+      "independent": true
+    }
+  ],
+  "evidence_for_p": [
+    "Romans 10 explicitly links belief in the heart, confession with the mouth, and calling on the Lord with salvation.",
+    "Christian communities have long used short confessions, creeds, baptismal professions, and prayers, showing that concise verbal expressions of faith are not foreign to Christian practice.",
+    "A concise salvation prayer can function as a pastoral summary of repentance, trust, and confession even if the precise wording is later."
+  ],
+  "evidence_for_not_p": [
+    "Across multiple Gospel scenes, Jesus uses varied language when speaking about life, salvation, discipleship, belief, repentance, and the Kingdom rather than supplying one fixed recitation.",
+    "When individuals directly ask what they must do, the recorded responses differ by context, which weighs against a single universal verbal formula being the centerpiece of Jesus' teaching.",
+    "Romans 10 can support heart-belief and spoken confession without implying that one standardized later prayer is itself the saving mechanism."
+  ],
+  "alternative_hypotheses": [
+    "The salvation prayer is a legitimate pastoral compression of biblical themes even though it is not a verbatim command of Jesus.",
+    "Early Christian initiation may have relied more on baptismal confession and communal practice than on a private prayer, with later revivalist settings adapting the response form.",
+    "The deeper dispute may concern whether salvation is best described as a one-time verbal transaction or an embodied allegiance involving trust, repentance, confession, and discipleship."
+  ],
+  "logic_audit": [
+    "Not finding a fixed prayer in Jesus' recorded teaching does not establish that prayer is irrelevant.",
+    "Using Romans 10 to support confession does not by itself establish that a later standardized script is divinely required.",
+    "A later practice can be useful without being identical to the earliest practice.",
+    "The proposition must remain limited to a required fixed prayer formula; broadening it to all prayer or confession would create a false dichotomy."
+  ],
+  "christ_consistency": {
+    "summary": "The recorded teaching of Jesus repeatedly emphasizes trust, repentance, following, mercy, love, allegiance, fruit, and lived response. A prayer may express those realities, but treating the wording of a prayer as the decisive mechanism appears less consistent with the broader recorded pattern than treating the inward and lived response as primary.",
+    "cautions": [
+      "This is a theological coherence analysis, not a claim of direct access to Jesus' unrecorded intentions.",
+      "Different Christian traditions weigh Gospel, Pauline, sacramental, and ecclesial evidence differently."
+    ]
+  },
+  "epistemic_limits": [
+    "The exact historical pathway by which the modern salvation prayer became standardized requires a dedicated source-history investigation.",
+    "Different versions of the prayer exist, so the phrase 'salvation prayer' does not refer to one universally fixed text.",
+    "This first version is a demonstration case and should be expanded with patristic, revivalist, liturgical, and historical evangelism sources before being treated as exhaustive."
+  ],
+  "challenges": [],
+  "history": [
+    {
+      "version": 1,
+      "date": "2026-08-22",
+      "reason": "Initial public demonstration finding, migrated to explicit P / not-P truth model without changing the substantive conclusion."
+    }
+  ],
+  "created_at": "2026-08-22T12:00:00-05:00",
+  "updated_at": "2026-08-22T12:34:00-05:00"
+}
