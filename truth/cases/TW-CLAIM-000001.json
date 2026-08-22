@@ -1,14 +1,30 @@
 {
   "case_id": "TW-CLAIM-000001",
-  "version": 1,
-  "status": "open_investigation",
+  "version": 2,
+  "status": "provisional_finding",
   "title": "Does God individually cause or permit every bad thing that happens?",
   "claim_under_test": "The inherited question 'Why does God let bad things happen to good people?' may contain an assumption that must itself be tested: that every event requires God's individual permission.",
   "current_assessment": {
-    "classification": "not_yet_rendered",
-    "summary": "The research record is being assembled. No final assessment has been issued.",
-    "certainty_note": "Trust-Worthy does not manufacture certainty before the source work is complete."
+    "classification": "hidden_premise_not_established",
+    "summary": "The evidence reviewed so far does not establish that every harmful event requires a separate act of divine causation or individualized permission. New Testament texts also portray meaningful human agency, ordinary tragedy, and hostile spiritual rule. However, biblical sovereignty traditions make the absolute opposite claim—'God is not in control of this world'—too strong as well.",
+    "most_defensible_formulation": "Biblical texts portray God as sovereign while also portraying a world in which created agents, hostile powers, and ordinary causal processes have real operation. How those claims fit together remains a theological question rather than an established historical fact.",
+    "certainty_note": "Provisional. Open to challenge and revision when stronger evidence is submitted."
   },
+  "key_findings": [
+    "Luke 13 rejects the inference that tragedy proves greater victim guilt but does not specify a full causal theory of suffering.",
+    "John 12:31 and related Johannine texts describe a hostile 'ruler of this world,' complicating simplistic direct-control models.",
+    "2 Corinthians 4:4 contributes to a New Testament pattern of hostile agency, though its interpretation must remain contextual and disputed where appropriate.",
+    "Stable natural causation provides a coherent alternative to imagining every event as a separately issued divine decision, but does not solve the philosophical problem of why extreme suffering exists.",
+    "The Apocryphon of John demonstrates an ancient Demiurge interpretation of the material world, but the existence of that tradition is not evidence that the Demiurge hypothesis is true.",
+    "Classical providence remains a strong countermodel because sovereignty can be understood as compatible with secondary causes."
+  ],
+  "unresolved": [
+    "Whether divine omniscience entails a meaningful form of permission.",
+    "How sovereignty texts should be reconciled with hostile-ruler texts.",
+    "Whether ancient descriptions of hostile powers are objective entities or theological symbolism.",
+    "Why an omnipotent good God would create or sustain laws permitting extreme natural suffering.",
+    "Whether any theodicy adequately accounts for horrendous apparently gratuitous suffering."
+  ],
   "protocol": "TWVP-0.1",
   "dimensions": [
     "provenance",
@@ -32,6 +48,38 @@
     "philosophy_of_suffering",
     "christ_consistency_analysis"
   ],
+  "sources": [
+    {
+      "type": "biblical_text",
+      "title": "Luke 13:1-5",
+      "url": "https://www.biblegateway.com/passage/?search=Luke+13%3A1-5&version=NET",
+      "role": "tragedy and victim-blame analysis"
+    },
+    {
+      "type": "biblical_text",
+      "title": "John 12:31-32",
+      "url": "https://classic.net.bible.org/passage.php?passage=Joh+12%3A31%2C32",
+      "role": "hostile ruler language"
+    },
+    {
+      "type": "scholarship",
+      "title": "Who is the 'God of this age' in 2 Corinthians 4:4?",
+      "url": "https://open.uct.ac.za/server/api/core/bitstreams/83beed00-67a2-4c1b-b58f-5e478f1e1906/content",
+      "role": "literary and historical context"
+    },
+    {
+      "type": "manuscript_catalog",
+      "title": "NASSCAL Apocryphon of John",
+      "url": "https://www.nasscal.com/e-clavis-christian-apocrypha/apocryphon-of-john/",
+      "role": "manuscript witnesses and editions"
+    },
+    {
+      "type": "philosophy_reference",
+      "title": "Stanford Encyclopedia of Philosophy: The Problem of Evil",
+      "url": "https://plato.stanford.edu/entries/evil/",
+      "role": "competing theodicies and objections"
+    }
+  ],
   "challenge_types": [
     "source",
     "date",
@@ -47,8 +95,13 @@
       "version": 1,
       "date": "2026-08-22",
       "change": "Case opened and investigation protocol published."
+    },
+    {
+      "version": 2,
+      "date": "2026-08-22",
+      "change": "First provisional finding published with biblical, historical, philosophical, counterevidence, and Christ-consistency analysis."
     }
   ],
-  "public_url": "https://bobsome1.com/truth/",
+  "public_url": "https://bobsome1.com/truth/case-000001.php",
   "challenge_endpoint": "https://bobsome1.com/truth/challenge-submit.php"
 }
