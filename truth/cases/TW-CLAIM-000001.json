@@ -1,0 +1,54 @@
+{
+  "case_id": "TW-CLAIM-000001",
+  "version": 1,
+  "status": "open_investigation",
+  "title": "Does God individually cause or permit every bad thing that happens?",
+  "claim_under_test": "The inherited question 'Why does God let bad things happen to good people?' may contain an assumption that must itself be tested: that every event requires God's individual permission.",
+  "current_assessment": {
+    "classification": "not_yet_rendered",
+    "summary": "The research record is being assembled. No final assessment has been issued.",
+    "certainty_note": "Trust-Worthy does not manufacture certainty before the source work is complete."
+  },
+  "protocol": "TWVP-0.1",
+  "dimensions": [
+    "provenance",
+    "temporal_proximity",
+    "independence",
+    "corroboration",
+    "counterevidence",
+    "logical_validity",
+    "alternative_explanations",
+    "uncertainty"
+  ],
+  "research_tracks": [
+    "biblical_texts_in_context",
+    "original_language_where_material",
+    "early_jewish_and_christian_interpretation",
+    "gnostic_and_demiurge_traditions",
+    "classical_sovereignty_models",
+    "human_agency",
+    "natural_causation",
+    "hostile_spiritual_agency",
+    "philosophy_of_suffering",
+    "christ_consistency_analysis"
+  ],
+  "challenge_types": [
+    "source",
+    "date",
+    "translation",
+    "context",
+    "logic",
+    "counterevidence",
+    "assumption",
+    "other"
+  ],
+  "revision_history": [
+    {
+      "version": 1,
+      "date": "2026-08-22",
+      "change": "Case opened and investigation protocol published."
+    }
+  ],
+  "public_url": "https://bobsome1.com/truth/",
+  "challenge_endpoint": "https://bobsome1.com/truth/challenge-submit.php"
+}
