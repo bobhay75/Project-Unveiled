@@ -14,6 +14,7 @@
     status.className='pu-signup-status';
     if(button)button.disabled=true;
     const fd=new FormData(form);
+    fd.set('journey','7-day-unveiled');
     fd.set('source_url',location.href);
     fd.set('started_ms',String(started));
     try{
