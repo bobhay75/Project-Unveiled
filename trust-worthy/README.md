@@ -30,13 +30,7 @@ structured Truth Trial record
 public finding + revision history
 ```
 
-The interface should visibly distinguish conversational analysis from completed research. Suggested states:
-
-- `TALKING` — natural live conversation;
-- `INVESTIGATING` — deeper source research is running;
-- `SOURCES VERIFIED` — cited material has been checked for provenance/context;
-- `ADVERSARIAL REVIEW` — the preliminary finding is being attacked;
-- `FINDING READY` — a structured case record can be published.
+The interface should visibly distinguish conversational analysis from completed research. Suggested states: `TALKING`, `INVESTIGATING`, `SOURCES VERIFIED`, `ADVERSARIAL REVIEW`, and `FINDING READY`.
 
 Trust-Worthy must never imply that an instant voice response is equivalent to exhaustive historical research.
 
@@ -55,32 +49,43 @@ This deliberately tests a Project Unveiled hypothesis first.
 - `/trust-worthy/cases-public/TW-CASE-000001-v1.json` — first versioned case record.
 - `/trust-worthy/assets/trust-worthy.css` — responsive interface styling aligned with Project Unveiled.
 
+## Public Theology Profiles — Core Social Primitive
+
+Every member may maintain a public, readable **Theology Profile**. The profile is a living map of the member's current positions, evidence, uncertainty, challenges, and revisions rather than a denominational label or popularity score.
+
+Suggested belief topics include God, Jesus, Kingdom of God, salvation, Scripture, church, Trinity, judgment/hell, resurrection, prophecy, spiritual gifts, and other member-created propositions.
+
+Each position records:
+- proposition / belief statement;
+- stance: `believe`, `lean-toward`, `questioning`, `unresolved`, `not-investigated`;
+- member explanation;
+- evidence and citations offered by the member;
+- confidence language without false numerical precision;
+- open and resolved challenges;
+- revision history and reason for revision;
+- linked Truth Trials.
+
+Profiles should explicitly welcome examination: confidence in a belief is compatible with allowing others to inspect and challenge the reasons for it.
+
+### Member-to-member challenges
+
+Any member may submit a structured evidence challenge against a substantive public belief held by any other member. Challenges target **claims, evidence, interpretation, translation, chronology, context, assumptions, or logic — never the person's worth, motives, spirituality, or identity**.
+
+A challenge may exist asynchronously without forcing the profile owner into a live confrontation. A live Theology Battle requires acceptance by the invited participant.
+
+Trust-Worthy acts as investigator/moderator rather than partisan judge. It independently checks submitted evidence, actively searches for contrary evidence, and may conclude that either position is better supported, both are partly supported, the framing is a false dichotomy, or the evidence is unresolved.
+
+### Revision Ledger
+
+Belief changes are preserved rather than erased. A Theology Profile shows prior position, revised position, date, linked investigation, and the evidence/reason that caused the revision. Changing one's mind after stronger evidence is treated as intellectual integrity, not defeat.
+
+Do **not** create a member `Truth Score`, holiness score, salvation score, or similar ranking. Reputation should be based on observable contributions such as investigations participated in, primary sources contributed, successful evidence challenges, corrections accepted, and findings materially improved.
+
 ## Case Renderer
 
-PHP reads a structured case record and renders:
-- claim and propositions;
-- assumptions;
-- evidence for / against;
-- source cards with provenance;
-- alternative hypotheses;
-- logic audit;
-- Christ-consistency analysis for theology mode;
-- uncertainty register;
-- current finding;
-- strongest objection;
-- what would change the finding;
-- version history.
+PHP reads a structured case record and renders claim and propositions, assumptions, evidence for/against, source cards with provenance, alternative hypotheses, logic audit, Christ-consistency analysis for theology mode, uncertainty register, current finding, strongest objection, what would change the finding, and version history.
 
 ## Challenge Intake
-
-Structured form fields:
-- case ID;
-- challenge type;
-- proposition or finding component challenged;
-- challenger argument;
-- source URL/citation;
-- why the source materially changes the case;
-- optional public display name/email handled privately.
 
 Challenge types: source/authenticity, provenance, chronology, translation/language, context, logic, counterevidence, assumption, omitted alternative.
 
@@ -88,36 +93,31 @@ Public submission never writes directly into the published case. Pending challen
 
 ### Deployment prerequisite
 
-Before challenge intake is enabled in production, confirm PHP can create/write this private path relative to the hosting document root:
+Before challenge intake is enabled in production, confirm PHP can create/write:
 
 ```text
 ../private/trust-worthy/pending-challenges/
 ```
 
-If the directory cannot be created or written safely, the form fails closed with a 503-style message rather than storing challenge data in public web space.
+If that path cannot be written safely, the form fails closed rather than storing challenge data in public web space.
 
 ## Voice Architecture — Phase 2 Priority
 
-Phase 2 should prioritize a provider-agnostic live-voice layer instead of building the product around typed chat.
-
 Minimum capabilities:
-
 1. browser microphone capture with explicit consent;
 2. streaming speech-to-text;
 3. low-latency conversational response;
 4. interruption / barge-in support;
-5. text transcript kept visible and correctable;
-6. source cards surfaced on screen while the conversation continues;
-7. a clear `Deep Dive` action that moves from conversational analysis into the full research protocol;
-8. ability to turn a completed deep-dive conversation into a versioned Truth Trial;
-9. text fallback for accessibility and unsupported browsers;
-10. no API secrets exposed client-side.
+5. visible, correctable transcript;
+6. source cards while conversation continues;
+7. `Deep Dive` transition into full research;
+8. convert a completed investigation into a versioned Truth Trial;
+9. text fallback;
+10. no client-side API secrets.
 
-Because production is Namecheap shared hosting, the web application should remain PHP/static where practical. Real-time model connections should be abstracted behind server-side endpoints or a narrowly scoped external realtime service so the public site is not locked to one model vendor and can migrate later.
+Production remains PHP/static where practical. Realtime model connections should be abstracted behind server-side endpoints or a narrowly scoped external realtime service so the site is not locked to one model vendor.
 
 ## Research Orchestrator — Phase 2
-
-The research engine executes distinct passes without exposing API keys client-side:
 
 1. Claim Decomposer
 2. Archivist / Source Hunter
@@ -130,30 +130,29 @@ The research engine executes distinct passes without exposing API keys client-si
 9. Christ-Consistency Analyst in theology mode
 10. Synthesizer
 
-The orchestrator should produce a draft case record that satisfies `truth-case.schema.json` before publication.
+The orchestrator produces a draft case record satisfying `truth-case.schema.json` before publication.
 
 ## Versioning
 
-Published records are immutable versions. A successful challenge creates v2, v3, etc. The page shows the current finding first while preserving all prior versions and revision reasons.
+Published records are immutable versions. A successful challenge creates v2, v3, etc. The current finding appears first while all prior versions and revision reasons remain available.
 
-## Storage
+## Storage and Privacy
 
-For v0.1, public cases are structured JSON records. Challenge submissions stay private and outside Git/public_html. If scale or concurrent editing becomes material, migrate case/challenge storage to SQLite or MySQL without changing the public schema.
-
-Live voice transcripts must be treated as private by default. A conversation becomes public only through an explicit publish/Truth-Trial action. Sensitive raw audio should not be retained by default unless a later feature has a clear reason and informed user consent.
+Public cases use structured JSON initially. Challenge submissions remain private and outside Git/public_html. Live voice transcripts are private by default. A conversation becomes public only through an explicit publish/Truth-Trial action. Raw audio should not be retained by default without a clear feature need and informed consent.
 
 ## Contest Demo Flow
 
-1. Judge speaks a provocative but precise question to Trust-Worthy.
-2. Trust-Worthy converses naturally and identifies the claim or hidden assumption.
-3. Judge says **Go deeper** / activates Deep Dive.
-4. Trust-Worthy exposes the source trail and reasoning while continuing the conversation.
-5. Judge interrupts with counterevidence or a challenge.
-6. Trust-Worthy independently investigates the challenge instead of defending itself reflexively.
+1. Judge speaks a question to Trust-Worthy.
+2. Trust-Worthy identifies the claim or hidden assumption.
+3. Judge activates Deep Dive.
+4. Trust-Worthy exposes sources and reasoning while continuing the conversation.
+5. Judge interrupts with counterevidence.
+6. Trust-Worthy independently investigates instead of reflexively defending itself.
 7. If material, the finding changes.
-8. The conversation becomes a public Truth Trial with a permanent version history.
+8. The conversation becomes a public Truth Trial with permanent version history.
+9. A member can attach the resulting finding to a Theology Profile and another member can challenge the specific belief/evidence.
 
-The memorable demo moment is not the AI sounding smart. It is a live AI investigator being **challenged, researching the objection, and correcting itself in public**.
+The memorable demo moment is a live AI investigator being **challenged, researching the objection, and correcting itself in public**.
 
 ## Phase Sequence
 
@@ -177,13 +176,16 @@ The memorable demo moment is not the AI sounding smart. It is a live AI investig
 - source/provenance extraction;
 - adversarial pass;
 - structured draft generation;
-- convert a conversation into a Truth Trial.
+- convert conversation into Truth Trial.
 
-### Phase 3 — Community
+### Phase 3 — Community + Theology Profiles
 - accounts;
-- contributor attribution;
-- challenge reputation;
-- live theology battles / Truth Trials;
+- public Theology Profiles;
+- belief position and evidence records;
+- member-to-member structured challenges;
+- Revision Ledger;
+- contributor attribution and evidence-based reputation;
+- consensual live Theology Battles / Truth Trials;
 - Unveiled, Bunk Book, Mystery Book indexes.
 
 ### Phase 4 — Evidence Graph + API
@@ -193,20 +195,10 @@ The memorable demo moment is not the AI sounding smart. It is a live AI investig
 - machine-readable case API;
 - revision/change feed for external AI systems.
 
-## Success Criteria for v0.1
+## Success Criteria
 
-The MVP succeeds if a first-time visitor can answer all five questions without explanation:
-1. What claim is being investigated?
-2. What evidence supports it?
-3. What evidence challenges it?
-4. Why does Trust-Worthy currently lean one way?
-5. How can I challenge or improve the finding?
+A first-time visitor should immediately understand what claim is being investigated, what supports it, what challenges it, why Trust-Worthy currently leans one way, and how to challenge or improve the finding.
 
-The voice-first prototype adds five more tests:
-1. Can a user begin without typing?
-2. Can the user interrupt Trust-Worthy naturally?
-3. Can Trust-Worthy clearly signal when it is doing deeper research rather than giving a provisional response?
-4. Can the user inspect sources without ending the conversation?
-5. Can the resulting investigation become a permanent, auditable Truth Trial?
+The voice prototype must allow a user to begin without typing, interrupt naturally, distinguish provisional conversation from deep research, inspect sources without ending the conversation, and publish an investigation as an auditable Truth Trial.
 
-If those are obvious, the core product is working.
+The community layer succeeds when a member can state a belief publicly, show why they hold it, receive a structured evidence challenge, revise the belief if warranted, and preserve the entire intellectual journey without personal attacks or popularity deciding the result.
