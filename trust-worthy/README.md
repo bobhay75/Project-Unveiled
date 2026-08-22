@@ -10,16 +10,16 @@ Build one public, auditable Truth Trial on bobsome1.com that demonstrates the fu
 
 This deliberately tests a Project Unveiled hypothesis first.
 
-## MVP Pages
+## Phase 1 Implemented
 
-- `/trust-worthy/` — landing page, mission, latest case, submit-a-question CTA.
-- `/trust-worthy/case.php?id=TW-CASE-000001` — public case record.
-- `/trust-worthy/challenge.php?id=TW-CASE-000001` — structured challenge form.
-- `/trust-worthy/method/` — plain-language protocol and research standards.
+- `/trust-worthy/` — landing page and latest case CTA.
+- `/trust-worthy/case.php?id=TW-CASE-000001` — JSON-backed public case renderer.
+- `/trust-worthy/challenge.php?id=TW-CASE-000001` — structured challenge form with validation, honeypot, private-server storage, and no direct publication path.
+- `/trust-worthy/method/` — plain-language public methodology.
+- `/trust-worthy/cases-public/TW-CASE-000001-v1.json` — first versioned case record.
+- `/trust-worthy/assets/trust-worthy.css` — responsive interface styling aligned with Project Unveiled.
 
-## MVP Components
-
-### 1. Case Renderer
+## Case Renderer
 
 PHP reads a structured case record and renders:
 - claim and propositions;
@@ -35,7 +35,7 @@ PHP reads a structured case record and renders:
 - what would change the finding;
 - version history.
 
-### 2. Challenge Intake
+## Challenge Intake
 
 Structured form fields:
 - case ID;
@@ -48,13 +48,22 @@ Structured form fields:
 
 Challenge types: source/authenticity, provenance, chronology, translation/language, context, logic, counterevidence, assumption, omitted alternative.
 
-Public submission must not write directly into the published case. Store pending challenges privately for review/research.
+Public submission never writes directly into the published case. Pending challenges are stored outside the document root for later independent review.
 
-### 3. Research Orchestrator
+### Deployment prerequisite
 
-Initial implementation can be manual/semi-automated: a server-side script receives a case question and executes distinct research passes. Do not expose API keys client-side.
+Before challenge intake is enabled in production, confirm PHP can create/write this private path relative to the hosting document root:
 
-Logical agents/passes:
+```text
+../private/trust-worthy/pending-challenges/
+```
+
+If the directory cannot be created or written safely, the form fails closed with a 503-style message rather than storing challenge data in public web space.
+
+## Research Orchestrator — Phase 2
+
+The initial research engine can be manual/semi-automated. A future server-side orchestrator should execute distinct research passes without exposing API keys client-side:
+
 1. Claim Decomposer
 2. Archivist / Source Hunter
 3. Provenance Auditor
@@ -66,38 +75,15 @@ Logical agents/passes:
 9. Christ-Consistency Analyst in theology mode
 10. Synthesizer
 
-The orchestrator produces a draft case record that must satisfy `truth-case.schema.json` before publication.
+The orchestrator should produce a draft case record that satisfies `truth-case.schema.json` before publication.
 
-### 4. Versioning
+## Versioning
 
 Published records are immutable versions. A successful challenge creates v2, v3, etc. The page shows the current finding first while preserving all prior versions and revision reasons.
 
 ## Storage
 
-For v0.1, prefer simple structured JSON records for public case data and private server-side storage for challenge submissions. If scale or concurrent editing becomes material, migrate case/challenge storage to SQLite or MySQL without changing the public schema.
-
-Suggested private/public split:
-
-```text
-public_html/
-  trust-worthy/
-    index.php
-    case.php
-    challenge.php
-    method/
-    assets/
-    cases-public/
-      TW-CASE-000001-v1.json
-
-/home/.../private/
-  trust-worthy/
-    config.php
-    pending-challenges/
-    research-drafts/
-    logs/
-```
-
-Never commit the private directory or secrets.
+For v0.1, public cases are structured JSON records. Challenge submissions stay private and outside Git/public_html. If scale or concurrent editing becomes material, migrate case/challenge storage to SQLite or MySQL without changing the public schema.
 
 ## Contest Demo Flow
 
@@ -113,16 +99,17 @@ The memorable demo moment is not the AI being right. It is the AI being **correc
 
 ## Phase Sequence
 
-### Phase 0 — Specification
+### Phase 0 — Specification — COMPLETE
 - protocol;
 - case schema;
 - MVP architecture.
 
-### Phase 1 — Static Truth Trial
+### Phase 1 — Static Truth Trial — BUILT ON BRANCH
 - landing page;
-- one hand-researched case rendered from JSON;
+- first case rendered from JSON;
 - challenge form;
-- version-history UI.
+- version-history UI;
+- public method page.
 
 ### Phase 2 — Assisted Research
 - server-side research orchestrator;
