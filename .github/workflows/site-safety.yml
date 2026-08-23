@@ -58,7 +58,10 @@ jobs:
           curl -fsS http://127.0.0.1:8080/truth/case-000002.php >/tmp/truth-case-2.html
           test "$(curl -sS -o /dev/null -w '%{http_code}' 'http://127.0.0.1:8080/truth/case.php?id=TW-CLAIM-000002')" = "308"
           curl -sS -D /tmp/truth-case-redirect.headers -o /dev/null 'http://127.0.0.1:8080/truth/case.php?id=TW-CLAIM-000002'
-          grep -Eqi '^location: /truth/case-000002.php\r?$' /tmp/truth-case-redirect.headers
+          grep -Fqi 'location: /truth/case-000002.php' /tmp/truth-case-redirect.headers || {
+            cat /tmp/truth-case-redirect.headers
+            exit 1
+          }
           test "$(curl -sS -o /dev/null -w '%{http_code}' 'http://127.0.0.1:8080/truth/case.php?id=bad')" = "400"
           test "$(curl -sS -o /dev/null -w '%{http_code}' 'http://127.0.0.1:8080/truth/case.php?id=TW-CLAIM-999999')" = "404"
           grep -q 'TW-CLAIM-000001' /tmp/truth-index.html
@@ -72,8 +75,12 @@ jobs:
             --data-urlencode 'materiality=It verifies that validated challenge records can be stored privately.' \
             --data-urlencode "opened_at=$opened_at" \
             http://127.0.0.1:8080/truth/challenge-submit.php >/tmp/truth-challenge.json
-          grep -q '"ok":true' /tmp/truth-challenge.json
-          if grep -Eqi 'Warning:|Notice:|Deprecated:|Fatal error|Parse error' /tmp/truth-*.html /tmp/trust-worthy-php.log; then
+          grep -q '"ok":true' /tmp/truth-challenge.json || {
+            cat /tmp/truth-challenge.json
+            cat /tmp/trust-worthy-php.log
+            exit 1
+          }
+          if grep -Eqi 'Warning:|Notice:|Deprecated:|Fatal error|Parse error' /tmp/truth-*.html /tmp/truth-challenge.json /tmp/trust-worthy-php.log; then
             cat /tmp/trust-worthy-php.log
             exit 1
           fi
