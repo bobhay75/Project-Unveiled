@@ -1,12 +1,16 @@
 <?php
 declare(strict_types=1);
-header('Content-Type: application/json; charset=UTF-8');
 header('Cache-Control: no-store, max-age=0');
 header('X-Content-Type-Options: nosniff');
 
 function out(bool $ok,string $message,int $code=200): never {
   http_response_code($code);
+  header('Content-Type: application/json; charset=UTF-8');
   echo json_encode(['ok'=>$ok,'message'=>$message],JSON_UNESCAPED_SLASHES);
+  exit;
+}
+function received(string $caseId): never {
+  header('Location: /truth/challenge-received.php?case='.rawurlencode($caseId),true,303);
   exit;
 }
 function clean(string $value,int $limit): string {
@@ -61,4 +65,4 @@ if(file_put_contents($tmp,json_encode($items,JSON_PRETTY_PRINT|JSON_UNESCAPED_SL
   out(false,'Your challenge could not be saved. Please try again.',500);
 }
 @chmod($file,0640);
-out(true,'Challenge received. Trust-Worthy will treat it as evidence to investigate, not as a comment to defeat.');
+received($caseId);
