@@ -1,0 +1,20 @@
+{
+  "case_id": "TW-CLAIM-000002",
+  "version": 1,
+  "status": "provisional_open_to_challenge",
+  "title": "Did Jesus teach the modern Romans Road / sinner's prayer concept of salvation?",
+  "claim_under_test": "The modern standardized sinner's-prayer / Romans-Road presentation is a later evangelistic framework built from New Testament material rather than a formula recorded as Jesus' stated method of salvation.",
+  "current_assessment": {
+    "classification": "later_framework_built_from_biblical_material",
+    "summary": "The surviving Gospel accounts do not record Jesus leading seekers through a standardized sinner's prayer. Romans contains genuine New Testament soteriological material, but the modern step-by-step Romans Road is an arrangement of that material. Historical scholarship places the standardized Sinner's Prayer in later evangelical development. This does not establish that repentance, faith, confession, calling on the Lord, or conversion prayer are unbiblical.",
+    "certainty_note": "Strong on the narrow historical distinction; open and disputed on the complete theological synthesis of salvation."
+  },
+  "primary_text_tracks": ["Mark 1:14-15", "Matthew 19:16-30", "Mark 10:17-30", "Luke 18:18-30", "Luke 10:25-28", "Romans 3", "Romans 6", "Romans 10"],
+  "historical_track": ["early Christian conversion practice", "revivalism", "nineteenth-century evangelism", "twentieth-century standardized Sinner's Prayer", "Romans Road development"],
+  "strongest_counterargument": "A standardized prayer need not appear verbatim in Jesus' teaching to serve as a legitimate expression of New Testament repentance, faith, confession, and calling on the Lord.",
+  "what_would_change_the_finding": ["early evidence of a standardized salvation prayer materially equivalent to the modern method", "a contextual reading showing Jesus taught the claimed formula", "historical evidence overturning the proposed development lineage", "a logical demonstration that the distinction between biblical concepts and later evangelistic arrangement is invalid"],
+  "protocol": "TWVP-0.1",
+  "revision_history": [{"version":1,"date":"2026-08-22","change":"Case opened with first-pass provisional investigation."}],
+  "public_url": "https://bobsome1.com/truth/case-000002.php",
+  "challenge_endpoint": "https://bobsome1.com/truth/challenge-submit.php"
+}
