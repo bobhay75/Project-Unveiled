@@ -1,20 +1,168 @@
 {
   "case_id": "TW-CLAIM-000002",
   "version": 1,
-  "status": "provisional_open_to_challenge",
-  "title": "Did Jesus teach the modern Romans Road / sinner's prayer concept of salvation?",
-  "claim_under_test": "The modern standardized sinner's-prayer / Romans-Road presentation is a later evangelistic framework built from New Testament material rather than a formula recorded as Jesus' stated method of salvation.",
-  "current_assessment": {
-    "classification": "later_framework_built_from_biblical_material",
-    "summary": "The surviving Gospel accounts do not record Jesus leading seekers through a standardized sinner's prayer. Romans contains genuine New Testament soteriological material, but the modern step-by-step Romans Road is an arrangement of that material. Historical scholarship places the standardized Sinner's Prayer in later evangelical development. This does not establish that repentance, faith, confession, calling on the Lord, or conversion prayer are unbiblical.",
-    "certainty_note": "Strong on the narrow historical distinction; open and disputed on the complete theological synthesis of salvation."
+  "status": "provisional",
+  "mode": "mixed",
+  "title": "Did Jesus prescribe a fixed salvation prayer?",
+  "description": "A provisional Trust-Worthy investigation of whether Jesus is recorded as prescribing a fixed salvation prayer and how that differs from later evangelistic packaging.",
+  "question": "Do the canonical Gospel accounts record Jesus prescribing a fixed verbal prayer as a necessary condition of salvation?",
+  "claim": "The canonical Gospel accounts record Jesus prescribing a fixed verbal prayer as a necessary condition of salvation.",
+  "scope": "The primary proposition concerns the recorded teaching of Jesus in the canonical Gospels. It does not ask whether prayer, repentance, faith, confession, baptism, public profession, grace, or calling on the Lord can be important. The historical development of the modern sinner's prayer and Romans Road is a related but subordinate inquiry.",
+  "propositions": [
+    {
+      "proposition_id": "P1",
+      "p": "The canonical Gospel accounts record Jesus prescribing a fixed verbal prayer as a necessary condition of salvation.",
+      "not_p": "The canonical Gospel accounts do not record Jesus prescribing a fixed verbal prayer as a necessary condition of salvation.",
+      "scope": "This tests a required fixed recitation, not the wider legitimacy of praying, confessing, repenting, trusting, or publicly professing faith.",
+      "epistemic_assessment": "leans-not-p"
+    }
+  ],
+  "finding": {
+    "epistemic_assessment": "leans-not-p",
+    "summary": "The evidence reviewed so far leans toward not-P. The sampled Gospel responses use varied language about repentance, belief, following, mercy, allegiance, the Kingdom, and eternal life rather than presenting one fixed recitation as Jesus' required mechanism of salvation. Romans contains genuine material about belief, confession, and calling on the Lord, while the standardized sinner's-prayer or Romans-Road presentation is better treated as later evangelistic packaging. A conversion prayer may still be a legitimate pastoral expression of biblical themes.",
+    "strongest_objection": "Luke 18:13–14 presents a tax collector praying for mercy and then being described by Jesus as justified. Romans 10:9–13 connects heart-belief, oral confession, calling on the Lord, and salvation. Together these texts can support a brief conversion prayer as a faithful expression even though neither supplies a universal fixed script attributed to Jesus.",
+    "what_would_change_it": [
+      "Early textual evidence showing Jesus or the earliest disciples prescribed a materially fixed verbal formula as a necessary condition of salvation.",
+      "A stronger contextual demonstration that Luke 18:13–14 or another Gospel passage functions as a universal initiation formula rather than a parable or context-specific response.",
+      "Historical evidence showing that the standardized modern method substantially predates the modern evangelistic developments identified in the present record.",
+      "A logical demonstration that distinguishing biblical themes from a later standardized arrangement is invalid."
+    ],
+    "maturity": "provisional",
+    "destination": "none"
   },
-  "primary_text_tracks": ["Mark 1:14-15", "Matthew 19:16-30", "Mark 10:17-30", "Luke 18:18-30", "Luke 10:25-28", "Romans 3", "Romans 6", "Romans 10"],
-  "historical_track": ["early Christian conversion practice", "revivalism", "nineteenth-century evangelism", "twentieth-century standardized Sinner's Prayer", "Romans Road development"],
-  "strongest_counterargument": "A standardized prayer need not appear verbatim in Jesus' teaching to serve as a legitimate expression of New Testament repentance, faith, confession, and calling on the Lord.",
-  "what_would_change_the_finding": ["early evidence of a standardized salvation prayer materially equivalent to the modern method", "a contextual reading showing Jesus taught the claimed formula", "historical evidence overturning the proposed development lineage", "a logical demonstration that the distinction between biblical concepts and later evangelistic arrangement is invalid"],
-  "protocol": "TWVP-0.1",
-  "revision_history": [{"version":1,"date":"2026-08-22","change":"Case opened with first-pass provisional investigation."}],
+  "sources": [
+    {
+      "source_id": "S1",
+      "title": "Mark 1:14–15",
+      "source_type": "primary-text",
+      "position": "supports-not-p",
+      "citation": "Gospel according to Mark 1:14–15, NET",
+      "url": "https://www.biblegateway.com/passage/?search=Mark+1%3A14-15&version=NET",
+      "provenance": "Canonical Gospel proclamation associating response with repentance and belief in the good news.",
+      "lineage_parent": null,
+      "independent": null,
+      "authenticity_or_dating_dispute": "Authorship and dating remain scholarly questions; no claim of fully independent Gospel lineage is made here.",
+      "limitations": "This summary proclamation is not a complete account of every Gospel teaching about salvation."
+    },
+    {
+      "source_id": "S2",
+      "title": "The rich ruler tradition",
+      "source_type": "primary-text",
+      "position": "supports-not-p",
+      "citation": "Mark 10:17–31; Matthew 19:16–30; Luke 18:18–30",
+      "url": "https://www.biblegateway.com/passage/?search=Mark+10%3A17-31%3B+Matthew+19%3A16-30%3B+Luke+18%3A18-30&version=NET",
+      "provenance": "Three Synoptic presentations of a question about eternal life, treated as a related literary lineage rather than three independent confirmations.",
+      "lineage_parent": "Synoptic rich-ruler tradition",
+      "independent": false,
+      "authenticity_or_dating_dispute": "The direction and details of Synoptic literary dependence remain debated.",
+      "limitations": "A context-specific encounter cannot by itself define a complete universal salvation doctrine."
+    },
+    {
+      "source_id": "S3",
+      "title": "Luke 10:25–28",
+      "source_type": "primary-text",
+      "position": "supports-not-p",
+      "citation": "Gospel according to Luke 10:25–28, NET",
+      "url": "https://www.biblegateway.com/passage/?search=Luke+10%3A25-28&version=NET",
+      "provenance": "Canonical Gospel scene framing an eternal-life question through love of God and neighbor.",
+      "lineage_parent": null,
+      "independent": null,
+      "authenticity_or_dating_dispute": "Literary and redactional questions remain relevant to historical reconstruction.",
+      "limitations": "The scene tests an interpreter of the law and is not a complete initiation manual."
+    },
+    {
+      "source_id": "S4",
+      "title": "Luke 18:9–14",
+      "source_type": "primary-text",
+      "position": "counterevidence",
+      "citation": "Gospel according to Luke 18:9–14, NET",
+      "url": "https://classic.net.bible.org/passage.php?passage=Luk+18%3A9-14",
+      "provenance": "Canonical parable containing a short plea for mercy followed by Jesus' statement that the tax collector went home justified.",
+      "lineage_parent": null,
+      "independent": null,
+      "authenticity_or_dating_dispute": null,
+      "limitations": "The passage is a parable contrasting humility and self-righteousness, not an explicit command that everyone repeat a fixed initiation script."
+    },
+    {
+      "source_id": "S5",
+      "title": "Romans 10:9–13",
+      "source_type": "primary-text",
+      "position": "counterevidence",
+      "citation": "Paul's letter to the Romans 10:9–13, NET",
+      "url": "https://www.biblegateway.com/passage/?search=Romans+10%3A9-13&version=NET",
+      "provenance": "Undisputed Pauline letter connecting belief, confession, calling on the Lord, and salvation; later presentations frequently draw from it.",
+      "lineage_parent": null,
+      "independent": true,
+      "authenticity_or_dating_dispute": null,
+      "limitations": "Paul is not quoting a fixed prayer from Jesus, and the passage must be read within Romans rather than as an isolated modern sequence."
+    },
+    {
+      "source_id": "S6",
+      "title": "The Sinner's Prayer: An Historical and Theological Analysis",
+      "source_type": "historical-study",
+      "position": "supports-not-p",
+      "citation": "Paul Harrison Chitwood, PhD dissertation, Southern Baptist Theological Seminary, 2001",
+      "url": "https://repository.sbts.edu/entities/publication/41de70a7-4174-444f-b7d7-da7d476332e3",
+      "provenance": "Doctoral dissertation preserved in the Southern Baptist Theological Seminary repository and devoted to the practice's historical and theological development.",
+      "lineage_parent": null,
+      "independent": true,
+      "authenticity_or_dating_dispute": null,
+      "limitations": "One dissertation should not be treated as the final historical verdict; its evidence and claims require comparison with earlier prayers, conversion practices, and other scholarship."
+    }
+  ],
+  "evidence_for_p": [
+    "Luke 18:13–14 contains a short plea for mercy and Jesus says the tax collector went home justified.",
+    "Romans 10:9–13 explicitly connects heart-belief, oral confession, calling on the Lord, and salvation.",
+    "Christian communities have long used prayers, confessions, creeds, baptismal professions, and other concise expressions of faith.",
+    "Defenders can reasonably describe a sinner's prayer as a pastoral summary rather than a claim that Jesus dictated identical wording."
+  ],
+  "evidence_for_not_p": [
+    "Gospel responses concerning repentance, eternal life, discipleship, belief, mercy, and the Kingdom vary by context rather than presenting one required recitation.",
+    "Luke 18:13 occurs inside a parable about humility and justification and is not framed as a universal initiation formula.",
+    "Romans 10 supports belief, confession, and calling without supplying the later standardized prayer or the modern verse sequence called the Romans Road.",
+    "Dedicated historical study places the standardized method within later evangelistic development rather than the recorded ministry of Jesus."
+  ],
+  "alternative_hypotheses": [
+    "The sinner's prayer is a legitimate pastoral compression of biblical repentance, faith, confession, and calling even though it is not a verbatim command from Jesus.",
+    "Early Christian initiation relied more on baptism, communal confession, catechesis, and embodied allegiance, with later revival settings adapting the response form.",
+    "The real disagreement concerns whether salvation is a one-time verbal transaction or a lived response involving trust, repentance, allegiance, confession, and discipleship.",
+    "Different practices called the sinner's prayer have separate histories, so no single origin story explains every version."
+  ],
+  "logic_audit": [
+    "Absence of a fixed prayer in Jesus' recorded teaching does not establish that prayer is irrelevant or improper.",
+    "The existence of repentance, confession, and calling language does not by itself establish a universally required later script.",
+    "A later practice can be pastorally useful without being identical to the earliest recorded practice.",
+    "The historical question of origin must remain separate from the theological question of whether the practice can faithfully express biblical themes."
+  ],
+  "adversarial_review": {
+    "performed": true,
+    "strongest_case": "Luke 18:13–14 supplies a brief prayer for mercy followed by justification, while Romans 10:9–13 joins heart-belief, oral confession, calling, and salvation. A defender therefore need not claim magical wording; the modern prayer can be defended as a practical enactment of these themes.",
+    "response": "That defense substantially supports the prayer's possible legitimacy as a pastoral tool. It does not establish the narrower proposition that the Gospels record Jesus prescribing one fixed verbal formula as a necessary condition of salvation.",
+    "unresolved": [
+      "The complete historical pathway from ancient conversion prayers and confessions to modern standardized forms.",
+      "How different Christian traditions integrate Gospel, Pauline, baptismal, sacramental, and ecclesial evidence.",
+      "Whether some evangelistic presentations explicitly claim necessity while others only offer optional language."
+    ]
+  },
+  "christ_consistency": {
+    "summary": "The recorded teaching of Jesus repeatedly moves beyond verbal profession toward trust, repentance, mercy, love, allegiance, changed priorities, fruit, and discipleship. A prayer may express those realities, but treating its wording as a guaranteed transaction detached from the life that follows appears less consistent with that broader pattern.",
+    "cautions": [
+      "This is theological coherence analysis, not direct access to Jesus' unrecorded intentions.",
+      "It does not claim that praying at conversion is wrong or that every use of a sinner's prayer is manipulative."
+    ]
+  },
+  "epistemic_limits": [
+    "The phrase sinner's prayer covers multiple wordings and practices rather than one universal text.",
+    "A documented verse-by-verse audit of all four canonical Gospels, including original-language search terms and semantic equivalents, is still needed before promoting the finding beyond provisional.",
+    "A fuller historical review should compare patristic initiation, baptismal confessions, medieval prayers, revivalism, tracts, crusade practice, and Romans Road development.",
+    "The canonical texts cannot alone establish the exact date when every modern version became standardized.",
+    "This narrow finding does not settle the complete theology of salvation."
+  ],
+  "revision_history": [
+    {"version": 1, "date": "2026-08-22", "change": "Case opened with a scoped provisional investigation, explicit counterevidence, source lineage, a separate historical-development track, and a leans-not-P assessment pending a documented Gospel corpus audit."}
+  ],
   "public_url": "https://bobsome1.com/truth/case-000002.php",
-  "challenge_endpoint": "https://bobsome1.com/truth/challenge-submit.php"
+  "challenge_endpoint": "https://bobsome1.com/truth/challenge-submit.php",
+  "created_at": "2026-08-23T02:15:40Z",
+  "updated_at": "2026-08-23T03:43:00Z"
 }

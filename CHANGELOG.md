@@ -1,5 +1,13 @@
 # Evidence Phase 2 Changelog
 
+## 2026-08-23 — Trust-Worthy consolidation and hardening
+
+- Consolidated the public product on `/truth/` with one `TW-CLAIM-*` ledger.
+- Replaced duplicate hardcoded case rendering with one JSON-backed renderer while preserving public case URLs.
+- Normalized the first two cases against the v0.2 schema and strengthened source lineage, counterevidence, uncertainty, and provisional labeling.
+- Hardened private challenge intake and added schema, link, and PHP runtime checks.
+- Kept voice, profiles, battles, personal books, and rewards outside the Phase 1 public surface.
+
 ## New Search Entry Pages
 
 - `questions/what-did-nicaea-decide.html`

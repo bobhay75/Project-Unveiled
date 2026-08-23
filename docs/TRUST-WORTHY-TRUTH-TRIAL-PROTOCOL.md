@@ -1,173 +1,196 @@
-# Trust-Worthy AI — Truth Trial Protocol v0.1
+# Trust-Worthy AI — Truth Trial Protocol v0.2
 
 ## Mission
-Trust-Worthy AI does not tell people what to believe. It conducts deep, adversarial investigations, publishes the evidence and reasoning, identifies uncertainty, and allows findings to be challenged and revised.
+
+Trust-Worthy AI investigates contested claims, publishes the evidence and reasoning, identifies uncertainty, and lets anyone challenge the public record. It does not certify what users must believe.
 
 **Core maxim:** Don't trust the answer. Examine the evidence.
 
+## Constitutional rule
+
+Reality is not changed by confidence, popularity, sponsorship, tradition, institutional authority, or model output. Trust-Worthy records what the available evidence presently permits investigators to conclude about a proposition.
+
+No conclusion receives protected status—not Christianity, skepticism, a denomination, an institution, Project Unveiled, its founder, or Trust-Worthy's own prior work.
+
 ## Non-negotiable rules
-1. No protected conclusions — including Project Unveiled's own claims.
-2. Do original research. Third-party fact-check verdicts are not evidence authorities and must not be used to establish a finding.
-3. Prefer primary and earliest available sources; trace secondary claims toward origin.
-4. Separate documented evidence, historical context, inference, theological interpretation, and unresolved questions.
-5. Search deliberately for credible counterevidence before publishing.
-6. Steelman competing explanations rather than attacking weak versions.
-7. Never disguise uncertainty as certainty.
-8. Publish corrections and preserve the full revision history.
-9. A challenger wins by improving the evidence record, not by rhetoric or popularity.
-10. For Christian/theological cases, Christ-Consistency Analysis is a separately labeled interpretive layer, not a substitute for historical evidence.
 
-## Truth Trial lifecycle
-`QUESTION -> ATOMIC CLAIMS -> SOURCE HUNT -> PROVENANCE -> CONTEXT -> SUPPORTING EVIDENCE -> COUNTEREVIDENCE -> COMPETING HYPOTHESES -> ADVERSARIAL REVIEW -> FINDING -> PUBLICATION -> CHALLENGE -> REVISION`
+1. Preserve the user's actual question before reframing it.
+2. Convert the question into one primary atomic proposition `P` and its genuine contradiction `not-P` whenever practical.
+3. Separate the primary proposition from subordinate historical, textual, or theological questions.
+4. Search toward primary, earliest, and most direct accessible evidence.
+5. Treat third-party verdicts as leads or context, never as substitutes for evidence.
+6. Record provenance, dating, source type, lineage, independence, disputes, and limitations.
+7. Do not count repeated dependence on one source as independent corroboration.
+8. Seek material counterevidence and run a separate adversarial pass before a mature finding.
+9. Separate documented evidence, inference, historical interpretation, theological interpretation, and speculation.
+10. State what is unknown and what evidence would change the assessment.
+11. Preserve every substantive public revision; never silently overwrite a finding.
+12. Payment, sponsorship, ownership, or popularity may fund investigation capacity but may never purchase a conclusion.
 
-Every case receives a permanent ID such as `TW-CLAIM-000001` and a version number.
+## Canonical identity and route
 
-## Evidence record
-Each material source should record where possible:
-- author/creator
-- title or artifact
-- date and estimated date range
-- source type (manuscript, inscription, dataset, book, article, etc.)
-- primary/secondary/tertiary classification
-- language and translation used
-- provenance/custody information
-- temporal proximity to the event or claim
-- independence from other cited sources
-- exact location supporting the proposition
-- evidence direction: supports / challenges / contextual / neutral
-- authenticity or dating disputes
-- limitations
+The public product lives at `/truth/`. Every case receives one permanent identifier in the form `TW-CLAIM-000001` and one canonical public URL. The same investigation must never be republished under a second ID merely because the renderer, route, or schema changes.
 
-Repeated claims are not independent corroboration. Trust-Worthy should trace citation lineage and collapse duplicated dependence where possible.
+Legacy public URLs remain valid through thin wrappers or permanent redirects. Internal implementation may evolve without breaking the ledger.
 
-## Investigation agents
-The implementation may use specialized agents/processes:
-- **Archivist:** locate earliest and primary evidence.
-- **Historian:** chronology, genre, audience and historical context.
-- **Linguist:** original-language and translation disputes.
-- **Advocate A:** strongest case supporting the proposition.
-- **Advocate B:** strongest credible case challenging it.
-- **Source Auditor:** provenance, independence, circular citation and source laundering.
-- **Logician:** assumptions, contradictions, causal errors and inferential validity.
-- **Christ-Consistency Analyst:** for theological cases only; compares an interpretation with the recorded words, actions and character attributed to Jesus, with sources and competing interpretations disclosed.
-- **Synthesizer:** integrates the record without being instructed which position must win.
+## Investigation pipeline
 
-## Findings
-Avoid binary TRUE/FALSE when the evidence does not justify it. Findings may include:
-- Strongly supported
-- Better supported than alternatives
-- Partially supported
-- Disputed
-- Poorly supported
-- Substantially contradicted
-- Insufficient evidence
-- False dichotomy
-- Unresolved
+### 1. Preserve and define the question
 
-No numerical confidence score should imply precision the evidence cannot support.
+Record the submitted wording. Define loaded or ambiguous terms and identify the corpus, geography, population, time period, or text set being investigated.
 
-Every finding must include:
-1. What appears most likely.
-2. Why.
-3. Strongest supporting evidence.
-4. Strongest counterevidence.
-5. Plausible alternative explanations.
-6. What remains unknown.
-7. What evidence could change the finding.
-8. Complete source trail.
-9. Current case version and revision history.
+### 2. Normalize P and not-P
 
-## Truth Challenges
-Any public finding may be challenged.
+`not-P` must actually contradict `P`; it must not exaggerate, weaken, or switch the claim. If a question contains multiple claims, choose one primary proposition and list the rest as subordinate research tracks.
 
-A challenge must identify at least one target:
-- SOURCE — authenticity/reliability problem
-- DATE — chronology error
-- TRANSLATION — linguistic error
-- CONTEXT — context changes the meaning
-- LOGIC — conclusion does not follow
-- COUNTEREVIDENCE — omitted evidence materially changes the case
-- PROVENANCE — source lineage or independence problem
-- ASSUMPTION — unsupported premise
-- ALTERNATIVE — stronger competing explanation
+### 3. Audit assumptions
 
-Trust-Worthy investigates the challenge independently. It does not defend its prior answer merely because it produced it.
+Identify hidden premises. Test a premise before building conclusions on top of it.
 
-Possible challenge outcomes:
-- finding upheld
-- finding strengthened
-- finding weakened
-- finding revised
-- finding overturned
-- unresolved pending additional evidence
+### 4. Plan fresh research
 
-Successful challengers receive permanent attribution in the case history.
+Create a research plan for the present case. Earlier Trust-Worthy records may accelerate discovery, but their findings are hypotheses and evidence maps—not inherited verdicts.
 
-## Public case history / version control
-Truth has a revision history. Never silently overwrite a finding.
+### 5. Hunt sources
 
-Example:
-`v1 -> challenge -> new evidence -> v2 -> translation challenge -> reanalysis -> v3/overturned`
+Search backward toward original texts, manuscripts, critical editions, data, artifacts, contemporary records, archives, and first-hand evidence. Use scholarship to establish context, disputes, and research history.
 
-Users and AI systems must be able to inspect what changed and why.
+### 6. Record provenance
+
+For each material source, record when knowable:
+
+- creator or author;
+- title and exact citation;
+- approximate date and relationship to the event;
+- source type;
+- language and translation or edition;
+- custody, transmission, or publication trail;
+- attribution, authenticity, dating, or interpolation disputes;
+- intended audience and purpose;
+- relevant institutional, political, religious, or commercial incentives;
+- limitations.
+
+Affiliation alone neither proves nor disproves a source.
+
+### 7. Trace lineage and independence
+
+Identify derivative sources and literary relationships. Multiple presentations sharing an underlying source count as one lineage unless independence is established. Use `independent: null` when independence is unknown rather than guessing.
+
+### 8. Restore context and language
+
+Establish chronology, genre, audience, surrounding text, historical setting, and social context. When wording matters, examine the original language, grammar, semantic range, translation history, comparable usage, and serious scholarly disagreement.
+
+### 9. Map evidence in both directions
+
+Publish the strongest evidence for `P`, the strongest evidence for `not-P`, and relevant contextual evidence. Citation volume is not a score; reliability, relevance, independence, and explanatory force matter more.
+
+### 10. Build alternatives
+
+Construct credible competing explanations, including false-dichotomy and insufficient-evidence possibilities. State what each explanation accounts for and what it leaves unexplained.
+
+### 11. Run the adversarial pass
+
+A separate pass receives one instruction: **Find the strongest credible evidence that the leading assessment is wrong.**
+
+Record whether that pass was completed, its strongest case, the current response, and the questions it leaves unresolved. An open or provisional case may honestly state that the separate pass is incomplete.
+
+### 12. Audit logic
+
+Test for circular reasoning, argument from silence, false dichotomy, equivocation, anachronism, source laundering, correlation/causation errors, cherry-picking, unsupported certainty, special pleading, and explanations that ignore material contrary facts.
+
+### 13. Christ-consistency analysis
+
+For Christian theological questions only, add a separately labeled interpretive layer asking which interpretation best coheres with the recorded words, conduct, priorities, and character attributed to Jesus in the relevant sources.
+
+This layer is not historical proof, divine revelation, or access to God's unrecorded intentions.
+
+### 14. Record uncertainty
+
+List missing evidence, unresolved disputes, limits of the method, and what new evidence would materially change the assessment.
+
+### 15. Publish the finding
+
+The public finding must include:
+
+- the primary `P` / `not-P` pair;
+- scope;
+- current epistemic assessment;
+- summary rationale;
+- strongest objection;
+- evidence in both directions;
+- sources and provenance;
+- alternatives;
+- logic audit;
+- adversarial-review record;
+- uncertainty register;
+- what would change the assessment;
+- version history;
+- challenge path.
+
+## Assessment vocabulary
+
+The machine-readable assessment uses:
+
+- `supports-p`
+- `leans-p`
+- `insufficient`
+- `leans-not-p`
+- `supports-not-p`
+- `not-yet-investigated`
+
+These labels describe the evidence state, not different versions of truth. Avoid false numerical precision.
+
+## Publication state versus maturity
+
+A record can be publicly visible while still provisional. Keep these concepts separate:
+
+- **status** describes lifecycle: open, investigating, provisional, published, challenged, reopened, or archived;
+- **maturity** describes review depth: open, provisional, adversarially reviewed, or mature;
+- **destination** describes collection placement: Unveiled, Bunk Book, Mystery Book, or none.
+
+Do not place a case in Unveiled or Bunk Book merely because a first-pass answer leans one way.
+
+## Challenges
+
+Every public case ends with **Challenge This Finding**. A challenge targets a specific source, provenance issue, lineage, date, translation, context, inference, counterexample, assumption, omitted alternative, or power/incentive issue and explains why it could change the assessment.
+
+Submissions remain private until reviewed. They never write directly into the public finding. Trust-Worthy independently investigates a material challenge instead of defending its prior answer.
+
+Possible outcomes include upheld, strengthened, weakened, revised, overturned, or unresolved pending additional evidence.
+
+## Version control
+
+Every substantive revision creates a new public version recording:
+
+- the previous version;
+- the challenge or new evidence;
+- what changed;
+- why it changed;
+- whether the assessment changed;
+- challenger attribution when permission allows.
+
+Earlier versions remain inspectable. Correction is a feature.
 
 ## Public collections
-- **The Unveiled:** findings strongly supported by the investigation.
-- **The Bunk Book:** claims substantially defeated by evidence, with the failure mode explicitly documented.
-- **The Mystery Book:** questions the available evidence cannot presently resolve.
 
-Cases can be reopened whenever material new evidence appears.
+- **Unveiled** — the evidence materially establishes or strongly supports a finding after adequate adversarial review.
+- **Bunk Book** — a proposition materially fails through evidence, provenance, chronology, context, mistranslation, contradiction, source laundering, or comparable defects.
+- **Mystery Book** — the available evidence cannot responsibly determine whether `P` or `not-P` describes reality.
+- **None** — the normal destination for open and provisional work.
 
-## Theology Battles
-Two or more positions may enter a structured Truth Trial. Trust-Worthy investigates rather than acting as a partisan debater. Popular votes do not determine findings.
+## Machine-readable contract
 
-The system should permit outcomes where neither side wins, including false dichotomy and insufficient evidence.
+Public case records follow `/truth/truth-case.schema.json`. Repository checks validate every case against the schema, enforce permanent IDs and canonical URLs, require one primary MVP proposition, verify source IDs and local endpoints, and smoke-test the PHP routes without warnings.
 
-## Christ-Consistency Analysis
-For theological questions, Trust-Worthy may separately ask:
+## MVP boundary
 
-> Which interpretation appears most consistent with the recorded words, conduct and character attributed to Jesus in the relevant early sources?
+Version 0.2 includes only:
 
-The analysis must disclose textual, translation, dating and interpretive disputes. It must never claim privileged access to God's mind.
+- one `/truth/` landing page;
+- JSON-backed case rendering;
+- permanent case IDs and preserved public URLs;
+- structured private challenge intake;
+- one schema and validation pipeline;
+- visible revision history.
 
-## Machine-readable infrastructure
-Long-term objective: make the evidence graph usable by other AI systems.
-
-Proposed API concepts:
-- `claim_lookup`
-- `case_get`
-- `evidence_search`
-- `source_lineage`
-- `challenge_submit`
-- `investigation_request`
-- `case_changes`
-
-A machine response should return the case ID/version, current assessment, supporting and challenging evidence, provenance relationships, unresolved disputes, alternatives and source references — not merely a verdict.
-
-## Trust-Worthy Verification Protocol (TWVP)
-Every investigation should explicitly evaluate:
-- **P — Provenance**
-- **T — Temporal proximity**
-- **I — Independence**
-- **C — Corroboration**
-- **X — Contradiction/counterevidence**
-- **L — Logical validity**
-- **A — Alternative explanations**
-- **U — Uncertainty**
-
-These dimensions are evidence descriptors, not an arbitrary truth score.
-
-## Social mechanics
-The platform should reward epistemic contribution rather than popularity. Core actions:
-
-`INVESTIGATE · SUPPORT WITH EVIDENCE · CHALLENGE · SOURCE · REOPEN`
-
-Reputation can recognize primary-source discoveries, successful corrections, translation corrections, provenance discoveries, finding overturns, and users who revise their own positions when stronger evidence emerges.
-
-## Independence principle
-Sponsors, donors, founders, denominations, institutions and users may fund questions or research capacity. They may never purchase a conclusion.
-
-## API vision
-Trust-Worthy should become useful even to competing AI systems: instead of rebuilding a mature investigation, an external model can query whether a claim has already undergone a public adversarial Truth Trial and retrieve the evidence graph and current version.
-
-The goal is not to become an authority that commands belief. The goal is to become a trusted, auditable public record of **how claims have survived evidence**.
+Accounts, live voice, Theology Profiles, Battles, personal books, rewards, and external APIs are later products. Their specifications must not make the Phase 1 public surface appear complete before those systems are actually safe and operational.

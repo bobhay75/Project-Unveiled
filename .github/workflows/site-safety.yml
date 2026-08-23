@@ -35,3 +35,52 @@ jobs:
 
       - name: Validate public files and local links
         run: python3 scripts/validate_site.py
+
+      - name: Validate Trust-Worthy records
+        run: |
+          python3 -m pip install --disable-pip-version-check 'jsonschema>=4.18,<5'
+          python3 scripts/validate_truth_cases.py
+
+      - name: Smoke-test Trust-Worthy PHP routes
+        shell: bash
+        run: |
+          set -euo pipefail
+          php -d display_errors=1 -d error_reporting=E_ALL -S 127.0.0.1:8080 -t . >/tmp/trust-worthy-php.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          for attempt in {1..20}; do
+            if curl -fsS http://127.0.0.1:8080/truth/ >/tmp/truth-index.html; then
+              break
+            fi
+            sleep 0.25
+          done
+          curl -fsS http://127.0.0.1:8080/truth/case-000001.php >/tmp/truth-case-1.html
+          curl -fsS http://127.0.0.1:8080/truth/case-000002.php >/tmp/truth-case-2.html
+          test "$(curl -sS -o /dev/null -w '%{http_code}' 'http://127.0.0.1:8080/truth/case.php?id=TW-CLAIM-000002')" = "308"
+          curl -sS -D /tmp/truth-case-redirect.headers -o /dev/null 'http://127.0.0.1:8080/truth/case.php?id=TW-CLAIM-000002'
+          grep -Fqi 'location: /truth/case-000002.php' /tmp/truth-case-redirect.headers || {
+            cat /tmp/truth-case-redirect.headers
+            exit 1
+          }
+          test "$(curl -sS -o /dev/null -w '%{http_code}' 'http://127.0.0.1:8080/truth/case.php?id=bad')" = "400"
+          test "$(curl -sS -o /dev/null -w '%{http_code}' 'http://127.0.0.1:8080/truth/case.php?id=TW-CLAIM-999999')" = "404"
+          grep -q 'TW-CLAIM-000001' /tmp/truth-index.html
+          grep -q 'TW-CLAIM-000002' /tmp/truth-index.html
+          grep -q 'Luke 18:9–14' /tmp/truth-case-2.html
+          opened_at=$(( $(date +%s) - 10 ))
+          curl -fsS -H 'Host: bobsome1.com' -H 'Accept: application/json' \
+            --data-urlencode 'case_id=TW-CLAIM-000002' \
+            --data-urlencode 'challenge_type=logic' \
+            --data-urlencode 'argument=This is a CI smoke-test challenge with sufficient length.' \
+            --data-urlencode 'materiality=It verifies that validated challenge records can be stored privately.' \
+            --data-urlencode "opened_at=$opened_at" \
+            http://127.0.0.1:8080/truth/challenge-submit.php >/tmp/truth-challenge.json
+          grep -q '"ok":true' /tmp/truth-challenge.json || {
+            cat /tmp/truth-challenge.json
+            cat /tmp/trust-worthy-php.log
+            exit 1
+          }
+          if grep -Eqi 'Warning:|Notice:|Deprecated:|Fatal error|Parse error' /tmp/truth-*.html /tmp/truth-challenge.json /tmp/trust-worthy-php.log; then
+            cat /tmp/trust-worthy-php.log
+            exit 1
+          fi
