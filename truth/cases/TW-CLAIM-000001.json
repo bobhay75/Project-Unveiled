@@ -1,0 +1,152 @@
+{
+  "case_id": "TW-CLAIM-000001",
+  "version": 2,
+  "status": "provisional",
+  "mode": "mixed",
+  "title": "Does God individually cause or permit every bad thing?",
+  "description": "A provisional Trust-Worthy investigation of the hidden premise that every harmful event requires a separate act of divine causation or individualized permission.",
+  "question": "Does every harmful event require God to have individually caused it or separately permitted it?",
+  "claim": "Every harmful event requires a separate act of divine causation or individualized permission.",
+  "scope": "This case distinguishes ultimate divine sovereignty from direct causation, individualized permission, human agency, hostile agency, and ordinary physical causation. It does not claim to prove or disprove God's existence or settle every form of providence.",
+  "propositions": [
+    {
+      "proposition_id": "P1",
+      "p": "Every harmful event requires a separate act of divine causation or individualized permission.",
+      "not_p": "The available evidence does not require every harmful event to be individually caused or separately permitted by God.",
+      "scope": "The proposition tests the hidden premise of individualized causation or permission, not the broader claim that God has ultimate authority.",
+      "epistemic_assessment": "leans-not-p"
+    }
+  ],
+  "finding": {
+    "epistemic_assessment": "leans-not-p",
+    "summary": "The evidence reviewed so far does not establish that every tragedy requires a separate divine act or individualized permission. Biblical texts also portray meaningful human agency, ordinary tragedy, and hostile spiritual agency. At the same time, strong sovereignty traditions make the absolute opposite claim—God has no ultimate authority—too broad.",
+    "strongest_objection": "Classical providence can distinguish primary and secondary causes: God may govern the whole while humans, natural processes, and hostile powers remain genuine causes. On that account, divine permission need not mean direct authorship, but the moral problem of preventable suffering remains.",
+    "what_would_change_it": [
+      "Historically early evidence explicitly teaching that every individual event is separately caused or specifically authorized by God.",
+      "A coherent reading showing that sovereignty language necessarily entails individualized permission rather than ultimate authority compatible with secondary causes.",
+      "Evidence that the hostile-agent and ordinary-causation readings used here materially misread their textual contexts."
+    ],
+    "maturity": "provisional",
+    "destination": "none"
+  },
+  "sources": [
+    {
+      "source_id": "S1",
+      "title": "Luke 13:1–5",
+      "source_type": "primary-text",
+      "position": "supports-not-p",
+      "citation": "Gospel according to Luke 13:1–5, NET",
+      "url": "https://www.biblegateway.com/passage/?search=Luke+13%3A1-5&version=NET",
+      "provenance": "Canonical Gospel text reporting Jesus' response to political violence and an accidental tower collapse.",
+      "lineage_parent": null,
+      "independent": null,
+      "authenticity_or_dating_dispute": "Authorship, dating, and the Synoptic literary relationship remain subjects of scholarship; no special interpolation claim is asserted here.",
+      "limitations": "The passage rejects victim-blame but does not state a complete causal theory of suffering."
+    },
+    {
+      "source_id": "S2",
+      "title": "John 12:31–32",
+      "source_type": "primary-text",
+      "position": "supports-not-p",
+      "citation": "Gospel according to John 12:31–32, NET",
+      "url": "https://classic.net.bible.org/passage.php?passage=Joh+12%3A31%2C32",
+      "provenance": "Johannine text describing a hostile 'ruler of this world' who will be driven out.",
+      "lineage_parent": null,
+      "independent": null,
+      "authenticity_or_dating_dispute": "The relationship of John to the Synoptic traditions and the historical level of the saying require separate treatment.",
+      "limitations": "Hostile agency does not prove the absence of ultimate divine sovereignty."
+    },
+    {
+      "source_id": "S3",
+      "title": "Second Corinthians 4:4 and 'the god of this age'",
+      "source_type": "scholarship",
+      "position": "context",
+      "citation": "University of Cape Town research on 2 Corinthians 4:4",
+      "url": "https://open.uct.ac.za/server/api/core/bitstreams/83beed00-67a2-4c1b-b58f-5e478f1e1906/content",
+      "provenance": "Academic research used to contextualize the Pauline phrase rather than treating one verse as a complete cosmology.",
+      "lineage_parent": null,
+      "independent": true,
+      "authenticity_or_dating_dispute": null,
+      "limitations": "Interpretation of the phrase remains debated and cannot establish a complete doctrine by itself."
+    },
+    {
+      "source_id": "S4",
+      "title": "Apocryphon of John manuscript record",
+      "source_type": "reference",
+      "position": "context",
+      "citation": "NASSCAL e-Clavis: Apocryphon of John",
+      "url": "https://www.nasscal.com/e-clavis-christian-apocrypha/apocryphon-of-john/",
+      "provenance": "Scholarly manuscript catalog documenting witnesses, editions, and bibliography for an ancient Demiurge interpretation.",
+      "lineage_parent": null,
+      "independent": true,
+      "authenticity_or_dating_dispute": "Surviving manuscripts are later than the earliest Christian generation; composition and textual history require careful dating.",
+      "limitations": "Evidence that an interpretation existed is not evidence that its metaphysical claims are true."
+    },
+    {
+      "source_id": "S5",
+      "title": "The Problem of Evil",
+      "source_type": "reference",
+      "position": "context",
+      "citation": "Stanford Encyclopedia of Philosophy, The Problem of Evil",
+      "url": "https://plato.stanford.edu/entries/evil/",
+      "provenance": "Peer-reviewed philosophical reference summarizing major formulations, theodicies, and objections.",
+      "lineage_parent": null,
+      "independent": true,
+      "authenticity_or_dating_dispute": null,
+      "limitations": "A philosophical map does not itself decide between theological or metaphysical models."
+    }
+  ],
+  "evidence_for_p": [
+    "Biblical traditions strongly affirm divine sovereignty and providential authority.",
+    "Classical theology can treat secondary causes as compatible with divine governance and permission.",
+    "If God possesses complete knowledge and power, nonintervention may still carry morally relevant responsibility even when God is not the direct cause."
+  ],
+  "evidence_for_not_p": [
+    "Luke 13 refuses to turn two tragedies into moral verdicts and supplies no individualized causal explanation.",
+    "Johannine and Pauline texts assign meaningful agency to hostile powers rather than reducing all action to direct divine action.",
+    "Stable physical processes provide a coherent intermediate explanation for many events without requiring a separately issued decision for each one."
+  ],
+  "alternative_hypotheses": [
+    "Divine sovereignty operates through secondary causes, making human and natural agency real while all events remain within providence.",
+    "Permission is only a human description of nonintervention and should not be treated as evidence of a discrete heavenly decision.",
+    "Some biblical hostile-power language is symbolic rather than a literal map of causal authority.",
+    "The question exceeds what surviving texts can establish and belongs partly to philosophical theology rather than historical inquiry."
+  ],
+  "logic_audit": [
+    "Ultimate authority does not logically entail direct authorship of every intermediate event.",
+    "Rejecting individualized causation does not establish that God lacks sovereignty or foreknowledge.",
+    "The existence of hostile-power traditions proves those interpretations existed, not that the described beings objectively exist.",
+    "An explanation involving stable natural laws does not by itself solve why a good and powerful God would sustain such a world."
+  ],
+  "adversarial_review": {
+    "performed": true,
+    "strongest_case": "A mature providence model can absorb all apparent counterevidence by distinguishing God's ultimate governance from secondary causes; human freedom, natural law, and hostile agency can therefore remain real without any event falling outside divine permission.",
+    "response": "That model is coherent, but it changes the popular premise from an individual divine decision behind each event to an overarching providential framework. It also preserves rather than resolves the moral question of preventable suffering.",
+    "unresolved": [
+      "Whether omniscience plus nonintervention should be called permission.",
+      "Whether biblical sovereignty texts require universal meticulous providence.",
+      "Whether hostile-power language is literal, symbolic, or both."
+    ]
+  },
+  "christ_consistency": {
+    "summary": "The Gospel material reviewed portrays Jesus rejecting easy blame, healing suffering, opposing destructive forces, showing mercy, and calling people toward transformation. Casually telling sufferers that God individually did this to them for a reason appears less consistent with that pattern than responding with truth, mercy, healing, and responsibility.",
+    "cautions": [
+      "This is theological coherence analysis, not direct access to God's unrecorded intentions.",
+      "It does not decide the full relationship between divine sovereignty, foreknowledge, permission, and secondary causes."
+    ]
+  },
+  "epistemic_limits": [
+    "The sources do not provide one systematic causal theory of every harmful event.",
+    "The meaning of divine permission changes across theological systems.",
+    "Historical evidence can establish what texts and communities claimed, not directly prove every metaphysical entity described.",
+    "The philosophical problem of apparently gratuitous suffering remains unresolved."
+  ],
+  "revision_history": [
+    {"version": 1, "date": "2026-08-22", "change": "Case opened and investigation protocol published."},
+    {"version": 2, "date": "2026-08-22", "change": "Provisional finding published with textual, historical, philosophical, adversarial, and Christ-consistency analysis."}
+  ],
+  "public_url": "https://bobsome1.com/truth/case-000001.php",
+  "challenge_endpoint": "https://bobsome1.com/truth/challenge-submit.php",
+  "created_at": "2026-08-22T21:13:44Z",
+  "updated_at": "2026-08-22T21:46:55Z"
+}

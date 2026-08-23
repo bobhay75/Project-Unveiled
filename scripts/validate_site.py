@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate public HTML links and reject private/deployment artifacts."""
+"""Validate public links and reject private or deployment artifacts."""
 
 from __future__ import annotations
 
@@ -23,7 +23,7 @@ class References(HTMLParser):
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         for name, value in attrs:
-            if value and name in {"href", "src"}:
+            if value and name in {"href", "src", "action"}:
                 self.items.append((self.getpos()[0], value.strip()))
 
 
@@ -36,7 +36,7 @@ def public_files() -> list[Path]:
 
 
 def resolve_reference(source: Path, raw: str) -> Path | None:
-    if not raw or raw.startswith(("#", "//")):
+    if not raw or raw.startswith(("#", "//")) or "<?" in raw:
         return None
     parsed = urlsplit(raw)
     if parsed.scheme or parsed.netloc:
@@ -46,8 +46,11 @@ def resolve_reference(source: Path, raw: str) -> Path | None:
         return None
     candidate = ROOT / target.lstrip("/") if target.startswith("/") else source.parent / target
     candidate = Path(os.path.normpath(candidate))
-    if candidate.suffix == "" and candidate.is_dir():
-        candidate /= "index.html"
+    if candidate.is_dir():
+        for index_name in ("index.html", "index.htm", "index.php"):
+            index_path = candidate / index_name
+            if index_path.is_file():
+                return index_path
     return candidate
 
 
@@ -67,7 +70,7 @@ def main() -> int:
     for source in (
         path
         for path in files
-        if path.suffix.lower() in {".html", ".htm"}
+        if path.suffix.lower() in {".html", ".htm", ".php"}
         and not any(part.lower() in SKIP_LINK_AUDIT_DIRS for part in path.relative_to(ROOT).parts)
     ):
         parser = References()
