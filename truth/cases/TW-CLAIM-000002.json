@@ -14,12 +14,12 @@
       "p": "The canonical Gospel accounts record Jesus prescribing a fixed verbal prayer as a necessary condition of salvation.",
       "not_p": "The canonical Gospel accounts do not record Jesus prescribing a fixed verbal prayer as a necessary condition of salvation.",
       "scope": "This tests a required fixed recitation, not the wider legitimacy of praying, confessing, repenting, trusting, or publicly professing faith.",
-      "epistemic_assessment": "supports-not-p"
+      "epistemic_assessment": "leans-not-p"
     }
   ],
   "finding": {
-    "epistemic_assessment": "supports-not-p",
-    "summary": "The surviving Gospel accounts use varied language about repentance, belief, following, mercy, allegiance, the Kingdom, and eternal life; they do not present one fixed recitation as Jesus' required mechanism of salvation. Romans contains genuine material about belief, confession, and calling on the Lord, while the standardized sinner's-prayer or Romans-Road presentation is better treated as later evangelistic packaging. A conversion prayer may still be a legitimate pastoral expression of biblical themes.",
+    "epistemic_assessment": "leans-not-p",
+    "summary": "The evidence reviewed so far leans toward not-P. The sampled Gospel responses use varied language about repentance, belief, following, mercy, allegiance, the Kingdom, and eternal life rather than presenting one fixed recitation as Jesus' required mechanism of salvation. Romans contains genuine material about belief, confession, and calling on the Lord, while the standardized sinner's-prayer or Romans-Road presentation is better treated as later evangelistic packaging. A conversion prayer may still be a legitimate pastoral expression of biblical themes.",
     "strongest_objection": "Luke 18:13–14 presents a tax collector praying for mercy and then being described by Jesus as justified. Romans 10:9–13 connects heart-belief, oral confession, calling on the Lord, and salvation. Together these texts can support a brief conversion prayer as a faithful expression even though neither supplies a universal fixed script attributed to Jesus.",
     "what_would_change_it": [
       "Early textual evidence showing Jesus or the earliest disciples prescribed a materially fixed verbal formula as a necessary condition of salvation.",
@@ -153,15 +153,16 @@
   },
   "epistemic_limits": [
     "The phrase sinner's prayer covers multiple wordings and practices rather than one universal text.",
+    "A documented verse-by-verse audit of all four canonical Gospels, including original-language search terms and semantic equivalents, is still needed before promoting the finding beyond provisional.",
     "A fuller historical review should compare patristic initiation, baptismal confessions, medieval prayers, revivalism, tracts, crusade practice, and Romans Road development.",
     "The canonical texts cannot alone establish the exact date when every modern version became standardized.",
     "This narrow finding does not settle the complete theology of salvation."
   ],
   "revision_history": [
-    {"version": 1, "date": "2026-08-22", "change": "Case opened with a scoped provisional investigation, explicit counterevidence, source lineage, and a separate historical-development track."}
+    {"version": 1, "date": "2026-08-22", "change": "Case opened with a scoped provisional investigation, explicit counterevidence, source lineage, a separate historical-development track, and a leans-not-P assessment pending a documented Gospel corpus audit."}
   ],
   "public_url": "https://bobsome1.com/truth/case-000002.php",
   "challenge_endpoint": "https://bobsome1.com/truth/challenge-submit.php",
   "created_at": "2026-08-23T02:15:40Z",
-  "updated_at": "2026-08-23T02:15:49Z"
+  "updated_at": "2026-08-23T03:43:00Z"
 }
