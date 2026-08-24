@@ -32,7 +32,7 @@ $context=clean((string)($_POST['context']??''),2000);
 $name=clean((string)($_POST['name']??''),100);
 $email=clean((string)($_POST['email']??''),190);
 
-$topics=['jesus','doctrine','history','science','current-events','other'];
+$topics=['news','propaganda','jesus','doctrine','history','science','current-events','other'];
 if(!in_array($topic,$topics,true)) out(false,'Choose a valid topic.',422);
 if(mb_strlen($question)<20) out(false,'Please state the question in enough detail to investigate.',422);
 if($email!==''&&!filter_var($email,FILTER_VALIDATE_EMAIL)) out(false,'Enter a valid email address or leave it blank.',422);
