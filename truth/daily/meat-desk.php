@@ -22,6 +22,9 @@ function tw_meat_desk_candidates(): array {
         ['Science & evidence', 'What is the difference between a single study, a replicated finding, an observational association, a causal result, and scientific consensus?'],
         ['Science & evidence', 'How often do dramatic scientific headlines say more than the underlying study actually established?'],
         ['History', 'How do we know that a famous historical event happened the way textbooks commonly describe it — and which parts rest on later retelling rather than contemporary evidence?'],
+        ['Holiday origins', 'Where did America’s major holidays and holiday customs actually come from — and which parts are documented history, older tradition, later reinterpretation, commerce, or myth?'],
+        ['Traditions of men', 'Which beliefs, rules, rituals, titles, customs, and institutions commonly presented as Christian can be traced directly to Jesus and the earliest followers — and which developed later?'],
+        ['Traditions of men', 'For a modern Christian teaching or practice, when does it first appear in the historical record, who formalized it, what influenced it, and did Jesus actually teach it?'],
         ['Religion & scripture', 'Which widely repeated Christian teachings are explicitly recorded in the words of Jesus, and which are later theological frameworks built from other texts?'],
         ['Religion & scripture', 'How did translation choices, manuscript differences, church history, and cultural assumptions shape what modern readers think a biblical passage means?'],
         ['Work & consumer life', 'What rights, protections, warranties, cancellation rules, and contract terms do ordinary people routinely give up because they never read the fine print?'],
@@ -87,8 +90,8 @@ function tw_user_question_candidates(string $privateDir, int $max = 6): array {
 
 function tw_build_meat_queue(array $newsCandidates, string $privateDir, int $max = 18): array {
     $user = tw_user_question_candidates($privateDir, 6);
-    $meat = array_slice(tw_meat_desk_candidates(), 0, 10);
-    $news = array_slice($newsCandidates, 0, 4);
+    $meat = array_slice(tw_meat_desk_candidates(), 0, 12);
+    $news = array_slice($newsCandidates, 0, 2);
 
     $queue = array_merge($user, $meat, $news);
     return array_slice($queue, 0, $max);
