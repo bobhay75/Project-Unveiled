@@ -3,6 +3,7 @@ declare(strict_types=1);
 require __DIR__ . '/lib.php';
 require __DIR__ . '/compat.php';
 require __DIR__ . '/trial-filter.php';
+require __DIR__ . '/meat-desk.php';
 $config = require __DIR__ . '/config.php';
 if (PHP_SAPI !== 'cli') { http_response_code(404); exit; }
 
@@ -20,18 +21,26 @@ foreach ($config['feeds'] as $feed) {
 }
 
 $ranked = tw_rank_candidates($items, (int)$config['lookback_hours'], (int)$config['max_candidates']);
-$candidates = tw_trial_focus($ranked, 18);
+$newsCandidates = tw_trial_focus($ranked, 12);
+$privateDir = tw_private_dir();
+$candidates = tw_build_meat_queue($newsCandidates, $privateDir, 18);
+
 $payload = [
     'refreshed_at_utc' => gmdate('c'),
     'source_count' => count($config['feeds']),
     'raw_item_count' => count($items),
     'candidate_count' => count($candidates),
-    'ranking_mode' => 'truth-trial-tension',
+    'ranking_mode' => 'need-to-know-meat-desk',
+    'editorial_priority' => [
+        'real user questions',
+        'high-consequence evergreen questions',
+        'current news only when it contributes meaningful evidence or context'
+    ],
     'errors' => $errors,
     'candidates' => $candidates,
 ];
-$path = tw_private_dir() . '/daily-candidates.json';
+$path = $privateDir . '/daily-candidates.json';
 tw_json_write($path, $payload);
 
-echo "\nSaved " . count($candidates) . " Truth-Trial-focused candidates to {$path}\n";
+echo "\nSaved " . count($candidates) . " need-to-know Meat Desk candidates to {$path}\n";
 echo "Private desk: https://bobsome1.com/truth/daily/desk.php?key=" . tw_admin_token() . "\n";
