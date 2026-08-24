@@ -2,6 +2,7 @@
 declare(strict_types=1);
 require __DIR__ . '/lib.php';
 require __DIR__ . '/compat.php';
+require __DIR__ . '/trial-filter.php';
 $config = require __DIR__ . '/config.php';
 if (PHP_SAPI !== 'cli') { http_response_code(404); exit; }
 
@@ -18,17 +19,19 @@ foreach ($config['feeds'] as $feed) {
     }
 }
 
-$candidates = tw_rank_candidates($items, (int)$config['lookback_hours'], (int)$config['max_candidates']);
+$ranked = tw_rank_candidates($items, (int)$config['lookback_hours'], (int)$config['max_candidates']);
+$candidates = tw_trial_focus($ranked, 18);
 $payload = [
     'refreshed_at_utc' => gmdate('c'),
     'source_count' => count($config['feeds']),
     'raw_item_count' => count($items),
     'candidate_count' => count($candidates),
+    'ranking_mode' => 'truth-trial-tension',
     'errors' => $errors,
     'candidates' => $candidates,
 ];
 $path = tw_private_dir() . '/daily-candidates.json';
 tw_json_write($path, $payload);
 
-echo "\nSaved " . count($candidates) . " ranked candidates to {$path}\n";
+echo "\nSaved " . count($candidates) . " Truth-Trial-focused candidates to {$path}\n";
 echo "Private desk: https://bobsome1.com/truth/daily/desk.php?key=" . tw_admin_token() . "\n";
