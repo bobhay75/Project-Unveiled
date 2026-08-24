@@ -1,0 +1,34 @@
+{
+  "case_id": "TW-CLAIM-000004",
+  "version": 1,
+  "status": "provisional_open_to_challenge",
+  "title": "Who is Jesus?",
+  "claim_under_test": "Jesus of Nazareth was a real first-century Jewish teacher who was crucified, and the earliest Christians proclaimed him risen and Lord; his ultimate identity remains historically and theologically disputed.",
+  "current_assessment": {
+    "classification": "historically_real_with_disputed_ultimate_identity",
+    "summary": "The best-supported historical core is Jesus' existence, crucifixion, and early resurrection proclamation. Whether those facts warrant belief that he is God's unique revelation is a further judgment.",
+    "certainty_note": "Strong on core existence/crucifixion and early proclamation; disputed on source precision and divine identity."
+  },
+  "evidence_tracks": [
+    "Pauline letters",
+    "Gospel traditions",
+    "Josephus",
+    "Tacitus",
+    "resurrection traditions"
+  ],
+  "strongest_counterargument": "The sources are religious and ancient; natural explanations may account for resurrection belief without a miracle.",
+  "what_would_change_the_finding": [
+    "decisive evidence invalidating the core historical sources",
+    "a stronger explanation of the early resurrection proclamation that accounts for the whole record"
+  ],
+  "protocol": "TWVP-0.1",
+  "revision_history": [
+    {
+      "version": 1,
+      "date": "2026-08-24",
+      "change": "Case opened as a separate investigation from the God-existence question."
+    }
+  ],
+  "public_url": "https://bobsome1.com/truth/case-000004.php",
+  "challenge_endpoint": "https://bobsome1.com/truth/challenge-submit.php"
+}
