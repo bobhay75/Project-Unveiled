@@ -7,15 +7,15 @@ $draft = tw_json_read(tw_private_dir() . '/daily-draft.json');
 $error = trim((string)($_GET['error'] ?? ''));
 function h(string $v): string { return htmlspecialchars($v, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); }
 function join_lines(mixed $v): string { return is_array($v) ? implode("\n", array_map('strval', $v)) : ''; }
-?><!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="no-referrer"><title>Trust-Worthy Private Daily Desk</title><link rel="stylesheet" href="/truth/truth-worthy.css"></head><body>
+?><!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="no-referrer"><title>Trust-Worthy Private Meat Desk</title><link rel="stylesheet" href="/truth/truth-worthy.css"></head><body>
 <header class="topbar"><div class="wrap nav"><a class="brand" href="/truth/">TRUST-WORTHY <span>AI</span></a><nav class="navlinks"><a href="/truth/today.php">Public Daily Trial</a><a href="/truth/">Truth Home</a></nav></div></header><main>
-<section class="hero"><div class="wrap"><div class="eyebrow">Private Editor Desk</div><h1>DAILY TRUTH TRIAL</h1><p>Free feed intake first. Paid deep research only when you choose a candidate.</p></div></section>
+<section class="hero"><div class="wrap"><div class="eyebrow">Private Editor Desk</div><h1>THE MEAT DESK</h1><p>Questions people need answered. Real user questions first. High-consequence truths next. News is evidence — not our editorial calendar.</p></div></section>
 <?php if ($error !== ''): ?><section class="section"><div class="wrap"><div class="card"><strong>Research error:</strong> <?=h($error)?></div></div></section><?php endif; ?>
-<section class="section"><div class="wrap"><div class="eyebrow">Candidate Queue</div><h2><?=h((string)($queue['candidate_count'] ?? 0))?> ranked candidates</h2><p class="muted">Last refresh: <?=h((string)($queue['refreshed_at_utc'] ?? 'not run yet'))?>. To refresh, run the server CLI refresh script or its cron job.</p>
+<section class="section"><div class="wrap"><div class="eyebrow">Need-to-Know Queue</div><h2><?=h((string)($queue['candidate_count'] ?? 0))?> candidates</h2><p class="muted">Last refresh: <?=h((string)($queue['refreshed_at_utc'] ?? 'not run yet'))?>. Priority: people asking → evergreen consequential questions → current evidence signals.</p>
 <div class="grid">
-<?php foreach (array_slice($queue['candidates'] ?? [], 0, 12) as $c): ?>
-<article class="card"><div class="case-id">SCORE <?=h((string)($c['score'] ?? '0'))?> · <?=h((string)($c['source'] ?? ''))?></div><h3><?=h((string)($c['title'] ?? ''))?></h3><p class="muted"><?=h((string)($c['why_trial_worthy'] ?? ''))?></p><?php if (!empty($c['corroborating_sources'])): ?><p><strong>Also appearing in:</strong> <?=h(implode(', ', $c['corroborating_sources']))?></p><?php endif; ?><p><a href="<?=h(tw_safe_url((string)($c['url'] ?? '')))?>" rel="noopener noreferrer" target="_blank">Open originating story</a></p>
-<form action="/truth/daily/investigate.php" method="post"><input type="hidden" name="key" value="<?=h($key)?>"><input type="hidden" name="id" value="<?=h((string)($c['id'] ?? ''))?>"><button class="button" type="submit">Investigate This Claim</button></form></article>
+<?php foreach (array_slice($queue['candidates'] ?? [], 0, 18) as $c): ?>
+<article class="card"><div class="case-id"><?=h((string)($c['trial_lane'] ?? 'Truth Trial'))?> · <?=h((string)($c['source'] ?? ''))?></div><h3><?=h((string)($c['title'] ?? ''))?></h3><p class="muted"><?=h((string)($c['why_trial_worthy'] ?? ''))?></p><?php if (!empty($c['summary'])): ?><p><?=h((string)$c['summary'])?></p><?php endif; ?><?php if (!empty($c['corroborating_sources'])): ?><p><strong>Also appearing in:</strong> <?=h(implode(', ', $c['corroborating_sources']))?></p><?php endif; ?><?php if (!empty($c['url'])): ?><p><a href="<?=h(tw_safe_url((string)$c['url']))?>" rel="noopener noreferrer" target="_blank">Open source signal</a></p><?php endif; ?>
+<form action="/truth/daily/investigate.php" method="post"><input type="hidden" name="key" value="<?=h($key)?>"><input type="hidden" name="id" value="<?=h((string)($c['id'] ?? ''))?>"><button class="button" type="submit">Put This Question on Trial</button></form></article>
 <?php endforeach; ?>
 </div></div></section>
 <?php if ($draft !== []): ?>
@@ -39,4 +39,4 @@ function join_lines(mixed $v): string { return is_array($v) ? implode("\n", arra
 <button class="button" type="submit">Approve & Publish Today's Trial</button></form>
 </article></div></section>
 <?php endif; ?>
-</main><footer class="footer"><div class="wrap"><strong>QUESTION EVERYTHING!</strong> · Private Daily Desk · <strong>YOU BE THE JUDGE.</strong></div></footer></body></html>
+</main><footer class="footer"><div class="wrap"><strong>QUESTION EVERYTHING!</strong> · The Meat Desk · <strong>YOU BE THE JUDGE.</strong></div></footer></body></html>
