@@ -45,6 +45,7 @@ if(!is_array($items)) $items=[];
 $secretFile=$dir.'/question-secret.txt';
 if(!is_file($secretFile)){file_put_contents($secretFile,bin2hex(random_bytes(32)),LOCK_EX);@chmod($secretFile,0640);}
 $ipHash=hash_hmac('sha256',(string)($_SERVER['REMOTE_ADDR']??''),trim((string)file_get_contents($secretFile)));
+$now=gmdate('c');
 $items[]=[
   'id'=>bin2hex(random_bytes(8)),
   'topic'=>$topic,
@@ -52,9 +53,19 @@ $items[]=[
   'context'=>$context,
   'name'=>$name,
   'email'=>$email,
-  'status'=>'submitted',
-  'submitted_at_utc'=>gmdate('c'),
-  'ip_hash'=>$ipHash
+  'status'=>'queued',
+  'submitted_at_utc'=>$now,
+  'ip_hash'=>$ipHash,
+  'research'=>[
+    'stage'=>'queued',
+    'claim'=>null,
+    'answer'=>null,
+    'sources'=>[],
+    'counterevidence'=>[],
+    'uncertainties'=>[],
+    'version'=>0,
+    'updated_at_utc'=>$now
+  ]
 ];
 $tmp=$file.'.tmp-'.bin2hex(random_bytes(4));
 if(file_put_contents($tmp,json_encode($items,JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES),LOCK_EX)===false||!rename($tmp,$file)){
