@@ -1,5 +1,15 @@
 <?php
 declare(strict_types=1);
+
+// Shared-hosting-safe secret loading. Environment variables still take priority,
+// but cPanel users may store the key outside public_html at the private path below.
+$privateKeyFile = dirname(__DIR__, 3) . '/site-private/trust-worthy/openai-key.txt';
+if (!getenv('TRUST_WORTHY_OPENAI_API_KEY') && is_file($privateKeyFile)) {
+    $privateKey = trim((string)file_get_contents($privateKeyFile));
+    if ($privateKey !== '') putenv('TRUST_WORTHY_OPENAI_API_KEY=' . $privateKey);
+    unset($privateKey);
+}
+
 require __DIR__ . '/lib.php';
 $config = require __DIR__ . '/config.php';
 $key = tw_require_admin();
