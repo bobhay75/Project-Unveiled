@@ -1,0 +1,39 @@
+{
+  "case_id": "TW-CLAIM-000003",
+  "version": 1,
+  "status": "provisional_open_to_challenge",
+  "title": "Is belief in God rational—and who was Jesus?",
+  "claim_under_test": "The evidence does not force either atheism or theism, but belief in God is rationally defensible; Jesus of Nazareth is historically real and his ultimate identity remains a disputed interpretive question.",
+  "current_assessment": {
+    "classification": "rationally_defensible_not_coercively_proven",
+    "summary": "God has not been scientifically disproved or mathematically proven. Philosophical arguments and historical claims are cumulative. Jesus was a first-century Jewish teacher crucified under Pontius Pilate; claims about his resurrection and divine identity are interpretation-dependent.",
+    "certainty_note": "Strong on the limits of categorical proof and on Jesus' historical existence/crucifixion; disputed on metaphysics and resurrection."
+  },
+  "evidence_tracks": [
+    "contingency",
+    "cosmic intelligibility",
+    "consciousness and morality",
+    "suffering and hiddenness",
+    "religious diversity",
+    "early Christian letters",
+    "Gospel traditions",
+    "Josephus",
+    "Tacitus"
+  ],
+  "strongest_counterargument": "Naturalistic explanations, suffering, divine hiddenness, and religious diversity may explain the evidence without positing God.",
+  "what_would_change_the_finding": [
+    "demonstration that the arguments are logically invalid and naturalistic alternatives explain all cited data better",
+    "decisive correction to the historical claims about Jesus",
+    "new evidence materially bearing on the resurrection traditions"
+  ],
+  "protocol": "TWVP-0.1",
+  "revision_history": [
+    {
+      "version": 1,
+      "date": "2026-08-24",
+      "change": "Case opened with first-pass deep-dive investigation."
+    }
+  ],
+  "public_url": "https://bobsome1.com/truth/case-000003.php",
+  "challenge_endpoint": "https://bobsome1.com/truth/challenge-submit.php"
+}
