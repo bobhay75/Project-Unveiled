@@ -212,7 +212,21 @@ function tw_rank_candidates(array $items, int $lookbackHours, int $max): array {
 }
 
 function tw_openai_key(): string {
-    return (string)(getenv('TRUST_WORTHY_OPENAI_API_KEY') ?: getenv('OPENAI_API_KEY') ?: getenv('INSIDE_OF_ME_OPENAI_API_KEY') ?: '');
+    // On shared cPanel hosting, the private key file is the canonical Trust-Worthy secret.
+    // It lives outside public_html and outside Git, so it cannot be served by the website
+    // or committed accidentally. Environment variables remain fallbacks for portability.
+    $privatePath = tw_private_dir() . '/openai-key.txt';
+    if (is_readable($privatePath)) {
+        $key = trim((string)file_get_contents($privatePath));
+        if ($key !== '') return $key;
+    }
+
+    return (string)(
+        getenv('TRUST_WORTHY_OPENAI_API_KEY')
+        ?: getenv('OPENAI_API_KEY')
+        ?: getenv('INSIDE_OF_ME_OPENAI_API_KEY')
+        ?: ''
+    );
 }
 
 function tw_extract_response_text(array $node): ?string {
@@ -277,19 +291,22 @@ PROMPT;
         'tools' => [['type' => 'web_search']],
         'input' => [
             ['role' => 'system', 'content' => [['type' => 'input_text', 'text' => $system]]],
-            ['role' => 'user', 'content' => [['type' => 'input_text', 'text' => "Investigate this Daily Truth Trial candidate. Search beyond the originating story. Verify the underlying factual propositions and retrieve primary evidence where possible.\n\nCANDIDATE:\n" . $candidateJson]]],
+            ['role' => 'user', 'content' => [['type' => 'input_text', 'text' => "Investigate this candidate claim. Begin by identifying exactly what is being claimed, then research broadly and deeply. Candidate: {$candidateJson}"]]],
         ],
-        'max_output_tokens' => 4200,
+        'max_output_tokens' => 6000,
     ];
 
     $ch = curl_init('https://api.openai.com/v1/responses');
-    if ($ch === false) throw new RuntimeException('Unable to initialize research request.');
+    if ($ch === false) throw new RuntimeException('Unable to initialize research provider request.');
     curl_setopt_array($ch, [
         CURLOPT_POST => true,
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_CONNECTTIMEOUT => 10,
-        CURLOPT_TIMEOUT => 120,
-        CURLOPT_HTTPHEADER => ['Authorization: Bearer ' . $key, 'Content-Type: application/json'],
+        CURLOPT_TIMEOUT => 180,
+        CURLOPT_HTTPHEADER => [
+            'Authorization: Bearer ' . $key,
+            'Content-Type: application/json',
+        ],
         CURLOPT_POSTFIELDS => json_encode($payload, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE),
     ]);
     $body = curl_exec($ch);
@@ -297,24 +314,34 @@ PROMPT;
     $error = curl_error($ch);
     curl_close($ch);
     if ($body === false || $status < 200 || $status >= 300) {
-        throw new RuntimeException('Research provider failed (HTTP ' . $status . ')' . ($error !== '' ? ': ' . $error : '.'));
+        $detail = '';
+        if (is_string($body)) {
+            $decodedError = json_decode($body, true);
+            if (is_array($decodedError)) {
+                $message = trim((string)($decodedError['error']['message'] ?? ''));
+                $code = trim((string)($decodedError['error']['code'] ?? ''));
+                if ($message !== '') $detail = ' - ' . $message;
+                if ($code !== '') $detail .= ' [' . $code . ']';
+            }
+        }
+        throw new RuntimeException('Research provider failed (HTTP ' . $status . ')' . $detail . ($error !== '' ? ' - ' . $error : ''));
     }
-    $response = json_decode($body, true);
-    if (!is_array($response)) throw new RuntimeException('Research provider returned unreadable JSON.');
-    $text = tw_extract_response_text($response);
-    if ($text === null) throw new RuntimeException('Research provider returned no readable report.');
+    $decoded = json_decode((string)$body, true);
+    if (!is_array($decoded)) throw new RuntimeException('Research provider returned invalid JSON.');
+    $text = tw_extract_response_text($decoded);
+    if ($text === null) throw new RuntimeException('Research provider returned no usable text.');
     $report = json_decode(tw_trim_json_fence($text), true);
-    if (!is_array($report)) throw new RuntimeException('Research report was not valid JSON.');
-
+    if (!is_array($report)) throw new RuntimeException('Research response was not valid investigation JSON.');
     $report['_meta'] = [
+        'generated_at_utc' => gmdate('c'),
         'candidate' => $candidate,
         'model' => $model,
-        'generated_at_utc' => gmdate('c'),
-        'status' => 'human-review-required',
+        'provider_response_id' => $decoded['id'] ?? null,
+        'human_review_required' => true,
     ];
     return $report;
 }
 
 function tw_safe_url(string $url): string {
-    return filter_var($url, FILTER_VALIDATE_URL) ? $url : '#';
+    return preg_match('#^https?://#i', $url) ? $url : '#';
 }
