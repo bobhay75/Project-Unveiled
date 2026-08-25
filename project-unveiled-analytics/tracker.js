@@ -88,9 +88,48 @@
     }
   };
 
+  const prepareHomepageReviews = () => {
+    const path = window.location.pathname.replace(/\/index\.html$/i, '/');
+    if (path !== '/') return;
+    const main = document.querySelector('main');
+    if (!main || document.querySelector('#reader-reviews')) return;
+
+    const section = document.createElement('section');
+    section.id = 'reader-reviews';
+    section.className = 'section-dark pu-review-showcase';
+    const container = document.createElement('div');
+    container.className = 'container';
+    const host = document.createElement('div');
+    host.setAttribute('data-pu-community', '');
+    host.setAttribute('data-kind', 'review');
+    host.setAttribute('data-display-only', 'true');
+    host.setAttribute('data-limit', '3');
+    container.appendChild(host);
+    section.appendChild(container);
+
+    const support = main.querySelector('#support');
+    if (support) main.insertBefore(section, support);
+    else main.appendChild(section);
+
+    if (!document.querySelector('link[data-pu-review-style]')) {
+      const style = document.createElement('link');
+      style.rel = 'stylesheet';
+      style.href = '/book/reader-community.css?v=8';
+      style.setAttribute('data-pu-review-style', '1');
+      document.head.appendChild(style);
+    }
+    if (!document.querySelector('script[data-pu-review-script]')) {
+      const script = document.createElement('script');
+      script.src = '/book/reader-community.js?v=8';
+      script.setAttribute('data-pu-review-script', '1');
+      document.body.appendChild(script);
+    }
+  };
+
   const prepareUi = () => {
     prepareSupportPrompt();
     preparePublicReviewLinks();
+    prepareHomepageReviews();
   };
 
   if (document.readyState === 'loading') {
