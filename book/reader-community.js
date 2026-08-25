@@ -34,8 +34,9 @@ function renderEntry(item,kind,onReply,ownerName){
   if(item.owner_reply){const reply=node('div',{class:'pu-community-owner-reply'});reply.append(node('strong',{},`${ownerName||'Robert J. Hayes'} replied`),node('p',{},item.owner_reply));article.append(reply);}
   return article;
 }
-function renderItems(container,items,kind,onReply,ownerName){
-  container.textContent='';const parents=items.filter(i=>!i.parent_id);const replies=items.filter(i=>i.parent_id);
+function renderItems(container,items,kind,onReply,ownerName,limit=0){
+  container.textContent='';let parents=items.filter(i=>!i.parent_id);const replies=items.filter(i=>i.parent_id);
+  if(limit>0)parents=parents.slice(0,limit);
   if(!parents.length){container.append(node('p',{class:'pu-community-empty'},kind==='review'?'No approved reviews yet. Be the first reader to submit one.':'No approved comments yet. Start the conversation.'));return;}
   parents.forEach(item=>{const wrap=node('div',{class:'pu-community-thread'});wrap.append(renderEntry(item,kind,onReply,ownerName));const child=replies.filter(r=>r.parent_id===item.id);if(child.length){const nest=node('div',{class:'pu-community-replies'});child.forEach(r=>nest.append(renderEntry(r,kind,()=>{},ownerName)));wrap.append(nest);}container.append(wrap);});
 }
@@ -64,21 +65,59 @@ function makeForm(kind,state,status,refresh){
   state.beginReply=item=>{state.parentId=item.id;form.querySelector('[name="parent_id"]').value=item.id;parentNotice.querySelector('span').textContent=`Replying to ${item.name}`;parentNotice.hidden=false;if(typeof state.openForm==='function')state.openForm();body.focus();form.scrollIntoView({behavior:'smooth',block:'center'});};
   return form;
 }
+function normalizedPath(){return location.pathname.replace(/\/index\.html$/,'/');}
+function prepareReviewSurfaces(){
+  const path=normalizedPath();
+  if(path==='/book/reviews.html'||path==='/book/reviews'){
+    const formHost=document.querySelector('#reader-review [data-pu-community][data-kind="review"]');
+    if(formHost)formHost.dataset.formOnly='true';
+    const current=[...document.querySelectorAll('section')].find(section=>(section.querySelector('.eyebrow')?.textContent||'').trim()==='Current Public Record');
+    if(current&&!current.querySelector('[data-pu-review-live]')){
+      const heading=current.querySelector('.section-heading');
+      const title=heading?.querySelector('h2');const copy=heading?.querySelector('p');
+      if(title)title.textContent='What readers are saying.';
+      if(copy)copy.textContent='Approved reader reviews are published here from the live moderation system. Nothing is padded, invented, or silently promoted.';
+      current.querySelector('.empty')?.remove();
+      const container=current.querySelector('.container')||current;
+      const live=node('div',{'data-pu-review-live':'1'});
+      live.append(node('div',{'data-pu-community':'','data-kind':'review','data-display-only':'true'}));
+      container.append(live);
+    }
+  }
+
+  const isBookLanding=path==='/book/';
+  const isReaderLanding=path==='/book/read/';
+  if(isBookLanding||isReaderLanding){
+    const host=document.querySelector('[data-pu-community][data-kind="review"]');
+    const main=document.querySelector('main');
+    if(host&&main&&!host.closest('main')){
+      host.dataset.displayOnly='true';host.dataset.limit='3';
+      const section=node('section',{class:'section-dark pu-review-showcase',id:'reader-reviews'});
+      const container=node('div',{class:'container'});section.append(container);container.append(host);
+      const support=main.querySelector('#support');
+      if(support)main.insertBefore(section,support);else main.append(section);
+    }
+  }
+}
 async function mount(host){
   const kind=host.dataset.kind==='review'?'review':'comment';const chapter=kind==='review'?'book':(host.dataset.chapter||slugFromPath());
+  const displayOnly=host.dataset.displayOnly==='true';const formOnly=host.dataset.formOnly==='true';const limit=Math.max(0,parseInt(host.dataset.limit||'0',10)||0);
   const state={kind,chapter,ownerName:'Robert J. Hayes',issued:0,token:'',openedAt:Math.floor(Date.now()/1000),parentId:'',beginReply:()=>{},openForm:()=>{}};
   host.classList.add('pu-community');host.textContent='';
-  const shell=node('section',{class:'pu-community-shell'});const intro=node('div',{class:'pu-community-heading'});
+  const shell=node('section',{class:'pu-community-shell'+(displayOnly?' pu-community-showcase':'')+(formOnly?' pu-community-form-only':'')});const intro=node('div',{class:'pu-community-heading'});
   intro.append(node('div',{class:'pu-community-kicker'},kind==='review'?'READER REVIEWS':'CHAPTER DISCUSSION'),node('h2',{},kind==='review'?'What Readers Are Saying':'Join the Conversation'));
-  intro.append(node('p',{},kind==='review'?'Rate the complete book and share what stood out. Reviews appear only after moderation.':'Questions, insights, disagreement, and respectful discussion are welcome. Comments appear only after moderation.'));
+  intro.append(node('p',{},kind==='review'?(displayOnly?'Approved reader reviews, shown from the live moderation record.':'Rate the complete book and share what stood out. Reviews appear only after moderation.'):'Questions, insights, disagreement, and respectful discussion are welcome. Comments appear only after moderation.'));
   const stats=node('div',{class:'pu-community-stats'});const status=statusBox();status.hidden=true;const list=node('div',{class:'pu-community-list'});const formWrap=node('div',{class:'pu-community-form-wrap'});
-  shell.append(intro,stats,status,list,formWrap);host.append(shell);
+  if(formOnly)shell.append(status,formWrap);else shell.append(intro,stats,status,list,formWrap);host.append(shell);
   let form=null;
   async function refresh(rebuildForm=true){
     try{
       const data=await api(`${API}?action=list&type=${encodeURIComponent(kind)}&chapter=${encodeURIComponent(chapter)}`);state.issued=data.issued;state.token=data.token;state.ownerName=data.owner_name||'Robert J. Hayes';state.openedAt=Math.floor(Date.now()/1000);
-      stats.textContent='';if(kind==='review'){stats.append(node('strong',{},data.stats.count?`${data.stats.average_rating} / 5`:'No rating yet'),node('span',{},`${data.stats.count} approved review${data.stats.count===1?'':'s'}`));}else{stats.append(node('strong',{},String(data.stats.count)),node('span',{},`approved comment${data.stats.count===1?'':'s'}`));}
-      formWrap.textContent='';if(data.enabled){
+      if(!formOnly){stats.textContent='';if(kind==='review'){stats.append(node('strong',{},data.stats.count?`${data.stats.average_rating} / 5`:'No rating yet'),node('span',{},`${data.stats.count} approved review${data.stats.count===1?'':'s'}`));}else{stats.append(node('strong',{},String(data.stats.count)),node('span',{},`approved comment${data.stats.count===1?'':'s'}`));}}
+      formWrap.textContent='';
+      if(displayOnly){
+        const link=node('a',{class:'pu-community-form-toggle',href:'/book/reviews.html#reader-review'},kind==='review'?'Read All Reviews / Write Yours':'Open the Discussion');formWrap.append(link);
+      }else if(data.enabled){
         if(rebuildForm||!form){form=makeForm(kind,state,status,refresh);}
         form.querySelector('[name="issued"]').value=state.issued;form.querySelector('[name="token"]').value=state.token;form.querySelector('[name="opened_at"]').value=state.openedAt;
         const closedLabel=kind==='review'?'Write a Reader Review':'Add Your Question or Comment';
@@ -89,10 +128,11 @@ async function mount(host){
         toggle.addEventListener('click',()=>{if(form.hidden){state.openForm();}else{form.hidden=true;toggle.setAttribute('aria-expanded','false');toggle.textContent=closedLabel;}});
         formWrap.append(toggle,form);
       }else{form=null;formWrap.append(node('p',{class:'pu-community-closed'},'Reader submissions are currently closed for this page.'));}
-      renderItems(list,data.items||[],kind,item=>state.beginReply(item),state.ownerName);
+      if(!formOnly)renderItems(list,data.items||[],kind,item=>state.beginReply(item),state.ownerName,limit);
     }catch(err){setStatus(status,err.message||'Reader community could not load.','bad');formWrap.textContent='';}
   }
   await refresh(true);
 }
+prepareReviewSurfaces();
 document.querySelectorAll('[data-pu-community]').forEach(host=>mount(host));
 })();
