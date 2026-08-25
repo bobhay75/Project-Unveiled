@@ -4,10 +4,28 @@ declare(strict_types=1);
 // Shared-hosting-safe secret loading. Environment variables still take priority,
 // but cPanel users may store the key outside public_html at the private path below.
 $privateKeyFile = dirname(__DIR__, 3) . '/site-private/trust-worthy/openai-key.txt';
-if (!getenv('TRUST_WORTHY_OPENAI_API_KEY') && is_file($privateKeyFile)) {
-    $privateKey = trim((string)file_get_contents($privateKeyFile));
-    if ($privateKey !== '') putenv('TRUST_WORTHY_OPENAI_API_KEY=' . $privateKey);
-    unset($privateKey);
+if (is_file($privateKeyFile)) {
+    $privateKey = (string)file_get_contents($privateKeyFile);
+    // Be forgiving about common cPanel/File Manager formats:
+    // OPENAI_API_KEY=sk-..., TRUST_WORTHY_OPENAI_API_KEY="sk-...", or Bearer sk-...
+    $privateKey = preg_replace('/^\xEF\xBB\xBF/', '', $privateKey) ?? $privateKey;
+    $privateKey = trim($privateKey);
+    if (preg_match('/^(?:TRUST_WORTHY_OPENAI_API_KEY|OPENAI_API_KEY|INSIDE_OF_ME_OPENAI_API_KEY)\s*=\s*(.+)$/is', $privateKey, $m)) {
+        $privateKey = trim($m[1]);
+    }
+    $privateKey = preg_replace('/^Bearer\s+/i', '', $privateKey) ?? $privateKey;
+    $privateKey = trim($privateKey, " \t\n\r\0\x0B\"'");
+
+    if ($privateKey !== '') {
+        // Keep the canonical private file normalized so lib.php reads exactly the token.
+        $current = trim((string)file_get_contents($privateKeyFile));
+        if ($current !== $privateKey) {
+            @file_put_contents($privateKeyFile, $privateKey . "\n", LOCK_EX);
+            @chmod($privateKeyFile, 0640);
+        }
+        putenv('TRUST_WORTHY_OPENAI_API_KEY=' . $privateKey);
+    }
+    unset($privateKey, $current, $m);
 }
 
 require __DIR__ . '/lib.php';
