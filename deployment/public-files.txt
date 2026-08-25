@@ -131,8 +131,10 @@ truth/case-000001.php
 truth/case-000002.php
 truth/case-000003.php
 truth/case-000004.php
+truth/case-000005.php
 truth/cases/TW-CLAIM-000001.json
 truth/cases/TW-CLAIM-000002.json
+truth/cases/TW-CLAIM-000005.json
 truth/challenge-received.php
 truth/challenge-submit.php
 truth/daily/.htaccess
@@ -178,6 +180,7 @@ truth/lib/intake.php
 truth/lib/trust-worthy-ai.php
 truth/question-received.php
 truth/question-submit.php
+truth/resurrection-trial.css
 truth/today.php
 truth/trust-worthy-ui.js
 truth/truth-worthy.css
