@@ -36,6 +36,18 @@ if(!($result['ok']??false)) {
 }
 
 $log=$dir.'/ai-investigations.jsonl';
-$record=['at_utc'=>gmdate('c'),'ip_hash'=>$ipHash,'question'=>$question,'model'=>$result['model']??'','response_id'=>$result['response_id']??''];
+$record=[
+  'at_utc'=>gmdate('c'),
+  'ip_hash'=>$ipHash,
+  'question'=>$question,
+  'model'=>$result['model']??'',
+  'response_id'=>$result['response_id']??'',
+  'input_tokens'=>(int)($result['input_tokens']??0),
+  'output_tokens'=>(int)($result['output_tokens']??0),
+  'reasoning_tokens'=>(int)($result['reasoning_tokens']??0),
+  'web_search_calls'=>(int)($result['web_search_calls']??0),
+  'source_count'=>(int)($result['source_count']??0),
+  'incomplete'=>(bool)($result['incomplete']??false),
+];
 file_put_contents($log,json_encode($record,JSON_UNESCAPED_SLASHES).PHP_EOL,FILE_APPEND|LOCK_EX); @chmod($log,0640);
 page('Truth Trial: '.$question,(string)$result['text']);
