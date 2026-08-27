@@ -30,7 +30,10 @@ $ipHash=hash_hmac('sha256',(string)($_SERVER['REMOTE_ADDR']??''),$secret);
 if(!$allowed) page('Research limit reached',$reason.' You can still submit the question for a full investigation.');
 
 $result=tw_short_investigation($question,$context);
-if(!($result['ok']??false)) page('Research engine unavailable',(string)($result['message']??'Please try again later.'));
+if(!($result['ok']??false)) {
+  tw_release_rate_limit($ipHash);
+  page('Research engine unavailable',(string)($result['message']??'Please try again later.'));
+}
 
 $log=$dir.'/ai-investigations.jsonl';
 $record=['at_utc'=>gmdate('c'),'ip_hash'=>$ipHash,'question'=>$question,'model'=>$result['model']??'','response_id'=>$result['response_id']??''];
