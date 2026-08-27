@@ -12,11 +12,14 @@ function tw_private_dir(): string {
 
 function tw_ai_config(): array {
     return [
-        'model' => getenv('TW_OPENAI_MODEL') ?: 'gpt-5-mini',
-        'max_output_tokens' => 1400,
+        'model' => getenv('TW_OPENAI_MODEL') ?: 'gpt-5.6-luna',
+        // This ceiling includes visible output AND reasoning tokens.
+        'max_output_tokens' => 3000,
+        'reasoning_effort' => 'low',
         'daily_request_cap' => 20,
         'per_ip_daily_cap' => 3,
-        'timeout_seconds' => 45,
+        'max_web_search_calls' => 1,
+        'timeout_seconds' => 60,
     ];
 }
 
@@ -82,6 +85,47 @@ function tw_log_openai_diagnostic(int $status, array $data, string $curlError = 
     @chmod($dir . '/openai-errors.jsonl', 0640);
 }
 
+function tw_extract_text_and_sources(array $data): array {
+    $text = trim((string)($data['output_text'] ?? ''));
+    $sources = [];
+    $webCalls = 0;
+
+    foreach (($data['output'] ?? []) as $item) {
+        if (!is_array($item)) continue;
+        if (($item['type'] ?? '') === 'web_search_call') $webCalls++;
+        foreach (($item['content'] ?? []) as $part) {
+            if (!is_array($part) || ($part['type'] ?? '') !== 'output_text') continue;
+            if ($text === '') $text .= (string)($part['text'] ?? '');
+            foreach (($part['annotations'] ?? []) as $annotation) {
+                if (!is_array($annotation) || ($annotation['type'] ?? '') !== 'url_citation') continue;
+                $url = trim((string)($annotation['url'] ?? ''));
+                if ($url === '' || !preg_match('#^https?://#i', $url)) continue;
+                $sources[$url] = trim((string)($annotation['title'] ?? 'Source')) ?: 'Source';
+            }
+        }
+        $actionSources = $item['action']['sources'] ?? [];
+        if (is_array($actionSources)) {
+            foreach ($actionSources as $source) {
+                if (!is_array($source)) continue;
+                $url = trim((string)($source['url'] ?? ''));
+                if ($url === '' || !preg_match('#^https?://#i', $url)) continue;
+                $sources[$url] = trim((string)($source['title'] ?? 'Source')) ?: 'Source';
+            }
+        }
+    }
+
+    $text = trim($text);
+    if ($text !== '' && $sources) {
+        $text .= "\n\nSOURCE TRAIL · WEB CHECK\n";
+        $i = 0;
+        foreach ($sources as $url => $title) {
+            $text .= "\n- " . $title . ": " . $url;
+            if (++$i >= 6) break;
+        }
+    }
+    return [$text, array_keys($sources), $webCalls];
+}
+
 function tw_short_investigation(string $question, string $context = ''): array {
     $key = tw_openai_key();
     if ($key === '') return ['ok'=>false,'message'=>'The research engine is not configured yet.'];
@@ -90,10 +134,19 @@ function tw_short_investigation(string $question, string $context = ''): array {
     $cfg = tw_ai_config();
     $system = <<<'PROMPT'
 You are the research synthesis layer for Project Unveiled: Truth on Trial, powered by the Trust-Worthy method.
-Do not act like an oracle and do not declare contested claims true merely because they are repeated. Give a concise preliminary investigation, not a final verdict.
-Separate: (1) the claim being tested, (2) what is well established, (3) strongest evidence supporting it, (4) strongest counterevidence or alternative explanation, (5) what remains unknown, and (6) a provisional finding with calibrated confidence.
-Never fabricate citations, quotations, documents, statistics, or source access. If the supplied material is insufficient to verify something, say so. Prefer primary/official/earliest sources when they are actually known to you, but explicitly state that this short answer has not independently browsed or authenticated sources unless source material was supplied.
-End with: “You be the judge.”
+This is a concise preliminary investigation, not a final verdict. Search the web once to check the factual record before answering. Prefer primary, official, declassified, court, legislative, academic, or earliest-accessible sources over summaries when available. Do not assume a source is truthful merely because it is primary; primary means closer to the event, not infallible.
+
+Return a COMPLETE short investigation in roughly 500–750 words using these exact sections:
+CLAIM ON TRIAL
+WHAT IS WELL ESTABLISHED
+STRONGEST EVIDENCE FOR
+STRONGEST COUNTEREVIDENCE / ALTERNATIVE
+WHAT REMAINS UNKNOWN
+PROVISIONAL FINDING
+
+Be adversarial toward every conclusion, including the user's premise. Distinguish documented fact, inference, disputed claim, and unknown. Do not equate motive with proof. Do not turn evidence of influence into evidence of total control unless the evidence supports that stronger claim.
+Never fabricate citations, quotations, documents, dates, statistics, or source access. If current or primary evidence is insufficient, say so explicitly. Keep the free answer useful but leave source-by-source provenance analysis, extended contradictions, and a full confidence ledger for the paid Deep Dive.
+End with exactly: You be the judge.
 PROMPT;
     $input = "QUESTION ON TRIAL:\n" . $question;
     if ($context !== '') $input .= "\n\nSUBMITTED CONTEXT:\n" . $context;
@@ -102,7 +155,13 @@ PROMPT;
         'model' => $cfg['model'],
         'instructions' => $system,
         'input' => $input,
+        'reasoning' => ['effort' => $cfg['reasoning_effort']],
+        'text' => ['verbosity' => 'low'],
         'max_output_tokens' => $cfg['max_output_tokens'],
+        'tools' => [['type' => 'web_search']],
+        'tool_choice' => 'required',
+        'max_tool_calls' => $cfg['max_web_search_calls'],
+        'include' => ['web_search_call.action.sources'],
     ];
     $ch = curl_init('https://api.openai.com/v1/responses');
     curl_setopt_array($ch, [
@@ -129,18 +188,29 @@ PROMPT;
         $code = preg_replace('/[^a-zA-Z0-9_.-]/', '', (string)($error['code'] ?? $error['type'] ?? 'api_error')) ?: 'api_error';
         return ['ok'=>false,'message'=>'OpenAI API request failed safely. Diagnostic: HTTP '.$status.' · '.$code];
     }
-    $text = trim((string)($data['output_text'] ?? ''));
-    if ($text === '' && isset($data['output']) && is_array($data['output'])) {
-        foreach ($data['output'] as $item) {
-            foreach (($item['content'] ?? []) as $part) {
-                if (($part['type'] ?? '') === 'output_text') $text .= (string)($part['text'] ?? '');
-            }
-        }
-        $text = trim($text);
-    }
+
+    [$text, $sources, $webCalls] = tw_extract_text_and_sources($data);
     if ($text === '') {
         tw_log_openai_diagnostic($status, ['error'=>['type'=>'empty_output','message'=>'Successful response contained no output text.']]);
         return ['ok'=>false,'message'=>'The research engine returned no usable answer. Diagnostic: empty_output'];
     }
-    return ['ok'=>true,'text'=>$text,'model'=>$cfg['model'],'response_id'=>(string)($data['id'] ?? '')];
+
+    $incomplete = (($data['status'] ?? '') === 'incomplete');
+    if ($incomplete && (($data['incomplete_details']['reason'] ?? '') === 'max_output_tokens')) {
+        $text .= "\n\n[System note: This preliminary answer reached its output ceiling. A Deep Dive can continue the investigation.]";
+    }
+
+    $usage = is_array($data['usage'] ?? null) ? $data['usage'] : [];
+    return [
+        'ok'=>true,
+        'text'=>$text,
+        'model'=>$cfg['model'],
+        'response_id'=>(string)($data['id'] ?? ''),
+        'input_tokens'=>(int)($usage['input_tokens'] ?? 0),
+        'output_tokens'=>(int)($usage['output_tokens'] ?? 0),
+        'reasoning_tokens'=>(int)($usage['output_tokens_details']['reasoning_tokens'] ?? 0),
+        'web_search_calls'=>$webCalls,
+        'source_count'=>count($sources),
+        'incomplete'=>$incomplete,
+    ];
 }
