@@ -85,6 +85,26 @@ function tw_log_openai_diagnostic(int $status, array $data, string $curlError = 
     @chmod($dir . '/openai-errors.jsonl', 0640);
 }
 
+function tw_clean_source_url(string $url): string {
+    $url = trim($url);
+    if ($url === '' || !preg_match('#^https?://#i', $url)) return '';
+    $parts = parse_url($url);
+    if (!is_array($parts) || empty($parts['host'])) return '';
+    $scheme = strtolower((string)($parts['scheme'] ?? 'https'));
+    $host = strtolower((string)$parts['host'];
+    $path = (string)($parts['path'] ?? '/');
+    $query = [];
+    if (!empty($parts['query'])) {
+        parse_str((string)$parts['query'], $query);
+        foreach (array_keys($query) as $key) {
+            if (str_starts_with(strtolower((string)$key), 'utm_')) unset($query[$key]);
+        }
+    }
+    $clean = $scheme . '://' . $host . $path;
+    if ($query) $clean .= '?' . http_build_query($query);
+    return $clean;
+}
+
 function tw_extract_text_and_sources(array $data): array {
     $text = trim((string)($data['output_text'] ?? ''));
     $sources = [];
@@ -98,8 +118,8 @@ function tw_extract_text_and_sources(array $data): array {
             if ($text === '') $text .= (string)($part['text'] ?? '');
             foreach (($part['annotations'] ?? []) as $annotation) {
                 if (!is_array($annotation) || ($annotation['type'] ?? '') !== 'url_citation') continue;
-                $url = trim((string)($annotation['url'] ?? ''));
-                if ($url === '' || !preg_match('#^https?://#i', $url)) continue;
+                $url = tw_clean_source_url((string)($annotation['url'] ?? ''));
+                if ($url === '') continue;
                 $sources[$url] = trim((string)($annotation['title'] ?? 'Source')) ?: 'Source';
             }
         }
@@ -107,8 +127,8 @@ function tw_extract_text_and_sources(array $data): array {
         if (is_array($actionSources)) {
             foreach ($actionSources as $source) {
                 if (!is_array($source)) continue;
-                $url = trim((string)($source['url'] ?? ''));
-                if ($url === '' || !preg_match('#^https?://#i', $url)) continue;
+                $url = tw_clean_source_url((string)($source['url'] ?? ''));
+                if ($url === '') continue;
                 $sources[$url] = trim((string)($source['title'] ?? 'Source')) ?: 'Source';
             }
         }
@@ -119,7 +139,7 @@ function tw_extract_text_and_sources(array $data): array {
         $text .= "\n\nSOURCE TRAIL · WEB CHECK\n";
         $i = 0;
         foreach ($sources as $url => $title) {
-            $text .= "\n- " . $title . ": " . $url;
+            $text .= "\n- " . preg_replace('/\s+/u', ' ', $title) . ': ' . $url;
             if (++$i >= 6) break;
         }
     }
@@ -136,7 +156,7 @@ function tw_short_investigation(string $question, string $context = ''): array {
 You are the research synthesis layer for Project Unveiled: Truth on Trial, powered by the Trust-Worthy method.
 This is a concise preliminary investigation, not a final verdict. Search the web once to check the factual record before answering. Prefer primary, official, declassified, court, legislative, academic, or earliest-accessible sources over summaries when available. Do not assume a source is truthful merely because it is primary; primary means closer to the event, not infallible.
 
-Return a COMPLETE short investigation in roughly 500–750 words using these exact sections:
+Return a COMPLETE short investigation in roughly 500–750 words using these exact section labels, each on its own line:
 CLAIM ON TRIAL
 WHAT IS WELL ESTABLISHED
 STRONGEST EVIDENCE FOR
@@ -144,8 +164,15 @@ STRONGEST COUNTEREVIDENCE / ALTERNATIVE
 WHAT REMAINS UNKNOWN
 PROVISIONAL FINDING
 
+OUTPUT FORMAT RULES:
+- Plain text only. Do not use Markdown heading markers, asterisks, underscores, tables, code fences, or Markdown links.
+- Do not put URLs or citations inline. The application appends the verified source trail separately.
+- Bullets may begin with a simple hyphen and space.
+- Use exact dates when known. Do not collapse separate events into a date range when the distinction matters.
+- Keep direct quotations very short; paraphrase wherever possible.
+
 Be adversarial toward every conclusion, including the user's premise. Distinguish documented fact, inference, disputed claim, and unknown. Do not equate motive with proof. Do not turn evidence of influence into evidence of total control unless the evidence supports that stronger claim.
-Never fabricate citations, quotations, documents, dates, statistics, or source access. If current or primary evidence is insufficient, say so explicitly. Keep the free answer useful but leave source-by-source provenance analysis, extended contradictions, and a full confidence ledger for the paid Deep Dive.
+Never fabricate citations, quotations, documents, dates, statistics, or source access. If current or primary evidence is insufficient, say so explicitly. When evidence shows that some officials had notice of uncertainty while others lacked the complete intelligence picture, say that instead of generalizing that “the government knew.” Keep the free answer useful but leave source-by-source provenance analysis, extended contradictions, and a full confidence ledger for the paid Deep Dive.
 End with exactly: You be the judge.
 PROMPT;
     $input = "QUESTION ON TRIAL:\n" . $question;
@@ -197,7 +224,7 @@ PROMPT;
 
     $incomplete = (($data['status'] ?? '') === 'incomplete');
     if ($incomplete && (($data['incomplete_details']['reason'] ?? '') === 'max_output_tokens')) {
-        $text .= "\n\n[System note: This preliminary answer reached its output ceiling. A Deep Dive can continue the investigation.]";
+        $text .= "\n\nSYSTEM NOTE\nThis preliminary answer reached its output ceiling. A Deep Dive can continue the investigation.";
     }
 
     $usage = is_array($data['usage'] ?? null) ? $data['usage'] : [];
