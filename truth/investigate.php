@@ -4,9 +4,58 @@ header('Cache-Control: no-store, max-age=0');
 header('X-Content-Type-Options: nosniff');
 require_once __DIR__ . '/lib/trust-worthy-ai.php';
 
+function render_trial_body(string $body): string {
+  $headings = [
+    'CLAIM ON TRIAL','WHAT IS WELL ESTABLISHED','STRONGEST EVIDENCE FOR',
+    'STRONGEST COUNTEREVIDENCE / ALTERNATIVE','WHAT REMAINS UNKNOWN',
+    'PROVISIONAL FINDING','SOURCE TRAIL · WEB CHECK','SYSTEM NOTE'
+  ];
+  $lines = preg_split('/\R/u', trim($body)) ?: [];
+  $html = '';
+  $inList = false;
+  foreach ($lines as $raw) {
+    $line = trim($raw);
+    if ($line === '') {
+      if ($inList) { $html .= '</ul>'; $inList = false; }
+      continue;
+    }
+    if (in_array($line, $headings, true)) {
+      if ($inList) { $html .= '</ul>'; $inList = false; }
+      $html .= '<h2>' . htmlspecialchars($line, ENT_QUOTES|ENT_SUBSTITUTE, 'UTF-8') . '</h2>';
+      continue;
+    }
+    if (str_starts_with($line, '- ')) {
+      if (!$inList) { $html .= '<ul class="rules">'; $inList = true; }
+      $item = trim(substr($line, 2));
+      if (preg_match('#^(.+?):\s+(https?://\S+)$#u', $item, $m)) {
+        $label = htmlspecialchars(trim($m[1]), ENT_QUOTES|ENT_SUBSTITUTE, 'UTF-8');
+        $url = filter_var($m[2], FILTER_VALIDATE_URL) ? $m[2] : '';
+        if ($url !== '') {
+          $safeUrl = htmlspecialchars($url, ENT_QUOTES|ENT_SUBSTITUTE, 'UTF-8');
+          $html .= '<li><a href="'.$safeUrl.'" target="_blank" rel="noopener noreferrer">'.$label.'</a></li>';
+        } else {
+          $html .= '<li>' . htmlspecialchars($item, ENT_QUOTES|ENT_SUBSTITUTE, 'UTF-8') . '</li>';
+        }
+      } else {
+        $html .= '<li>' . htmlspecialchars($item, ENT_QUOTES|ENT_SUBSTITUTE, 'UTF-8') . '</li>';
+      }
+      continue;
+    }
+    if ($inList) { $html .= '</ul>'; $inList = false; }
+    $safe = htmlspecialchars($line, ENT_QUOTES|ENT_SUBSTITUTE, 'UTF-8');
+    if (strcasecmp($line, 'You be the judge.') === 0) {
+      $html .= '<div class="judge">YOU BE THE JUDGE.<small>POWERED BY TRUST-WORTHY</small></div>';
+    } else {
+      $html .= '<p>' . $safe . '</p>';
+    }
+  }
+  if ($inList) $html .= '</ul>';
+  return $html;
+}
+
 function page(string $title,string $body): never {
   http_response_code(200);
-  ?><!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title><?=htmlspecialchars($title)?> | Truth on Trial</title><link rel="stylesheet" href="/truth/truth-worthy.css"></head><body><header class="topbar"><div class="wrap nav"><a class="brand" href="/truth/">PROJECT UNVEILED <span>TRUTH ON TRIAL</span></a></div></header><main><section class="section"><div class="wrap"><article class="card"><div class="eyebrow">FREE PRELIMINARY INVESTIGATION</div><h1><?=htmlspecialchars($title)?></h1><div style="white-space:pre-wrap;line-height:1.7"><?=htmlspecialchars($body)?></div><p><a class="button" href="/truth/deep-dive.php">Request the Deep Dive</a> <a class="button" href="/truth/#ask">Try Another Question</a></p><p><small>This is an AI-assisted preliminary synthesis, not a final verdict. Claims requiring current or specialized evidence should be verified against the cited primary record during a full investigation.</small></p></article></div></section></main></body></html><?php exit;
+  ?><!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title><?=htmlspecialchars($title)?> | Truth on Trial</title><link rel="stylesheet" href="/truth/truth-worthy.css"></head><body><header class="topbar"><div class="wrap nav"><a class="brand" href="/truth/">PROJECT UNVEILED <span>TRUTH ON TRIAL</span></a></div></header><main><section class="section"><div class="wrap"><article class="card"><div class="eyebrow">FREE PRELIMINARY INVESTIGATION</div><h1><?=htmlspecialchars($title)?></h1><div class="trial-result"><?=render_trial_body($body)?></div><p><a class="button" href="/truth/deep-dive.php">Request the Deep Dive</a> <a class="button" href="/truth/#ask">Try Another Question</a></p><p><small>This is an AI-assisted preliminary synthesis, not a final verdict. Claims requiring current or specialized evidence should be verified against the cited primary record during a full investigation.</small></p></article></div></section></main></body></html><?php exit;
 }
 
 if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') { header('Location: /truth/#ask', true, 303); exit; }
