@@ -27,12 +27,15 @@ function tw_openai_key(): string {
     return is_file($file) ? trim((string)file_get_contents($file)) : '';
 }
 
+function tw_usage_file(): string {
+    return tw_private_dir() . '/ai-usage-' . gmdate('Y-m-d') . '.json';
+}
+
 function tw_rate_limit(string $ipHash): array {
     $cfg = tw_ai_config();
     $dir = tw_private_dir();
     if (!is_dir($dir) && !mkdir($dir, 0750, true)) return [false, 'Private storage unavailable.'];
-    $day = gmdate('Y-m-d');
-    $file = $dir . '/ai-usage-' . $day . '.json';
+    $file = tw_usage_file();
     $usage = is_file($file) ? json_decode((string)file_get_contents($file), true) : [];
     if (!is_array($usage)) $usage = [];
     $total = (int)($usage['total'] ?? 0);
@@ -46,6 +49,37 @@ function tw_rate_limit(string $ipHash): array {
     file_put_contents($file, json_encode($usage, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES), LOCK_EX);
     @chmod($file, 0640);
     return [true, ''];
+}
+
+function tw_release_rate_limit(string $ipHash): void {
+    $file = tw_usage_file();
+    if (!is_file($file)) return;
+    $usage = json_decode((string)file_get_contents($file), true);
+    if (!is_array($usage)) return;
+    $usage['total'] = max(0, (int)($usage['total'] ?? 0) - 1);
+    $ips = is_array($usage['ips'] ?? null) ? $usage['ips'] : [];
+    if (isset($ips[$ipHash])) {
+        $ips[$ipHash] = max(0, (int)$ips[$ipHash] - 1);
+        if ($ips[$ipHash] === 0) unset($ips[$ipHash]);
+    }
+    $usage['ips'] = $ips;
+    file_put_contents($file, json_encode($usage, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES), LOCK_EX);
+}
+
+function tw_log_openai_diagnostic(int $status, array $data, string $curlError = ''): void {
+    $dir = tw_private_dir();
+    if (!is_dir($dir)) @mkdir($dir, 0750, true);
+    $error = is_array($data['error'] ?? null) ? $data['error'] : [];
+    $record = [
+        'at_utc' => gmdate('c'),
+        'http_status' => $status,
+        'error_type' => (string)($error['type'] ?? ''),
+        'error_code' => (string)($error['code'] ?? ''),
+        'error_message' => mb_substr((string)($error['message'] ?? ''), 0, 500),
+        'curl_error' => mb_substr($curlError, 0, 300),
+    ];
+    file_put_contents($dir . '/openai-errors.jsonl', json_encode($record, JSON_UNESCAPED_SLASHES) . PHP_EOL, FILE_APPEND|LOCK_EX);
+    @chmod($dir . '/openai-errors.jsonl', 0640);
 }
 
 function tw_short_investigation(string $question, string $context = ''): array {
@@ -83,11 +117,17 @@ PROMPT;
     $status = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE);
     $err = curl_error($ch);
     curl_close($ch);
-    if ($raw === false || $err !== '') return ['ok'=>false,'message'=>'The research engine could not connect.'];
+    if ($raw === false || $err !== '') {
+        tw_log_openai_diagnostic($status, [], $err);
+        return ['ok'=>false,'message'=>'The research engine could not connect. Diagnostic: network_error'];
+    }
     $data = json_decode((string)$raw, true);
-    if ($status < 200 || $status >= 300 || !is_array($data)) {
-        error_log('Trust-Worthy OpenAI error HTTP ' . $status);
-        return ['ok'=>false,'message'=>'The research engine is temporarily unavailable.'];
+    if (!is_array($data)) $data = [];
+    if ($status < 200 || $status >= 300) {
+        tw_log_openai_diagnostic($status, $data);
+        $error = is_array($data['error'] ?? null) ? $data['error'] : [];
+        $code = preg_replace('/[^a-zA-Z0-9_.-]/', '', (string)($error['code'] ?? $error['type'] ?? 'api_error')) ?: 'api_error';
+        return ['ok'=>false,'message'=>'OpenAI API request failed safely. Diagnostic: HTTP '.$status.' · '.$code];
     }
     $text = trim((string)($data['output_text'] ?? ''));
     if ($text === '' && isset($data['output']) && is_array($data['output'])) {
@@ -98,6 +138,9 @@ PROMPT;
         }
         $text = trim($text);
     }
-    if ($text === '') return ['ok'=>false,'message'=>'The research engine returned no usable answer.'];
+    if ($text === '') {
+        tw_log_openai_diagnostic($status, ['error'=>['type'=>'empty_output','message'=>'Successful response contained no output text.']]);
+        return ['ok'=>false,'message'=>'The research engine returned no usable answer. Diagnostic: empty_output'];
+    }
     return ['ok'=>true,'text'=>$text,'model'=>$cfg['model'],'response_id'=>(string)($data['id'] ?? '')];
 }
