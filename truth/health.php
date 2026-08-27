@@ -16,9 +16,11 @@ $checks = [
   'private_storage_writable' => is_dir($dir) && is_writable($dir),
   'openai_key_configured' => $key !== '',
   'model' => (string)$cfg['model'],
+  'reasoning_effort' => (string)$cfg['reasoning_effort'],
   'daily_request_cap' => (int)$cfg['daily_request_cap'],
   'per_ip_daily_cap' => (int)$cfg['per_ip_daily_cap'],
   'max_output_tokens' => (int)$cfg['max_output_tokens'],
+  'max_web_search_calls' => (int)$cfg['max_web_search_calls'],
 ];
 
 $checks['ready'] = $checks['curl_enabled'] && $checks['private_storage_exists'] && $checks['private_storage_writable'] && $checks['openai_key_configured'];
