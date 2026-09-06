@@ -6,6 +6,7 @@
 - Added a venue-focused engagement path suitable for opportunity-audit outreach without publishing prospect-specific findings.
 - Linked only to inspectable live work or clearly labeled public prototypes; no unverifiable testimonials or performance claims were added.
 - Added the new route to the homepage navigation, footer, README, and XML sitemap.
+- Repaired a pre-existing missing parenthesis in the Trust-Worthy source URL sanitizer so the repository safety workflow can complete.
 
 ## New Search Entry Pages
 

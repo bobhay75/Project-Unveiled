@@ -91,7 +91,7 @@ function tw_clean_source_url(string $url): string {
     $parts = parse_url($url);
     if (!is_array($parts) || empty($parts['host'])) return '';
     $scheme = strtolower((string)($parts['scheme'] ?? 'https'));
-    $host = strtolower((string)$parts['host'];
+    $host = strtolower((string)$parts['host']);
     $path = (string)($parts['path'] ?? '/');
     $query = [];
     if (!empty($parts['query'])) {
