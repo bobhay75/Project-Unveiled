@@ -10,6 +10,7 @@ The source for [bobsome1.com](https://bobsome1.com), including the complete publ
 - `/book/timeline.html` — Interactive historical timeline
 - `/book/research.html` — Research standards and corrections process
 - `/questions/` — Focused public evidence files
+- `/services/` — Bobsome1 Media + IT services and selected work
 
 ## Hosting
 
