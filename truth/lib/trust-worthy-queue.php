@@ -100,6 +100,22 @@ function tw_find_question(string $id): ?array {
     return null;
 }
 
+function tw_claim_question(string $id): ?array {
+    $claimed = tw_with_queue_lock(function() use ($id) {
+        $items = tw_read_questions();
+        foreach ($items as $index => $item) {
+            if (!is_array($item) || !hash_equals((string)($item['id'] ?? ''), $id)) continue;
+            if (($item['status'] ?? '') !== 'queued') return null;
+            $item['status'] = 'researching';
+            $item['research_started_at_utc'] = gmdate('c');
+            $items[$index] = $item;
+            return tw_write_questions($items) ? [$index, $item] : null;
+        }
+        return null;
+    });
+    return is_array($claimed) ? $claimed : null;
+}
+
 function tw_replace_question(int $index, array $item): bool {
     return (bool)tw_with_queue_lock(function() use ($index, $item): bool {
         $items = tw_read_questions();

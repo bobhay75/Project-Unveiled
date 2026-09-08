@@ -65,6 +65,7 @@ function tw_reserve_run(): array {
 }
 
 function tw_ollama_post(string $path, array $payload): array {
+    if (!tw_research_enabled()) return ['ok'=>false, 'error'=>'Research was disabled by the kill switch.'];
     $key = tw_ollama_key();
     if ($key === '' || !function_exists('curl_init')) return ['ok'=>false, 'error'=>'Provider is not configured.'];
     $ch = curl_init('https://ollama.com' . $path);
@@ -130,9 +131,13 @@ function tw_run_research(array $item): array {
     foreach($sources as $url=>&$source){
         if($fetched>=8)break;
         $page=tw_fetch_source($url);
-        if($page['ok']??false){if($page['title']!=='')$source['title']=$page['title'];if($page['content']!=='')$source['content']=$page['content'];$fetched++;}
+        if(!($page['ok']??false))continue;
+        if(($page['title']??'')!=='')$source['title']=$page['title'];
+        $source['content']=$page['content'];
+        $fetched++;
     }
     unset($source);
+    if($fetched<2) return ['ok'=>false,'error'=>'Fewer than two sources could be fetched; no draft was saved.'];
     $sourceText=json_encode(array_values($sources),JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE);
     $schema='{"facts":[{"claim":"...","source_ids":["S1"]}],"inferences":[{"claim":"...","source_ids":["S1"]}],"disputed":[{"claim":"...","source_ids":["S1","S2"]}],"counterevidence":[{"claim":"...","source_ids":["S2"]}],"unknowns":["..."],"limitations":["..."],"verification_paths":["..."],"draft_finding":"...","uncertainty":"low|medium|high"}';
     $system='Return exactly one JSON object matching this schema: '.$schema.'. Treat snippets as leads, not verified full documents. Never invent evidence, quotes, dates, or source IDs. Separate facts from inferences and disputed claims. Include material counterevidence and unknowns. A source ID must exist in the supplied ledger. The finding is a draft for human review, never a verdict.';
