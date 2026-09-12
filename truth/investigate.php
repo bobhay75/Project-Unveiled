@@ -2,6 +2,14 @@
 declare(strict_types=1);
 header('Cache-Control: no-store, max-age=0');
 header('X-Content-Type-Options: nosniff');
+
+if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
+  http_response_code(405);
+  header('Allow: POST');
+  header('Content-Type: text/plain; charset=UTF-8');
+  exit('POST required.');
+}
+
 require_once __DIR__ . '/lib/trust-worthy-ai.php';
 
 function render_trial_body(string $body): string {
@@ -58,7 +66,6 @@ function page(string $title,string $body): never {
   ?><!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title><?=htmlspecialchars($title)?> | Truth on Trial</title><link rel="stylesheet" href="/truth/truth-worthy.css"></head><body><header class="topbar"><div class="wrap nav"><a class="brand" href="/truth/">PROJECT UNVEILED <span>TRUTH ON TRIAL</span></a></div></header><main><section class="section"><div class="wrap"><article class="card"><div class="eyebrow">FREE PRELIMINARY INVESTIGATION</div><h1><?=htmlspecialchars($title)?></h1><div class="trial-result"><?=render_trial_body($body)?></div><p><a class="button" href="/truth/deep-dive.php">Request the Deep Dive</a> <a class="button" href="/truth/#ask">Try Another Question</a></p><p><small>This is an AI-assisted preliminary synthesis, not a final verdict. Claims requiring current or specialized evidence should be verified against the cited primary record during a full investigation.</small></p></article></div></section></main></body></html><?php exit;
 }
 
-if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') { header('Location: /truth/#ask', true, 303); exit; }
 $host=strtolower(preg_replace('/:\d+$/','',(string)($_SERVER['HTTP_HOST']??''))??'');
 $origin=strtolower((string)parse_url((string)($_SERVER['HTTP_ORIGIN']??''),PHP_URL_HOST));
 if(!in_array($host,['bobsome1.com','www.bobsome1.com'],true)||($origin!==''&&!in_array($origin,['bobsome1.com','www.bobsome1.com'],true))) { http_response_code(403); exit('Request origin was not accepted.'); }

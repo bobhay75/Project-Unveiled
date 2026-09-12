@@ -10,6 +10,7 @@ node --check truth/lab/observer.js
 node --check tests/trust-worthy-lab/release-integrity.mjs
 node --check tests/trust-worthy-lab/release-manifest.mjs
 node --check tests/trust-worthy-lab/live-release-gate.mjs
+bash tests/trust-worthy-lab/investigate-method-gate.sh
 node tests/trust-worthy-lab/release-manifest.mjs --check
 python3 scripts/validate_site.py
 python3 tests/trust-worthy-lab/static_checks.py
