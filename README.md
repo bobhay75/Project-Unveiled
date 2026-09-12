@@ -10,6 +10,8 @@ The source for [bobsome1.com](https://bobsome1.com), including the complete publ
 - `/book/timeline.html` — Interactive historical timeline
 - `/book/research.html` — Research standards and corrections process
 - `/questions/` — Focused public evidence files
+- `/truth/` — Published Truth Trials and question intake
+- `/truth/lab/` — Local-first Trust-Worthy claim-mapping and Source Sweep workbench
 - `/services/` — Bobsome1 Media + IT services and selected work
 
 ## Hosting
@@ -34,4 +36,4 @@ node --check worksite/book/reader-community.js
 node --check worksite/project-unveiled-analytics/tracker.js
 ```
 
-The current public-site audit covers local links, linked files, URL fragments, duplicate IDs, H1/title counts, and JSON-LD syntax.
+The current public-site audit covers local links, linked files, URL fragments, duplicate IDs, H1/title counts, and JSON-LD syntax. Run `bash tests/trust-worthy-lab/run_all.sh` for the Trust-Worthy release, research-engine, provenance, hostile-input, privacy, and rollback contract.

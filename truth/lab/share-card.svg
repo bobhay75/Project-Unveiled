@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">Project Unveiled Trust-Worthy Evidence Lab</title>
+  <desc id="desc">A dark blue evidence-grid card inviting the viewer to put a claim on trial.</desc>
+  <defs>
+    <pattern id="grid" width="52" height="52" patternUnits="userSpaceOnUse">
+      <path d="M52 0H0V52" fill="none" stroke="#173447" stroke-width="1"/>
+    </pattern>
+    <linearGradient id="glow" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0f2d40"/>
+      <stop offset="1" stop-color="#06111b"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+  <rect width="1200" height="630" fill="url(#grid)" opacity=".72"/>
+  <rect x="68" y="62" width="82" height="82" fill="none" stroke="#e8b85f" stroke-width="3"/>
+  <text x="109" y="114" fill="#ffdda0" font-family="Georgia,serif" font-size="29" text-anchor="middle">TW</text>
+  <text x="180" y="91" fill="#f3f0e8" font-family="Arial,sans-serif" font-size="24" font-weight="800" letter-spacing="3">PROJECT UNVEILED</text>
+  <text x="180" y="126" fill="#9db2bc" font-family="Arial,sans-serif" font-size="18" letter-spacing="5">TRUST-WORTHY EVIDENCE LAB</text>
+  <line x1="68" y1="181" x2="1132" y2="181" stroke="#294758"/>
+  <text x="68" y="286" fill="#f3f0e8" font-family="Georgia,serif" font-size="78">Put a claim</text>
+  <text x="68" y="371" fill="#ffdda0" font-family="Georgia,serif" font-size="78">on trial.</text>
+  <text x="72" y="441" fill="#c3d3d9" font-family="Arial,sans-serif" font-size="25">Records. Provenance. Counter-case. Honest uncertainty.</text>
+  <g transform="translate(68 500)">
+    <rect width="286" height="58" fill="#e8b85f"/>
+    <text x="143" y="37" fill="#101820" font-family="Arial,sans-serif" font-size="18" font-weight="900" text-anchor="middle" letter-spacing="1">TRY THE PUBLIC LAB</text>
+  </g>
+  <text x="1132" y="535" fill="#75deb0" font-family="Arial,sans-serif" font-size="18" font-weight="800" text-anchor="end">KNOWN RECORD FREE</text>
+  <text x="1132" y="564" fill="#9db2bc" font-family="Arial,sans-serif" font-size="16" text-anchor="end">HUMAN INVESTIGATION AVAILABLE</text>
+</svg>

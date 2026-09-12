@@ -1,0 +1,504 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Project Unveiled's public claim laboratory: learn the reasoning free, inspect sourced cases, and commission a human-reviewed investigation without manufactured certainty.">
+  <meta name="theme-color" content="#06111b">
+  <meta name="color-scheme" content="dark">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <meta name="referrer" content="no-referrer">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; frame-src 'none'; form-action 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self' https://api.crossref.org https://api.openalex.org https://www.ebi.ac.uk https://archive.org https://www.federalregister.gov">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Project Unveiled">
+  <meta property="og:title" content="Put a Claim on Trial | Project Unveiled Evidence Lab">
+  <meta property="og:description" content="Trace a claim from the viral post back to records, data, provenance, and the strongest counter-case. Known record free; human investigation available.">
+  <meta property="og:url" content="https://bobsome1.com/truth/lab/">
+  <meta property="og:image" content="https://bobsome1.com/truth/lab/share-card.png">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Project Unveiled Trust-Worthy Evidence Lab: put a claim on trial">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Put a Claim on Trial | Project Unveiled">
+  <meta name="twitter:description" content="Known record free. Paid human investigation. No manufactured certainty.">
+  <meta name="twitter:image" content="https://bobsome1.com/truth/lab/share-card.png">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Evidence Lab">
+  <link rel="canonical" href="https://bobsome1.com/truth/lab/">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./app-icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="./app-icon-192.png">
+  <title>Project Unveiled Evidence Lab | Put a Claim on Trial</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#claim-input">Skip to the claim</a>
+
+  <header class="topbar">
+    <a class="brand" href="#top">
+      <span class="brand-mark" aria-hidden="true">TW</span>
+      <span><strong>PROJECT UNVEILED</strong><small>TRUST-WORTHY EVIDENCE LAB</small></span>
+    </a>
+    <div class="top-status">
+      <span class="status-chip"><i aria-hidden="true"></i> Public beta</span>
+      <span>Facebook-shareable public web app · local-first cases</span>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="lab-shell" aria-labelledby="lab-title">
+      <nav class="stage-rail" aria-label="Trust-Worthy stages">
+        <button class="stage is-active" type="button" data-stage="frame" aria-current="step">
+          <span>01</span><strong>Frame</strong><small>Make it testable</small>
+        </button>
+        <button class="stage" type="button" data-stage="search">
+          <span>02</span><strong>Search</strong><small>Expose coverage</small>
+        </button>
+        <button class="stage" type="button" data-stage="test">
+          <span>03</span><strong>Test</strong><small>Attack every theory</small>
+        </button>
+        <button class="stage" type="button" data-stage="judge">
+          <span>04</span><strong>You judge</strong><small>Inspect the boundary</small>
+        </button>
+      </nav>
+
+      <div class="case-workspace">
+        <div class="workspace-heading">
+          <div>
+            <p class="eyebrow">Project Unveiled / public claim laboratory</p>
+            <h1 id="lab-title">Put the claim on trial.</h1>
+          </div>
+          <button class="text-button" id="load-moon-case" type="button">Open Moon adversarial file</button>
+        </div>
+        <p class="lede">Start with the post, headline, teaching, memory, or historical claim. Trace it down to original records, data, metadata, provenance, and source dependencies—then make the best explanation survive its strongest credible rival.</p>
+
+        <form id="claim-form" novalidate data-local-only autocomplete="off">
+          <label for="claim-input">Claim or question</label>
+          <textarea id="claim-input" minlength="8" maxlength="800" required aria-describedby="claim-help claim-error" placeholder="Paste the exact Facebook post, headline, or claim. Example: Did humans land on the Moon?"></textarea>
+          <div class="input-meta">
+            <span id="claim-help">One claim. One burden. No moving target.</span>
+            <span><output id="char-count">0</output>/800</span>
+          </div>
+          <p class="form-error" id="claim-error" role="alert"></p>
+          <p class="claim-sync-warning" id="claim-sync-warning" role="status" aria-live="polite" hidden>The claim editor has changed. Build the new claim map before searching, saving, or treating the displayed record as current.</p>
+          <div class="sample-row" aria-label="Sample claims">
+            <span>Stress-test it:</span>
+            <button type="button" class="sample" data-claim="Did humans land on the Moon?">Moon landing</button>
+            <button type="button" class="sample" data-claim="Are persistent high-altitude aircraft trails evidence of a secret atmospheric spraying program?">Aircraft trails</button>
+            <button type="button" class="sample" data-claim="Did the Council of Nicaea decide which books belong in the Bible?">Nicaea</button>
+            <button type="button" class="sample" data-claim="This business lost sales because it stopped advertising.">Lost sales</button>
+          </div>
+          <div class="form-actions">
+            <button class="primary-action" type="submit"><span>Build the claim map</span><span aria-hidden="true">→</span></button>
+            <button class="secondary-action" id="new-case" type="button">Clear case</button>
+          </div>
+          <noscript><p class="noscript-note">JavaScript is required to build a local claim map. This form does not submit what you type to the hosting server.</p></noscript>
+        </form>
+
+        <div class="fast-path"><span>Want a human to investigate it?</span><a href="#investigation-offers">Compare $19, $99, and $249 case options →</a></div>
+
+        <div class="method-promise" aria-label="Project Unveiled evidence promise">
+          <div><strong>Known record stays free</strong><span>Directly established facts, source links, reasoning lessons, and reviewed public cases are open to everyone.</span></div>
+          <div><strong>Investigation is paid labor</strong><span>You pay for disciplined search, comparison, provenance work, and a report—not for us to call somebody a liar.</span></div>
+          <div><strong>Uncertainty stays visible</strong><span>A finding can be supported, unsupported, mixed, or indeterminate. We never manufacture 100% certainty.</span></div>
+          <div><strong>No authority shortcut</strong><span>Mainstream, official, dissident, and anonymous sources face the same incentive, custody, dependency, and falsification tests.</span></div>
+        </div>
+
+        <div class="truth-line">
+          <strong>Truth boundary</strong>
+          <p>The free Source Sweep searches a named, bounded set of public research and archive indexes only when you start it. It records every query, provider failure, duplicate family, and known gap. Search hits remain unreviewed leads until the underlying record is opened and tested. “All facts” means all known, accessible, relevant evidence inside a declared boundary—never an impossible claim of omniscience.</p>
+        </div>
+      </div>
+
+      <aside class="docket-panel" aria-labelledby="docket-title">
+        <div class="panel-heading">
+          <div><p class="eyebrow">Private on this device</p><h2 id="docket-title">Case docket</h2></div>
+          <span class="counter" id="docket-count">0</span>
+        </div>
+        <p class="panel-copy">Save active cases in this browser. A saved case stays on this device unless you deliberately share it, email an investigation request, follow an external link, or run Source Sweep—which sends claim-derived queries to the named public indexes. Other people using this browser profile may see saved cases.</p>
+        <div class="docket-actions">
+          <button class="secondary-action full" id="save-case" type="button">Save current case</button>
+          <button class="text-button danger" id="clear-cases" type="button">Clear all local cases</button>
+        </div>
+        <div id="saved-cases" class="saved-cases">
+          <p class="empty-state">No saved cases yet.</p>
+        </div>
+      </aside>
+    </section>
+
+    <section class="observer-desk" id="observer" aria-labelledby="observer-title">
+      <div class="observer-heading">
+        <div>
+          <p class="eyebrow">Watch-Dawg observer / local self-test</p>
+          <h2 id="observer-title">Observe first. Test what can fail.</h2>
+          <p>Once per day on this browser, Trust-Worthy checks its public route policy, every owned asset fingerprint, critical media signatures, core functions, privacy boundary, and security controls. A manual check is always available.</p>
+        </div>
+        <div class="observer-action">
+          <button class="primary-action compact" id="run-observer" type="button"><span>Run observation now</span><span aria-hidden="true">⌁</span></button>
+          <small id="observer-last-run">No local observation receipt yet.</small>
+        </div>
+      </div>
+      <div class="observer-summary" id="observer-status" role="status" aria-live="polite" data-state="idle">
+        <div><span>Observer state</span><strong id="observer-state">READY</strong></div>
+        <div><span>Checks passed</span><strong id="observer-pass-count">0/0</strong></div>
+        <div><span>Verified failures</span><strong id="observer-failure-count">0</strong></div>
+      </div>
+      <ul class="observer-results" id="observer-results">
+        <li>Waiting for the first local observation.</li>
+      </ul>
+      <details class="release-proof" id="release-proof">
+        <summary><span>Release 14 provenance</span><strong id="release-proof-state">CHECK PENDING</strong></summary>
+        <div class="release-proof-grid">
+          <div><span>Owned-asset root</span><code id="release-root">Pending local verification</code></div>
+          <div><span>Public receipt</span><a href="./release-manifest.json">Open machine-readable manifest</a></div>
+          <div><span>Rollback point</span><strong>Release 11 · tested known-good</strong></div>
+          <div><span>Delivery layer</span><strong id="release-transform-state">Not observed yet</strong></div>
+        </div>
+        <p>SHA-256 fingerprints cover every owned public asset. The observer requires the Bobsome1 server to deliver those owned bytes exactly and fails closed on any difference. This receipt is tamper evidence relative to a separately trusted copy—not a digital signature, proof of authorship, or external timestamp.</p>
+      </details>
+      <p class="observer-boundary"><strong>Boundary:</strong> HTTP 200 is healthy only for a documented page or asset. An unknown URL must return 404. Unsupported write methods must remain denied with 405. This public self-test does not access finances, private cases, passwords, customer data, or attacker identity, and it cannot modify the deployed site.</p>
+    </section>
+
+    <section class="investigation-offers" id="investigation-offers" aria-labelledby="offer-title">
+      <div class="offer-heading">
+        <p class="eyebrow">Human investigation / founding public-beta rates</p>
+        <h2 id="offer-title">Have a disputed claim? Commission the test—not the verdict.</h2>
+        <p>We investigate a precise claim and return the strongest conclusion the record permits: supported, unsupported, mixed, or indeterminate. The work product is the proof chain, including evidence that cuts against your starting belief.</p>
+      </div>
+      <div class="offer-tier-grid">
+        <article class="offer-tier">
+          <span>FAST SCREEN</span><h3>Claim Triage</h3><strong>$19</strong>
+          <p>One claim up to 250 words, tightened into a testable proposition with burden of proof, source plan, strongest rival explanation, and acceptance decision.</p>
+          <small>Delivered within 72 hours after written acceptance, payment, and necessary context are received.</small>
+          <a class="primary-action" id="triage-link" href="mailto:thebobsomest1@gmail.com?subject=Project%20Unveiled%20Claim%20Triage">Request triage <span aria-hidden="true">→</span></a>
+          <p class="scope-gate">Request → written scope and order code → private PayPal link for that written order → written start notice.</p>
+        </article>
+        <article class="offer-tier featured-tier">
+          <span>ONE PRECISE CLAIM</span><h3>Deep Investigation</h3><strong>$99</strong>
+          <p>Primary-record search, independent corroboration, strongest counter-case, source-dependence check, dated citations, uncertainty labels, and a shareable evidence report.</p>
+          <small>One clarification round. Scope and delivery date are confirmed in writing before payment.</small>
+          <a class="primary-action" id="deep-link" href="mailto:thebobsomest1@gmail.com?subject=Project%20Unveiled%20Deep%20Investigation">Open an investigation <span aria-hidden="true">→</span></a>
+          <p class="scope-gate">Request → written scope and order code → private PayPal link for that written order → written start notice.</p>
+        </article>
+        <article class="offer-tier">
+          <span>CONNECTED CLAIM CLUSTER</span><h3>Hyper-Deep Case File</h3><strong>$249</strong>
+          <p>Everything above plus a claim tree, event timeline, provenance and dependency map, evidence matrix, contradiction log, revision triggers, and presentation-ready case file.</p>
+          <small>Scope and delivery date are agreed in writing before payment. Claim clusters outside this defined package are declined or offered only under a separately approved scope; this $249 package is not silently repriced.</small>
+          <a class="primary-action" id="hyper-link" href="mailto:thebobsomest1@gmail.com?subject=Project%20Unveiled%20Hyper-Deep%20Case%20File">Submit a case <span aria-hidden="true">→</span></a>
+          <p class="scope-gate">Request → written scope and order code → private PayPal link for that written order → written start notice.</p>
+        </article>
+      </div>
+      <p class="investigation-boundary"><strong>Commercial boundary:</strong> A request is not a purchase or reservation. If accepted, you receive the exact claim, deliverables, delivery date, order code, cancellation terms, and a private PayPal payment link matching that written order. Cancellation before the written start notice receives a full refund. After work starts, disagreement with an honest finding is not a refund reason; if we cannot deliver the agreed work, the undelivered portion is refunded. We investigate claims, records, systems, and public assertions—not private people for harassment. No guaranteed finding, buyer-defined conclusion, live surveillance, unlawful access, legal advice, medical advice, or financial advice.</p>
+      <div class="offer-contact" aria-label="Bobsome1 investigation contact">
+        <div><strong>Robert J. Hayes · Bobsome1 Media + IT</strong><span><a href="tel:+19127014008">912-701-4008</a> · <a href="mailto:thebobsomest1@gmail.com">thebobsomest1@gmail.com</a></span><span>Serving Branson and the Table Rock Lake area · remote work available</span></div>
+        <div><a href="https://bobsome1-revenue-engine.thebobsomest1.chatgpt.site/" target="_blank" rel="noopener noreferrer">Everything Store</a><a href="https://bobsome1-media-it-preview.thebobsomest1.chatgpt.site/" target="_blank" rel="noopener noreferrer">Media + IT services</a></div>
+      </div>
+    </section>
+
+    <section class="result-shell" id="results" aria-labelledby="results-title" tabindex="-1" hidden>
+      <div class="result-toolbar">
+        <div>
+          <p class="eyebrow" id="result-kicker">Trust-Worthy pre-research map</p>
+          <h2 id="results-title">The claim, separated from the conclusion.</h2>
+        </div>
+        <div class="toolbar-actions">
+            <button class="quiet-action" id="copy-report" type="button">Copy case</button>
+            <button class="quiet-action" id="share-report" type="button">Share via device</button>
+            <a class="quiet-action" id="facebook-share" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fbobsome1.com%2Ftruth%2Flab%2F" target="_blank" rel="noopener noreferrer">Share public lab on Facebook</a>
+            <button class="quiet-action" id="print-report" type="button">Print / PDF</button>
+        </div>
+      </div>
+      <p class="print-record-meta" id="print-record-meta"></p>
+
+      <div class="finding-band" id="finding-band" aria-live="polite">
+        <div><span>Current finding</span><strong id="finding-label">PRE-RESEARCH</strong></div>
+        <p id="finding-summary">No source-backed finding has been made.</p>
+      </div>
+
+      <section class="source-sweep" id="research-sweep" aria-labelledby="research-title" tabindex="-1">
+        <div class="sweep-heading">
+          <div>
+            <p class="eyebrow">Free autonomous discovery / bounded and auditable</p>
+            <h2 id="research-title">Search several evidence worlds at once.</h2>
+            <p>Trust-Worthy sends the exact claim through neutral, supportive, and challenging query lanes across named public indexes. It records what answered, what failed, and which exact stable identifier or canonical URL justified a family merge. Similar titles stay separate until lineage is actually established.</p>
+          </div>
+          <div class="sweep-actions">
+            <button class="primary-action compact" id="run-research" type="button" aria-describedby="sweep-transmission"><span>Run Source Sweep</span><span aria-hidden="true">⌁</span></button>
+            <button class="secondary-action" id="cancel-research" type="button" hidden>Stop sweep</button>
+            <p class="sweep-transmission" id="sweep-transmission">Starts external transmission: claim-derived queries go to Crossref, OpenAlex, Europe PMC, Internet Archive, and Federal Register. Do not enter secrets or private third-party data.</p>
+          </div>
+        </div>
+        <div class="sweep-status" id="research-status" role="status" aria-live="polite">
+          <strong>READY</strong><span>No external query has been sent.</span>
+        </div>
+        <div class="sweep-meter" aria-label="Source sweep progress">
+          <div><span>Query lanes</span><strong id="research-query-count">0/6</strong></div>
+          <div><span>Evidence families</span><strong id="research-result-count">0</strong></div>
+          <div><span>Provider failures</span><strong id="research-failure-count">0</strong></div>
+        </div>
+        <details class="query-receipt" id="research-query-receipt">
+          <summary>Inspect exact query receipt</summary>
+          <div id="research-query-list"><p class="empty-state">Run the sweep to create an execution receipt.</p></div>
+        </details>
+        <div class="research-results-head">
+          <div><h3>Discovery leads</h3><p>Open the source, inspect it, then attach only what survives review.</p></div>
+          <button class="quiet-action" id="copy-search-receipt" type="button" disabled>Copy search receipt</button>
+        </div>
+        <div class="research-results" id="research-results">
+          <p class="empty-state">No automated leads yet.</p>
+        </div>
+        <p class="sweep-boundary"><strong>Hard boundary:</strong> A title, snippet, index ranking, patent, archive upload, or repeated URL is not proof. The sweep does not inspect full text, authenticate media, infer honesty from credentials, or decide the claim. Failed and blocked lanes remain visible and prevent absence-based conclusions.</p>
+      </section>
+
+      <div class="report-grid">
+        <article class="report-card claim-card">
+          <span class="card-index">01</span>
+          <p class="eyebrow">Claim on trial</p>
+          <blockquote id="report-claim"></blockquote>
+          <div class="classification" id="report-classification"></div>
+        </article>
+
+        <article class="report-card">
+          <span class="card-index">02</span>
+          <p class="eyebrow">Wording pressure test</p>
+          <h3>Where the sentence can move</h3>
+          <div id="report-wording"></div>
+        </article>
+
+        <article class="report-card">
+          <span class="card-index">03</span>
+          <p class="eyebrow">Research contract</p>
+          <h3>Define before searching</h3>
+          <ul id="report-clarify"></ul>
+        </article>
+
+        <article class="report-card">
+          <span class="card-index">04</span>
+          <p class="eyebrow">Evidence burden</p>
+          <h3>What must be established</h3>
+          <ul id="report-support"></ul>
+        </article>
+
+        <article class="report-card">
+          <span class="card-index">05</span>
+          <p class="eyebrow">Strongest counter-test</p>
+          <h3>What could weaken or defeat it</h3>
+          <ul id="report-counter"></ul>
+        </article>
+
+        <article class="report-card source-order-card">
+          <span class="card-index">06</span>
+          <p class="eyebrow">Source order</p>
+          <h3>Trace claims toward the original record</h3>
+          <ol id="report-sources"></ol>
+        </article>
+
+        <article class="report-card adversarial-card">
+          <span class="card-index">07</span>
+          <p class="eyebrow">Competing explanations</p>
+          <h3>Hypotheses and discriminating predictions</h3>
+          <div class="test-stack" id="report-hypotheses"></div>
+        </article>
+
+        <article class="report-card adversarial-card">
+          <span class="card-index">08</span>
+          <p class="eyebrow">Interest and dependence ledger</p>
+          <h3>Who benefits, who pays, who repeats whom</h3>
+          <ul id="report-incentives"></ul>
+        </article>
+
+        <article class="report-card adversarial-card">
+          <span class="card-index">09</span>
+          <p class="eyebrow">Visual and media forensics</p>
+          <h3>Test the artifact—not the caption</h3>
+          <div class="test-stack" id="report-forensics"></div>
+        </article>
+
+        <article class="report-card adversarial-card">
+          <span class="card-index">10</span>
+          <p class="eyebrow">Missing-evidence register</p>
+          <h3>Known gaps that block false closure</h3>
+          <ul id="report-gaps"></ul>
+          <div class="coverage-summary" id="report-coverage" aria-label="Recorded search coverage"></div>
+        </article>
+      </div>
+
+      <section class="evidence-workbench" aria-labelledby="evidence-title">
+        <div class="evidence-head">
+          <div><p class="eyebrow">Evidence bench</p><h2 id="evidence-title" tabindex="-1">Make every source earn its place.</h2></div>
+          <div class="readiness" aria-label="Evidence readiness">
+            <span>Audit safeguards</span>
+            <strong id="readiness-score">0/8</strong>
+            <small id="readiness-label">No record attached</small>
+          </div>
+        </div>
+
+        <div class="readiness-grid" id="readiness-grid">
+          <div data-check="primary"><span>Direct-record claim logged</span><strong>Missing</strong></div>
+          <div data-check="independent"><span>Independence claim explained</span><strong>Missing</strong></div>
+          <div data-check="counter"><span>Counter-record claim logged</span><strong>Missing</strong></div>
+          <div data-check="provenance"><span>Origin and limitation</span><strong>Missing</strong></div>
+          <div data-check="incentives"><span>Stake / incentive review</span><strong>Missing</strong></div>
+          <div data-check="custody"><span>Custody / transformation</span><strong>Missing</strong></div>
+          <div data-check="falsifier"><span>Weakening condition</span><strong>Missing</strong></div>
+          <div data-check="coverage"><span>Search boundary receipt</span><strong>Missing</strong></div>
+        </div>
+        <p class="metric-warning">Completeness is not a truth percentage or source authentication. Eight green safeguards mean ledger fields were recorded—not that the entries, links, source classes, independence claims, or conclusions were authenticated or found correct.</p>
+        <p class="watchdawg-note"><strong>Watch-Dawg adversarial hygiene:</strong> basic checks flag unsafe or duplicate links, hidden source lineage, missing interests, broken custody, no failure test, and undeclared search gaps. A motive never proves a lie; a prestigious title never proves truth.</p>
+
+        <form id="coverage-form" class="coverage-form" novalidate data-local-only autocomplete="off">
+          <div>
+            <p class="eyebrow">Evidence-universe receipt</p>
+            <h3>Show where you looked—and where you did not.</h3>
+            <p>A defensible investigation can prove its search trail, not that no undiscovered record exists.</p>
+          </div>
+          <label for="coverage-scope">Repositories, archives, exact query families, languages, and date range actually searched</label>
+          <textarea id="coverage-scope" maxlength="1400" aria-describedby="coverage-error" placeholder="Example: NASA Technical Reports Server; National Archives catalog; skeptical video and image claims; queries both supporting and challenging the claim…"></textarea>
+          <div class="field-pair">
+            <label>Search cutoff
+              <input id="coverage-cutoff" maxlength="80" aria-describedby="coverage-error" placeholder="Example: September 8, 2026">
+            </label>
+            <label>Stop rule
+              <input id="coverage-stop" maxlength="220" aria-describedby="coverage-error" placeholder="When did you stop, and why was that defensible?">
+            </label>
+          </div>
+          <label for="coverage-gaps">Excluded, inaccessible, deleted, sealed, untranslated, or still-unsearched evidence</label>
+          <textarea id="coverage-gaps" maxlength="1200" aria-describedby="coverage-error" placeholder="Do not hide the dark zones. Record every known gap and why it matters."></textarea>
+          <p class="form-error" id="coverage-error" role="alert"></p>
+          <button class="secondary-action" type="submit">Record search boundary</button>
+        </form>
+
+        <div class="evidence-layout">
+          <form id="evidence-form" class="evidence-form" novalidate data-local-only autocomplete="off">
+            <h3>Add an inspected source</h3>
+            <label for="source-title">Source title</label>
+            <input id="source-title" maxlength="180" required aria-describedby="evidence-error" placeholder="Exact document, dataset, record, or analysis">
+            <label for="source-url">Source URL <span class="optional-field">optional for offline artifacts</span></label>
+            <input id="source-url" type="url" inputmode="url" aria-describedby="source-url-help evidence-error" placeholder="https://…">
+            <small class="field-help" id="source-url-help">Offline records are retained, but cannot satisfy public-link safeguards until a verifiable public locator is added.</small>
+            <div class="field-pair">
+              <label>Author or publisher
+                <input id="source-author" maxlength="140" placeholder="Who is responsible for it?">
+              </label>
+              <label>Publication or event date
+                <input id="source-date" maxlength="80" placeholder="Exact date if known">
+              </label>
+            </div>
+            <div class="field-pair">
+              <label>Evidence role
+                <select id="source-role">
+                  <option value="support">Supports named target</option>
+                  <option value="counter">Challenges named target</option>
+                  <option value="context">Context only</option>
+                </select>
+              </label>
+              <label>Source class
+                <select id="source-class">
+                  <option value="primary">Primary / direct record</option>
+                  <option value="independent">Potentially independent — explain</option>
+                  <option value="analysis">Qualified analysis</option>
+                  <option value="lead">Lead only / unverified</option>
+                </select>
+              </label>
+            </div>
+            <label for="source-target">Exact claim, component, or hypothesis this evidence targets</label>
+            <input id="source-target" maxlength="180" required aria-describedby="evidence-error" placeholder="Example: H2 uncrewed substitute, or documented cloud-seeding component">
+            <label for="source-origin">Origin or dependence</label>
+            <input id="source-origin" maxlength="120" required aria-describedby="evidence-error" placeholder="Who produced it? What earlier source does it rely on?">
+            <label for="source-independence">Independence or shared upstream record</label>
+            <textarea id="source-independence" maxlength="600" aria-describedby="evidence-error" placeholder="Institution, funding, data, and information lineage. Different websites are not automatically independent."></textarea>
+            <label for="source-incentives">Affiliations, possible gains, costs, and conflicts</label>
+            <textarea id="source-incentives" maxlength="600" aria-describedby="evidence-error" placeholder="Financial, career, political, institutional, ideological, legal, and reputational stakes—on every side."></textarea>
+            <label for="source-custody">Chain of custody and transformations</label>
+            <textarea id="source-custody" maxlength="600" aria-describedby="evidence-error" placeholder="Original or derivative? Who held it? What was scanned, cropped, compressed, edited, or copied?"></textarea>
+            <label for="source-falsifier">What would weaken or disqualify this source?</label>
+            <textarea id="source-falsifier" maxlength="600" aria-describedby="evidence-error" placeholder="State the failure test before granting it weight."></textarea>
+            <label for="source-notes">What this source actually establishes</label>
+            <textarea id="source-notes" maxlength="600" aria-describedby="evidence-error" placeholder="Record the relevant fact, limitation, method, and what it does not prove."></textarea>
+            <p class="form-error" id="evidence-error" role="alert"></p>
+            <button class="primary-action" type="submit"><span>Attach evidence</span><span aria-hidden="true">＋</span></button>
+          </form>
+
+          <div class="evidence-record">
+            <div class="record-heading"><h3>Attached record</h3><span id="evidence-count">0 sources</span></div>
+            <div id="evidence-list" class="evidence-list">
+              <p class="empty-state">No evidence attached. Add only sources you have actually inspected.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <article class="judgment-card" aria-labelledby="boundary-title">
+        <div class="judgment-heading">
+          <div><p class="eyebrow">Honest boundary</p><h2 id="boundary-title" tabindex="-1">What the record permits us to say</h2></div>
+          <span id="case-status">Record not searched</span>
+        </div>
+        <div class="boundary-grid">
+          <div><span class="signal verified">Documented in this dossier</span><p id="verified-text">Nothing yet. No inspected sources are attached.</p></div>
+          <div><span class="signal inference">Best-supported inference</span><p id="inference-text"></p></div>
+          <div><span class="signal unknown">Still unknown</span><p id="unknown-text"></p></div>
+        </div>
+        <div class="judge-line"><strong>You be the judge.</strong><span>Trust-Worthy exposes the record and reasoning. It does not borrow your decision.</span></div>
+        <div class="receipt-line">
+          <div><span>Local record fingerprint</span><code id="receipt-hash">Generating…</code></div>
+          <div class="receipt-actions"><button class="quiet-action" id="copy-receipt" type="button">Copy fingerprint</button><button class="quiet-action" id="copy-receipt-json" type="button">Copy canonical JSON</button></div>
+          <small>The SHA-256 fingerprint covers the claim, hypotheses, search boundary, incentives, dependency, custody, failure tests, gaps, reasoning, and complete evidence entries. Copy the canonical JSON to reproduce the fingerprint. It is not an external timestamp or proof that a source is true.</small>
+        </div>
+        <div class="archived-receipt" id="archived-receipt" hidden>
+          <div><span>Archived save-time fingerprint</span><code id="archived-receipt-hash"></code><strong id="archived-receipt-status"></strong></div>
+          <div class="receipt-actions"><button class="quiet-action" id="copy-archived-hash" type="button">Copy archived fingerprint</button><button class="quiet-action" id="copy-archived-json" type="button">Copy archived JSON</button></div>
+          <small>This is the exact canonical record preserved when the local snapshot was saved. It is separate from the current reconstruction, is never used to grant reviewed status, and has no external timestamp.</small>
+        </div>
+      </article>
+
+    </section>
+
+    <section class="proof-desk" aria-labelledby="proof-title">
+      <div class="proof-heading">
+        <div><p class="eyebrow">Free public knowledge + reasoning school</p><h2 id="proof-title">Known record is free. The method is teachable.</h2></div>
+        <div class="proof-actions">
+          <button class="primary-action compact" id="open-proof-case" type="button"><span>Open Moon file</span><span aria-hidden="true">→</span></button>
+          <button class="secondary-action" id="open-atmosphere-case" type="button">Open aircraft-trails file</button>
+        </div>
+      </div>
+      <p>Every reviewed public case shows its sources, exact search boundary, interests, dependencies, custody breaks, strongest counter-case, unresolved evidence, version date, and reasoning. Search hits are grouped only when a shared stable identifier or canonical URL establishes the same artifact; title-only similarities remain separate possible duplicates until lineage is inspected.</p>
+      <div class="standards-grid">
+        <div><span>01</span><strong>Search receipt</strong><p>Expose queries, archives, dates, exclusions, and blocked access.</p></div>
+        <div><span>02</span><strong>Interest audit</strong><p>Test funding, control, and incentives symmetrically.</p></div>
+        <div><span>03</span><strong>Artifact test</strong><p>Authenticate original media, custody, metadata, physics, and alternatives.</p></div>
+        <div><span>04</span><strong>Rival predictions</strong><p>Make each explanation predict what should and should not exist.</p></div>
+      </div>
+      <div class="finding-scale" aria-label="Permitted findings">
+        <strong>Permitted findings</strong>
+        <span>Supported</span><span>Unsupported</span><span>Mixed</span><span>Indeterminate</span>
+        <p>“Absolute” is reserved for what a defined record directly entails. Historical conclusions usually remain reasoned findings with explicit revision conditions.</p>
+      </div>
+    </section>
+
+    <section class="privacy-desk" id="privacy" aria-labelledby="privacy-title">
+      <div><p class="eyebrow">Privacy / deliberate exits</p><h2 id="privacy-title">Your draft case begins on this device.</h2></div>
+      <div>
+        <p>Typing, mapping, attaching, fingerprinting, and saving a case happen in this browser. Saving uses this browser profile's local storage; another person using the same profile may see it.</p>
+        <p><strong>No external search runs until you press “Run Source Sweep.”</strong> Starting it sends the claim-derived query text to Crossref, OpenAlex, Europe PMC, Internet Archive, and the Federal Register. Their privacy and logging practices apply. Trust-Worthy records returned metadata and failures locally; it does not send your saved docket or manually attached evidence to those indexes.</p>
+        <p><strong>Local receipts are not a trust authority.</strong> Browser storage can be edited, cleared, or forged by a user, extension, or local software. On reopen, provider identities and queries are rebuilt from the fixed plan and prior execution is labeled unverified. The app preserves the exact save-time canonical JSON and checks its stored fingerprint when possible, but neither one is an external timestamp or proof of review.</p>
+        <p><strong>Hosting boundary:</strong> This public app is delivered through ChatGPT Sites and network/security providers. They may process ordinary request metadata, IP addresses, security cookies, and access logs under their own terms; Trust-Worthy does not receive a private analytics dashboard from this browser-local case file.</p>
+        <p>“Share via device” hands the displayed report and public app URL to the destination you choose. “Share public lab on Facebook” sends only the public lab URL—not the draft case. Copy actions use your clipboard. Source links, email, Facebook, and later payment instructions leave this site and are handled by those services.</p>
+        <p>Do not enter or email passwords, account numbers, private medical or legal records, unlawful material, or private third-party accusations. Delete local cases with “Clear all local cases” when finished.</p>
+        <p><strong>Paid email intake:</strong> Bobsome1 uses emailed intake, scope, work, delivery, and payment-confirmation records only to evaluate, perform, support, document, and legally account for the requested service. Access is limited to Robert and necessary email, storage, and payment providers. Bobsome1 does not sell intake data or publish a customer's identity or private submission without written permission. This is ordinary email, not an encrypted or legally privileged channel.</p>
+        <p><strong>Retention, deletion, and public cases:</strong> Bobsome1 manually deletes customer records when they are no longer needed for the purposes above, subject to legal, tax, dispute, security, and provider-backup requirements. A customer may request access or deletion by email. Already-public source findings and generalized or anonymized method lessons may be reused; customer identity and private submitted material require written permission before public-case reuse. State any stricter confidentiality or reuse limits before accepting the written scope.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div><strong>PROJECT UNVEILED</strong> presents Trust-Worthy · Robert J. Hayes / Bobsome1<br>912-701-4008 · Branson, Missouri</div>
+    <p><a href="/truth/">Truth Trials</a> · <a href="#privacy">Privacy boundary</a> · <a href="/.well-known/security.txt">Security contact</a> · <a href="./release-manifest.json">Release provenance</a> · We do not sell certainty. We make the evidence—and its limits—harder to hide.</p>
+  </footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="./research-sweep.js" defer></script>
+  <script src="./app.js" defer></script>
+  <script src="./observer.js" defer></script>
+</body>
+</html>

@@ -1,5 +1,13 @@
 # Evidence Phase 2 Changelog
 
+## Trust-Worthy Canonical Evidence Lab — September 12, 2026
+
+- Added the verified Trust-Worthy Evidence Lab at `/truth/lab/` without replacing any published Truth Trial, PHP intake path, private owner route, or payment boundary.
+- Moved public sharing, PWA scope, security contact, sitemap, and release provenance to the canonical `https://bobsome1.com/truth/lab/` address.
+- Added an exact-byte release manifest, browser-local observer v4, true-404 and deny-by-default method contract, Content Security Policy, and a tested rollback pointer to release 13 and Project-Unveiled commit `7a4345bc5b4268ff4305494cf4019f8bd783029a`.
+- Added the full research-engine, hostile-input, privacy, storage-failure, accessibility-structure, and provenance gate to repository CI.
+- Blocked internal Markdown, Python, validation, test, and deployment materials from public download and excluded them from future cPanel deployments.
+
 ## Bobsome1 Media + IT Landing Page — September 6, 2026
 
 - Added `/services/` as a standalone services and selected-work page for venues, churches, contractors, and local businesses.

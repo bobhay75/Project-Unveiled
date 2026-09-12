@@ -7,6 +7,15 @@ Options -Indexes
   Require all denied
 </FilesMatch>
 
+# Keep repository instructions, validation code, and internal research notes off the public web.
+<FilesMatch "(?i)\.(md|py|ya?ml)$">
+  Require all denied
+</FilesMatch>
+
+<FilesMatch "(?i)^README(?:[-_][^/]*)?\.(?:md|txt)$">
+  Require all denied
+</FilesMatch>
+
 # Block setup and deployment artifacts that should never be public.
 <FilesMatch "(?i)(installer\.php|install-project-unveiled-structured-data\.php|README-FIRST\.txt|AUDIT-RESULTS\.txt|INSTALL-MANIFEST\.json|VALIDATION-MANIFEST\.json|UPLOAD-INSTRUCTIONS\.txt)$">
   Require all denied
@@ -21,6 +30,9 @@ RewriteRule ^ https://bobsome1.com%{REQUEST_URI} [R=301,L,NE]
 
 # Block old installer payloads and test application folders while leaving the live site alone.
 RewriteRule ^(?:_pu_[^/]+|pu-signup-v73|truth-unveiled-os-0\.0\.1)(?:/|$) - [F,L,NC]
+
+# These directories are build and verification inputs, not public application routes.
+RewriteRule ^(?:docs|scripts|tests)(?:/|$) - [F,L,NC]
 
 # Block dated HTML backup copies from direct public access.
 RewriteRule (^|/)[^/]*BACKUP[^/]*\.html$ - [F,L,NC]

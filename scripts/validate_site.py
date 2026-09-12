@@ -47,7 +47,9 @@ def resolve_reference(source: Path, raw: str) -> Path | None:
     candidate = ROOT / target.lstrip("/") if target.startswith("/") else source.parent / target
     candidate = Path(os.path.normpath(candidate))
     if candidate.suffix == "" and candidate.is_dir():
-        candidate /= "index.html"
+        html_index = candidate / "index.html"
+        php_index = candidate / "index.php"
+        candidate = html_index if html_index.is_file() else php_index
     return candidate
 
 
