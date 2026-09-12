@@ -1,0 +1,31 @@
+Options -Indexes
+DirectoryIndex index.html
+ErrorDocument 404 /truth/lab/404.html
+
+<IfModule mod_mime.c>
+  AddType application/manifest+json .webmanifest
+  AddType application/json .json
+  AddType image/svg+xml .svg
+  AddType text/javascript .js
+</IfModule>
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # One canonical address for the lab document.
+  RewriteCond %{THE_REQUEST} \s/+truth/lab/index\.html(?:[\s?]) [NC]
+  RewriteRule ^index\.html$ /truth/lab/ [R=301,L,NE]
+
+  # This static laboratory has no write-method contract.
+  RewriteCond %{REQUEST_METHOD} !^(?:GET|HEAD)$ [NC]
+  RewriteRule ^ - [R=405,L]
+</IfModule>
+
+<IfModule mod_headers.c>
+  Header always set Content-Security-Policy "default-src 'self'; base-uri 'self'; object-src 'none'; frame-src 'none'; form-action 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self' https://api.crossref.org https://api.openalex.org https://www.ebi.ac.uk https://archive.org https://www.federalregister.gov"
+  Header always set Referrer-Policy "no-referrer"
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=()"
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "DENY"
+  Header always set Cross-Origin-Opener-Policy "same-origin"
+</IfModule>

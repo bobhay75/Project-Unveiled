@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-labelledby="title">
+  <title id="title">Trust-Worthy Evidence Lab icon</title>
+  <rect width="512" height="512" rx="74" fill="#06111b"/>
+  <path d="M72 72h368v368H72z" fill="none" stroke="#173447" stroke-width="3"/>
+  <path d="M72 178h368M72 334h368M178 72v368M334 72v368" stroke="#173447" stroke-width="2"/>
+  <circle cx="394" cy="118" r="22" fill="#75deb0"/>
+  <text x="256" y="296" fill="#ffdda0" font-family="Georgia,serif" font-size="152" text-anchor="middle">TW</text>
+  <text x="256" y="365" fill="#f3f0e8" font-family="Arial,sans-serif" font-size="28" font-weight="800" text-anchor="middle" letter-spacing="6">EVIDENCE</text>
+</svg>

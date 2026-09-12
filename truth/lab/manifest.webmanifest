@@ -1,0 +1,22 @@
+{
+  "name": "Project Unveiled Trust-Worthy Evidence Lab",
+  "short_name": "Evidence Lab",
+  "description": "Put a claim on trial with visible evidence, counter-tests, provenance, and honest uncertainty.",
+  "start_url": "/truth/lab/",
+  "scope": "/truth/lab/",
+  "display": "standalone",
+  "background_color": "#06111b",
+  "theme_color": "#06111b",
+  "icons": [
+    {
+      "src": "/truth/lab/app-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/truth/lab/app-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

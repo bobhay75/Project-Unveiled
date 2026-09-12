@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /truth/lab/
+
+Sitemap: https://bobsome1.com/truth/lab/sitemap.xml
