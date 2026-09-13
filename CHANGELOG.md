@@ -1,5 +1,22 @@
 # Evidence Phase 2 Changelog
 
+## Trust-Worthy Release 16 — September 13, 2026
+
+- Replaced the Daily Desk's reusable URL token with one-use, ten-minute fragment sign-in codes, short-lived secure sessions, same-origin checks, and CSRF protection; credentials no longer enter HTTP URLs, referrers, redirects, or cron logs.
+- Bound every Daily Desk source to provider-returned web evidence, required complete bounded provider responses, added atomic hourly/daily/concurrent cost reservations, and made publication digest-bound, human-reviewed, private-question-proof, and recoverable after partial writes.
+- Rebuilt public question and challenge intake around bounded scalar requests, real-case validation, HMAC rate limits, atomic fail-closed queues, owner-only secrets, record/file ceilings, and 180-day retention including legacy records.
+- Made free Truth Trials reserve quota atomically, charge provider attempts safely, reject malformed or unverifiable output, append only provider-bound source trails, send `store: false` so responses are not kept as retrievable provider responses, and remove raw questions from operational logs.
+- Reduced the public health response to a GET/HEAD-only ready/unavailable contract; added canonical-host, read-only-method, include-only-module, CSP, referrer, framing, and implementation-header protections.
+- Corrected protected-app password-file paths for the active cPanel account, pinned deployment collation for deterministic manifest checks, and advanced the shared analytics cache token after Store tracking changed.
+- Hardened first-party analytics with strict same-origin JSON intake, actual-byte and Apache body caps, a complete event allowlist, atomic per-address abuse controls, owner-only bounded retention, privacy-safe referrers/search/targets, locked atomic migration of legacy private records, content-bound metadata, bounded dashboard reads, formula-safe CSV, rate-limited login, and CSRF-protected logout.
+- Replaced broad cPanel copying with a reproducible exact public-file allowlist and stale-file retirement registry, preserving unrelated runtime/application data while preventing repository internals, credentials, archives, and tests from entering `public_html`.
+- Added reachable-history secret scanning, fail-closed deployment tests, a pinned read-only GitHub Actions workflow, and weekly GitHub Actions dependency updates.
+- Enforced the canonical `https://bobsome1.com` origin inside the Evidence Lab child rewrite context and added live HTTP, `www`, path, and query-preservation checks.
+- Replaced over-constrained archive queries with bounded alternative term groups, removed weak connective terms, normalized Unicode, and added topic-anchor screening to reduce loosely related discovery leads without deleting lower-overlap audit records.
+- Preserved keyboard focus across Source Sweep start, progress, completion, and result rerenders; field errors now identify and focus the exact invalid control.
+- Exposed exact provider endpoints and UTC request/completion times in visible and printed search receipts, and moved commercial navigation from hosted previews to owned Bobsome1 routes.
+- Advanced the exact-byte manifest and local observer to release 16 / observer v6, retaining release 15 commit `aea90c55a31e7d158f1d092e2509fcc3b9147a34` as provenance and adding a guarded, Evidence-Lab-only rollback to the verified lab bytes in pre-release main commit `9c4faa71e9c4955c1e597b2b3f9c8a861cac3bf1`.
+
 ## Revenue Funnel Foundation — September 13, 2026
 
 - Added `/store/` as the clear revenue hub for the $7 Project Unveiled digital edition, the exact $250 Visibility Starter checkout, qualified service inquiries, and partner/sponsor proposals.

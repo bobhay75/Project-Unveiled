@@ -1448,7 +1448,7 @@
   <div class="pu-support-footer" aria-label="Project support and privacy links"><a href="/book/read/support-right-hand.html" data-pu-event="support_page_click">Support the Work</a><span aria-hidden="true">◆</span><a href="/privacy.html">Privacy</a></div>
 </footer>
 
-<script id="project-unveiled-traffic-tracker" src="/project-unveiled-analytics/tracker.js?v=2" defer></script>
+<script id="project-unveiled-traffic-tracker" src="/project-unveiled-analytics/tracker.js?v=5" defer></script>
 <a class="pu-support-float" href="/book/read/support-right-hand.html" data-pu-event="support_page_click" aria-label="Support Project Unveiled and Right Hand Ministry">Support the Work</a>
 <script>document.querySelector('#submit-correction')?.addEventListener('submit',async e=>{e.preventDefault();const f=e.currentTarget,r=document.querySelector('#correction-result');r.textContent='Submitting…';try{const d=new URLSearchParams(new FormData(f));const x=await fetch(f.action,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'},body:d});const j=await x.json();r.textContent=j.message;if(j.ok)f.reset();}catch(_){r.textContent='Your submission could not be sent. Please try again.';}});document.querySelector('#submit-correction [name="opened_at"]')?.setAttribute('value',String(Math.floor(Date.now()/1000)));</script></body>
 </html>

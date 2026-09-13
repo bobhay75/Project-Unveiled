@@ -487,9 +487,10 @@ context.window.TrustResearch.runFederatedSearch = async (claim, options = {}) =>
       metadataOnly: true
     }],
     screening: {
-      policy: "claim-term-overlap-v1",
+      policy: "claim-term-overlap-v2",
       mode: "applied",
       requiredMatchCount: 2,
+      requiredAnchorMatchCount: 2,
       titleCharacterLimit: 240,
       descriptionCharacterLimit: 1000,
       returnedFamilyCount: 2,
@@ -499,25 +500,48 @@ context.window.TrustResearch.runFederatedSearch = async (claim, options = {}) =>
   };
   return fixtureResearchRun;
 };
-await nodes.get("run-research").listeners.get("click")();
+nodes.get("run-research").focus();
+const runningSweep = nodes.get("run-research").listeners.get("click")();
+assert.equal(documentStub.activeElement, nodes.get("cancel-research"), "starting a sweep must move focus from the disabled Run control to Stop");
+assert.equal(nodes.get("research-sweep").getAttribute("aria-busy"), "true");
+await runningSweep;
+assert.equal(documentStub.activeElement, nodes.get("run-research"), "finishing a sweep must return focus when Stop held focus");
+assert.equal(nodes.get("research-sweep").getAttribute("aria-busy"), "false");
 const sweepReceipt = JSON.parse(api.receiptPayload());
 assert.equal(sweepReceipt.automated_source_sweep.status, "complete");
 assert.equal(sweepReceipt.automated_source_sweep.queries.length, 6);
 assert.equal(sweepReceipt.automated_source_sweep.discovered_evidence_families.length, 1);
 assert.equal(sweepReceipt.automated_source_sweep.discovered_evidence_families[0].status, "DISCOVERY LEAD · NOT INSPECTED EVIDENCE");
 assert.equal(sweepReceipt.automated_source_sweep.schema, "trust-worthy-source-sweep-v2");
-assert.equal(sweepReceipt.automated_source_sweep.screening.policy, "claim-term-overlap-v1");
+assert.equal(sweepReceipt.automated_source_sweep.screening.policy, "claim-term-overlap-v2");
 assert.equal(sweepReceipt.automated_source_sweep.screening.mode, "applied");
+assert.equal(sweepReceipt.automated_source_sweep.screening.required_topic_anchor_match_count, 2);
 assert.equal(sweepReceipt.automated_source_sweep.screening.provider_description_character_limit, 1000);
 assert.equal(sweepReceipt.automated_source_sweep.screening.screened_out_family_count, 1);
 assert.equal(sweepReceipt.automated_source_sweep.low_overlap_metadata_families.length, 1);
 assert.equal(sweepReceipt.automated_source_sweep.low_overlap_metadata_families[0].status, "LOWER-OVERLAP METADATA FAMILY · NOT INSPECTED EVIDENCE");
 assert.match(researchStatusText.textContent, /1 lower-overlap family remains/);
-const relevanceAudit = nodes.get("research-results").children.find(node => node.tagName === "DETAILS");
+let relevanceAudit = nodes.get("research-results").children.find(node => node.tagName === "DETAILS");
 assert.ok(relevanceAudit, "lower-overlap provider returns must remain inspectable in the audit drawer");
 assert.match(relevanceAudit.children[0].textContent, /1 lower-overlap metadata family preserved for audit/);
-const lowerOverlapLink = relevanceAudit.descendants().find(node => node.tagName === "A");
+let lowerOverlapLink = relevanceAudit.descendants().find(node => node.tagName === "A");
 assert.match(lowerOverlapLink.getAttribute("aria-label"), /Crossref: To Which Race Did Jesus Belong/);
+const firstQueryBlock = nodes.get("research-query-list").children[0].children[1];
+assert.match(firstQueryBlock.children[1].textContent, /Requested UTC: 2026-09-08T12:00:00.000Z/);
+assert.equal(firstQueryBlock.children[3].textContent, fixtureResearchRun.queries[0].url, "the visible query receipt must expose the exact endpoint");
+const primaryAttach = nodes.get("research-results").descendants().find(node => node.dataset.researchFocusKey?.startsWith("attach:"));
+primaryAttach.focus();
+vm.runInContext("renderResearch();", context);
+const restoredAttach = nodes.get("research-results").descendants().find(node => node.dataset.researchFocusKey === primaryAttach.dataset.researchFocusKey);
+assert.equal(documentStub.activeElement, restoredAttach, "progress rerenders must preserve focus on a surviving Attach control");
+relevanceAudit = nodes.get("research-results").children.find(node => node.tagName === "DETAILS");
+relevanceAudit.open = true;
+lowerOverlapLink = relevanceAudit.descendants().find(node => node.tagName === "A");
+lowerOverlapLink.focus();
+vm.runInContext("renderResearch();", context);
+const restoredLowerLink = nodes.get("research-results").descendants().find(node => node.dataset.researchFocusKey === lowerOverlapLink.dataset.researchFocusKey);
+assert.equal(documentStub.activeElement, restoredLowerLink, "progress rerenders must preserve focus on a surviving lower-overlap source link");
+relevanceAudit = nodes.get("research-results").children.find(node => node.tagName === "DETAILS");
 relevanceAudit.open = true;
 relevanceAudit.children[0].focus();
 const preMutationReceipt = api.receiptPayload();
@@ -928,8 +952,25 @@ assert.match(nodes.get("archived-receipt-status").textContent, /^MATCH/, "reopen
 await click("copy-archived-hash");
 assert.equal(clipboardWrites.at(-1), archivedSnapshot.canonicalReceiptHash);
 
+// Local-only forms must identify and focus the exact field that failed validation.
+vm.runInContext('analyze("Accessible local validation must identify the field that needs attention.")', context);
+nodes.get("coverage-form").listeners.get("submit")({ preventDefault() {} });
+assert.equal(nodes.get("coverage-scope").getAttribute("aria-invalid"), "true");
+assert.equal(documentStub.activeElement, nodes.get("coverage-scope"));
+nodes.get("coverage-form").listeners.get("input")({ target: nodes.get("coverage-scope") });
+assert.equal(nodes.get("coverage-scope").getAttribute("aria-invalid"), null);
+assert.equal(nodes.get("coverage-error").textContent, "");
+nodes.get("evidence-form").listeners.get("submit")({ preventDefault() {} });
+assert.equal(nodes.get("source-title").getAttribute("aria-invalid"), "true");
+assert.equal(documentStub.activeElement, nodes.get("source-title"));
+vm.runInContext("resetCase();", context);
+nodes.get("claim-input").value = "short";
+nodes.get("claim-form").listeners.get("submit")({ preventDefault() {} });
+assert.equal(nodes.get("claim-input").getAttribute("aria-invalid"), "true");
+assert.equal(documentStub.activeElement, nodes.get("claim-input"));
+
 const blankMetrics = api.sourceMetrics([{ url: "", role: "support", className: "primary" }]);
 assert.ok(Object.values(blankMetrics).every(value => value === false));
 assert.ok(api.sourceFlags({ url: "", role: "support", className: "lead" }, []).length >= 6);
 
-console.log("App smoke checks passed: reviewed dossiers, stable docket identity, truthful storage failure, async race safety, reset privacy, sanitization, restored-sweep distrust, draft isolation, and archived receipt verification");
+console.log("App smoke checks passed: reviewed dossiers, stable docket identity, truthful storage failure, async race safety, accessible focus lifecycle and validation, reset privacy, sanitization, restored-sweep distrust, draft isolation, and archived receipt verification");

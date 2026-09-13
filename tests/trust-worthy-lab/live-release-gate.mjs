@@ -109,6 +109,24 @@ for (const [label, response] of [["GET", indexAliasGet], ["HEAD", indexAliasHead
 }
 assertSecurityHeaders(labGet);
 
+const canonicalRedirectCases = [
+  "http://bobsome1.com/truth/lab/",
+  "https://www.bobsome1.com/truth/lab/",
+  "http://www.bobsome1.com/truth/lab/status.json?canonical-check=1",
+  "https://www.bobsome1.com/truth/lab/app.js?canonical-check=1",
+  "http://bobsome1.com/services/?canonical-check=1",
+  "https://www.bobsome1.com/book/?canonical-check=1"
+];
+const canonicalRedirectResponses = await Promise.all(canonicalRedirectCases.map(url =>
+  request(url, { redirect: "manual" }, new URL(url).origin)
+));
+canonicalRedirectResponses.forEach((response, index) => {
+  const source = new URL(canonicalRedirectCases[index]);
+  assert.ok([301, 302, 307, 308].includes(response.status), `${source.href} must redirect to the canonical HTTPS apex origin`);
+  const destination = new URL(response.headers.get("location") || "", source);
+  assert.equal(destination.href, new URL(`${source.pathname}${source.search}`, PRODUCTION_ORIGIN).href, `${source.href} did not preserve its path and query on the canonical HTTPS apex origin`);
+});
+
 const missingRoute = `/truth/lab/__trust_release_missing_${Date.now()}_${Math.random().toString(16).slice(2)}`;
 const [missingGet, missingHead] = await Promise.all([
   request(missingRoute),
@@ -147,6 +165,29 @@ truthResponses.forEach((response, index) => {
   contentTypeMatches(response, type, route);
 });
 
+const [healthGet, healthHead] = await Promise.all([
+  request("/truth/health.php"),
+  request("/truth/health.php", { method: "HEAD" })
+]);
+assert.equal(healthGet.status, 200, "live health endpoint must report ready");
+assert.equal(healthHead.status, 200, "HEAD health endpoint must report ready");
+contentTypeMatches(healthGet, "application/json", "/truth/health.php");
+contentTypeMatches(healthHead, "application/json", "/truth/health.php");
+const healthBody = await healthGet.json();
+assert.deepEqual(Object.keys(healthBody).sort(), ["service", "status"], "health endpoint exposed implementation details");
+assert.equal(healthBody.service, "truth-on-trial");
+assert.equal(healthBody.status, "ready");
+assert.equal(healthGet.headers.get("x-powered-by"), null, "health endpoint exposed X-Powered-By");
+
+const healthDeniedResponses = await Promise.all(deniedMethods.map(method => request("/truth/health.php", {
+  method,
+  body: method === "OPTIONS" ? undefined : "synthetic-release-gate"
+})));
+healthDeniedResponses.forEach((response, index) => {
+  assert.equal(response.status, 405, `${deniedMethods[index]} /truth/health.php must return 405`);
+  assert.match(String(response.headers.get("allow") || ""), /(?:^|,|\s)GET(?:,|\s).*HEAD/i, "health 405 response must advertise GET and HEAD");
+});
+
 const [ownerBoundary, publicInvestigationGet, publicInvestigationHead, questionGet, questionHead, challengeGet, challengeHead] = await Promise.all([
   request("/owner/", { redirect: "manual" }),
   request("/truth/investigate.php", { redirect: "manual" }),
@@ -168,23 +209,46 @@ const internalRoutes = [
   "/docs/TRUST-WORTHY-TRUTH-TRIAL-PROTOCOL.md",
   "/truth/EDITORIAL-STANDARD.md",
   "/campaigns/7-day-unveiled-launch.md",
-  "/truth/daily/KEY-FILE-NOTE.md"
+  "/truth/daily/KEY-FILE-NOTE.md",
+  "/truth/lib/trust-worthy-ai.php",
+  "/truth/lib/intake.php",
+  "/truth/daily/config.php",
+  "/truth/daily/lib.php",
+  "/truth/daily/meat-desk.php",
+  "/truth/daily/trial-filter.php"
 ];
 const internalResponses = await Promise.all(internalRoutes.map(route => request(route)));
 internalResponses.forEach((response, index) => {
   assert.ok([403, 404].includes(response.status), `${internalRoutes[index]} must not be publicly downloadable`);
 });
 
-const handoffs = [
-  "https://bobsome1-revenue-engine.thebobsomest1.chatgpt.site/",
-  "https://bobsome1-media-it-preview.thebobsomest1.chatgpt.site/"
-];
-const handoffResponses = await Promise.all(handoffs.flatMap(url => [
-  request(url, {}, new URL(url).origin),
-  request(url, { method: "HEAD" }, new URL(url).origin)
+const ownedHandoffs = ["/", "/services/"];
+const handoffResponses = await Promise.all(ownedHandoffs.flatMap(route => [
+  request(route),
+  request(route, { method: "HEAD" })
 ]));
 handoffResponses.forEach((response, index) => {
-  assert.equal(response.status, 200, `${index % 2 ? "HEAD" : "GET"} ${handoffs[Math.floor(index / 2)]} must return 200`);
+  assert.equal(response.status, 200, `${index % 2 ? "HEAD" : "GET"} ${ownedHandoffs[Math.floor(index / 2)]} must return 200`);
+});
+
+for (const response of handoffResponses.filter((_, index) => index % 2 === 0)) {
+  const csp = String(response.headers.get("content-security-policy") || "").toLowerCase();
+  for (const directive of ["default-src 'self'", "object-src 'none'", "frame-ancestors 'self'", "form-action 'self'"]) {
+    assert.ok(csp.includes(directive), `public-site CSP is missing ${directive}`);
+  }
+  assert.equal(response.headers.get("x-powered-by"), null, "public route exposed X-Powered-By");
+}
+
+const readOnlyRoutes = ["/", "/services/", "/book/", "/privacy.html", "/truth/today.php"];
+const readOnlyMethodResponses = await Promise.all(readOnlyRoutes.flatMap(route => deniedMethods.map(method => request(route, {
+  method,
+  body: method === "OPTIONS" ? undefined : "synthetic-release-gate"
+}))));
+readOnlyMethodResponses.forEach((response, index) => {
+  const route = readOnlyRoutes[Math.floor(index / deniedMethods.length)];
+  const method = deniedMethods[index % deniedMethods.length];
+  assert.equal(response.status, 405, `${method} ${route} must return 405`);
+  assert.match(String(response.headers.get("allow") || ""), /(?:^|,|\s)GET(?:,|\s).*HEAD/i, `${method} ${route} must advertise GET and HEAD`);
 });
 
 console.log(JSON.stringify({
@@ -196,11 +260,14 @@ console.log(JSON.stringify({
   true_404_verified: true,
   denied_methods_verified: deniedMethods,
   security_headers_verified: true,
+  canonical_https_apex_redirects_verified: canonicalRedirectCases.length,
   truth_trials_preserved: 4,
   owner_boundary_verified: true,
   public_post_only_boundaries_verified: 3,
+  minimal_health_contract_verified: true,
   internal_artifacts_denied: internalRoutes.length,
-  handoffs_verified: handoffs.length,
+  owned_handoffs_verified: ownedHandoffs.length,
+  public_read_only_routes_verified: readOnlyRoutes.length,
   build_root_sha256: manifest.digest.root,
   result: "pass"
 }, null, 2));

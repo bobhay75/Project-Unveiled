@@ -1,28 +1,44 @@
 <?php
 declare(strict_types=1);
-header('Cache-Control: no-store, max-age=0');
+
+header_remove('X-Powered-By');
+header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+header('Pragma: no-cache');
+header('Expires: 0');
 header('Content-Type: application/json; charset=UTF-8');
 header('X-Content-Type-Options: nosniff');
+header('X-Robots-Tag: noindex, nofollow, noarchive, nosnippet');
+header("Content-Security-Policy: default-src 'none'; base-uri 'none'; frame-ancestors 'none'");
+
+$method = strtoupper((string)($_SERVER['REQUEST_METHOD'] ?? 'GET'));
+if (!in_array($method, ['GET', 'HEAD'], true)) {
+    http_response_code(405);
+    header('Allow: GET, HEAD');
+    echo json_encode(['error' => 'method_not_allowed'], JSON_UNESCAPED_SLASHES) . "\n";
+    exit;
+}
+
 require_once __DIR__ . '/lib/trust-worthy-ai.php';
 
-$dir = tw_private_dir();
-$key = tw_openai_key();
-$cfg = tw_ai_config();
+$privateDir = tw_private_dir();
+$questionSecret = tw_question_secret_readonly();
+$ready = PHP_VERSION_ID >= 80100
+    && function_exists('ctype_digit')
+    && function_exists('curl_init')
+    && function_exists('mb_check_encoding')
+    && function_exists('mb_strlen')
+    && function_exists('mb_substr')
+    && is_dir($privateDir)
+    && is_writable($privateDir)
+    && tw_openai_key_readonly() !== ''
+    && $questionSecret !== ''
+    && tw_ai_private_storage_ready($questionSecret);
 
-$checks = [
-  'php' => PHP_VERSION,
-  'curl_enabled' => function_exists('curl_init'),
-  'private_storage_exists' => is_dir($dir),
-  'private_storage_writable' => is_dir($dir) && is_writable($dir),
-  'openai_key_configured' => $key !== '',
-  'model' => (string)$cfg['model'],
-  'reasoning_effort' => (string)$cfg['reasoning_effort'],
-  'daily_request_cap' => (int)$cfg['daily_request_cap'],
-  'per_ip_daily_cap' => (int)$cfg['per_ip_daily_cap'],
-  'max_output_tokens' => (int)$cfg['max_output_tokens'],
-  'max_web_search_calls' => (int)$cfg['max_web_search_calls'],
-];
+http_response_code($ready ? 200 : 503);
 
-$checks['ready'] = $checks['curl_enabled'] && $checks['private_storage_exists'] && $checks['private_storage_writable'] && $checks['openai_key_configured'];
+if ($method === 'HEAD') exit;
 
-echo json_encode($checks, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES);
+echo json_encode([
+    'service' => 'truth-on-trial',
+    'status' => $ready ? 'ready' : 'unavailable',
+], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n";

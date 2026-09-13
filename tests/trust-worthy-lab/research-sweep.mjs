@@ -24,6 +24,19 @@ assert.deepEqual(
 assert.ok(plan.every(item => item.query.toLowerCase().includes("lunar")), "every lane must derive from the claim");
 assert.ok(plan.every(item => new URL(item.url).protocol === "https:"), "provider requests must use HTTPS");
 
+const noisyClaim = "Did human beings land on the Moon during NASA Apollo missions between 1969 and 1972?";
+const noisyPlan = api.buildResearchPlan(noisyClaim);
+const archiveQueries = noisyPlan.filter(item => item.providerId === "internetarchive").map(item => item.query.toLowerCase());
+assert.ok(archiveQueries.every(query => !/\b(?:beings|during|between)\b/.test(query)), "weak connective terms must not enter archive queries");
+assert.ok(archiveQueries.every(query => query.includes(" or ")), "archive discovery must use bounded alternative term groups instead of requiring every raw claim word");
+const marsNoise = api.assessResultRelevance(noisyClaim, {
+  title: "Humans to Mars",
+  snippet: "NASA future missions and human exploration planning."
+});
+assert.equal(marsNoise.status, "low-overlap", "broad human/mission vocabulary plus one agency name must not outrank the claim's Moon/Apollo anchors");
+assert.equal(marsNoise.requiredAnchorMatches, 2);
+assert.deepEqual([...marsNoise.matchedAnchorTerms], ["nasa"]);
+
 const nicaeaClaim = "Did the Council of Nicaea choose which early Christian writings belong in the Bible?";
 assert.equal(api.assessResultRelevance(nicaeaClaim, { title: "The Council of Jerusalem and the Council of Nicaea" }).status, "retained");
 assert.equal(api.assessResultRelevance(nicaeaClaim, {
@@ -67,6 +80,8 @@ assert.equal(api.safeHttpUrl("http://100.64.0.1/record"), "");
 assert.equal(api.safeHttpUrl("https://[fd00::1]/record"), "");
 assert.equal(api.safeHttpUrl("https://example.com/record#fragment"), "https://example.com/record");
 assert.equal(api.cleanText("&lt;img src=x onerror=alert(1)&gt; Visible\u202E title"), "Visible title");
+assert.equal(api.cleanText("Cafe\u0301"), "Café", "canonically equivalent Unicode text must normalize identically");
+assert.equal(api.assessResultRelevance("Café safety report", { title: "CAFE\u0301 safety findings" }).status, "retained", "Unicode normalization must apply to relevance screening");
 assert.doesNotThrow(() => api.mergeEvidenceFamilies([
   { title: "Malformed DOI A", url: "https://doi.org/10.1000/%ZZ", foundBy: ["A"], queryIds: ["a"], queryStances: ["neutral"], stance: "neutral" },
   { title: "Malformed DOI B", url: "https://doi.org/10.1000/%ZZ", foundBy: ["B"], queryIds: ["b"], queryStances: ["challenge"], stance: "challenge" }
@@ -361,9 +376,10 @@ assert.equal(result.lowOverlapResults[0].title, "To Which Race Did Jesus Belong?
 assert.equal(result.lowOverlapResults[0].relevance.status, "low-overlap");
 assert.ok(!result.results.some(item => item.externalId === "10.1000/noise"));
 assert.deepEqual({ ...result.screening }, {
-  policy: "claim-term-overlap-v1",
+  policy: "claim-term-overlap-v2",
   mode: "applied",
   requiredMatchCount: 2,
+  requiredAnchorMatchCount: 2,
   titleCharacterLimit: 240,
   descriptionCharacterLimit: 1000,
   returnedFamilyCount: 6,
@@ -401,6 +417,7 @@ const bypassed = await api.runFederatedSearch("Did it do that?", {
 });
 assert.equal(bypassed.screening.mode, "bypassed-no-usable-terms");
 assert.equal(bypassed.screening.requiredMatchCount, 0);
+assert.equal(bypassed.screening.requiredAnchorMatchCount, 0);
 assert.equal(bypassed.lowOverlapResults.length, 0);
 assert.ok(bypassed.results.every(item => item.relevance.status === "retained" && /no usable screening terms/i.test(item.relevance.reason)));
 
@@ -426,4 +443,4 @@ const timedOut = await api.runFederatedSearch(claim, { fetchImpl: neverResponds,
 assert.ok(timedOut.queries.every(item => item.status === "failed"), "provider timeouts must be failures, not user cancellations");
 assert.ok(timedOut.queries.every(item => /timed out after 5 ms/i.test(item.error)));
 
-console.log("Source Sweep checks passed: fixed endpoints, claim-term display screening, auditable lower-overlap families, full identity lineage, hostile-text cleanup, visible partial failure, and timeout classification");
+console.log("Source Sweep checks passed: bounded higher-recall archive queries, topic-anchor screening, Unicode normalization, fixed endpoints, auditable lower-overlap families, full identity lineage, hostile-text cleanup, visible partial failure, and timeout classification");

@@ -16,6 +16,7 @@
     <p>Your question is private. It will be reviewed before any proposed investigation or public Truth Trial is opened.</p>
     <div class="manifesto">Submission does not guarantee publication. It does guarantee that no question is rejected merely because it is uncomfortable.</div>
     <p><a class="button" href="/truth/">Return to Truth Trials</a></p>
+    <p class="muted"><a href="/privacy.html#truth-intake-privacy">How private question submissions are used and retained</a></p>
   </div></section></main>
   <footer class="footer"><div class="wrap">Trust-Worthy AI · Don't trust the answer. Examine the evidence.</div></footer>
 </body>

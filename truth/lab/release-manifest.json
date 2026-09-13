@@ -1,9 +1,9 @@
 {
   "schema": "trust-worthy-release-manifest-v1",
-  "release_id": "trust-worthy-evidence-lab-r15",
-  "release": 15,
-  "observer": "trust-worthy-observer-v5",
-  "recorded_at": "2026-09-13T05:54:03Z",
+  "release_id": "trust-worthy-evidence-lab-r16",
+  "release": 16,
+  "observer": "trust-worthy-observer-v6",
+  "recorded_at": "2026-09-13T13:48:49Z",
   "event_category": "corrective-maintenance",
   "organization": {
     "name": "Bobsome1 / Project Unveiled",
@@ -15,22 +15,23 @@
     "public_origin": "https://bobsome1.com/truth/lab/"
   },
   "predecessor": {
-    "release": 14,
-    "source_commit": "10c0b4b140264808aebdf0d18cdd0b3632c358f2",
-    "build_root_sha256": "aed87658da895e0a5453afcf48294e7a95aa6995b7d6f8489da91660acb0bec9",
+    "release": 15,
+    "source_commit": "aea90c55a31e7d158f1d092e2509fcc3b9147a34",
+    "build_root_sha256": "92deed2f60f249b01f2b12869c66b49e25238291fe7e74a3e9a82f6117a4c520",
     "public_origin": "https://bobsome1.com/truth/lab/",
     "relationship": "supersedes",
-    "note": "Release 14 is the verified canonical predecessor. Release 15 corrects the hosting disclosure and adds an auditable claim-term-overlap display screen for Source Sweep metadata."
+    "note": "Release 15 is the verified canonical predecessor. Release 16 restores canonical HTTPS/apex delivery, strengthens Source Sweep query precision and accessibility, and keeps commercial navigation on the owned bobsome1.com surface."
   },
   "rollback": {
-    "project_unveiled_source_commit": "10c0b4b140264808aebdf0d18cdd0b3632c358f2",
-    "evidence_lab_release": 14,
+    "project_unveiled_source_commit": "9c4faa71e9c4955c1e597b2b3f9c8a861cac3bf1",
+    "evidence_lab_release": 15,
     "tested_live_fallback": "https://bobsome1.com/truth/lab/",
-    "instruction": "Redeploy the named Project-Unveiled commit to restore release 14 if the release 15 live gate fails."
+    "scope": "Evidence Lab files only; do not check out or redeploy the older whole-site commit.",
+    "instruction": "From the release 16 checkout, run scripts/rollback-trust-worthy-lab.sh against /home/bobsome1/public_html/truth/lab to restore the verified release 15 lab bytes from the named commit."
   },
   "digest": {
     "algorithm": "SHA-256",
-    "root": "92deed2f60f249b01f2b12869c66b49e25238291fe7e74a3e9a82f6117a4c520",
+    "root": "31035b2675d52f16863537ed7165e546c81a44cf38bdbe11d69a7b1096d85236",
     "canonicalization": "UTF-8 JSON array of path, route, expected_status, sha256, bytes, content_type, delivery mode, and delivery policy rows sorted by path, followed by LF."
   },
   "scope": {
@@ -97,8 +98,8 @@
         "path": "app.js",
         "route": "/truth/lab/app.js",
         "expected_status": 200,
-        "sha256": "57a9c0169739039b98690899564383aefe1c5580326a4f0d753849ed55ae8c28",
-        "bytes": 167191,
+        "sha256": "4b6063f2074b51e8330d5a91c1c1cd32d6ad383849af05f4da64228873c14f3d",
+        "bytes": 173083,
         "content_type": "javascript",
         "delivery": {
           "mode": "exact"
@@ -108,8 +109,8 @@
         "path": "index.html",
         "route": "/truth/lab/",
         "expected_status": 200,
-        "sha256": "42e06d375f4059cae85da1825e6dbb9c1abefde8cec6a4673e5f87925a8552ce",
-        "bytes": 40248,
+        "sha256": "1f034500b5bc65aca0db68ece1bd4f22d3546b6c6d3e5d5b628cbfc9a81f08f5",
+        "bytes": 40052,
         "content_type": "text/html",
         "delivery": {
           "mode": "exact"
@@ -130,7 +131,7 @@
         "path": "observer.js",
         "route": "/truth/lab/observer.js",
         "expected_status": 200,
-        "sha256": "398c55ce3660a31818106a46333d15f103ee6072a881970e15e42157e47e4c85",
+        "sha256": "6aa51888fbf93e539441258db65fe6aa9c34ae47bb5bc97ee5199ae59a167ab4",
         "bytes": 17017,
         "content_type": "javascript",
         "delivery": {
@@ -141,8 +142,8 @@
         "path": "research-sweep.js",
         "route": "/truth/lab/research-sweep.js",
         "expected_status": 200,
-        "sha256": "4b3db1559c12cb4b7fec61a83168b9e3b5ca17ecc0715a550dbe5a02aad7ed57",
-        "bytes": 28858,
+        "sha256": "4ec28cdf78a3c5287f9a06db2356c012300ccfe97176348517013bbf3fb7a33a",
+        "bytes": 30942,
         "content_type": "javascript",
         "delivery": {
           "mode": "exact"
@@ -196,7 +197,7 @@
         "path": "status.json",
         "route": "/truth/lab/status.json",
         "expected_status": 200,
-        "sha256": "4d1d3aa8fda4a8b288491a35336f48801bccbf7c0c4723094874e7557caaf43f",
+        "sha256": "f4398d2099a439b9a58f060ab81d671532a7a61435a359819af1d840d30c80f6",
         "bytes": 809,
         "content_type": "application/json",
         "delivery": {
@@ -207,8 +208,8 @@
         "path": "styles.css",
         "route": "/truth/lab/styles.css",
         "expected_status": 200,
-        "sha256": "848c35190d5ef1918c2d4c2ffc6511c80a93eb9301c0326062e2c8b78bd5dd8d",
-        "bytes": 40062,
+        "sha256": "a1c7013a1e4e9e46e8e794e0f2c53e94d989ea29d0ca305bc587a895dcc92185",
+        "bytes": 40593,
         "content_type": "text/css",
         "delivery": {
           "mode": "exact"

@@ -20,6 +20,7 @@ if(!preg_match('/^TW-CLAIM-\d{6}$/',$caseId)) $caseId='your Truth Trial';
     <p>Your challenge to <strong><?php echo htmlspecialchars($caseId,ENT_QUOTES,'UTF-8'); ?></strong> was received. Trust-Worthy will treat it as evidence to investigate—not as a comment to defeat.</p>
     <div class="manifesto">A serious challenge can strengthen, weaken, revise, or overturn a finding. That is the point of the trial.</div>
     <p><a class="button" href="/truth/">Return to Truth Trials</a></p>
+    <p class="muted"><a href="/privacy.html#truth-intake-privacy">How evidence challenges are used and retained</a></p>
   </div></section></main>
   <footer class="footer"><div class="wrap">Trust-Worthy AI · Don't trust the answer. Examine the evidence.</div></footer>
 </body>

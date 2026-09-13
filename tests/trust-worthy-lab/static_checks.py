@@ -43,11 +43,11 @@ assert (DIST / "release-manifest.json").is_file(), "release manifest is missing"
 assert (DIST / "404.html").is_file(), "custom 404 page is missing"
 assert (DIST / ".well-known" / "security.txt").is_file(), "security contact is missing"
 status = json.loads((DIST / "status.json").read_text(encoding="utf-8"))
-assert status["release"] == 15, "public status release is incorrect"
-assert status["observer"] == "trust-worthy-observer-v5", "public observer release is incorrect"
+assert status["release"] == 16, "public status release is incorrect"
+assert status["observer"] == "trust-worthy-observer-v6", "public observer release is incorrect"
 assert status["release_manifest"] == "/truth/lab/release-manifest.json", "public release-manifest route is incorrect"
-assert status["rollback_release"] == 14, "last-known-good rollback release is incorrect"
-assert status["rollback_source_commit"] == "10c0b4b140264808aebdf0d18cdd0b3632c358f2", "release-14 rollback commit is incorrect"
+assert status["rollback_release"] == 15, "last-known-good rollback release is incorrect"
+assert status["rollback_source_commit"] == "9c4faa71e9c4955c1e597b2b3f9c8a861cac3bf1", "release-16 rollback commit is incorrect"
 assert status["unknown_route_status"] == 404, "unknown routes must be declared as 404"
 assert status["expected_denials"]["OPTIONS"] == 405, "unsupported methods must remain denied"
 robots = DIST / "robots.txt"
@@ -130,8 +130,8 @@ for required in (
     "ordinary email, not an encrypted or legally privileged channel",
     "A customer may request access or deletion by email",
     "Local receipts are not a trust authority",
-    "Release 15 provenance",
-    "Release 14 · tested known-good",
+    "Release 16 provenance",
+    "Release 15 · tested known-good",
     "Open machine-readable manifest",
     "fails closed on any difference",
     "not a digital signature, proof of authorship, or external timestamp",
@@ -141,10 +141,11 @@ for required in (
     "You be the judge",
     "912-701-4008",
     "Serving Branson and the Table Rock Lake area",
-    "bobsome1-revenue-engine.thebobsomest1.chatgpt.site",
-    "bobsome1-media-it-preview.thebobsomest1.chatgpt.site",
+    "Bobsome1 home",
+    "Media + IT services",
 ):
     assert required in text, f"required safety or conversion text missing: {required}"
+assert "chatgpt.site" not in text, "public lab navigation must remain on the owned bobsome1.com surface"
 
 for element_id in (
     "coverage-form", "coverage-scope", "coverage-cutoff", "coverage-stop", "coverage-gaps",
@@ -199,14 +200,20 @@ assert ' name=' not in claim_tag.lower(), "claim textarea must not natively subm
 app_source = (DIST / "app.js").read_text(encoding="utf-8")
 research_source = (DIST / "research-sweep.js").read_text(encoding="utf-8")
 observer_source = (DIST / "observer.js").read_text(encoding="utf-8")
+lab_htaccess = (DIST / ".htaccess").read_text(encoding="utf-8")
 assert "trustedRegistryRecordForSaved" in app_source, "reviewed local records lack an immutable registry gate"
 assert "Local review claims are never trusted" in app_source, "forged review downgrade is missing"
 assert "DISCOVERY LEAD · NOT INSPECTED EVIDENCE" in app_source, "automated leads are not explicitly bounded"
 assert "low_overlap_metadata_families" in app_source, "lower-overlap families are missing from the canonical audit receipt"
 assert "first 1,000 cleaned characters of its provider description" in app_source, "the visible screen omits its provider-description limit"
 assert "assessResultRelevance" in research_source, "Source Sweep lacks its deterministic display screen"
-assert "claim-term-overlap-v1" in research_source, "Source Sweep screening policy is not named"
+assert "claim-term-overlap-v2" in research_source, "Source Sweep screening policy is not named"
+assert "requiredAnchorMatches" in research_source, "Source Sweep lacks its topic-anchor precision gate"
+assert '.normalize("NFKC")' in research_source, "Source Sweep lacks canonical Unicode normalization"
 assert "screeningExcerpt" in research_source, "the bounded screening input is not retained for audit"
+assert "RewriteCond %{HTTPS} !=on [OR]" in lab_htaccess, "lab child rewrites do not enforce HTTPS"
+assert "RewriteCond %{HTTP_HOST} !^bobsome1\\.com$ [NC]" in lab_htaccess, "lab child rewrites do not enforce the apex host"
+assert "RewriteRule ^ https://bobsome1.com%{REQUEST_URI} [R=301,L,NE]" in lab_htaccess, "lab canonical redirect must use a fixed owned host"
 assert 'behavior: "smooth"' not in app_source, "scripted smooth scrolling must respect the reduced-motion baseline"
 assert "open.innerHTML" not in app_source, "saved-case content must not be injected as HTML"
 assert "eval(" not in app_source and "eval(" not in research_source and "eval(" not in observer_source, "dynamic code execution is forbidden"
@@ -233,7 +240,7 @@ assert ".relevance-audit:not([open])" in styles, "printed reports must expose lo
 
 truth_home = (ROOT / "truth" / "index.php").read_text(encoding="utf-8")
 assert 'href="/truth/lab/">Evidence Lab</a>' in truth_home, "Truth on Trial navigation does not expose the Evidence Lab"
-assert 'id="lab"' in truth_home and "LIVE EVIDENCE WORKBENCH · RELEASE 15" in truth_home, "Truth on Trial lacks the integrated release card"
+assert 'id="lab"' in truth_home and "LIVE EVIDENCE WORKBENCH · RELEASE 16" in truth_home, "Truth on Trial lacks the integrated release card"
 assert 'action="/truth/investigate.php" method="post"' in truth_home, "the existing Truth Trial submission contract changed"
 assert all(f"/truth/case-00000{number}.php" in truth_home for number in range(1, 5)), "an existing Truth Trial route disappeared"
 
@@ -249,13 +256,89 @@ for required in ("ErrorDocument 404 /truth/lab/404.html", "R=405", "Content-Secu
 root_htaccess = (ROOT / ".htaccess").read_text(encoding="utf-8")
 assert "md|py|ya?ml" in root_htaccess, "internal source extensions are not denied"
 assert "(?:docs|scripts|tests)" in root_htaccess, "internal source directories are not denied"
+assert "RewriteCond %{HTTP_HOST} !^bobsome1\\.com$ [NC]" in root_htaccess, "root canonical redirect accepts an alternate Host"
+assert "RewriteRule ^ https://bobsome1.com%{REQUEST_URI} [R=301,L,NE]" in root_htaccess, "root canonical redirect must use the fixed owned host"
+for required in (
+    "Content-Security-Policy",
+    "object-src 'none'",
+    "frame-ancestors 'self'",
+    "form-action 'self'",
+    "Header always unset X-Powered-By",
+    "X-Permitted-Cross-Domain-Policies",
+    "PU_LAB_SCOPE",
+    "PU_READ_ONLY_METHOD_DENIED",
+    "RewriteCond %{REQUEST_FILENAME} -f",
+    "RewriteCond %{REQUEST_FILENAME} -d",
+    "RewriteRule ^truth/lib(?:/|$) - [F,L,NC]",
+):
+    assert required in root_htaccess, f"root hosting hardening is missing: {required}"
+assert root_htaccess.count("RewriteCond %{REQUEST_URI} !^/(?:owner|unveiltheinsideofme)(?:/|$) [NC]") == 2, "read-only method rules must preserve authenticated application routing"
+
+for protected_route in ("owner", "unveiltheinsideofme"):
+    protected_htaccess = (ROOT / protected_route / ".htaccess").read_text(encoding="utf-8")
+    expected_password_file = "/home/bobsome1/.htpasswds/public_html/{}/passwd".format(protected_route)
+    assert expected_password_file in protected_htaccess, "{} uses the wrong cPanel password-file path".format(protected_route)
+    assert "/home/bobsocdw/" not in protected_htaccess, "{} retains the retired cPanel account path".format(protected_route)
+
+daily_htaccess = (ROOT / "truth" / "daily" / ".htaccess").read_text(encoding="utf-8")
+for helper in ("compat", "config", "lib", "meat-desk", "queue-rotation", "traditions-of-men", "trial-filter"):
+    assert helper in daily_htaccess, f"daily include-only module remains publicly routable: {helper}.php"
+assert "Require all denied" in daily_htaccess, "daily include-only modules are not denied"
+
+root_home = (ROOT / "index.html").read_text(encoding="utf-8")
+assert 'href="/truth/today.php">Today\'s Trial</a>' in root_home, "Today's Truth Trial has no public incoming link"
+
+health_source = (ROOT / "truth" / "health.php").read_text(encoding="utf-8")
+for required in ("['GET', 'HEAD']", "http_response_code(405)", "Allow: GET, HEAD", "method_not_allowed", "truth-on-trial", "PHP_VERSION_ID >= 80100", "ctype_digit", "mb_check_encoding", "mb_strlen", "mb_substr", "tw_openai_key_readonly()", "tw_question_secret_readonly()", "tw_ai_private_storage_ready"):
+    assert required in health_source, f"health method/privacy contract is missing: {required}"
+for mutating_health_call in ("tw_openai_key()", "tw_question_secret()", "tw_migrate_ai_private_storage()"):
+    assert mutating_health_call not in health_source, f"unauthenticated health check invokes mutating storage helper: {mutating_health_call}"
+for forbidden in ("curl_enabled", "private_storage_exists", "openai_key_configured", "reasoning_effort", "daily_request_cap", "per_ip_daily_cap", "max_output_tokens", "max_web_search_calls"):
+    assert forbidden not in health_source, f"health endpoint exposes implementation detail: {forbidden}"
+
+cia_case = (ROOT / "truth" / "case-000004.php").read_text(encoding="utf-8")
+for stale in (
+    "https://www.cia.gov/readingroom/document/cia-rdp82b00421r000100020039-7",
+    "https://www.cia.gov/readingroom/docs/DOC_0001262737.pdf",
+):
+    assert stale not in cia_case, f"stale CIA citation remains: {stale}"
+assert "web.archive.org/web/20250305233503id_" in cia_case, "archived CIA policy record is missing"
+assert "archive.org/details/CIA-Family-Jewels/page/n20/mode/2up" in cia_case, "archived Project MOCKINGBIRD record is missing"
 
 root_security = (ROOT / ".well-known" / "security.txt").read_bytes()
 assert root_security == (DIST / ".well-known" / "security.txt").read_bytes(), "root and release security contacts differ"
 
 deployment = (ROOT / ".cpanel.yml").read_text(encoding="utf-8")
-for excluded in ("--exclude docs", "--exclude scripts", "--exclude tests", "--exclude '*.md'"):
-    assert excluded in deployment, f"cPanel deployment may publish internal material: {excluded}"
+deploy_script = (ROOT / "scripts" / "deploy-public.sh").read_text(encoding="utf-8")
+public_manifest = (ROOT / "deployment" / "public-files.txt").read_text(encoding="utf-8").splitlines()
+retired_paths = (ROOT / "deployment" / "retired-public-paths.txt").read_text(encoding="utf-8").splitlines()
+assert "./scripts/deploy-public.sh" in deployment, "cPanel deployment does not use the guarded public sync"
+assert "/usr/bin/rsync" not in deployment, "cPanel configuration must not bypass the guarded deployment script"
+for required in ('deployment/public-files.txt', '--files-from="$public_manifest"', "--no-implied-dirs", "--prune-empty-dirs"):
+    assert required in deploy_script, f"guarded public sync is missing: {required}"
+assert "--delete" not in deploy_script, "guarded public sync must not broadly delete public_html"
+assert public_manifest == sorted(set(public_manifest), key=lambda item: item.encode("utf-8")), "public deployment manifest is not unique and byte-order sorted"
+assert "index.html" in public_manifest and "truth/lab/index.html" in public_manifest, "public deployment manifest lacks required entry points"
+for retired_asset in ("unveiltheinsideofme/visual-approval.css", "unveiltheinsideofme/visual-approval.js"):
+    assert retired_asset in retired_paths, f"historically removed public asset is not retired: {retired_asset}"
+tracker_pages = []
+for path in public_manifest:
+    assert not path.startswith((".github/", "deployment/", "docs/", "scripts/", "tests/")), f"internal directory entered public deployment manifest: {path}"
+    assert not path.lower().endswith((".md", ".py", ".yml", ".yaml", ".zip", ".sql", ".log")), f"internal file entered public deployment manifest: {path}"
+    if path.lower().endswith((".html", ".php")):
+        source = (ROOT / path).read_text(encoding="utf-8")
+        if "/project-unveiled-analytics/tracker.js?v=" in source:
+            tracker_pages.append(path)
+            assert "/project-unveiled-analytics/tracker.js?v=5" in source, f"stale analytics cache token remains in {path}"
+assert tracker_pages, "no public analytics tracker references were verified"
+
+owner_route_contracts = {
+    "owner/funnel-servant/command-center.php": "'/owner/funnel-servant/?tab=community'",
+    "owner/funnel-servant/campaign-studio.php": 'href="/owner/funnel-servant/?tab=activity"',
+    "owner/funnel-servant/search.php": 'href="/owner/funnel-servant/?tab=drafts"',
+}
+for path, expected_route in owner_route_contracts.items():
+    assert expected_route in (ROOT / path).read_text(encoding="utf-8"), f"owner route is not canonical in {path}"
 
 for file_name in ("index.html", "app.js", "observer.js", "status.json", "robots.txt", "sitemap.xml"):
     public_text = (DIST / file_name).read_text(encoding="utf-8")

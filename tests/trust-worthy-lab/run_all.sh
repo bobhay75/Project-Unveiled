@@ -11,9 +11,23 @@ node --check tests/trust-worthy-lab/release-integrity.mjs
 node --check tests/trust-worthy-lab/release-manifest.mjs
 node --check tests/trust-worthy-lab/live-release-gate.mjs
 bash tests/trust-worthy-lab/investigate-method-gate.sh
+bash tests/trust-worthy-lab/health-method-gate.sh
+if command -v php >/dev/null 2>&1; then
+  php -r 'if (PHP_VERSION_ID < 80100) { fwrite(STDERR, "PHP 8.1 or newer is required.\n"); exit(1); }'
+  php tests/trust-worthy-public/backend-hardening.php
+  php tests/trust-worthy-intake/intake-storage.php
+  bash tests/trust-worthy-intake/request-gate.sh
+  php tests/trust-worthy-daily/hardening.php
+  php tests/project-unveiled-analytics/hardening.php
+else
+  echo "PHP behavior checks skipped: PHP is unavailable in this environment."
+fi
 node tests/trust-worthy-lab/release-manifest.mjs --check
 python3 scripts/validate_site.py
 python3 tests/trust-worthy-lab/static_checks.py
+python3 tests/trust-worthy-intake/static_checks.py
+python3 tests/trust-worthy-daily/static_checks.py
+python3 tests/project-unveiled-analytics/static_checks.py
 node tests/trust-worthy-lab/research-sweep.mjs
 node tests/trust-worthy-lab/app-smoke.mjs
 node tests/trust-worthy-lab/observer.mjs

@@ -2,6 +2,21 @@
 # Prevent directory browsing.
 Options -Indexes
 
+# Bound the public AI form before PHP parses or buffers a chunked request.
+# This basename also covers the private Daily Desk investigation endpoint,
+# whose application-level limit is smaller (8 KiB).
+<Files "investigate.php">
+  LimitRequestBody 16384
+</Files>
+
+<Files "question-submit.php">
+  LimitRequestBody 65536
+</Files>
+
+<Files "challenge-submit.php">
+  LimitRequestBody 114688
+</Files>
+
 # Block downloadable deployment packages, database files, checksums, logs, and backups.
 <FilesMatch "(?i)\.(zip|sha256|sql|bak|old|log)$">
   Require all denied
@@ -25,8 +40,31 @@ RewriteEngine On
 
 # Keep one secure, indexable public origin.
 RewriteCond %{HTTPS} !=on [OR]
-RewriteCond %{HTTP_HOST} ^www\.bobsome1\.com$ [NC]
+RewriteCond %{HTTP_HOST} !^bobsome1\.com$ [NC]
 RewriteRule ^ https://bobsome1.com%{REQUEST_URI} [R=301,L,NE]
+
+# Public static documents and assets are read-only. Normalize unsupported
+# methods here while leaving the site's named PHP form/API endpoints alone.
+RewriteCond %{REQUEST_METHOD} !^(?:GET|HEAD)$ [NC]
+RewriteCond %{REQUEST_URI} !^/(?:owner|unveiltheinsideofme)(?:/|$) [NC]
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule \.(?:avif|css|gif|html?|ico|jpe?g|js|json|mjs|mp3|mp4|pdf|png|svg|txt|webmanifest|webp|xml)$ - [R=405,L,E=PU_READ_ONLY_METHOD_DENIED:1,NC]
+
+RewriteCond %{REQUEST_METHOD} !^(?:GET|HEAD)$ [NC]
+RewriteCond %{REQUEST_URI} !^/(?:owner|unveiltheinsideofme)(?:/|$) [NC]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteCond %{REQUEST_FILENAME}/index.html -f
+RewriteRule ^ - [R=405,L,E=PU_READ_ONLY_METHOD_DENIED:1]
+
+# These public Truth routes render documents; writes belong only at the
+# explicitly named submission and investigation endpoints.
+RewriteCond %{REQUEST_METHOD} !^(?:GET|HEAD)$ [NC]
+RewriteRule ^truth/(?:index\.php|today\.php|deep-dive\.php|case-00000[1-4]\.php|question-received\.php|challenge-received\.php)$ - [R=405,L,E=PU_READ_ONLY_METHOD_DENIED:1,NC]
+
+# PHP modules are include-only. Internal require/include calls do not pass
+# through Apache routing, so denying their public URLs cannot break callers.
+RewriteRule ^truth/lib(?:/|$) - [F,L,NC]
+RewriteRule ^project-unveiled-analytics/lib\.php$ - [F,L,NC]
 
 # Block old installer payloads and test application folders while leaving the live site alone.
 RewriteRule ^(?:_pu_[^/]+|pu-signup-v73|truth-unveiled-os-0\.0\.1)(?:/|$) - [F,L,NC]
@@ -43,9 +81,22 @@ RewriteRule (^|/)[^/]*BACKUP[^/]*\.html$ - [F,L,NC]
 </FilesMatch>
 
 <IfModule mod_headers.c>
+  Header unset X-Powered-By
+  Header always unset X-Powered-By
+  Header always set Allow "GET, HEAD" env=PU_READ_ONLY_METHOD_DENIED
+  Header always set Allow "GET, HEAD" env=REDIRECT_PU_READ_ONLY_METHOD_DENIED
   Header always set X-Content-Type-Options "nosniff"
   Header always set Referrer-Policy "strict-origin-when-cross-origin"
   Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=()"
   Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set X-Permitted-Cross-Domain-Policies "none"
   Header always set Strict-Transport-Security "max-age=31536000"
+  <IfModule mod_setenvif.c>
+    # The lab declares a stricter route-specific policy with approved research
+    # providers. Avoid intersecting it with this broader public-site policy.
+    SetEnvIf Request_URI "^/truth/lab(?:/|$)" PU_LAB_SCOPE=1
+    Header always set Content-Security-Policy "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; frame-src 'none'; form-action 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self'; media-src 'self' blob:; worker-src 'self' blob:; manifest-src 'self'; upgrade-insecure-requests" env=!PU_LAB_SCOPE
+  </IfModule>
 </IfModule>
+
+ServerSignature Off

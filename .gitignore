@@ -19,3 +19,7 @@ error_log
 Thumbs.db
 .idea/
 .vscode/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/

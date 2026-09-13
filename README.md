@@ -13,6 +13,7 @@ The source for [bobsome1.com](https://bobsome1.com), including the complete publ
 - `/truth/` — Published Truth Trials and question intake
 - `/truth/lab/` — Local-first Trust-Worthy claim-mapping and Source Sweep workbench
 - `/services/` — Bobsome1 Media + IT services and selected work
+- `/store/` — Digital edition, fixed-scope service checkout, and partner paths
 
 ## Hosting
 
@@ -37,3 +38,14 @@ node --check worksite/project-unveiled-analytics/tracker.js
 ```
 
 The current public-site audit covers local links, linked files, URL fragments, duplicate IDs, H1/title counts, and JSON-LD syntax. Run `bash tests/trust-worthy-lab/run_all.sh` for the Trust-Worthy release, research-engine, provenance, hostile-input, privacy, and rollback contract.
+
+Before changing the cPanel deployment policy or removing a public file, also run:
+
+```bash
+python3 scripts/check-deployment-safety.py --write-manifest
+python3 scripts/check-deployment-safety.py
+python3 scripts/security-audit.py --history
+bash tests/deployment/run.sh
+```
+
+Deployment copies only the reproducible allowlist in `deployment/public-files.txt`. Public-file removal is explicit rather than recursive: register an old path in `deployment/retired-public-paths.txt`. This prevents stale endpoints without risking separately managed files or runtime data under `public_html`.

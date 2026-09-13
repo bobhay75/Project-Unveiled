@@ -12,6 +12,13 @@ ErrorDocument 404 /truth/lab/404.html
 <IfModule mod_rewrite.c>
   RewriteEngine On
 
+  # Child rewrite rules replace the parent per-directory rewrite context on
+  # this host, so enforce the owned canonical origin here as well. The fixed
+  # destination prevents an untrusted Host header from entering Location.
+  RewriteCond %{HTTPS} !=on [OR]
+  RewriteCond %{HTTP_HOST} !^bobsome1\.com$ [NC]
+  RewriteRule ^ https://bobsome1.com%{REQUEST_URI} [R=301,L,NE]
+
   # One canonical address for the lab document.
   RewriteCond %{THE_REQUEST} \s/+truth/lab/index\.html(?:[\s?]) [NC]
   RewriteRule ^index\.html$ /truth/lab/ [R=301,L,NE]

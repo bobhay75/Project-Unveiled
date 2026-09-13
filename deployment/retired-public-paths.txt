@@ -1,0 +1,9 @@
+# Exact repository-relative files that may remain in public_html after removal
+# from Git. The deployment script removes only entries listed here. Directories,
+# globs, absolute paths, and parent traversal are rejected.
+
+# Historical repository archives removed before the hardened deploy policy.
+Project-Unveiled-repository-ready.zip
+Project-Unveiled-repository-ready (2).zip
+unveiltheinsideofme/visual-approval.css
+unveiltheinsideofme/visual-approval.js

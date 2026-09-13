@@ -154,7 +154,7 @@
   if (dnt || gpc) return;
 
   const endpoint = '/project-unveiled-analytics/collect.php';
-  const allowedCampaignKeys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'];
+  const allowedCampaignKeys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content'];
   const maxText = 300;
 
   const clean = (value, limit = maxText) => String(value || '').replace(/[\u0000-\u001f\u007f]/g, '').slice(0, limit);
@@ -204,11 +204,26 @@
     try {
       if (!document.referrer) return '';
       const url = new URL(document.referrer);
-      return clean(url.hostname + url.pathname, 240);
+      return clean(url.hostname, 240);
     } catch (_) {
       return '';
     }
   })();
+
+  const privacySafeTarget = (value) => {
+    if (!value) return '';
+    try {
+      const url = new URL(value, window.location.origin);
+      if (url.protocol === 'https:') {
+        const path = url.pathname || '/';
+        return url.origin === window.location.origin ? path : `${url.origin}${path}`;
+      }
+      if (url.protocol === 'mailto:' || url.protocol === 'tel:') {
+        return `${url.protocol}${url.pathname}`;
+      }
+    } catch (_) {}
+    return '';
+  };
 
   const send = (eventName, details = {}) => {
     const payload = {
@@ -222,7 +237,6 @@
       medium: clean(campaign.medium || '', 120),
       campaign: clean(campaign.campaign || '', 120),
       content: clean(campaign.content || '', 120),
-      term: clean(campaign.term || '', 120),
       target: clean(details.target || '', 300),
       label: clean(details.label || '', 180)
     };
@@ -291,7 +305,7 @@
     if (!eventName && currentChapter === 13 && /\/book\/read\/?(?:#.*)?$/i.test(href)) eventName = 'book_complete';
     if (!eventName) return;
 
-    send(eventName, { target: absoluteHref || href, label: text });
+    send(eventName, { target: privacySafeTarget(absoluteHref || href), label: text });
   }, true);
 
   const chapterSearch = document.getElementById('chapter-search');
@@ -300,7 +314,9 @@
     chapterSearch.addEventListener('input', () => {
       if (!searchRecorded && chapterSearch.value.trim().length >= 2) {
         searchRecorded = true;
-        send('search_use', { label: chapterSearch.value.trim() });
+        // Record only that search was used. Free-text search terms may contain
+        // personal or sensitive material and never belong in analytics.
+        send('search_use');
       }
     });
   }

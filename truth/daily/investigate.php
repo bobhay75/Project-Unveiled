@@ -1,52 +1,79 @@
 <?php
 declare(strict_types=1);
+require __DIR__ . '/lib.php';
+require __DIR__ . '/legacy-migration.php';
 
-// Shared-hosting-safe secret loading. Environment variables still take priority,
-// but cPanel users may store the key outside public_html at the private path below.
-$privateKeyFile = dirname(__DIR__, 3) . '/site-private/trust-worthy/openai-key.txt';
-if (is_file($privateKeyFile)) {
-    $privateKey = (string)file_get_contents($privateKeyFile);
-    // Be forgiving about common cPanel/File Manager formats:
-    // OPENAI_API_KEY=sk-..., TRUST_WORTHY_OPENAI_API_KEY="sk-...", or Bearer sk-...
-    $privateKey = preg_replace('/^\xEF\xBB\xBF/', '', $privateKey) ?? $privateKey;
-    $privateKey = trim($privateKey);
-    if (preg_match('/^(?:TRUST_WORTHY_OPENAI_API_KEY|OPENAI_API_KEY|INSIDE_OF_ME_OPENAI_API_KEY)\s*=\s*(.+)$/is', $privateKey, $m)) {
-        $privateKey = trim($m[1]);
-    }
-    $privateKey = preg_replace('/^Bearer\s+/i', '', $privateKey) ?? $privateKey;
-    $privateKey = trim($privateKey, " \t\n\r\0\x0B\"'");
+tw_admin_private_headers();
+tw_require_same_origin_form_post(8192);
+tw_require_admin();
+tw_require_admin_csrf();
+$privateDir = tw_private_dir();
+tw_daily_prune_expired_candidate_derivatives($privateDir);
 
-    if ($privateKey !== '') {
-        // Keep the canonical private file normalized so lib.php reads exactly the token.
-        $current = trim((string)file_get_contents($privateKeyFile));
-        if ($current !== $privateKey) {
-            @file_put_contents($privateKeyFile, $privateKey . "\n", LOCK_EX);
-            @chmod($privateKeyFile, 0640);
-        }
-        putenv('TRUST_WORTHY_OPENAI_API_KEY=' . $privateKey);
-    }
-    unset($privateKey, $current, $m);
+$config = require __DIR__ . '/config.php';
+$idValue = tw_post_scalar('id', 80);
+$id = $idValue === null ? '' : trim($idValue);
+if (!preg_match('/^[a-zA-Z0-9-]{1,80}$/', $id)) {
+    http_response_code(422);
+    exit('A valid candidate identifier is required.');
 }
 
-require __DIR__ . '/lib.php';
-$config = require __DIR__ . '/config.php';
-$key = tw_require_admin();
-if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') { http_response_code(405); header('Allow: POST'); exit('POST required.'); }
-$id = trim((string)($_POST['id'] ?? ''));
-$queue = tw_json_read(tw_private_dir() . '/daily-candidates.json');
+$queue = tw_private_json_read_strict($privateDir . '/daily-candidates.json', [], 2097152);
 $candidate = null;
 foreach (($queue['candidates'] ?? []) as $row) {
-    if (($row['id'] ?? '') === $id) { $candidate = $row; break; }
+    if (is_array($row) && ($row['id'] ?? '') === $id) {
+        $candidate = $row;
+        break;
+    }
 }
-if (!is_array($candidate)) { http_response_code(404); exit('Candidate not found. Refresh the queue and try again.'); }
+if (!is_array($candidate)) {
+    http_response_code(404);
+    exit('Candidate not found. Refresh the queue and try again.');
+}
+if (!tw_daily_private_candidate_is_current($candidate)) {
+    http_response_code(410);
+    exit('This private question has expired. Refresh the queue and choose another candidate.');
+}
 
+$reservation = null;
 try {
-    $report = tw_run_investigation($candidate, (string)$config['openai_model']);
-    tw_json_write(tw_private_dir() . '/daily-draft.json', $report);
-    header('Location: /truth/daily/desk.php?key=' . rawurlencode($key) . '&generated=1', true, 303);
-    exit;
-} catch (Throwable $e) {
-    tw_json_write(tw_private_dir() . '/daily-last-error.json', ['at_utc' => gmdate('c'), 'message' => $e->getMessage()]);
-    header('Location: /truth/daily/desk.php?key=' . rawurlencode($key) . '&error=' . rawurlencode($e->getMessage()), true, 303);
-    exit;
+    $dailyAi = is_array($config['daily_ai'] ?? null) ? $config['daily_ai'] : [];
+    $reservation = tw_daily_ai_reserve($dailyAi);
+    $providerSucceeded = false;
+    $usage = [];
+    try {
+        $report = tw_run_investigation($candidate, (string)$config['openai_model'], $dailyAi);
+        $providerSucceeded = true;
+        $usage = is_array($report['_meta']['provider_usage'] ?? null) ? $report['_meta']['provider_usage'] : [];
+    } finally {
+        $finishId = $reservation;
+        $reservation = null;
+        tw_daily_ai_finish($finishId, $providerSucceeded, $usage);
+    }
+    tw_store_daily_draft($report);
+    tw_admin_flash_set('success', tw_daily_draft_is_private_question($report)
+        ? 'Private investigation drafted. Publication is disabled because the question was submitted privately.'
+        : 'Investigation drafted and bound to its evidence record. Human review is required before publication.');
+} catch (Throwable) {
+    if ($reservation !== null) {
+        try {
+            tw_daily_ai_finish($reservation, false);
+        } catch (Throwable $ignored) {
+            // The active lease expires automatically. Never bypass a failed budget reconciliation.
+        }
+    }
+    try {
+        tw_json_write(tw_private_dir() . '/daily-safe-error.json', [
+            'at_utc' => gmdate('c'),
+            'category' => 'daily_investigation',
+            'code' => 'TW_DAILY_INVESTIGATION_FAILED',
+            'message' => 'The investigation stopped safely; no research draft was stored.',
+        ]);
+    } catch (Throwable $ignored) {
+        // Never let a logging failure replace the stable owner-safe response.
+    }
+    tw_admin_flash_set('error', 'The investigation stopped safely; no research draft was stored. Reference: TW_DAILY_INVESTIGATION_FAILED.');
 }
+
+header('Location: /truth/daily/desk.php', true, 303);
+exit;
