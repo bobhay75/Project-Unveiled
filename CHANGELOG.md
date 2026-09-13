@@ -6,7 +6,7 @@
 - Applied screening only after DOI and canonical-URL family merging, preventing a lower-overlap provider variant from erasing the provenance of an identity-linked higher-overlap record.
 - Corrected the public hosting disclosure to Namecheap shared hosting and removed the stale ChatGPT Sites delivery claim.
 - Advanced the exact-byte release manifest and local observer to release 15 / observer v5, with verified release 14 commit `10c0b4b140264808aebdf0d18cdd0b3632c358f2` as the rollback point.
-- Kept the dependency-free release validators compatible with the Python 3.6 runtime supplied by the production cPanel shell.
+- Kept the dependency-free release gate compatible with the Python 3.6 and GNU grep tools supplied by the production cPanel shell.
 
 ## Trust-Worthy Canonical Evidence Lab — September 12, 2026
 
