@@ -1,5 +1,13 @@
 # Evidence Phase 2 Changelog
 
+## Revenue Funnel Foundation — September 13, 2026
+
+- Added `/store/` as the clear revenue hub for the $7 Project Unveiled digital edition, the exact $250 Visibility Starter checkout, qualified service inquiries, and partner/sponsor proposals.
+- Added owned conversion events for store, checkout, lead and partner actions while preserving DNT/GPC behavior.
+- Added a capped $35 Meta campaign brief with a required checkout and analytics preflight.
+- Added a ranked partner/sponsor pipeline with value-first outreach and disclosure guardrails.
+- Added Store discovery to the homepage, services page and shared reader navigation.
+
 ## Trust-Worthy Release 15 — September 13, 2026
 
 - Added a deterministic claim-term-overlap display screen so Source Sweep presents higher-overlap metadata first while preserving lower-overlap families, every provider variant, exact query counts, and screening details in an audit drawer and canonical receipt.

@@ -41,7 +41,9 @@ if (!is_array($data)) {
 
 $allowedEvents = [
     'pageview', 'chapter_start', 'chapter_next', 'share_click',
-    'support_page_click', 'paypal_click', 'book_complete'
+    'support_page_click', 'paypal_click', 'book_complete', 'store_click',
+    'product_checkout_click', 'service_checkout_click', 'free_reader_click',
+    'qualified_lead_click', 'partner_inquiry_click'
 ];
 $event = strtolower((string)($data['event'] ?? ''));
 if (!in_array($event, $allowedEvents, true)) {
