@@ -2,7 +2,7 @@
 declare(strict_types=1);
 require __DIR__ . '/lib.php';
 $key = tw_require_admin();
-if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') { http_response_code(405); exit('POST required.'); }
+if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') { http_response_code(405); header('Allow: POST'); exit('POST required.'); }
 
 function field(string $name, int $limit = 12000): string {
     return mb_substr(trim((string)($_POST[$name] ?? '')), 0, $limit);

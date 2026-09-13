@@ -31,7 +31,7 @@ if (is_file($privateKeyFile)) {
 require __DIR__ . '/lib.php';
 $config = require __DIR__ . '/config.php';
 $key = tw_require_admin();
-if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') { http_response_code(405); exit('POST required.'); }
+if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') { http_response_code(405); header('Allow: POST'); exit('POST required.'); }
 $id = trim((string)($_POST['id'] ?? ''));
 $queue = tw_json_read(tw_private_dir() . '/daily-candidates.json');
 $candidate = null;
