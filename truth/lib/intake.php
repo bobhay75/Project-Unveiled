@@ -109,23 +109,23 @@ function tw_intake_require_file_mode(string $path, int $mode, string $label): vo
     if (is_link($path)) {
         throw new TwIntakeException($label . ' must not be a symlink.');
     }
-    $stat = @lstat($path);
-    if (!is_array($stat) || ((((int)$stat['mode']) & 0170000) !== 0100000)) {
+    $before = @lstat($path);
+    if (!is_array($before) || ((((int)$before['mode']) & 0170000) !== 0100000)) {
         throw new TwIntakeException($label . ' must be a regular file.');
     }
-    if (!@chmod($path, $mode)) {
+    if ((((int)$before['mode']) & 0777) !== $mode && !@chmod($path, $mode)) {
         throw new TwIntakeException($label . ' permissions could not be secured.');
     }
     clearstatcache(true, $path);
     if (is_link($path)) {
         throw new TwIntakeException($label . ' changed into a symlink.');
     }
-    $stat = @lstat($path);
-    $permissions = @fileperms($path);
-    if (!is_array($stat)
-        || ((((int)$stat['mode']) & 0170000) !== 0100000)
-        || !is_int($permissions)
-        || ($permissions & 0777) !== $mode
+    $after = @lstat($path);
+    if (!is_array($after)
+        || ((((int)$after['mode']) & 0170000) !== 0100000)
+        || (int)$after['dev'] !== (int)$before['dev']
+        || (int)$after['ino'] !== (int)$before['ino']
+        || ((((int)$after['mode']) & 0777) !== $mode)
     ) {
         throw new TwIntakeException($label . ' permissions could not be verified.');
     }
@@ -164,7 +164,10 @@ function tw_intake_secure_open_file($handle, string $path, int $mode, string $la
     ) {
         throw new TwIntakeException($label . ' changed unexpectedly or could not be verified.');
     }
-    if (!@fchmod($handle, $mode)) {
+    // The containing private directory is verified as owner-writable only.
+    // Recheck the pathname-to-handle identity immediately around PHP's
+    // pathname-only chmod(), then fail closed if either identity changed.
+    if ((((int)$opened['mode']) & 0777) !== $mode && !@chmod($path, $mode)) {
         throw new TwIntakeException($label . ' permissions could not be secured.');
     }
     clearstatcache(true, $path);

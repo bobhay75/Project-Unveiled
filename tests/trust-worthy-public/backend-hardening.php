@@ -197,6 +197,7 @@ check(str_contains($publicEndpoint, "'question_hash'=>hash_hmac") && str_contain
 check(!str_contains($publicEndpoint, "'response_id'=>") && str_contains($publicEndpoint, "\$record['response_id_hash']=hash_hmac"), 'provider response IDs must be keyed before entering the investigation log');
 $aiGateway = file_get_contents(dirname(__DIR__, 2) . '/truth/lib/trust-worthy-ai.php');
 check(is_string($aiGateway) && str_contains($aiGateway, "'store' => false"), 'public OpenAI requests must disable provider-side response storage');
+check(!str_contains($aiGateway, 'fchmod('), 'AI storage depends on PHP\'s nonexistent fchmod function');
 check(str_contains($aiGateway, 'CURLOPT_WRITEFUNCTION') && str_contains($aiGateway, '$maximumResponseBytes = 4194304'), 'provider response bodies must be bounded before JSON decoding');
 check(str_contains($publicEndpoint, "hash_hmac('sha256','ai-ip|'"), 'AI quota identifiers must use a domain-separated IP HMAC');
 check(!str_contains($publicEndpoint, "hash_hmac('sha256','ip|'"), 'AI quota identifiers must not reuse the intake ledger HMAC domain');

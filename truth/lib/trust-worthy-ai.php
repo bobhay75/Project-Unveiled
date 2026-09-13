@@ -47,17 +47,17 @@ function tw_ai_secure_open_regular_file($handle, string $path, int $mode = 0600)
     if (!is_resource($handle)) return false;
     $opened = @fstat($handle);
     if (!is_array($opened) || ((((int)$opened['mode']) & 0170000) !== 0100000)) return false;
-    // Establish that the opened inode is still the non-symlink path before
-    // changing its mode. Otherwise a path-swap race could chmod an unrelated
-    // symlink target even though the subsequent identity check fails closed.
+    // PHP exposes pathname chmod(), not descriptor-level chmod. Establish that
+    // the owner-protected pathname still names this opened regular file,
+    // change its mode, then repeat the full identity and mode verification.
     clearstatcache(true, $path);
     if (is_link($path)) return false;
     $pathStat = @lstat($path);
     if (!is_array($pathStat)
         || ((((int)$pathStat['mode']) & 0170000) !== 0100000)
         || (int)$pathStat['dev'] !== (int)$opened['dev']
-        || (int)$pathStat['ino'] !== (int)$opened['ino']
-        || !@fchmod($handle, $mode)) return false;
+        || (int)$pathStat['ino'] !== (int)$opened['ino']) return false;
+    if ((((int)$opened['mode']) & 0777) !== $mode && !@chmod($path, $mode)) return false;
     clearstatcache(true, $path);
     if (is_link($path)) return false;
     $pathStat = @lstat($path);
@@ -896,8 +896,11 @@ function tw_migrate_ai_private_storage(): array {
     }
     // Authenticated deployment migration initializes the HMAC secret so the
     // public read-only health route never has to create private state.
-    $secret = tw_question_secret();
-    if ($secret === '') throw new RuntimeException('Private AI storage secret is unavailable.');
+    // This runs only from the authenticated CLI migration. Let the shared
+    // intake exception retain its safe, specific failure reason here; the
+    // public request path still uses tw_question_secret() and its generic
+    // fail-closed empty result.
+    $secret = tw_intake_secret('question');
 
     $keyPath = $dir . '/openai-key.txt';
     $keyMigrated = 0;

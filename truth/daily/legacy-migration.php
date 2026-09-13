@@ -70,7 +70,7 @@ function tw_daily_legacy_open_file(string $path, string $mode, string $label, ?a
         ) {
             throw new RuntimeException($label . ' changed before it could be secured.');
         }
-        if (!fchmod($handle, 0600)) {
+        if ((((int)($handleStat['mode'] ?? 0)) & 0777) !== 0600 && !chmod($path, 0600)) {
             throw new RuntimeException($label . ' permissions could not be restricted.');
         }
         clearstatcache(true, $path);

@@ -129,7 +129,8 @@ def main() -> None:
     require("is_link($privatePath)" in library, "OpenAI fallback accepts a symlink")
     require(library.count("lstat($privatePath)") >= 2, "OpenAI fallback identity is not checked across its read")
     require("fopen($privatePath, 'rb')" in library, "OpenAI fallback is not read through a verified handle")
-    require("fstat($handle)" in library and "fchmod($handle, 0600)" in library, "OpenAI fallback handle is not secured")
+    require("fstat($handle)" in library and "!chmod($privatePath, 0600)" in library, "OpenAI fallback handle is not secured")
+    require("fchmod(" not in library, "Daily storage depends on PHP's nonexistent fchmod function")
     require("file_get_contents($privatePath)" not in library, "OpenAI fallback follows its pathname during the secret read")
     require("$size > 8192" in library and "8193" in library, "OpenAI fallback read is not size bounded")
     require("& 0777) === 0600" in library, "OpenAI fallback mode is not verified")
@@ -143,6 +144,7 @@ def main() -> None:
     )
 
     migration = text("truth/daily/legacy-migration.php")
+    require("fchmod(" not in migration, "Daily migration depends on PHP's nonexistent fchmod function")
     migration_cli = text("scripts/migrate-intake-permissions.php")
     daily_htaccess = text("truth/daily/.htaccess")
     require("LimitRequestBody 524288" in daily_htaccess, "Daily requests are not bounded before PHP body parsing")

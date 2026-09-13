@@ -102,8 +102,12 @@ if command -v php >/dev/null 2>&1; then
     php scripts/migrate-intake-permissions.php --pre-sync >/dev/null
   phase_after_failed_sync="$(sha256sum "$phase_private/daily-admin-token.txt" "$phase_private/daily-last-error.json" "$phase_private/daily-draft.json")"
   [[ "$phase_after_failed_sync" == "$phase_before" ]]
+  grep -Eq '^[a-f0-9]{64}$' "$phase_private/question-secret.txt"
+  [[ "$(stat -c '%a' "$phase_private/question-secret.txt")" == "600" ]]
+  phase_secret_before="$(sha256sum "$phase_private/question-secret.txt")"
   PROJECT_UNVEILED_DEPLOY_TEST_MODE=1 TW_INTAKE_MIGRATION_TEST_DIR="$phase_private" \
     php scripts/migrate-intake-permissions.php --post-sync >/dev/null
+  [[ "$(sha256sum "$phase_private/question-secret.txt")" == "$phase_secret_before" ]]
   test ! -e "$phase_private/daily-admin-token.txt"
   test ! -e "$phase_private/daily-last-error.json"
   test ! -e "$phase_private/daily-draft.json"

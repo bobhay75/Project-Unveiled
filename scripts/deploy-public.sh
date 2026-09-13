@@ -149,7 +149,7 @@ done < "$public_manifest"
 if [[ "${PROJECT_UNVEILED_DEPLOY_TEST_MODE:-0}" != "1" ]]; then
   migration_php="/usr/local/bin/php"
   [[ -x "$migration_php" ]] || fail "documented cPanel PHP is unavailable for the private runtime migration"
-  "$migration_php" -r 'if (PHP_VERSION_ID < 80100) { fwrite(STDERR, "PHP 8.1 or newer is required.\n"); exit(1); } foreach (["ctype_digit", "curl_init", "mb_check_encoding", "mb_strlen", "mb_substr"] as $function) { if (!function_exists($function)) { fwrite(STDERR, "Required PHP function unavailable: {$function}\n"); exit(1); } }' || \
+  "$migration_php" -r 'if (PHP_VERSION_ID < 80100) { fwrite(STDERR, "PHP 8.1 or newer is required.\n"); exit(1); } foreach (["chmod", "ctype_digit", "curl_init", "mb_check_encoding", "mb_strlen", "mb_substr"] as $function) { if (!function_exists($function)) { fwrite(STDERR, "Required PHP function unavailable: {$function}\n"); exit(1); } }' || \
     fail "required cPanel PHP 8.1 runtime or extensions are unavailable"
   "$migration_php" -q "$repo_root/scripts/migrate-intake-permissions.php" --pre-sync || \
     fail "private runtime migration failed"

@@ -79,7 +79,9 @@ function tw_daily_open_regular_file(string $path, string $openMode, string $labe
             throw new RuntimeException($label . ' changed before it could be secured.');
         }
         if ($requiredMode !== null) {
-            if (!fchmod($handle, $requiredMode)) {
+            if ((((int)($handleStat['mode'] ?? 0)) & 0777) !== $requiredMode
+                && !chmod($path, $requiredMode)
+            ) {
                 throw new RuntimeException($label . ' permissions could not be restricted.');
             }
             clearstatcache(true, $path);
@@ -1090,7 +1092,20 @@ function tw_openai_key(): string {
         }
         if (!flock($handle, LOCK_SH)) throw new RuntimeException('OpenAI key file could not be locked safely.');
         $locked = true;
-        if (!fchmod($handle, 0600)) {
+        clearstatcache(true, $privatePath);
+        $lockedPath = lstat($privatePath);
+        $lockedHandle = fstat($handle);
+        if (is_link($privatePath)
+            || !$sameFile($pathBefore, $lockedPath)
+            || !$sameFile($lockedPath, $lockedHandle)
+            || !is_array($lockedHandle)
+            || ((((int)($lockedHandle['mode'] ?? 0)) & 0170000) !== 0100000)
+        ) {
+            throw new RuntimeException('OpenAI key file changed before its permissions could be restricted.');
+        }
+        if ((((int)($lockedHandle['mode'] ?? 0)) & 0777) !== 0600
+            && !chmod($privatePath, 0600)
+        ) {
             throw new RuntimeException('OpenAI key permissions could not be restricted to owner-only access.');
         }
 

@@ -58,6 +58,8 @@ assert HELPER.index(
 ), "private queue data is written before owner-only permissions are verified"
 assert "$contentType !== 'application/x-www-form-urlencoded'" in HELPER, "multipart input is not denied"
 assert "['application/x-www-form-urlencoded', 'multipart/form-data']" not in HELPER, "multipart input remains allowed"
+assert "fchmod(" not in HELPER, "intake storage depends on PHP's nonexistent fchmod function"
+assert "!@chmod($path, $mode)" in HELPER, "portable private-file permission migration is missing"
 
 for exact_name in (
     "question-secret.txt",
@@ -77,6 +79,7 @@ post_migration = '"$migration_php" -q "$repo_root/scripts/migrate-intake-permiss
 assert production_migration in DEPLOY, "real deployment does not select documented cPanel PHP"
 assert "PHP_VERSION_ID < 80100" in DEPLOY, "real deployment does not require PHP 8.1 or newer"
 assert '"ctype_digit"' in DEPLOY, "real deployment does not require the ctype request-validation function"
+assert '"chmod"' in DEPLOY, "real deployment does not require portable permission migration support"
 assert pre_migration in DEPLOY, "real deployment does not invoke pre-sync permission migration"
 assert post_migration in DEPLOY, "real deployment does not invoke post-sync private migration"
 assert DEPLOY.index(pre_migration) < DEPLOY.rindex("/usr/bin/rsync"), "pre-sync permission migration runs after public sync"
