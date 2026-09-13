@@ -417,7 +417,8 @@ const nodes = {
 };
 
 const emptyCoverage = () => ({ scope: "", cutoff: "", stop: "", gaps: "" });
-const emptyResearchRun = () => ({ schema: "trust-worthy-source-sweep-v1", status: "idle", startedAt: "", completedAt: "", claim: "", queries: [], results: [] });
+const emptyScreening = () => ({ policy: "claim-term-overlap-v1", mode: "not-run", requiredMatchCount: 0, titleCharacterLimit: 240, descriptionCharacterLimit: 1000, returnedFamilyCount: 0, retainedFamilyCount: 0, screenedOutFamilyCount: 0 });
+const emptyResearchRun = () => ({ schema: "trust-worthy-source-sweep-v2", status: "idle", startedAt: "", completedAt: "", claim: "", queries: [], results: [], lowOverlapResults: [], screening: emptyScreening() });
 const emptyArchive = () => ({ receipt: "", hash: "", verified: "" });
 let state = { claim: "", map: null, evidence: [], coverage: emptyCoverage(), coverageOrigin: "none", research: emptyResearchRun(), curated: false, caseId: null, recordVersion: null, reviewedAt: null, parent: null, archive: emptyArchive() };
 let lastReport = "";
@@ -794,18 +795,30 @@ function currentMissingEvidenceGaps() {
 function coverageFromResearch(run) {
   const completed = (run.queries || []).filter(item => item.status === "complete");
   const failed = (run.queries || []).filter(item => item.status !== "complete");
+  const lowOverlapCount = Number(run.screening?.screenedOutFamilyCount ?? (run.lowOverlapResults || []).length);
+  const screenMode = run.screening?.mode || (Number(run.screening?.requiredMatchCount || 0) ? "applied" : "bypassed-no-usable-terms");
+  const screenBoundary = screenMode === "applied"
+    ? "The claim-term display screen was applied."
+    : "The claim supplied no usable screening terms, so metadata was left unscreened.";
+  const countBoundary = screenMode === "applied"
+    ? "raw metadata counts, higher-overlap counts, lower-overlap counts, and errors"
+    : "raw unscreened metadata counts and errors";
+  const overlapBoundary = screenMode === "applied"
+    ? `${lowOverlapCount} lower-overlap metadata famil${lowOverlapCount === 1 ? "y was" : "ies were"} separated from the primary leads but preserved in the audit drawer. This lexical display screen can miss inflections, synonyms, abbreviations, translations, and unfamiliar terminology; it is not an evidentiary judgment.`
+    : "No higher/lower split was made because the claim supplied no usable screening terms.";
   const lanes = (run.queries || []).map(item => `${item.provider} ${item.stance} (${item.status})`).join("; ");
   const failedNames = failed.length ? ` Failed or cancelled lanes: ${failed.map(item => `${item.provider} ${item.stance}: ${item.error || item.status}`).join("; ")}.` : " All six bounded lanes returned a response.";
   return {
-    scope: `Automatic Source Sweep execution receipt: ${lanes}. Exact encoded queries, UTC timestamps, result counts, and errors are preserved in the search receipt.`,
+    scope: `Automatic Source Sweep execution receipt: ${lanes}. Exact encoded queries, UTC timestamps, ${countBoundary} are preserved in the search receipt. ${screenBoundary}`,
     cutoff: run.completedAt || new Date().toISOString(),
     stop: `Bounded automatic stop after requesting the top 5 metadata hits from each of ${run.queries.length} predeclared lanes; no pagination or full-text inspection.`,
-    gaps: `${failedNames} Search ranking, unindexed pages, general web results, other languages, paywalled text, deleted, private, sealed, classified, and undiscovered records remain outside this sweep. ${completed.length} lanes completed; a zero-result lane is never evidence that the claim is false.`
+    gaps: `${failedNames} ${overlapBoundary} Search ranking, unindexed pages, general web results, other languages, paywalled text, deleted, private, sealed, classified, and undiscovered records remain outside this sweep. ${completed.length} lanes completed; a zero-result lane is never evidence that the claim is false.`
   };
 }
 
 function renderResearchQueries() {
   const run = state.research || emptyResearchRun();
+  const screenApplied = Number(run.screening?.requiredMatchCount || 0) > 0;
   nodes.researchQueries.replaceChildren();
   if (!run.queries.length) {
     const empty = document.createElement("p");
@@ -834,7 +847,16 @@ function renderResearchQueries() {
     }
     const status = document.createElement("span");
     status.className = `query-state ${item.status || "pending"}`;
-    status.textContent = item.status === "complete" ? `${item.resultCount} returned` : item.status || "pending";
+    if (item.status === "complete") {
+      const returned = Number(item.resultCount || 0);
+      const retained = Number(item.retainedResultCount ?? returned);
+      const lowOverlap = Number(item.lowOverlapResultCount ?? Math.max(0, returned - retained));
+      status.textContent = screenApplied
+        ? `${retained} higher · ${lowOverlap} lower · ${returned} returned`
+        : `${returned} unscreened · ${returned} returned`;
+    } else {
+      status.textContent = item.status || "pending";
+    }
     row.append(source, queryBlock, status);
     nodes.researchQueries.append(row);
   });
@@ -842,15 +864,24 @@ function renderResearchQueries() {
 
 function renderResearchResults() {
   const results = [...(state.research?.results || [])];
+  const lowOverlapResults = [...(state.research?.lowOverlapResults || [])]
+    .sort((a, b) => (Number(b.relevance?.score) || 0) - (Number(a.relevance?.score) || 0));
   const stanceOrder = { challenge: 0, neutral: 1, support: 2 };
-  results.sort((a, b) => (stanceOrder[a.stance] ?? 9) - (stanceOrder[b.stance] ?? 9));
+  results.sort((a, b) => (Number(b.relevance?.score) || 0) - (Number(a.relevance?.score) || 0)
+    || (stanceOrder[a.stance] ?? 9) - (stanceOrder[b.stance] ?? 9));
+  const priorAudit = nodes.researchResults.querySelector?.(".relevance-audit");
+  const auditWasOpen = Boolean(priorAudit?.open);
+  const auditHadFocus = Boolean(priorAudit?.contains?.(document.activeElement));
   nodes.researchResults.replaceChildren();
   if (!results.length) {
     const empty = document.createElement("p");
     empty.className = "empty-state";
-    empty.textContent = state.research?.status === "running" ? "Waiting for provider responses…" : "No automated leads were returned. Zero results do not establish that the claim is false.";
+    empty.textContent = state.research?.status === "running"
+      ? "Waiting for provider responses…"
+      : lowOverlapResults.length
+        ? "No higher-overlap automated leads were found. Review the lower-overlap audit; zero primary leads do not establish that the claim is false."
+        : "No automated metadata leads were returned. Zero results do not establish that the claim is false.";
     nodes.researchResults.append(empty);
-    return;
   }
   results.forEach(result => {
     const article = document.createElement("article");
@@ -870,6 +901,13 @@ function renderResearchResults() {
     meta.className = "lead-meta";
     meta.textContent = [result.author, result.publisher, result.date, result.kind].filter(Boolean).join(" · ") || "Creator and date not returned by the index";
     article.append(topline, title, meta);
+    const overlap = document.createElement("p");
+    overlap.className = "lead-overlap";
+    const matchedTerms = result.relevance?.matchedTerms || [];
+    overlap.textContent = result.relevance?.requiredMatches === 0
+      ? "Display screen bypassed: the claim supplied no usable screening terms. This item remains unreviewed metadata."
+      : `Display screen: matched ${matchedTerms.join(", ") || "no terms"}. Claim-term overlap is not evidence of relevance or truth.`;
+    article.append(overlap);
     if (result.snippet) {
       const snippet = document.createElement("p");
       snippet.textContent = result.snippet;
@@ -912,6 +950,55 @@ function renderResearchResults() {
     article.append(actions);
     nodes.researchResults.append(article);
   });
+
+  if (!lowOverlapResults.length) return;
+  const audit = document.createElement("details");
+  audit.className = "relevance-audit";
+  audit.open = auditWasOpen;
+  const summary = document.createElement("summary");
+  summary.textContent = `${lowOverlapResults.length} lower-overlap metadata famil${lowOverlapResults.length === 1 ? "y" : "ies"} preserved for audit`;
+  const note = document.createElement("p");
+  note.className = "relevance-audit-note";
+  const requiredMatches = Number(state.research?.screening?.requiredMatchCount || lowOverlapResults[0]?.relevance?.requiredMatches || 0);
+  note.textContent = `These provider returns did not meet the visible ${requiredMatches}-term claim-overlap display screen across each title and the first 1,000 cleaned characters of its provider description. They remain inspectable because inflections, synonyms, abbreviations, translations, and vocabulary mismatch can hide useful evidence. This screen is not a finding about relevance or truth.`;
+  const list = document.createElement("div");
+  list.className = "low-overlap-list";
+  lowOverlapResults.forEach(result => {
+    const item = document.createElement("article");
+    item.className = "low-overlap-lead";
+    const title = document.createElement("h4");
+    title.textContent = result.title;
+    const meta = document.createElement("span");
+    meta.textContent = [
+      (result.foundBy || [result.provider]).join(" + "),
+      (result.queryStances || [result.stance]).filter(Boolean).map(value => `${value} lane`).join(" + "),
+      result.relevance?.reason
+    ].filter(Boolean).join(" · ");
+    item.append(title, meta);
+    const variants = Array.isArray(result.variants) && result.variants.length ? result.variants : [result];
+    const variantList = document.createElement("div");
+    variantList.className = "low-overlap-variants";
+    variants.forEach((variant, index) => {
+      const safe = safeHttpUrl(variant.url);
+      if (!safe) return;
+      const row = document.createElement("div");
+      const variantTitle = document.createElement("span");
+      variantTitle.textContent = `${variant.provider || "Metadata provider"}: ${variant.title}`;
+      const link = document.createElement("a");
+      link.href = safe;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      link.textContent = variants.length === 1 ? `Inspect ${variant.provider || "source"} record ↗` : `Inspect ${variant.provider || "source"} variant ${index + 1} ↗`;
+      link.setAttribute("aria-label", `Inspect lower-overlap source from ${variant.provider || "metadata provider"}: ${variant.title}`);
+      row.append(variantTitle, link);
+      variantList.append(row);
+    });
+    item.append(variantList);
+    list.append(item);
+  });
+  audit.append(summary, note, list);
+  nodes.researchResults.append(audit);
+  if (auditHadFocus) summary.focus({ preventScroll: true });
 }
 
 function renderResearch() {
@@ -919,6 +1006,8 @@ function renderResearch() {
   const total = run.queries.length || window.TrustResearch?.buildResearchPlan(state.claim || "placeholder claim")?.length || 6;
   const finished = (run.queries || []).filter(item => ["complete", "failed", "cancelled"].includes(item.status)).length;
   const failures = researchFailureCount(run);
+  const lowOverlapCount = Number(run.screening?.screenedOutFamilyCount ?? (run.lowOverlapResults || []).length);
+  const screenApplied = Number(run.screening?.requiredMatchCount || 0) > 0;
   const running = run.status === "running";
   const status = byId("research-status");
   status.classList.toggle("is-running", running);
@@ -930,10 +1019,17 @@ function renderResearch() {
     statusText.textContent = `${finished} of ${total} query lanes answered. No returned title is being treated as proof.`;
   } else if (run.status === "restored-unverified") {
     statusCode.textContent = "RESTORED · EXECUTION UNVERIFIED";
-    statusText.textContent = `${run.results.length} locally restored discovery families; browser storage cannot prove the recorded provider requests occurred. Re-run the sweep for a live execution receipt.`;
+    statusText.textContent = screenApplied
+      ? `${run.results.length} higher-overlap and ${lowOverlapCount} lower-overlap metadata famil${run.results.length + lowOverlapCount === 1 ? "y was" : "ies were"} re-screened from local storage; browser storage cannot prove the recorded provider requests occurred. Re-run the sweep for a live execution receipt.`
+      : `${run.results.length} unscreened metadata famil${run.results.length === 1 ? "y was" : "ies were"} restored because the claim supplied no usable screening terms; browser storage cannot prove the recorded provider requests occurred. Re-run the sweep for a live execution receipt.`;
   } else if (run.status === "complete" || run.status === "complete-with-gaps") {
     statusCode.textContent = failures ? "COMPLETE WITH GAPS" : "BOUNDED SWEEP COMPLETE";
-    statusText.textContent = `${run.results.length} identity-bounded evidence families discovered; title-only similarities remain separate. ${failures} provider lane${failures === 1 ? "" : "s"} failed or stopped. Every hit remains unreviewed.`;
+    const lowerOverlapStatus = lowOverlapCount
+      ? `${lowOverlapCount} lower-overlap famil${lowOverlapCount === 1 ? "y remains" : "ies remain"} inspectable in the audit drawer`
+      : "no lower-overlap families were recorded";
+    statusText.textContent = screenApplied
+      ? `${run.results.length} higher-overlap identity-bounded metadata famil${run.results.length === 1 ? "y is" : "ies are"} shown; ${lowerOverlapStatus}. Title-only similarities remain separate. ${failures} provider lane${failures === 1 ? "" : "s"} failed or stopped. Every item remains an unreviewed metadata lead.`
+      : `${run.results.length} unscreened identity-bounded metadata famil${run.results.length === 1 ? "y is" : "ies are"} shown because the claim supplied no usable screening terms. ${failures} provider lane${failures === 1 ? "" : "s"} failed or stopped. Every item remains an unreviewed metadata lead.`;
   } else {
     statusCode.textContent = "READY";
     statusText.textContent = "No external query has been sent.";
@@ -1070,7 +1166,7 @@ function receiptPayload() {
     },
     search_coverage: { ...state.coverage, provenance: state.coverageOrigin || "none" },
     automated_source_sweep: {
-      schema: state.research?.schema || "trust-worthy-source-sweep-v1",
+      schema: state.research?.schema || "trust-worthy-source-sweep-v2",
       status: state.research?.status || "idle",
       started_at: state.research?.startedAt || "",
       completed_at: state.research?.completedAt || "",
@@ -1085,7 +1181,89 @@ function receiptPayload() {
         completed_at: item.completedAt || "",
         status: item.status || "pending",
         result_count: Number(item.resultCount || 0),
+        retained_result_count: Number(item.retainedResultCount ?? item.resultCount ?? 0),
+        low_overlap_result_count: Number(item.lowOverlapResultCount || 0),
         error: item.error || ""
+      })),
+      screening: {
+        policy: state.research?.screening?.policy || "claim-term-overlap-v1",
+        mode: state.research?.screening?.mode || (Number(state.research?.screening?.requiredMatchCount || 0) ? "applied" : "bypassed-no-usable-terms"),
+        required_match_count: Number(state.research?.screening?.requiredMatchCount || 0),
+        title_character_limit: Number(state.research?.screening?.titleCharacterLimit || 240),
+        provider_description_character_limit: Number(state.research?.screening?.descriptionCharacterLimit || 1000),
+        returned_family_count: Number(state.research?.screening?.returnedFamilyCount ?? ((state.research?.results?.length || 0) + (state.research?.lowOverlapResults?.length || 0))),
+        retained_family_count: Number(state.research?.screening?.retainedFamilyCount ?? (state.research?.results?.length || 0)),
+        screened_out_family_count: Number(state.research?.screening?.screenedOutFamilyCount ?? (state.research?.lowOverlapResults?.length || 0)),
+        boundary: "Lexical display screen only; not a finding about relevance, reliability, or truth."
+      },
+      low_overlap_metadata_families: (state.research?.lowOverlapResults || []).map(item => ({
+        id: item.id,
+        family_id: item.familyId || item.id,
+        family_relationship: item.familyRelationship || "single-record",
+        provider: item.provider,
+        providers: item.foundBy || [item.provider],
+        repository: item.repository,
+        query_id: item.queryId,
+        query_ids: item.queryIds || [item.queryId],
+        query_stances: item.queryStances || [item.stance],
+        stance: item.stance,
+        title: item.title,
+        url: canonicalUrl(item.url),
+        author: item.author || "",
+        date: item.date || "",
+        publisher: item.publisher || "",
+        kind: item.kind || "",
+        external_id: item.externalId || "",
+        snippet: item.snippet || "",
+        matched_claim_terms: item.relevance?.matchedTerms || [],
+        claim_terms: item.relevance?.claimTerms || [],
+        required_matches: Number(item.relevance?.requiredMatches || 0),
+        reason: item.relevance?.reason || "Lower visible claim-term overlap; retained only in the audit receipt.",
+        identity: {
+          stable_identifiers: item.identity?.stableIdentifiers || [],
+          canonical_urls: (item.identity?.canonicalUrls || []).map(canonicalUrl).filter(Boolean)
+        },
+        merge_decisions: (item.mergeDecisions || []).map(decision => ({
+          action: decision.action,
+          left_variant_id: decision.leftVariantId,
+          right_variant_id: decision.rightVariantId,
+          reason: decision.reason,
+          match: decision.match
+        })),
+        possible_duplicate_clusters: (item.possibleDuplicateClusters || []).map(cluster => ({
+          cluster_id: cluster.clusterId,
+          basis: cluster.basis,
+          decision: cluster.decision,
+          reason: cluster.reason,
+          member_family_ids: cluster.memberFamilyIds || []
+        })),
+        variants: (item.variants || [item]).map(variant => ({
+          id: variant.id,
+          provider: variant.provider,
+          repository: variant.repository,
+          stance: variant.stance,
+          query_ids: variant.queryIds || [variant.queryId],
+          query_stances: variant.queryStances || [variant.stance],
+          title: variant.title,
+          url: canonicalUrl(variant.url),
+          author: variant.author || "",
+          date: variant.date || "",
+          publisher: variant.publisher || "",
+          kind: variant.kind || "",
+          external_id: variant.externalId || "",
+          snippet: variant.snippet || "",
+          screening_excerpt: variant.screeningExcerpt || variant.snippet || "",
+          relevance: {
+            status: variant.relevance?.status || "low-overlap",
+            score: Number(variant.relevance?.score || 0),
+            ratio: Number(variant.relevance?.ratio || 0),
+            matched_claim_terms: variant.relevance?.matchedTerms || [],
+            claim_terms: variant.relevance?.claimTerms || [],
+            required_matches: Number(variant.relevance?.requiredMatches || 0),
+            reason: variant.relevance?.reason || ""
+          }
+        })),
+        status: "LOWER-OVERLAP METADATA FAMILY · NOT INSPECTED EVIDENCE"
       })),
       discovered_evidence_families: (state.research?.results || []).map(item => ({
         id: item.id,
@@ -1103,6 +1281,13 @@ function receiptPayload() {
         external_id: item.externalId || "",
         query_stances: item.queryStances || [item.stance],
         snippet: item.snippet || "",
+        relevance: {
+          score: Number(item.relevance?.score || 0),
+          ratio: Number(item.relevance?.ratio || 0),
+          matched_claim_terms: item.relevance?.matchedTerms || [],
+          required_matches: Number(item.relevance?.requiredMatches || 0),
+          reason: item.relevance?.reason || ""
+        },
         identity: {
           stable_identifiers: item.identity?.stableIdentifiers || [],
           canonical_urls: (item.identity?.canonicalUrls || []).map(canonicalUrl).filter(Boolean)
@@ -1133,7 +1318,15 @@ function receiptPayload() {
           date: variant.date || "",
           publisher: variant.publisher || "",
           kind: variant.kind || "",
-          external_id: variant.externalId || ""
+          external_id: variant.externalId || "",
+          screening_excerpt: variant.screeningExcerpt || variant.snippet || "",
+          relevance: {
+            status: variant.relevance?.status || "unscored",
+            score: Number(variant.relevance?.score || 0),
+            matched_claim_terms: variant.relevance?.matchedTerms || [],
+            required_matches: Number(variant.relevance?.requiredMatches || 0),
+            reason: variant.relevance?.reason || ""
+          }
         })),
         status: "DISCOVERY LEAD · NOT INSPECTED EVIDENCE"
       }))
@@ -1439,6 +1632,16 @@ function loadAtmosphereCase() { loadReviewedCase(atmosphereCase); }
 function buildPlainReport() {
   if (!state.map) return "";
   const map = state.map;
+  const screenApplied = Number(state.research?.screening?.requiredMatchCount || 0) > 0;
+  const queryReceiptLines = (state.research?.queries || []).map(item => screenApplied
+    ? `- ${item.provider} / ${item.stance} / ${item.status}: ${item.query} (${item.resultCount || 0} returned; ${item.retainedResultCount ?? item.resultCount ?? 0} higher overlap; ${item.lowOverlapResultCount || 0} lower overlap${item.error ? `; ${item.error}` : ""})`
+    : `- ${item.provider} / ${item.stance} / ${item.status}: ${item.query} (${item.resultCount || 0} returned; unscreened${item.error ? `; ${item.error}` : ""})`);
+  const screenReceiptLine = screenApplied
+    ? `Display screen: ${state.research?.screening?.policy || "claim-term-overlap-v1"}; ${state.research?.screening?.requiredMatchCount} distinct claim terms required. This is not an evidentiary judgment.`
+    : "Display screen: bypassed because the claim supplied no usable screening terms; returned metadata is unscreened and unreviewed.";
+  const familyReceiptLine = screenApplied
+    ? `Primary discovery families: ${state.research?.results?.length || 0}; lower-overlap audit families: ${state.research?.lowOverlapResults?.length || 0}. Every returned item remains a metadata lead until inspected.`
+    : `Unscreened discovery families: ${state.research?.results?.length || 0}. Every returned item remains a metadata lead until inspected.`;
   const lines = [
     "TRUST-WORTHY ADVERSARIAL EVIDENCE REPORT",
     state.curated ? `CASE ${state.caseId} · VERSION ${state.recordVersion} · REVIEWED ${state.reviewedAt}` : state.parent ? `STATUS: USER FORK OF ${state.parent.caseId} VERSION ${state.parent.version} / NOT INDEPENDENTLY REVIEWED` : "STATUS: PRE-RESEARCH / USER RECORD NOT INDEPENDENTLY REVIEWED",
@@ -1484,12 +1687,20 @@ function buildPlainReport() {
     `Status: ${state.research?.status || "idle"}`,
     `Started: ${state.research?.startedAt || "Not run."}`,
     `Completed: ${state.research?.completedAt || "Not completed."}`,
-    ...(state.research?.queries || []).map(item => `- ${item.provider} / ${item.stance} / ${item.status}: ${item.query} (${item.resultCount || 0} returned${item.error ? `; ${item.error}` : ""})`),
-    `Discovery families: ${state.research?.results?.length || 0}. Every returned item remains a metadata lead until inspected.`,
+    ...queryReceiptLines,
+    screenReceiptLine,
+    familyReceiptLine,
     ...(state.research?.results || []).flatMap(item => {
       const variants = item.variants || [item];
       return [
         `- ${item.familyId || item.id}: ${item.familyRelationship || "single-record"}; ${variants.length} retained variant${variants.length === 1 ? "" : "s"}${item.possibleDuplicateClusters?.length ? "; title-similar possible duplicate retained separately" : ""}.`,
+        ...variants.map(variant => `  ${variant.provider || "Unknown provider"}: ${variant.title} — ${canonicalUrl(variant.url)}`)
+      ];
+    }),
+    ...(state.research?.lowOverlapResults || []).flatMap(item => {
+      const variants = item.variants || [item];
+      return [
+        `- LOWER-OVERLAP ${item.familyId || item.id}: ${item.relevance?.reason || "Did not meet the claim-term display screen."}`,
         ...variants.map(variant => `  ${variant.provider || "Unknown provider"}: ${variant.title} — ${canonicalUrl(variant.url)}`)
       ];
     }),
@@ -1571,7 +1782,7 @@ function sanitizedResearch(value, claim) {
     .slice(0, 20)
     .map(item => [boundedText(item.id, 100), item]));
   const allowedResultStatuses = new Set(["complete", "failed", "cancelled"]);
-  const queries = plan.map(expected => {
+  const baseQueries = plan.map(expected => {
     const raw = rawById.get(expected.id);
     const interrupted = raw?.status === "pending" || raw?.status === "running";
     const missing = !raw;
@@ -1581,55 +1792,110 @@ function sanitizedResearch(value, claim) {
       completedAt: boundedText(raw?.completedAt, 80),
       status: interrupted || missing ? "cancelled" : allowedResultStatuses.has(raw?.status) ? raw.status : "failed",
       resultCount: Math.max(0, Math.min(100, Number(raw?.resultCount) || 0)),
+      retainedResultCount: 0,
+      lowOverlapResultCount: 0,
       error: interrupted
         ? "Saved before this query lane completed; treated as cancelled on reopen."
         : missing ? "Lane missing from the restored local receipt." : boundedText(raw?.error, 240)
     };
   });
   const planById = new Map(plan.map(item => [item.id, item]));
-  const rawVariants = Array.isArray(value.results) ? value.results.flatMap(item =>
-    Array.isArray(item?.variants) && item.variants.length ? item.variants : [item]
-  ) : [];
-  const restoredVariants = rawVariants.map((item, index) => {
-    const title = boundedText(item?.title, 240);
-    const url = safeHttpUrl(boundedText(item?.url, 1200));
-    const queryIds = (Array.isArray(item?.queryIds) ? item.queryIds : [item?.queryId])
-      .map(entry => boundedText(entry, 100)).filter(id => planById.has(id)).slice(0, 12);
-    const primaryLane = planById.get(queryIds[0]);
-    if (!title || !url || !primaryLane) return null;
+  const restoreVariants = families => {
+    const rawVariants = Array.isArray(families) ? families.flatMap(item =>
+      Array.isArray(item?.variants) && item.variants.length ? item.variants : [item]
+    ) : [];
+    return rawVariants.map((item, index) => {
+      const title = boundedText(item?.title, 240);
+      const url = safeHttpUrl(boundedText(item?.url, 1200));
+      const queryIds = (Array.isArray(item?.queryIds) ? item.queryIds : [item?.queryId])
+        .map(entry => boundedText(entry, 100)).filter(id => planById.has(id)).slice(0, 12);
+      const primaryLane = planById.get(queryIds[0]);
+      if (!title || !url || !primaryLane) return null;
+      const snippet = boundedText(item?.snippet, 500);
+      const screeningExcerpt = boundedText(item?.screeningExcerpt || snippet, 1000);
+      const assessed = window.TrustResearch?.assessResultRelevance
+        ? window.TrustResearch.assessResultRelevance(claim, { title, snippet, screeningExcerpt })
+        : { score: 0, ratio: 0, requiredMatches: 0, matchedTerms: [], claimTerms: [] };
+      return {
+        id: boundedText(item?.id, 120) || `${primaryLane.id}-restored-${index + 1}`,
+        providerId: primaryLane.providerId,
+        provider: primaryLane.provider,
+        repository: primaryLane.repository,
+        stance: primaryLane.stance,
+        queryId: primaryLane.id,
+        query: primaryLane.query,
+        title,
+        url,
+        author: boundedText(item?.author, 220),
+        date: boundedText(item?.date, 80),
+        publisher: boundedText(item?.publisher, 180),
+        kind: boundedText(item?.kind, 100),
+        snippet,
+        screeningExcerpt,
+        externalId: boundedText(item?.externalId, 220),
+        foundBy: [...new Set(queryIds.map(id => planById.get(id).provider))],
+        queryIds,
+        queryStances: [...new Set(queryIds.map(id => planById.get(id).stance))],
+        relevance: {
+          ...assessed,
+          reason: `${assessed.reason} Restored local metadata cannot authenticate the prior execution or screening.`
+        },
+        metadataOnly: true
+      };
+    }).filter(Boolean).slice(0, 300);
+  };
+  const restoredVariants = restoreVariants([
+    ...(Array.isArray(value.results) ? value.results : []),
+    ...(Array.isArray(value.lowOverlapResults) ? value.lowOverlapResults : [])
+  ]);
+  const uniqueVariants = [...new Map(restoredVariants.map(item => [
+    `${item.id}|${item.url}|${item.queryIds.join(",")}`,
+    item
+  ])).values()];
+  const families = window.TrustResearch?.mergeEvidenceFamilies
+    ? window.TrustResearch.mergeEvidenceFamilies(uniqueVariants).slice(0, 200)
+    : uniqueVariants.slice(0, 200);
+  const results = families.filter(family => (family.variants || [family]).some(variant => variant.relevance?.status === "retained")).slice(0, 100);
+  const lowOverlapResults = families.filter(family => !(family.variants || [family]).some(variant => variant.relevance?.status === "retained")).slice(0, 100);
+  const queryCounts = new Map(plan.map(item => [item.id, { retained: 0, low: 0 }]));
+  uniqueVariants.forEach(item => {
+    item.queryIds.forEach(id => {
+      const counts = queryCounts.get(id);
+      if (!counts) return;
+      if (item.relevance.status === "retained") counts.retained += 1;
+      else counts.low += 1;
+    });
+  });
+  const queries = baseQueries.map(item => {
+    const counts = queryCounts.get(item.id) || { retained: 0, low: 0 };
     return {
-      id: boundedText(item?.id, 120) || `${primaryLane.id}-restored-${index + 1}`,
-      providerId: primaryLane.providerId,
-      provider: primaryLane.provider,
-      repository: primaryLane.repository,
-      stance: primaryLane.stance,
-      queryId: primaryLane.id,
-      query: primaryLane.query,
-      title,
-      url,
-      author: boundedText(item?.author, 220),
-      date: boundedText(item?.date, 80),
-      publisher: boundedText(item?.publisher, 180),
-      kind: boundedText(item?.kind, 100),
-      snippet: boundedText(item?.snippet, 500),
-      externalId: boundedText(item?.externalId, 220),
-      foundBy: [...new Set(queryIds.map(id => planById.get(id).provider))],
-      queryIds,
-      queryStances: [...new Set(queryIds.map(id => planById.get(id).stance))],
-      metadataOnly: true
+      ...item,
+      resultCount: counts.retained + counts.low,
+      retainedResultCount: counts.retained,
+      lowOverlapResultCount: counts.low
     };
-  }).filter(Boolean).slice(0, 300);
-  const results = window.TrustResearch?.mergeEvidenceFamilies
-    ? window.TrustResearch.mergeEvidenceFamilies(restoredVariants).slice(0, 100)
-    : restoredVariants.slice(0, 100);
+  });
+  const requiredMatchCount = Number(window.TrustResearch?.assessResultRelevance?.(claim, {})?.requiredMatches || 0);
+  const screening = {
+    policy: "claim-term-overlap-v1",
+    mode: requiredMatchCount ? "applied" : "bypassed-no-usable-terms",
+    requiredMatchCount,
+    titleCharacterLimit: 240,
+    descriptionCharacterLimit: 1000,
+    returnedFamilyCount: results.length + lowOverlapResults.length,
+    retainedFamilyCount: results.length,
+    screenedOutFamilyCount: lowOverlapResults.length
+  };
   return {
-    schema: "trust-worthy-source-sweep-v1",
+    schema: "trust-worthy-source-sweep-v2",
     status: "restored-unverified",
     startedAt: boundedText(value.startedAt, 80),
     completedAt: boundedText(value.completedAt, 80),
     claim,
     queries,
-    results
+    results,
+    lowOverlapResults,
+    screening
   };
 }
 
@@ -1926,14 +2192,20 @@ async function startResearchSweep() {
   const revision = ++researchRevision;
   researchController = typeof AbortController === "function" ? new AbortController() : null;
   state.research = {
-    schema: "trust-worthy-source-sweep-v1",
+    schema: "trust-worthy-source-sweep-v2",
     status: "running",
     startedAt: new Date().toISOString(),
     completedAt: "",
     claim: state.claim,
-    queries: plan.map(item => ({ ...item, requestedAt: "", completedAt: "", status: "pending", resultCount: 0, error: "" })),
-    results: []
+    queries: plan.map(item => ({ ...item, requestedAt: "", completedAt: "", status: "pending", resultCount: 0, retainedResultCount: 0, lowOverlapResultCount: 0, error: "" })),
+    results: [],
+    lowOverlapResults: [],
+    screening: {
+      ...emptyScreening(),
+      requiredMatchCount: Number(window.TrustResearch?.assessResultRelevance?.(state.claim, {})?.requiredMatches || 0)
+    }
   };
+  state.research.screening.mode = state.research.screening.requiredMatchCount ? "applied" : "bypassed-no-usable-terms";
   state.coverage = emptyCoverage();
   state.coverageOrigin = "automatic-running";
   renderCase();

@@ -11,11 +11,11 @@ Production site: `/home/bobsome1/public_html`
 3. Use cPanel Git Version Control → **Deploy HEAD Commit**.
 4. Confirm the site remains on HTTPS and test the reader, timeline, research pages, and signup.
 
-## Trust-Worthy release 14 gate
+## Trust-Worthy release 15 gate
 
 Before deployment, require `bash tests/trust-worthy-lab/run_all.sh` and the GitHub `Site safety checks` workflow to pass. After deployment, run `node tests/trust-worthy-lab/live-release-gate.mjs` from a checkout with Node 20 or newer.
 
-If any release-14 live check fails, use cPanel Git Version Control to deploy Project-Unveiled commit `7a4345bc5b4268ff4305494cf4019f8bd783029a`. The verified release-13 lab at `https://trust-worthy-public-lab.thebobsomest1.chatgpt.site/` remains the public fallback during rollback. Do not remove it until the canonical-domain release has a stable observation history.
+If any release-15 live check fails, use cPanel Git Version Control to redeploy Project-Unveiled commit `10c0b4b140264808aebdf0d18cdd0b3632c358f2`, restoring the verified release-14 lab at `https://bobsome1.com/truth/lab/`.
 
 ## Self-hosted 7-Day Unveiled Journey
 

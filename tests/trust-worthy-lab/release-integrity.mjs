@@ -7,12 +7,12 @@ export const PROJECT_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.
 export const DIST = path.join(PROJECT_ROOT, "truth", "lab");
 export const MANIFEST_PATH = path.join(DIST, "release-manifest.json");
 export const MANIFEST_SCHEMA = "trust-worthy-release-manifest-v1";
-export const PUBLIC_RELEASE = 14;
-export const OBSERVER_RELEASE = "trust-worthy-observer-v4";
-export const BUILD_RECORDED_AT = "2026-09-12T00:30:00Z";
-export const PREDECESSOR_COMMIT = "c103af51c83b19dbd73fe56f2e795bb3358556e6";
-export const PREDECESSOR_ROOT = "4b5835452d1589b90f01af2dba8f50ae0765c1712c8ab2855380936075db6216";
-export const ROLLBACK_SOURCE_COMMIT = "7a4345bc5b4268ff4305494cf4019f8bd783029a";
+export const PUBLIC_RELEASE = 15;
+export const OBSERVER_RELEASE = "trust-worthy-observer-v5";
+export const BUILD_RECORDED_AT = "2026-09-13T05:54:03Z";
+export const PREDECESSOR_COMMIT = "10c0b4b140264808aebdf0d18cdd0b3632c358f2";
+export const PREDECESSOR_ROOT = "aed87658da895e0a5453afcf48294e7a95aa6995b7d6f8489da91660acb0bec9";
+export const ROLLBACK_SOURCE_COMMIT = "10c0b4b140264808aebdf0d18cdd0b3632c358f2";
 export const PRODUCTION_ORIGIN = "https://bobsome1.com";
 export const LAB_PATH = "/truth/lab/";
 export const DELIVERY_POLICY = "exact-owned-static-v1";
@@ -101,7 +101,7 @@ export function buildManifest() {
     release: PUBLIC_RELEASE,
     observer: OBSERVER_RELEASE,
     recorded_at: BUILD_RECORDED_AT,
-    event_category: "canonical-domain-integration",
+    event_category: "corrective-maintenance",
     organization: {
       name: "Bobsome1 / Project Unveiled",
       attribution: "Self-declared public owner identity; no third-party organization credential is asserted."
@@ -112,18 +112,18 @@ export function buildManifest() {
       public_origin: `${PRODUCTION_ORIGIN}${LAB_PATH}`
     },
     predecessor: {
-      release: 13,
+      release: 14,
       source_commit: PREDECESSOR_COMMIT,
       build_root_sha256: PREDECESSOR_ROOT,
-      public_origin: "https://trust-worthy-public-lab.thebobsomest1.chatgpt.site/",
-      relationship: "canonicalizes",
-      note: "Release 13 remains the verified hosted fallback while release 14 moves the same evidence workflow under the owned Bobsome1 Truth path."
+      public_origin: `${PRODUCTION_ORIGIN}${LAB_PATH}`,
+      relationship: "supersedes",
+      note: "Release 14 is the verified canonical predecessor. Release 15 corrects the hosting disclosure and adds an auditable claim-term-overlap display screen for Source Sweep metadata."
     },
     rollback: {
       project_unveiled_source_commit: ROLLBACK_SOURCE_COMMIT,
-      evidence_lab_release: 13,
-      tested_live_fallback: "https://trust-worthy-public-lab.thebobsomest1.chatgpt.site/",
-      instruction: "Redeploy the named Project-Unveiled commit and keep release 13 available if the release 14 live gate fails."
+      evidence_lab_release: 14,
+      tested_live_fallback: `${PRODUCTION_ORIGIN}${LAB_PATH}`,
+      instruction: "Redeploy the named Project-Unveiled commit to restore release 14 if the release 15 live gate fails."
     },
     digest: {
       algorithm: "SHA-256",

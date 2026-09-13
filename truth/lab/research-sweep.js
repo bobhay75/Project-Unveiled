@@ -56,6 +56,65 @@
     return [...new Set(words)].slice(0, 10);
   }
 
+  function relevanceTermKey(value) {
+    let term = cleanText(value, 80).toLocaleLowerCase().replace(/[^\p{L}\p{N}]/gu, "");
+    if (term.length > 5 && term.endsWith("ies")) term = `${term.slice(0, -3)}y`;
+    else if (term.length > 3 && term.endsWith("s") && !/(?:ss|is|us|as|ws|ics)$/.test(term)) term = term.slice(0, -1);
+    return term;
+  }
+
+  function relevanceTermKeys(value) {
+    const term = relevanceTermKey(value);
+    return term ? [term] : [];
+  }
+
+  function relevanceClaimTerms(claim) {
+    const terms = cleanText(claim, 300)
+      .toLocaleLowerCase()
+      .replace(/[^\p{L}\p{N}\s-]/gu, " ")
+      .split(/[\s-]+/)
+      .filter(word => word.length >= 3 && !STOP_WORDS.has(word))
+      .map(term => ({ term, key: relevanceTermKey(term), keys: relevanceTermKeys(term) }))
+      .filter(item => item.key);
+    const seen = new Set();
+    return terms.filter(item => {
+      if (item.keys.some(key => seen.has(key))) return false;
+      item.keys.forEach(key => seen.add(key));
+      return true;
+    }).slice(0, 12);
+  }
+
+  function relevanceDocumentKeys(result) {
+    return new Set(cleanText(`${result?.title || ""} ${result?.screeningExcerpt || result?.snippet || ""}`, 1300)
+      .toLocaleLowerCase()
+      .replace(/[^\p{L}\p{N}\s-]/gu, " ")
+      .split(/[\s-]+/)
+      .flatMap(relevanceTermKeys)
+      .filter(Boolean));
+  }
+
+  function assessResultRelevance(claim, result) {
+    const claimTerms = relevanceClaimTerms(claim);
+    const documentKeys = relevanceDocumentKeys(result);
+    const matchedTerms = claimTerms.filter(item => item.keys.some(key => documentKeys.has(key))).map(item => item.term);
+    const requiredMatches = Math.min(2, claimTerms.length);
+    const retained = matchedTerms.length >= requiredMatches;
+    const countText = `${matchedTerms.length} of ${claimTerms.length || 0} claim terms`;
+    return {
+      status: retained ? "retained" : "low-overlap",
+      score: matchedTerms.length,
+      ratio: claimTerms.length ? Number((matchedTerms.length / claimTerms.length).toFixed(3)) : 0,
+      requiredMatches,
+      matchedTerms,
+      claimTerms: claimTerms.map(item => item.term),
+      reason: retained
+        ? requiredMatches
+          ? `Shown because ${countText} matched the title or provider description.`
+          : "Shown because the claim supplied no usable screening terms; no metadata was hidden."
+        : `Moved to the low-overlap audit because only ${countText} matched the title or provider description; ${requiredMatches} were required.`
+    };
+  }
+
   function queryFamilies(claim) {
     const neutral = cleanText(claim, 300).replace(/[?!]+$/g, "");
     const terms = coreTerms(neutral);
@@ -185,6 +244,7 @@
       publisher: cleanText(item.publisher, 160),
       kind: cleanText(item.type, 80),
       snippet: cleanText(item.abstract, 420),
+      screeningExcerpt: cleanText(item.abstract, 1000),
       externalId: cleanText(item.DOI, 160)
     }));
   }
@@ -198,6 +258,7 @@
       publisher: cleanText(item.primary_location?.source?.display_name, 160),
       kind: cleanText(item.type, 80),
       snippet: "",
+      screeningExcerpt: cleanText(Object.keys(item.abstract_inverted_index || {}).slice(0, 250).join(" "), 1000),
       externalId: cleanText(item.doi || item.id, 180)
     }));
   }
@@ -214,6 +275,7 @@
         publisher: cleanText(item.journalTitle, 160),
         kind: cleanText(item.pubType || item.source, 80),
         snippet: cleanText(item.abstractText, 420),
+        screeningExcerpt: cleanText(item.abstractText, 1000),
         externalId: cleanText(item.doi || articleId, 180)
       };
     });
@@ -232,6 +294,7 @@
         publisher: "Internet Archive item record",
         kind: cleanText(item.mediatype, 80),
         snippet: cleanText(description, 420),
+        screeningExcerpt: cleanText(description, 1000),
         externalId: identifier
       };
     });
@@ -246,6 +309,7 @@
       publisher: "Office of the Federal Register index",
       kind: cleanText(item.type || item.document_type, 80),
       snippet: cleanText(item.abstract, 420),
+      screeningExcerpt: cleanText(item.abstract, 1000),
       externalId: cleanText(item.document_number, 100)
     }));
   }
@@ -310,6 +374,19 @@
     return [...new Set(entries.map(item => cleanText(item, 180)).filter(Boolean))];
   }
 
+  function relevanceSnapshot(value) {
+    const input = value && typeof value === "object" ? value : {};
+    return {
+      status: ["retained", "low-overlap"].includes(input.status) ? input.status : "unscored",
+      score: Math.max(0, Math.min(20, Number(input.score) || 0)),
+      ratio: Math.max(0, Math.min(1, Number(input.ratio) || 0)),
+      requiredMatches: Math.max(0, Math.min(20, Number(input.requiredMatches) || 0)),
+      matchedTerms: cleanStringList(input.matchedTerms).slice(0, 20),
+      claimTerms: cleanStringList(input.claimTerms).slice(0, 20),
+      reason: cleanText(input.reason, 320)
+    };
+  }
+
   function variantSnapshot(result, index) {
     const provider = cleanText(result.provider, 100);
     const stance = cleanText(result.stance, 30);
@@ -329,10 +406,12 @@
       publisher: cleanText(result.publisher, 160),
       kind: cleanText(result.kind, 80),
       snippet: cleanText(result.snippet, 420),
+      screeningExcerpt: cleanText(result.screeningExcerpt || result.snippet, 1000),
       externalId: cleanText(result.externalId, 180),
       foundBy: cleanStringList(result.foundBy, provider ? [provider] : []),
       queryIds: cleanStringList(result.queryIds, queryId ? [queryId] : []),
       queryStances: cleanStringList(result.queryStances, stance ? [stance] : []),
+      relevance: relevanceSnapshot(result.relevance),
       metadataOnly: true
     };
   }
@@ -342,7 +421,7 @@
     return left.filter(value => rightSet.has(value));
   }
 
-  function normalizeResults(planItem, rawResults) {
+  function normalizeResults(planItem, rawResults, claim) {
     return rawResults
       .map((item, index) => ({
         id: `${planItem.id}-${index + 1}`,
@@ -359,6 +438,7 @@
         publisher: cleanText(item.publisher, 160),
         kind: cleanText(item.kind, 80),
         snippet: cleanText(item.snippet, 420),
+        screeningExcerpt: cleanText(item.screeningExcerpt || item.snippet, 1000),
         externalId: cleanText(item.externalId, 180),
         foundBy: [planItem.provider],
         queryIds: [planItem.id],
@@ -366,7 +446,11 @@
         metadataOnly: true
       }))
       .filter(item => item.title && item.url)
-      .slice(0, MAX_RESULTS_PER_QUERY);
+      .slice(0, MAX_RESULTS_PER_QUERY)
+      .map(item => {
+        const relevance = assessResultRelevance(claim, item);
+        return { ...item, relevance };
+      });
   }
 
   function mergeEvidenceFamilies(results) {
@@ -449,8 +533,14 @@
         const { inputIndex, canonicalUrl, stableIds, titleKey, ...snapshot } = member;
         return snapshot;
       });
+      const representativeIndex = members.reduce((bestIndex, member, index) => {
+        const best = members[bestIndex];
+        const scoreDifference = (member.relevance?.score || 0) - (best.relevance?.score || 0);
+        return scoreDifference > 0 || (scoreDifference === 0 && member.inputIndex < best.inputIndex) ? index : bestIndex;
+      }, 0);
+      const publicRepresentative = publicVariants[representativeIndex];
       const family = {
-        ...publicVariants[0],
+        ...publicRepresentative,
         familyId,
         familyRelationship: members.length > 1 ? "merged-by-identity" : "single-record",
         mergeDecisions: decisions,
@@ -463,6 +553,8 @@
         queryIds: [...new Set(members.flatMap(member => member.queryIds))],
         queryStances: [...new Set(members.flatMap(member => member.queryStances))]
       };
+      family.relevance = { ...publicRepresentative.relevance };
+      delete family.screeningExcerpt;
       ["snippet", "author", "date", "publisher", "kind", "externalId"].forEach(field => {
         if (!family[field]) family[field] = members.find(member => member[field])?.[field] || "";
       });
@@ -546,8 +638,19 @@
       try {
         const payload = await fetchJson(planItem, fetchImpl, options.signal, timeoutMs);
         const parser = PARSERS[planItem.providerId];
-        const results = normalizeResults(planItem, parser ? parser(payload) : []);
-        const record = { ...planItem, requestedAt, completedAt: new Date().toISOString(), status: "complete", resultCount: results.length, error: "" };
+        const results = normalizeResults(planItem, parser ? parser(payload) : [], claim);
+        const retainedResultCount = results.filter(item => item.relevance.status === "retained").length;
+        const lowOverlapResultCount = results.filter(item => item.relevance.status === "low-overlap").length;
+        const record = {
+          ...planItem,
+          requestedAt,
+          completedAt: new Date().toISOString(),
+          status: "complete",
+          resultCount: results.length,
+          retainedResultCount,
+          lowOverlapResultCount,
+          error: ""
+        };
         onProgress(record);
         return { record, results };
       } catch (error) {
@@ -558,6 +661,8 @@
           completedAt: new Date().toISOString(),
           status: aborted ? "cancelled" : "failed",
           resultCount: 0,
+          retainedResultCount: 0,
+          lowOverlapResultCount: 0,
           error: cleanText(aborted ? "Search cancelled before completion." : error?.message || "Provider request failed.", 180)
         };
         onProgress(record);
@@ -565,13 +670,29 @@
       }
     }));
 
+    const families = mergeEvidenceFamilies(settled.flatMap(item => item.results));
+    const results = families.filter(family => family.variants.some(variant => variant.relevance?.status === "retained"));
+    const lowOverlapResults = families.filter(family => !family.variants.some(variant => variant.relevance?.status === "retained"));
+    const requiredMatchCount = Math.min(2, relevanceClaimTerms(claim).length);
+
     return {
-      schema: "trust-worthy-source-sweep-v1",
+      schema: "trust-worthy-source-sweep-v2",
       startedAt,
       completedAt: new Date().toISOString(),
       claim: cleanText(claim, 800),
       queries: settled.map(item => item.record),
-      results: mergeEvidenceFamilies(settled.flatMap(item => item.results))
+      results,
+      lowOverlapResults,
+      screening: {
+        policy: "claim-term-overlap-v1",
+        mode: requiredMatchCount ? "applied" : "bypassed-no-usable-terms",
+        requiredMatchCount,
+        titleCharacterLimit: 240,
+        descriptionCharacterLimit: 1000,
+        returnedFamilyCount: families.length,
+        retainedFamilyCount: results.length,
+        screenedOutFamilyCount: lowOverlapResults.length
+      }
     };
   }
 
@@ -581,6 +702,7 @@
     coreTerms,
     queryFamilies,
     buildResearchPlan,
+    assessResultRelevance,
     mergeEvidenceFamilies,
     runFederatedSearch
   };
