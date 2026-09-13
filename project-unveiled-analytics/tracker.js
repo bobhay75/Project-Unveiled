@@ -56,6 +56,17 @@
     document.querySelectorAll('.footer-links').forEach((footer) => addLink(footer));
     document.querySelectorAll('.pu-support-footer').forEach((footer) => addLink(footer));
 
+    const storeHref = '/store/';
+    const addStoreLink = (container) => {
+      if (!container || container.querySelector(`a[href="${storeHref}"]`)) return;
+      const link = document.createElement('a');
+      link.href = storeHref;
+      link.textContent = 'Store';
+      link.setAttribute('data-pu-event', 'store_click');
+      container.appendChild(link);
+    };
+    document.querySelectorAll('.nav-links,.footer-links,.pu-support-footer').forEach(addStoreLink);
+
     const progress = document.querySelector('[role="progressbar"][aria-valuenow]');
     if (progress) {
       const value = Math.max(0, Math.min(100, Number(progress.getAttribute('aria-valuenow')) || 0));
