@@ -680,6 +680,18 @@ function tw_ai_redact_investigation_record(array $record, string $secret): array
         $rawPrompts[$field] = $value;
         unset($record[$field]);
     }
+    $responseIdPresent = array_key_exists('response_id', $record);
+    $responseId = null;
+    if ($responseIdPresent) {
+        $responseId = $record['response_id'];
+        if (!is_string($responseId) || tw_ai_utf8_length($responseId) === null || strlen($responseId) > 1024) {
+            throw new RuntimeException('Private investigation log contains invalid provider metadata; no data was overwritten.');
+        }
+        // Preserve only a keyed identity derived from the original provider
+        // value. Remove it before generic prompt-echo scrubbing so an ID that
+        // happens to equal a raw prompt is not hashed from a replacement marker.
+        unset($record['response_id'], $record['response_id_hash'], $record['response_id_characters']);
+    }
     $record = tw_ai_scrub_prompt_echoes($record, $rawPrompts, $secret);
     foreach ($rawPrompts as $field => $value) {
         $record[$field . '_hash'] = hash_hmac('sha256', $field . '|' . $value, $secret);
@@ -694,16 +706,11 @@ function tw_ai_redact_investigation_record(array $record, string $secret): array
         || $record['question_characters'] < 0) {
         throw new RuntimeException('Private investigation log is missing its protected question identity; no data was overwritten.');
     }
-    if (array_key_exists('response_id', $record)) {
-        $responseId = $record['response_id'];
-        if (!is_string($responseId) || tw_ai_utf8_length($responseId) === null || strlen($responseId) > 1024) {
-            throw new RuntimeException('Private investigation log contains invalid provider metadata; no data was overwritten.');
-        }
+    if ($responseIdPresent) {
         if ($responseId !== '') {
             $record['response_id_hash'] = hash_hmac('sha256', 'response-id|' . $responseId, $secret);
             $record['response_id_characters'] = tw_ai_utf8_length($responseId);
         }
-        unset($record['response_id']);
     }
     if (array_key_exists('response_id_hash', $record)
         && (!is_string($record['response_id_hash'])
