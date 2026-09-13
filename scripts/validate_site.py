@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
 """Validate public HTML links and reject private/deployment artifacts."""
 
-from __future__ import annotations
-
 import os
 import sys
 from html.parser import HTMLParser
 from pathlib import Path
+from typing import List, Optional, Tuple
 from urllib.parse import unquote, urlsplit
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -19,15 +18,15 @@ SKIP_LINK_AUDIT_DIRS = {"owner"}
 class References(HTMLParser):
     def __init__(self) -> None:
         super().__init__(convert_charrefs=True)
-        self.items: list[tuple[int, str]] = []
+        self.items: List[Tuple[int, str]] = []
 
-    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+    def handle_starttag(self, tag: str, attrs: List[Tuple[str, Optional[str]]]) -> None:
         for name, value in attrs:
             if value and name in {"href", "src"}:
                 self.items.append((self.getpos()[0], value.strip()))
 
 
-def public_files() -> list[Path]:
+def public_files() -> List[Path]:
     return [
         path
         for path in ROOT.rglob("*")
@@ -35,7 +34,7 @@ def public_files() -> list[Path]:
     ]
 
 
-def resolve_reference(source: Path, raw: str) -> Path | None:
+def resolve_reference(source: Path, raw: str) -> Optional[Path]:
     if not raw or raw.startswith(("#", "//")):
         return None
     parsed = urlsplit(raw)
@@ -54,7 +53,7 @@ def resolve_reference(source: Path, raw: str) -> Path | None:
 
 
 def main() -> int:
-    errors: list[str] = []
+    errors: List[str] = []
     files = public_files()
 
     for path in files:

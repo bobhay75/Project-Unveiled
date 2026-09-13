@@ -4,6 +4,7 @@
 from html.parser import HTMLParser
 import json
 from pathlib import Path
+from typing import List, Optional, Tuple
 from urllib.parse import urlsplit
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -13,12 +14,12 @@ DIST = ROOT / "truth" / "lab"
 class PageAudit(HTMLParser):
     def __init__(self) -> None:
         super().__init__()
-        self.ids: list[str] = []
-        self.references: list[str] = []
+        self.ids: List[str] = []
+        self.references: List[str] = []
         self.h1_count = 0
         self.title_count = 0
 
-    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+    def handle_starttag(self, tag: str, attrs: List[Tuple[str, Optional[str]]]) -> None:
         attributes = dict(attrs)
         if attributes.get("id"):
             self.ids.append(str(attributes["id"]))
@@ -60,7 +61,7 @@ manifest = json.loads((DIST / "manifest.webmanifest").read_text(encoding="utf-8"
 assert manifest["name"].startswith("Project Unveiled"), "manifest brand is incorrect"
 for icon in manifest["icons"]:
     assert icon["src"].startswith("/truth/lab/"), f"manifest icon escaped the lab scope: {icon['src']}"
-    assert (DIST / icon["src"].removeprefix("/truth/lab/")).is_file(), f"manifest icon is missing: {icon['src']}"
+    assert (DIST / icon["src"][len("/truth/lab/"):]).is_file(), f"manifest icon is missing: {icon['src']}"
 
 audit = PageAudit()
 audit.feed(page.read_text(encoding="utf-8"))
@@ -80,11 +81,11 @@ for raw in audit.references:
     if parsed.netloc:
         raise AssertionError(f"scheme-relative external reference is not allowed: {raw}")
     if parsed.path.startswith("/truth/lab/"):
-        target = DIST / parsed.path.removeprefix("/truth/lab/")
+        target = DIST / parsed.path[len("/truth/lab/"):]
     elif parsed.path.startswith("/"):
         target = ROOT / parsed.path.lstrip("/")
     else:
-        local_path = parsed.path.removeprefix("./")
+        local_path = parsed.path[2:] if parsed.path.startswith("./") else parsed.path
         target = DIST / local_path
     assert target.exists(), f"broken local reference: {raw}"
 
