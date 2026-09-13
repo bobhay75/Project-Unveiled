@@ -1,12 +1,22 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+repo_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+
+grep -Fq 'Header always set Allow "GET, HEAD"' "$repo_dir/truth/lab/.htaccess"
+for endpoint in truth/question-submit.php truth/challenge-submit.php; do
+  grep -Fq "header('Allow: POST')" "$repo_dir/$endpoint"
+done
+grep -Fq "header('Allow: ' . \$required)" "$repo_dir/truth/daily/lib.php"
+for endpoint in truth/daily/investigate.php truth/daily/publish.php; do
+  grep -Fq 'tw_require_same_origin_form_post' "$repo_dir/$endpoint"
+done
+
 if ! command -v php >/dev/null 2>&1; then
-  echo "Investigation method gate skipped: PHP is unavailable in this environment."
+  echo "HTTP method runtime gate skipped: PHP is unavailable; source-level Allow checks passed."
   exit 0
 fi
 
-repo_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 port=18714
 body_file="$(mktemp)"
 header_file="$(mktemp)"
@@ -39,10 +49,12 @@ if [[ "$ready" != "1" ]]; then
   exit 1
 fi
 
-for method in GET HEAD; do
-  status="$(curl -sS --max-time 5 -X "$method" -D "$header_file" -o "$body_file" -w '%{http_code}' "http://127.0.0.1:${port}/truth/investigate.php")"
-  [[ "$status" == "405" ]]
-  grep -qi '^Allow: POST' "$header_file"
+for endpoint in truth/investigate.php truth/question-submit.php truth/challenge-submit.php; do
+  for method in GET HEAD OPTIONS PUT PATCH DELETE; do
+    status="$(curl -sS --max-time 5 -X "$method" -D "$header_file" -o "$body_file" -w '%{http_code}' "http://127.0.0.1:${port}/${endpoint}")"
+    [[ "$status" == "405" ]]
+    grep -qi '^Allow: POST' "$header_file"
+  done
 done
 
 status="$(curl -sS --max-time 5 -X POST -H 'Host: bobsome1.com' -d 'opened_at=0' -D "$header_file" -o "$body_file" -w '%{http_code}' "http://127.0.0.1:${port}/truth/investigate.php")"
@@ -64,4 +76,4 @@ status="$(curl -sS --max-time 5 -X POST -H 'Host: bobsome1.com' -H 'Origin: http
 [[ "$status" == "422" ]]
 grep -q 'Form fields must contain plain text' "$body_file"
 
-echo "Investigation method gate passed: methods fail closed, CSRF origin checks reject missing/null/cross-site requests, and malformed arrays stop before research."
+echo "Investigation method gate passed: POST-only routes return accurate 405 responses, CSRF origin checks reject missing/null/cross-site requests, and malformed arrays stop before research."

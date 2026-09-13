@@ -142,6 +142,8 @@ const deniedResponses = await Promise.all(deniedMethods.map(method => request(LA
 })));
 deniedResponses.forEach((response, index) => {
   assert.equal(response.status, 405, `${deniedMethods[index]} ${LAB_PATH} must remain denied with 405`);
+  const allowed = String(response.headers.get("allow") || "").toUpperCase();
+  assert.ok(allowed.includes("GET") && allowed.includes("HEAD"), `${deniedMethods[index]} ${LAB_PATH} must advertise Allow: GET, HEAD`);
 });
 
 const truthRoutes = [
@@ -186,14 +188,21 @@ healthDeniedResponses.forEach((response, index) => {
   assert.match(String(response.headers.get("allow") || ""), /(?:^|,|\s)GET(?:,|\s).*HEAD/i, "health 405 response must advertise GET and HEAD");
 });
 
-const [ownerBoundary, publicInvestigationGet, publicInvestigationHead] = await Promise.all([
+const [ownerBoundary, publicInvestigationGet, publicInvestigationHead, questionGet, questionHead, challengeGet, challengeHead] = await Promise.all([
   request("/owner/", { redirect: "manual" }),
   request("/truth/investigate.php", { redirect: "manual" }),
-  request("/truth/investigate.php", { method: "HEAD", redirect: "manual" })
+  request("/truth/investigate.php", { method: "HEAD", redirect: "manual" }),
+  request("/truth/question-submit.php", { redirect: "manual" }),
+  request("/truth/question-submit.php", { method: "HEAD", redirect: "manual" }),
+  request("/truth/challenge-submit.php", { redirect: "manual" }),
+  request("/truth/challenge-submit.php", { method: "HEAD", redirect: "manual" })
 ]);
 assert.ok([401, 403].includes(ownerBoundary.status), "the owner route must remain authentication-protected");
-assert.equal(publicInvestigationGet.status, 405, "the public investigation endpoint must deny GET");
-assert.equal(publicInvestigationHead.status, 405, "the public investigation endpoint must deny HEAD");
+const postOnlyResponses = [publicInvestigationGet, publicInvestigationHead, questionGet, questionHead, challengeGet, challengeHead];
+postOnlyResponses.forEach(response => {
+  assert.equal(response.status, 405, "public POST-only endpoints must deny GET and HEAD");
+  assert.ok(String(response.headers.get("allow") || "").toUpperCase().includes("POST"), "public POST-only 405 responses must advertise Allow: POST");
+});
 
 const internalRoutes = [
   "/scripts/validate_site.py",
@@ -254,7 +263,7 @@ console.log(JSON.stringify({
   canonical_https_apex_redirects_verified: canonicalRedirectCases.length,
   truth_trials_preserved: 4,
   owner_boundary_verified: true,
-  public_investigation_write_boundary_verified: true,
+  public_post_only_boundaries_verified: 3,
   minimal_health_contract_verified: true,
   internal_artifacts_denied: internalRoutes.length,
   owned_handoffs_verified: ownedHandoffs.length,

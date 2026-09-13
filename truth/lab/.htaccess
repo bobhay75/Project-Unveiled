@@ -29,6 +29,7 @@ ErrorDocument 404 /truth/lab/404.html
 </IfModule>
 
 <IfModule mod_headers.c>
+  Header always set Allow "GET, HEAD"
   Header always set Content-Security-Policy "default-src 'self'; base-uri 'self'; object-src 'none'; frame-src 'none'; form-action 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self' https://api.crossref.org https://api.openalex.org https://www.ebi.ac.uk https://archive.org https://www.federalregister.gov"
   Header always set Referrer-Policy "no-referrer"
   Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=()"
