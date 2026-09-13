@@ -5,13 +5,18 @@
   const DEFAULT_TIMEOUT_MS = 12000;
   const STOP_WORDS = new Set([
     "a", "an", "and", "are", "as", "at", "be", "because", "been", "by", "did", "do", "does",
-    "for", "from", "had", "has", "have", "how", "i", "if", "in", "into", "is", "it", "its",
+    "being", "beings", "between", "during", "for", "from", "had", "has", "have", "how", "i", "if", "in", "into", "is", "it", "its",
     "man", "of", "on", "or", "our", "that", "the", "their", "there", "this", "to", "was",
     "were", "what", "when", "where", "which", "who", "why", "with", "would"
   ]);
+  const BROAD_RELEVANCE_TERMS = new Set([
+    "being", "case", "claim", "current", "datum", "evidence", "exist", "first", "human", "information",
+    "last", "mission", "new", "people", "person", "program", "record", "report", "research", "result",
+    "source", "study", "system", "test"
+  ]);
 
   function cleanText(value, maxLength = 500) {
-    const decoded = String(value == null ? "" : value)
+    const decoded = String(value == null ? "" : value).normalize("NFKC")
       .replace(/&nbsp;|&#160;/gi, " ")
       .replace(/&amp;/gi, "&")
       .replace(/&lt;/gi, "<")
@@ -84,6 +89,10 @@
     }).slice(0, 12);
   }
 
+  function isAnchorTerm(item) {
+    return Boolean(item?.key) && !/^\d+$/.test(item.key) && !BROAD_RELEVANCE_TERMS.has(item.key);
+  }
+
   function relevanceDocumentKeys(result) {
     return new Set(cleanText(`${result?.title || ""} ${result?.screeningExcerpt || result?.snippet || ""}`, 1300)
       .toLocaleLowerCase()
@@ -97,21 +106,28 @@
     const claimTerms = relevanceClaimTerms(claim);
     const documentKeys = relevanceDocumentKeys(result);
     const matchedTerms = claimTerms.filter(item => item.keys.some(key => documentKeys.has(key))).map(item => item.term);
+    const anchorTerms = claimTerms.filter(isAnchorTerm);
+    const matchedAnchorTerms = anchorTerms.filter(item => item.keys.some(key => documentKeys.has(key))).map(item => item.term);
     const requiredMatches = Math.min(2, claimTerms.length);
-    const retained = matchedTerms.length >= requiredMatches;
+    const requiredAnchorMatches = Math.min(2, anchorTerms.length);
+    const retained = matchedTerms.length >= requiredMatches && matchedAnchorTerms.length >= requiredAnchorMatches;
     const countText = `${matchedTerms.length} of ${claimTerms.length || 0} claim terms`;
+    const anchorCountText = `${matchedAnchorTerms.length} of ${anchorTerms.length || 0} topic anchors`;
     return {
       status: retained ? "retained" : "low-overlap",
       score: matchedTerms.length,
       ratio: claimTerms.length ? Number((matchedTerms.length / claimTerms.length).toFixed(3)) : 0,
       requiredMatches,
+      requiredAnchorMatches,
       matchedTerms,
+      matchedAnchorTerms,
       claimTerms: claimTerms.map(item => item.term),
+      anchorTerms: anchorTerms.map(item => item.term),
       reason: retained
         ? requiredMatches
-          ? `Shown because ${countText} matched the title or provider description.`
+          ? `Shown because ${countText}, including ${anchorCountText}, matched the title or provider description.`
           : "Shown because the claim supplied no usable screening terms; no metadata was hidden."
-        : `Moved to the low-overlap audit because only ${countText} matched the title or provider description; ${requiredMatches} were required.`
+        : `Moved to the low-overlap audit because only ${countText}, including ${anchorCountText}, matched the title or provider description; ${requiredMatches} terms and ${requiredAnchorMatches} topic anchors were required.`
     };
   }
 
@@ -137,7 +153,15 @@
 
   function buildResearchPlan(claim) {
     const families = queryFamilies(claim);
-    const archiveCore = coreTerms(claim).map(term => `\"${term.replace(/\"/g, "")}\"`).join(" AND ") || `\"${families.neutral}\"`;
+    const allArchiveTerms = coreTerms(claim);
+    const focusedArchiveTerms = allArchiveTerms.filter(term => isAnchorTerm({ key: relevanceTermKey(term) }));
+    const archiveTerms = (focusedArchiveTerms.length >= 2 ? focusedArchiveTerms : allArchiveTerms).slice(0, 6);
+    const quotedArchiveTerms = archiveTerms.map(term => `\"${term.replace(/\"/g, "")}\"`);
+    const archiveLeft = quotedArchiveTerms.filter((_, index) => index % 2 === 0).join(" OR ");
+    const archiveRight = quotedArchiveTerms.filter((_, index) => index % 2 === 1).join(" OR ");
+    const archiveCore = archiveRight
+      ? `((${archiveLeft}) AND (${archiveRight}))`
+      : archiveLeft || `\"${families.neutral}\"`;
     const archiveSupport = `(${archiveCore}) AND (evidence OR data OR report OR experiment OR archive)`;
     const archiveChallenge = `(${archiveCore}) AND (hoax OR fake OR fraud OR critique OR contradiction OR dissent)`;
     return [
@@ -381,8 +405,11 @@
       score: Math.max(0, Math.min(20, Number(input.score) || 0)),
       ratio: Math.max(0, Math.min(1, Number(input.ratio) || 0)),
       requiredMatches: Math.max(0, Math.min(20, Number(input.requiredMatches) || 0)),
+      requiredAnchorMatches: Math.max(0, Math.min(20, Number(input.requiredAnchorMatches) || 0)),
       matchedTerms: cleanStringList(input.matchedTerms).slice(0, 20),
+      matchedAnchorTerms: cleanStringList(input.matchedAnchorTerms).slice(0, 20),
       claimTerms: cleanStringList(input.claimTerms).slice(0, 20),
+      anchorTerms: cleanStringList(input.anchorTerms).slice(0, 20),
       reason: cleanText(input.reason, 320)
     };
   }
@@ -673,7 +700,9 @@
     const families = mergeEvidenceFamilies(settled.flatMap(item => item.results));
     const results = families.filter(family => family.variants.some(variant => variant.relevance?.status === "retained"));
     const lowOverlapResults = families.filter(family => !family.variants.some(variant => variant.relevance?.status === "retained"));
-    const requiredMatchCount = Math.min(2, relevanceClaimTerms(claim).length);
+    const claimTerms = relevanceClaimTerms(claim);
+    const requiredMatchCount = Math.min(2, claimTerms.length);
+    const requiredAnchorMatchCount = Math.min(2, claimTerms.filter(isAnchorTerm).length);
 
     return {
       schema: "trust-worthy-source-sweep-v2",
@@ -684,9 +713,10 @@
       results,
       lowOverlapResults,
       screening: {
-        policy: "claim-term-overlap-v1",
+        policy: "claim-term-overlap-v2",
         mode: requiredMatchCount ? "applied" : "bypassed-no-usable-terms",
         requiredMatchCount,
+        requiredAnchorMatchCount,
         titleCharacterLimit: 240,
         descriptionCharacterLimit: 1000,
         returnedFamilyCount: families.length,

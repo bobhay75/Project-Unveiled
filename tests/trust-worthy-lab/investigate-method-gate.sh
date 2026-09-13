@@ -45,8 +45,23 @@ for method in GET HEAD; do
   grep -qi '^Allow: POST' "$header_file"
 done
 
-status="$(curl -sS --max-time 5 -X POST -H 'Host: bobsome1.com' -D "$header_file" -o "$body_file" -w '%{http_code}' "http://127.0.0.1:${port}/truth/investigate.php")"
-[[ "$status" == "200" ]]
-grep -q 'Please take a few seconds to review your question' "$body_file"
+status="$(curl -sS --max-time 5 -X POST -H 'Host: bobsome1.com' -d 'opened_at=0' -D "$header_file" -o "$body_file" -w '%{http_code}' "http://127.0.0.1:${port}/truth/investigate.php")"
+[[ "$status" == "403" ]]
+grep -q 'Request origin was not accepted' "$body_file"
 
-echo "Investigation method gate passed: GET and HEAD return 405 before the research dependency loads; bounded POST reaches the form guard."
+status="$(curl -sS --max-time 5 -X POST -H 'Host: bobsome1.com' -H 'Origin: null' -d 'opened_at=0' -D "$header_file" -o "$body_file" -w '%{http_code}' "http://127.0.0.1:${port}/truth/investigate.php")"
+[[ "$status" == "403" ]]
+
+status="$(curl -sS --max-time 5 -X POST -H 'Host: bobsome1.com' -H 'Origin: https://bobsome1.com' -H 'Sec-Fetch-Site: cross-site' -d 'opened_at=0' -D "$header_file" -o "$body_file" -w '%{http_code}' "http://127.0.0.1:${port}/truth/investigate.php")"
+[[ "$status" == "403" ]]
+
+status="$(curl -sS --max-time 5 -X POST -H 'Host: bobsome1.com' -H 'Origin: https://bobsome1.com' -H 'Sec-Fetch-Site: same-origin' -d 'opened_at=0' -D "$header_file" -o "$body_file" -w '%{http_code}' "http://127.0.0.1:${port}/truth/investigate.php")"
+[[ "$status" == "422" ]]
+grep -q 'Please reload the page, then take a few seconds' "$body_file"
+
+opened_at="$(( $(date +%s) - 5 ))"
+status="$(curl -sS --max-time 5 -X POST -H 'Host: bobsome1.com' -H 'Origin: https://bobsome1.com' --data-urlencode "opened_at=${opened_at}" --data-urlencode 'question[]=array-input' -D "$header_file" -o "$body_file" -w '%{http_code}' "http://127.0.0.1:${port}/truth/investigate.php")"
+[[ "$status" == "422" ]]
+grep -q 'Form fields must contain plain text' "$body_file"
+
+echo "Investigation method gate passed: methods fail closed, CSRF origin checks reject missing/null/cross-site requests, and malformed arrays stop before research."

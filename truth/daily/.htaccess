@@ -1,0 +1,25 @@
+Options -Indexes
+
+# Keep a bounded fallback for every private-desk request, then align each form
+# route with the exact maximum its PHP request gate accepts.
+LimitRequestBody 524288
+
+<Files "login.php">
+  LimitRequestBody 4096
+</Files>
+
+<Files "logout.php">
+  LimitRequestBody 2048
+</Files>
+
+<Files "investigate.php">
+  LimitRequestBody 8192
+</Files>
+
+<Files "publish.php">
+  LimitRequestBody 524288
+</Files>
+
+<FilesMatch "^(compat|config|legacy-migration|lib|meat-desk|queue-rotation|traditions-of-men|trial-filter)\.php$">
+  Require all denied
+</FilesMatch>

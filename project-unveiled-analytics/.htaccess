@@ -1,0 +1,18 @@
+Options -Indexes
+
+# Apache enforces the collector's immutable configured hard maximum before PHP
+# reads a chunked body. The application keeps the normal collector limit at
+# 8 KiB and applies the configured value only within this 32 KiB ceiling.
+<Files "collect.php">
+  LimitRequestBody 32768
+</Files>
+
+# Keep the public login parser's pre-PHP body allocation aligned with its
+# smaller URL-encoded form limit.
+<Files "index.php">
+  LimitRequestBody 2048
+</Files>
+
+<Files "lib.php">
+  Require all denied
+</Files>

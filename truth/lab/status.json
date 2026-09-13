@@ -1,7 +1,7 @@
 {
   "schema": "trust-worthy-public-status-v1",
-  "release": 15,
-  "observer": "trust-worthy-observer-v5",
+  "release": 16,
+  "observer": "trust-worthy-observer-v6",
   "published_date": "2026-09-13",
   "role": "observe-test-report",
   "allowed_methods": ["GET", "HEAD"],
@@ -17,8 +17,8 @@
   "release_manifest_schema": "trust-worthy-release-manifest-v1",
   "owned_asset_digest": "SHA-256",
   "delivery_transform_policy": "exact-owned-static-v1",
-  "rollback_release": 14,
-  "rollback_source_commit": "10c0b4b140264808aebdf0d18cdd0b3632c358f2",
+  "rollback_release": 15,
+  "rollback_source_commit": "9c4faa71e9c4955c1e597b2b3f9c8a861cac3bf1",
   "finance_boundary": "private-read-only-never-public",
   "deception_boundary": "synthetic-only-no-retaliation-no-identity-enrichment"
 }

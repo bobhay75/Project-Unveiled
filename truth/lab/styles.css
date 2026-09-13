@@ -212,6 +212,8 @@ input { min-height: 3rem; }
 select { min-height: 3rem; padding: .65rem .7rem; }
 textarea::placeholder, input::placeholder { color: #82949e; }
 textarea:focus, input:focus, select:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(98,205,241,.13); }
+textarea[aria-invalid="true"], input[aria-invalid="true"], select[aria-invalid="true"] { border-color: var(--red); }
+textarea[aria-invalid="true"]:focus, input[aria-invalid="true"]:focus, select[aria-invalid="true"]:focus { box-shadow: 0 0 0 3px rgba(255,107,107,.16); }
 .input-meta { display: flex; justify-content: space-between; gap: 1rem; margin-top: .38rem; color: var(--muted); font-size: .8rem; }
 .form-error { min-height: 1.25rem; margin: .35rem 0 0; color: var(--red); font-size: .86rem; }
 
@@ -367,6 +369,9 @@ textarea:focus, input:focus, select:focus { border-color: var(--blue); box-shado
 .query-row span { color: var(--muted); font-size: .7rem; text-transform: uppercase; letter-spacing: .06em; }
 .query-row code { overflow-wrap: anywhere; color: #cad8dc; font-size: .75rem; white-space: normal; }
 .query-row small { margin-top: .25rem; color: var(--red); font-size: .7rem; }
+.query-row .query-execution, .query-row .query-endpoint-label { color: var(--muted); }
+.query-row .query-endpoint-label { margin-top: .45rem; text-transform: uppercase; letter-spacing: .05em; }
+.query-row .query-endpoint { color: #9fb4ba; font-size: .68rem; }
 .query-state { color: var(--muted); font: .75rem ui-monospace,monospace; text-transform: uppercase; }
 .query-state.complete { color: var(--green); }
 .query-state.failed, .query-state.cancelled { color: var(--red); }

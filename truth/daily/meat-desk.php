@@ -83,41 +83,51 @@ function tw_meat_desk_candidates(): array {
 
 function tw_user_question_candidates(string $privateDir, int $max = 6): array {
     $path = $privateDir . '/questions.json';
-    if (!is_file($path)) return [];
-    $rows = json_decode((string)file_get_contents($path), true);
-    if (!is_array($rows)) return [];
+    if (!tw_daily_path_exists($path)) return [];
+    $rows = tw_private_json_read_strict($path, [], 8388608);
+    if (!is_array($rows) || !array_is_list($rows)) {
+        throw new RuntimeException('Private question storage has an invalid structure.');
+    }
+
+    $retentionSeconds = tw_daily_intake_retention_days() * 86400;
+    $now = time();
 
     $out = [];
     foreach (array_reverse($rows) as $row) {
         if (!is_array($row)) continue;
-        $question = trim((string)($row['question'] ?? ''));
+        $question = is_string($row['question'] ?? null) ? trim($row['question']) : '';
         if ($question === '') continue;
-        $submitted = strtotime((string)($row['submitted_at_utc'] ?? '')) ?: time();
+        $submitted = tw_daily_parse_utc_timestamp($row['submitted_at_utc'] ?? null);
+        if (!is_int($submitted) || $submitted <= 0 || $submitted > $now) continue;
+        if (!array_key_exists('delete_after_utc', $row)) {
+            $deleteAt = $submitted + $retentionSeconds;
+        } else {
+            $deleteAt = tw_daily_parse_utc_timestamp($row['delete_after_utc']);
+            if (!is_int($deleteAt) || $deleteAt <= $submitted) continue;
+            // A stored date may shorten retention, but it cannot extend today's configured cap.
+            $deleteAt = min($deleteAt, $submitted + $retentionSeconds);
+        }
+        if ($deleteAt <= $now) continue;
+        $rowId = is_string($row['id'] ?? null) ? $row['id'] : substr(hash('sha256', $question), 0, 16);
+        $context = is_string($row['context'] ?? null) ? trim($row['context']) : '';
         $out[] = [
-            'id' => 'user-' . preg_replace('/[^a-zA-Z0-9]/', '', (string)($row['id'] ?? substr(hash('sha256', $question), 0, 16))),
+            'id' => 'user-' . preg_replace('/[^a-zA-Z0-9]/', '', $rowId),
             'source' => 'Private user question',
             'title' => $question,
             'url' => '',
             'published_at_utc' => gmdate('c', $submitted),
             'timestamp' => $submitted,
-            'summary' => trim((string)($row['context'] ?? '')),
+            'summary' => $context,
             'score' => 200 - count($out),
             'trial_lane' => 'People are asking',
             'tension_score' => 60,
             'corroborating_sources' => [],
             'why_trial_worthy' => 'A real person asked Trust-Worthy to investigate it.',
             'candidate_type' => 'user-question',
+            'visibility' => 'private',
+            'delete_after_utc' => gmdate('c', $deleteAt),
         ];
         if (count($out) >= $max) break;
     }
     return $out;
-}
-
-function tw_build_meat_queue(array $newsCandidates, string $privateDir, int $max = 18): array {
-    $user = tw_user_question_candidates($privateDir, 6);
-    $meat = array_slice(tw_meat_desk_candidates(), 0, 12);
-    $news = array_slice($newsCandidates, 0, 2);
-
-    $queue = array_merge($user, $meat, $news);
-    return array_slice($queue, 0, $max);
 }

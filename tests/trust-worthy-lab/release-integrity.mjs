@@ -7,12 +7,12 @@ export const PROJECT_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.
 export const DIST = path.join(PROJECT_ROOT, "truth", "lab");
 export const MANIFEST_PATH = path.join(DIST, "release-manifest.json");
 export const MANIFEST_SCHEMA = "trust-worthy-release-manifest-v1";
-export const PUBLIC_RELEASE = 15;
-export const OBSERVER_RELEASE = "trust-worthy-observer-v5";
-export const BUILD_RECORDED_AT = "2026-09-13T05:54:03Z";
-export const PREDECESSOR_COMMIT = "10c0b4b140264808aebdf0d18cdd0b3632c358f2";
-export const PREDECESSOR_ROOT = "aed87658da895e0a5453afcf48294e7a95aa6995b7d6f8489da91660acb0bec9";
-export const ROLLBACK_SOURCE_COMMIT = "10c0b4b140264808aebdf0d18cdd0b3632c358f2";
+export const PUBLIC_RELEASE = 16;
+export const OBSERVER_RELEASE = "trust-worthy-observer-v6";
+export const BUILD_RECORDED_AT = "2026-09-13T13:48:49Z";
+export const PREDECESSOR_COMMIT = "aea90c55a31e7d158f1d092e2509fcc3b9147a34";
+export const PREDECESSOR_ROOT = "92deed2f60f249b01f2b12869c66b49e25238291fe7e74a3e9a82f6117a4c520";
+export const ROLLBACK_SOURCE_COMMIT = "9c4faa71e9c4955c1e597b2b3f9c8a861cac3bf1";
 export const PRODUCTION_ORIGIN = "https://bobsome1.com";
 export const LAB_PATH = "/truth/lab/";
 export const DELIVERY_POLICY = "exact-owned-static-v1";
@@ -112,18 +112,19 @@ export function buildManifest() {
       public_origin: `${PRODUCTION_ORIGIN}${LAB_PATH}`
     },
     predecessor: {
-      release: 14,
+      release: 15,
       source_commit: PREDECESSOR_COMMIT,
       build_root_sha256: PREDECESSOR_ROOT,
       public_origin: `${PRODUCTION_ORIGIN}${LAB_PATH}`,
       relationship: "supersedes",
-      note: "Release 14 is the verified canonical predecessor. Release 15 corrects the hosting disclosure and adds an auditable claim-term-overlap display screen for Source Sweep metadata."
+      note: "Release 15 is the verified canonical predecessor. Release 16 restores canonical HTTPS/apex delivery, strengthens Source Sweep query precision and accessibility, and keeps commercial navigation on the owned bobsome1.com surface."
     },
     rollback: {
       project_unveiled_source_commit: ROLLBACK_SOURCE_COMMIT,
-      evidence_lab_release: 14,
+      evidence_lab_release: 15,
       tested_live_fallback: `${PRODUCTION_ORIGIN}${LAB_PATH}`,
-      instruction: "Redeploy the named Project-Unveiled commit to restore release 14 if the release 15 live gate fails."
+      scope: "Evidence Lab files only; do not check out or redeploy the older whole-site commit.",
+      instruction: "From the release 16 checkout, run scripts/rollback-trust-worthy-lab.sh against /home/bobsome1/public_html/truth/lab to restore the verified release 15 lab bytes from the named commit."
     },
     digest: {
       algorithm: "SHA-256",

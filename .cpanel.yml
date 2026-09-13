@@ -2,7 +2,5 @@
 deployment:
  tasks:
  - export DEPLOYPATH=/home/bobsome1/public_html/
- - /bin/mkdir -p $DEPLOYPATH/truth
- - /usr/bin/rsync -rlt --chmod=D755,F644 --exclude '*.md' --exclude 'README*' ./truth/ $DEPLOYPATH/truth/
- - /usr/bin/rsync -rlt --chmod=D755,F644 --exclude .git --exclude .github --exclude .gitignore --exclude .cpanel.yml --exclude docs --exclude scripts --exclude tests --exclude '*.md' --exclude 'README*' --exclude '*.py' --exclude '*.yml' --exclude '*.yaml' --exclude '*.zip' ./ $DEPLOYPATH
+ - /bin/bash ./scripts/deploy-public.sh "$DEPLOYPATH"
  - /bin/chmod 755 $DEPLOYPATH

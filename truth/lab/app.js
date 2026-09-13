@@ -417,7 +417,7 @@ const nodes = {
 };
 
 const emptyCoverage = () => ({ scope: "", cutoff: "", stop: "", gaps: "" });
-const emptyScreening = () => ({ policy: "claim-term-overlap-v1", mode: "not-run", requiredMatchCount: 0, titleCharacterLimit: 240, descriptionCharacterLimit: 1000, returnedFamilyCount: 0, retainedFamilyCount: 0, screenedOutFamilyCount: 0 });
+const emptyScreening = () => ({ policy: "claim-term-overlap-v2", mode: "not-run", requiredMatchCount: 0, requiredAnchorMatchCount: 0, titleCharacterLimit: 240, descriptionCharacterLimit: 1000, returnedFamilyCount: 0, retainedFamilyCount: 0, screenedOutFamilyCount: 0 });
 const emptyResearchRun = () => ({ schema: "trust-worthy-source-sweep-v2", status: "idle", startedAt: "", completedAt: "", claim: "", queries: [], results: [], lowOverlapResults: [], screening: emptyScreening() });
 const emptyArchive = () => ({ receipt: "", hash: "", verified: "" });
 let state = { claim: "", map: null, evidence: [], coverage: emptyCoverage(), coverageOrigin: "none", research: emptyResearchRun(), curated: false, caseId: null, recordVersion: null, reviewedAt: null, parent: null, archive: emptyArchive() };
@@ -433,7 +433,7 @@ let archiveRevision = 0;
 let docketReadIssue = "";
 
 function normalizedClaim(value) {
-  return String(value || "")
+  return String(value || "").normalize("NFKC")
     .replace(/[\u0000-\u001F\u007F\u202A-\u202E\u2066-\u2069]/g, " ")
     .trim()
     .replace(/\s+/g, " ");
@@ -466,6 +466,19 @@ function updateClaimEditorGate() {
   });
   nodes.results.querySelectorAll?.("[data-attach-research], [data-remove-source]").forEach(control => { control.disabled = dirty; });
   return dirty;
+}
+
+function clearFormError(form, errorNode) {
+  form.querySelectorAll?.("input, textarea, select").forEach(control => control.removeAttribute("aria-invalid"));
+  errorNode.textContent = "";
+}
+
+function reportFormError(form, errorNode, message, field = null) {
+  clearFormError(form, errorNode);
+  errorNode.textContent = message;
+  if (!field) return;
+  field.setAttribute("aria-invalid", "true");
+  field.focus({ preventScroll: true });
 }
 
 function uniqueMatches(text, terms) {
@@ -840,6 +853,16 @@ function renderResearchQueries() {
     const query = document.createElement("code");
     query.textContent = item.query;
     queryBlock.append(query);
+    const execution = document.createElement("small");
+    execution.className = "query-execution";
+    execution.textContent = `Requested UTC: ${item.requestedAt || "not started"} · Completed UTC: ${item.completedAt || "not completed"}`;
+    const endpointLabel = document.createElement("small");
+    endpointLabel.className = "query-endpoint-label";
+    endpointLabel.textContent = "Exact endpoint:";
+    const endpoint = document.createElement("code");
+    endpoint.className = "query-endpoint";
+    endpoint.textContent = item.url;
+    queryBlock.append(execution, endpointLabel, endpoint);
     if (item.error) {
       const error = document.createElement("small");
       error.textContent = item.error;
@@ -862,6 +885,13 @@ function renderResearchQueries() {
   });
 }
 
+function researchFamilyFocusIdentity(result) {
+  return result.identity?.stableIdentifiers?.[0]
+    || result.identity?.canonicalUrls?.[0]
+    || safeHttpUrl(result.url)
+    || result.id;
+}
+
 function renderResearchResults() {
   const results = [...(state.research?.results || [])];
   const lowOverlapResults = [...(state.research?.lowOverlapResults || [])]
@@ -869,9 +899,20 @@ function renderResearchResults() {
   const stanceOrder = { challenge: 0, neutral: 1, support: 2 };
   results.sort((a, b) => (Number(b.relevance?.score) || 0) - (Number(a.relevance?.score) || 0)
     || (stanceOrder[a.stance] ?? 9) - (stanceOrder[b.stance] ?? 9));
+  const focusedResearchKey = nodes.researchResults.contains?.(document.activeElement)
+    ? document.activeElement?.dataset?.researchFocusKey || ""
+    : "";
   const priorAudit = nodes.researchResults.querySelector?.(".relevance-audit");
   const auditWasOpen = Boolean(priorAudit?.open);
   const auditHadFocus = Boolean(priorAudit?.contains?.(document.activeElement));
+  const restoreFocusedResearchControl = () => {
+    if (!focusedResearchKey) return false;
+    const candidates = Array.from(nodes.researchResults.querySelectorAll?.("[data-research-focus-key]") || []);
+    const match = candidates.find(node => node.dataset.researchFocusKey === focusedResearchKey);
+    if (!match) return false;
+    match.focus({ preventScroll: true });
+    return true;
+  };
   nodes.researchResults.replaceChildren();
   if (!results.length) {
     const empty = document.createElement("p");
@@ -884,6 +925,7 @@ function renderResearchResults() {
     nodes.researchResults.append(empty);
   }
   results.forEach(result => {
+    const focusIdentity = researchFamilyFocusIdentity(result);
     const article = document.createElement("article");
     article.className = "research-lead";
     const topline = document.createElement("div");
@@ -906,7 +948,7 @@ function renderResearchResults() {
     const matchedTerms = result.relevance?.matchedTerms || [];
     overlap.textContent = result.relevance?.requiredMatches === 0
       ? "Display screen bypassed: the claim supplied no usable screening terms. This item remains unreviewed metadata."
-      : `Display screen: matched ${matchedTerms.join(", ") || "no terms"}. Claim-term overlap is not evidence of relevance or truth.`;
+      : `Display screen: matched ${matchedTerms.join(", ") || "no terms"}; ${result.relevance?.matchedAnchorTerms?.length || 0} topic anchors matched. Claim-term overlap is not evidence of relevance or truth.`;
     article.append(overlap);
     if (result.snippet) {
       const snippet = document.createElement("p");
@@ -938,12 +980,14 @@ function renderResearchResults() {
       link.target = "_blank";
       link.rel = "noopener noreferrer";
       link.textContent = variantUrls.length === 1 ? "Inspect source ↗" : `Inspect variant ${index + 1} ↗`;
+      link.dataset.researchFocusKey = `source-link:${safe}`;
       actions.append(link);
     });
     const attach = document.createElement("button");
     attach.type = "button";
     attach.className = "quiet-action";
     attach.dataset.attachResearch = result.id;
+    attach.dataset.researchFocusKey = `attach:${focusIdentity}`;
     attach.textContent = "Attach as unreviewed lead";
     attach.setAttribute("aria-label", `Attach as unreviewed lead: ${result.title}`);
     actions.append(attach);
@@ -951,16 +995,22 @@ function renderResearchResults() {
     nodes.researchResults.append(article);
   });
 
-  if (!lowOverlapResults.length) return;
+  if (!lowOverlapResults.length) {
+    restoreFocusedResearchControl();
+    return;
+  }
   const audit = document.createElement("details");
   audit.className = "relevance-audit";
   audit.open = auditWasOpen;
   const summary = document.createElement("summary");
+  summary.dataset.researchFocusKey = "lower-overlap-summary";
   summary.textContent = `${lowOverlapResults.length} lower-overlap metadata famil${lowOverlapResults.length === 1 ? "y" : "ies"} preserved for audit`;
   const note = document.createElement("p");
   note.className = "relevance-audit-note";
   const requiredMatches = Number(state.research?.screening?.requiredMatchCount || lowOverlapResults[0]?.relevance?.requiredMatches || 0);
-  note.textContent = `These provider returns did not meet the visible ${requiredMatches}-term claim-overlap display screen across each title and the first 1,000 cleaned characters of its provider description. They remain inspectable because inflections, synonyms, abbreviations, translations, and vocabulary mismatch can hide useful evidence. This screen is not a finding about relevance or truth.`;
+  const requiredAnchorMatches = Number(state.research?.screening?.requiredAnchorMatchCount || lowOverlapResults[0]?.relevance?.requiredAnchorMatches || 0);
+  const anchorRequirement = requiredAnchorMatches ? `, including ${requiredAnchorMatches} topic anchor${requiredAnchorMatches === 1 ? "" : "s"}` : "";
+  note.textContent = `These provider returns did not meet the visible claim-overlap display screen requiring ${requiredMatches} term${requiredMatches === 1 ? "" : "s"}${anchorRequirement} across each title and the first 1,000 cleaned characters of its provider description. They remain inspectable because inflections, synonyms, abbreviations, translations, and vocabulary mismatch can hide useful evidence. This screen is not a finding about relevance or truth.`;
   const list = document.createElement("div");
   list.className = "low-overlap-list";
   lowOverlapResults.forEach(result => {
@@ -990,6 +1040,7 @@ function renderResearchResults() {
       link.rel = "noopener noreferrer";
       link.textContent = variants.length === 1 ? `Inspect ${variant.provider || "source"} record ↗` : `Inspect ${variant.provider || "source"} variant ${index + 1} ↗`;
       link.setAttribute("aria-label", `Inspect lower-overlap source from ${variant.provider || "metadata provider"}: ${variant.title}`);
+      link.dataset.researchFocusKey = `source-link:${safe}`;
       row.append(variantTitle, link);
       variantList.append(row);
     });
@@ -998,7 +1049,7 @@ function renderResearchResults() {
   });
   audit.append(summary, note, list);
   nodes.researchResults.append(audit);
-  if (auditHadFocus) summary.focus({ preventScroll: true });
+  if (!restoreFocusedResearchControl() && auditHadFocus) summary.focus({ preventScroll: true });
 }
 
 function renderResearch() {
@@ -1009,6 +1060,7 @@ function renderResearch() {
   const lowOverlapCount = Number(run.screening?.screenedOutFamilyCount ?? (run.lowOverlapResults || []).length);
   const screenApplied = Number(run.screening?.requiredMatchCount || 0) > 0;
   const running = run.status === "running";
+  byId("research-sweep").setAttribute("aria-busy", running ? "true" : "false");
   const status = byId("research-status");
   status.classList.toggle("is-running", running);
   status.classList.toggle("has-failures", !running && failures > 0);
@@ -1186,9 +1238,10 @@ function receiptPayload() {
         error: item.error || ""
       })),
       screening: {
-        policy: state.research?.screening?.policy || "claim-term-overlap-v1",
+        policy: state.research?.screening?.policy || "claim-term-overlap-v2",
         mode: state.research?.screening?.mode || (Number(state.research?.screening?.requiredMatchCount || 0) ? "applied" : "bypassed-no-usable-terms"),
         required_match_count: Number(state.research?.screening?.requiredMatchCount || 0),
+        required_topic_anchor_match_count: Number(state.research?.screening?.requiredAnchorMatchCount || 0),
         title_character_limit: Number(state.research?.screening?.titleCharacterLimit || 240),
         provider_description_character_limit: Number(state.research?.screening?.descriptionCharacterLimit || 1000),
         returned_family_count: Number(state.research?.screening?.returnedFamilyCount ?? ((state.research?.results?.length || 0) + (state.research?.lowOverlapResults?.length || 0))),
@@ -1216,8 +1269,11 @@ function receiptPayload() {
         external_id: item.externalId || "",
         snippet: item.snippet || "",
         matched_claim_terms: item.relevance?.matchedTerms || [],
+        matched_topic_anchors: item.relevance?.matchedAnchorTerms || [],
         claim_terms: item.relevance?.claimTerms || [],
+        topic_anchors: item.relevance?.anchorTerms || [],
         required_matches: Number(item.relevance?.requiredMatches || 0),
+        required_topic_anchor_matches: Number(item.relevance?.requiredAnchorMatches || 0),
         reason: item.relevance?.reason || "Lower visible claim-term overlap; retained only in the audit receipt.",
         identity: {
           stable_identifiers: item.identity?.stableIdentifiers || [],
@@ -1258,8 +1314,11 @@ function receiptPayload() {
             score: Number(variant.relevance?.score || 0),
             ratio: Number(variant.relevance?.ratio || 0),
             matched_claim_terms: variant.relevance?.matchedTerms || [],
+            matched_topic_anchors: variant.relevance?.matchedAnchorTerms || [],
             claim_terms: variant.relevance?.claimTerms || [],
+            topic_anchors: variant.relevance?.anchorTerms || [],
             required_matches: Number(variant.relevance?.requiredMatches || 0),
+            required_topic_anchor_matches: Number(variant.relevance?.requiredAnchorMatches || 0),
             reason: variant.relevance?.reason || ""
           }
         })),
@@ -1285,7 +1344,9 @@ function receiptPayload() {
           score: Number(item.relevance?.score || 0),
           ratio: Number(item.relevance?.ratio || 0),
           matched_claim_terms: item.relevance?.matchedTerms || [],
+          matched_topic_anchors: item.relevance?.matchedAnchorTerms || [],
           required_matches: Number(item.relevance?.requiredMatches || 0),
+          required_topic_anchor_matches: Number(item.relevance?.requiredAnchorMatches || 0),
           reason: item.relevance?.reason || ""
         },
         identity: {
@@ -1324,7 +1385,9 @@ function receiptPayload() {
             status: variant.relevance?.status || "unscored",
             score: Number(variant.relevance?.score || 0),
             matched_claim_terms: variant.relevance?.matchedTerms || [],
+            matched_topic_anchors: variant.relevance?.matchedAnchorTerms || [],
             required_matches: Number(variant.relevance?.requiredMatches || 0),
+            required_topic_anchor_matches: Number(variant.relevance?.requiredAnchorMatches || 0),
             reason: variant.relevance?.reason || ""
           }
         })),
@@ -1633,11 +1696,15 @@ function buildPlainReport() {
   if (!state.map) return "";
   const map = state.map;
   const screenApplied = Number(state.research?.screening?.requiredMatchCount || 0) > 0;
-  const queryReceiptLines = (state.research?.queries || []).map(item => screenApplied
-    ? `- ${item.provider} / ${item.stance} / ${item.status}: ${item.query} (${item.resultCount || 0} returned; ${item.retainedResultCount ?? item.resultCount ?? 0} higher overlap; ${item.lowOverlapResultCount || 0} lower overlap${item.error ? `; ${item.error}` : ""})`
-    : `- ${item.provider} / ${item.stance} / ${item.status}: ${item.query} (${item.resultCount || 0} returned; unscreened${item.error ? `; ${item.error}` : ""})`);
+  const queryReceiptLines = (state.research?.queries || []).flatMap(item => [
+    screenApplied
+      ? `- ${item.provider} / ${item.stance} / ${item.status}: ${item.query} (${item.resultCount || 0} returned; ${item.retainedResultCount ?? item.resultCount ?? 0} higher overlap; ${item.lowOverlapResultCount || 0} lower overlap${item.error ? `; ${item.error}` : ""})`
+      : `- ${item.provider} / ${item.stance} / ${item.status}: ${item.query} (${item.resultCount || 0} returned; unscreened${item.error ? `; ${item.error}` : ""})`,
+    `  Endpoint: ${item.url}`,
+    `  Requested UTC: ${item.requestedAt || "not started"}; completed UTC: ${item.completedAt || "not completed"}`
+  ]);
   const screenReceiptLine = screenApplied
-    ? `Display screen: ${state.research?.screening?.policy || "claim-term-overlap-v1"}; ${state.research?.screening?.requiredMatchCount} distinct claim terms required. This is not an evidentiary judgment.`
+    ? `Display screen: ${state.research?.screening?.policy || "claim-term-overlap-v2"}; ${state.research?.screening?.requiredMatchCount} distinct claim terms and ${state.research?.screening?.requiredAnchorMatchCount || 0} topic anchors required. This is not an evidentiary judgment.`
     : "Display screen: bypassed because the claim supplied no usable screening terms; returned metadata is unscreened and unreviewed.";
   const familyReceiptLine = screenApplied
     ? `Primary discovery families: ${state.research?.results?.length || 0}; lower-overlap audit families: ${state.research?.lowOverlapResults?.length || 0}. Every returned item remains a metadata lead until inspected.`
@@ -1875,11 +1942,14 @@ function sanitizedResearch(value, claim) {
       lowOverlapResultCount: counts.low
     };
   });
-  const requiredMatchCount = Number(window.TrustResearch?.assessResultRelevance?.(claim, {})?.requiredMatches || 0);
+  const emptyAssessment = window.TrustResearch?.assessResultRelevance?.(claim, {}) || {};
+  const requiredMatchCount = Number(emptyAssessment.requiredMatches || 0);
+  const requiredAnchorMatchCount = Number(emptyAssessment.requiredAnchorMatches || 0);
   const screening = {
-    policy: "claim-term-overlap-v1",
+    policy: "claim-term-overlap-v2",
     mode: requiredMatchCount ? "applied" : "bypassed-no-usable-terms",
     requiredMatchCount,
+    requiredAnchorMatchCount,
     titleCharacterLimit: 240,
     descriptionCharacterLimit: 1000,
     returnedFamilyCount: results.length + lowOverlapResults.length,
@@ -2052,7 +2122,7 @@ function resetCase() {
   renderCoverageForm();
   nodes.input.value = "";
   nodes.count.textContent = "0";
-  nodes.error.textContent = "";
+  clearFormError(nodes.form, nodes.error);
   byId("report-claim").textContent = "";
   ["report-classification", "report-wording", "report-clarify", "report-support", "report-counter", "report-sources", "report-hypotheses", "report-incentives", "report-forensics", "report-gaps"].forEach(id => byId(id).replaceChildren());
   byId("result-kicker").textContent = "Trust-Worthy pre-research map";
@@ -2084,7 +2154,8 @@ function refreshClaimEditor() {
   }
   nodes.count.textContent = String(nodes.input.value.length);
   const dirty = updateClaimEditorGate();
-  nodes.error.textContent = "";
+  clearFormError(nodes.form, nodes.error);
+  nodes.input.removeAttribute("aria-invalid");
   return dirty;
 }
 
@@ -2102,11 +2173,19 @@ function clearTransientEditors() {
   ].forEach(id => { byId(id).value = ""; });
   byId("source-role").value = "support";
   byId("source-class").value = "primary";
-  byId("evidence-error").textContent = "";
-  byId("coverage-error").textContent = "";
+  clearFormError(nodes.evidenceForm, byId("evidence-error"));
+  clearFormError(nodes.coverageForm, byId("coverage-error"));
 }
 
 nodes.input.addEventListener("input", refreshClaimEditor);
+nodes.coverageForm.addEventListener("input", event => {
+  event.target?.removeAttribute?.("aria-invalid");
+  byId("coverage-error").textContent = "";
+});
+nodes.evidenceForm.addEventListener("input", event => {
+  event.target?.removeAttribute?.("aria-invalid");
+  byId("evidence-error").textContent = "";
+});
 
 document.querySelectorAll(".sample").forEach(button => {
   button.addEventListener("click", () => {
@@ -2116,10 +2195,10 @@ document.querySelectorAll(".sample").forEach(button => {
 
 nodes.form.addEventListener("submit", event => {
   event.preventDefault();
+  clearFormError(nodes.form, nodes.error);
   const claim = boundedText(nodes.input.value, 800);
   if (claim.length < 8) {
-    nodes.error.textContent = "Enter a complete claim or question of at least 8 characters.";
-    nodes.input.focus();
+    reportFormError(nodes.form, nodes.error, "Enter a complete claim or question of at least 8 characters.", nodes.input);
     return;
   }
   analyze(claim);
@@ -2186,6 +2265,7 @@ async function startResearchSweep() {
     showToast("Wait a few seconds before starting another bounded sweep");
     return;
   }
+  const moveFocusToStop = document.activeElement === byId("run-research");
   lastResearchStartedAt = now;
   forkReviewedRecord();
   const plan = window.TrustResearch.buildResearchPlan(state.claim);
@@ -2202,7 +2282,8 @@ async function startResearchSweep() {
     lowOverlapResults: [],
     screening: {
       ...emptyScreening(),
-      requiredMatchCount: Number(window.TrustResearch?.assessResultRelevance?.(state.claim, {})?.requiredMatches || 0)
+      requiredMatchCount: Number(window.TrustResearch?.assessResultRelevance?.(state.claim, {})?.requiredMatches || 0),
+      requiredAnchorMatchCount: Number(window.TrustResearch?.assessResultRelevance?.(state.claim, {})?.requiredAnchorMatches || 0)
     }
   };
   state.research.screening.mode = state.research.screening.requiredMatchCount ? "applied" : "bypassed-no-usable-terms";
@@ -2210,6 +2291,7 @@ async function startResearchSweep() {
   state.coverageOrigin = "automatic-running";
   renderCase();
   setActiveStage("search");
+  if (moveFocusToStop) byId("cancel-research").focus({ preventScroll: true });
 
   try {
     const result = await window.TrustResearch.runFederatedSearch(state.claim, {
@@ -2225,6 +2307,7 @@ async function startResearchSweep() {
       }
     });
     if (revision !== researchRevision) return;
+    const returnFocusToRun = document.activeElement === byId("cancel-research");
     const failures = researchFailureCount(result);
     state.research = { ...result, status: failures ? "complete-with-gaps" : "complete" };
     state.coverage = coverageFromResearch(state.research);
@@ -2232,9 +2315,11 @@ async function startResearchSweep() {
     researchController = null;
     renderCoverageForm();
     renderCase();
+    if (returnFocusToRun) byId("run-research").focus({ preventScroll: true });
     showToast(failures ? "Source Sweep finished with visible gaps" : "Bounded Source Sweep complete");
   } catch (error) {
     if (revision !== researchRevision) return;
+    const returnFocusToRun = document.activeElement === byId("cancel-research");
     state.research.status = "complete-with-gaps";
     state.research.completedAt = new Date().toISOString();
     state.research.queries = state.research.queries.map(item => item.status === "pending" ? { ...item, status: "failed", error: boundedText(error?.message || "Source Sweep failed before completion.", 240) } : item);
@@ -2243,41 +2328,46 @@ async function startResearchSweep() {
     researchController = null;
     renderCoverageForm();
     renderCase();
+    if (returnFocusToRun) byId("run-research").focus({ preventScroll: true });
     showToast("Source Sweep stopped with a recorded failure");
   }
 }
 
 nodes.coverageForm.addEventListener("submit", event => {
   event.preventDefault();
-  if (!state.map) { byId("coverage-error").textContent = "Build a claim map before recording search coverage."; return; }
-  if (state.research?.status === "running") { byId("coverage-error").textContent = "Stop or finish the Source Sweep before recording a manual boundary."; return; }
-  if (claimEditorDiffers()) { byId("coverage-error").textContent = "Build the edited claim map before recording its search boundary."; return; }
+  const errorNode = byId("coverage-error");
+  clearFormError(nodes.coverageForm, errorNode);
+  if (!state.map) { reportFormError(nodes.coverageForm, errorNode, "Build a claim map before recording search coverage."); return; }
+  if (state.research?.status === "running") { reportFormError(nodes.coverageForm, errorNode, "Stop or finish the Source Sweep before recording a manual boundary."); return; }
+  if (claimEditorDiffers()) { reportFormError(nodes.coverageForm, errorNode, "Build the edited claim map before recording its search boundary."); return; }
   const coverage = {
     scope: boundedText(byId("coverage-scope").value, 1800),
     cutoff: boundedText(byId("coverage-cutoff").value, 100),
     stop: boundedText(byId("coverage-stop").value, 500),
     gaps: boundedText(byId("coverage-gaps").value, 1800)
   };
-  if (coverage.scope.length < 60) { byId("coverage-error").textContent = "Name the repositories and supportive, challenging, and neutral query families actually searched."; return; }
-  if (coverage.cutoff.length < 4) { byId("coverage-error").textContent = "Record the search cutoff date."; return; }
-  if (coverage.stop.length < 20) { byId("coverage-error").textContent = "Record the stop rule used for this search."; return; }
-  if (coverage.gaps.length < 30) { byId("coverage-error").textContent = "Record inaccessible, excluded, or still-unsearched evidence; ‘none’ needs an explanation."; return; }
+  if (coverage.scope.length < 60) { reportFormError(nodes.coverageForm, errorNode, "Name the repositories and supportive, challenging, and neutral query families actually searched.", byId("coverage-scope")); return; }
+  if (coverage.cutoff.length < 4) { reportFormError(nodes.coverageForm, errorNode, "Record the search cutoff date.", byId("coverage-cutoff")); return; }
+  if (coverage.stop.length < 20) { reportFormError(nodes.coverageForm, errorNode, "Record the stop rule used for this search.", byId("coverage-stop")); return; }
+  if (coverage.gaps.length < 30) { reportFormError(nodes.coverageForm, errorNode, "Record inaccessible, excluded, or still-unsearched evidence; ‘none’ needs an explanation.", byId("coverage-gaps")); return; }
   forkReviewedRecord();
   state.coverage = coverage;
   state.coverageOrigin = "user";
-  byId("coverage-error").textContent = "";
+  clearFormError(nodes.coverageForm, errorNode);
   renderCase();
   showToast("Search boundary recorded as a user entry");
 });
 
 nodes.evidenceForm.addEventListener("submit", event => {
   event.preventDefault();
+  const errorNode = byId("evidence-error");
+  clearFormError(nodes.evidenceForm, errorNode);
   if (!state.map) {
-    byId("evidence-error").textContent = "Build a claim map before attaching evidence.";
+    reportFormError(nodes.evidenceForm, errorNode, "Build a claim map before attaching evidence.");
     return;
   }
-  if (state.research?.status === "running") { byId("evidence-error").textContent = "Stop or finish the Source Sweep before attaching evidence."; return; }
-  if (claimEditorDiffers()) { byId("evidence-error").textContent = "Build the edited claim map before attaching evidence."; return; }
+  if (state.research?.status === "running") { reportFormError(nodes.evidenceForm, errorNode, "Stop or finish the Source Sweep before attaching evidence."); return; }
+  if (claimEditorDiffers()) { reportFormError(nodes.evidenceForm, errorNode, "Build the edited claim map before attaching evidence."); return; }
   const title = boundedText(byId("source-title").value, 240);
   const rawUrl = boundedText(byId("source-url").value, 1200);
   const url = safeHttpUrl(rawUrl);
@@ -2288,16 +2378,16 @@ nodes.evidenceForm.addEventListener("submit", event => {
   const incentives = boundedText(byId("source-incentives").value, 900);
   const custody = boundedText(byId("source-custody").value, 900);
   const falsifier = boundedText(byId("source-falsifier").value, 900);
-  if (title.length < 4) { byId("evidence-error").textContent = "Name the exact source."; return; }
-  if (rawUrl && !url) { byId("evidence-error").textContent = "Use a valid HTTP or HTTPS source URL."; return; }
-  if (url && state.evidence.some(item => dedupeUrl(item.url) === dedupeUrl(url))) { byId("evidence-error").textContent = "That source is already attached. Repetition is not corroboration."; return; }
-  if (target.length < 4) { byId("evidence-error").textContent = "Name the exact claim, component, or hypothesis this evidence targets."; return; }
-  if (origin.length < 8) { byId("evidence-error").textContent = "Record who produced the source and its upstream origin."; return; }
-  if (notes.length < 20) { byId("evidence-error").textContent = "Record what the source establishes and one limitation."; return; }
-  if (independence.length < 20) { byId("evidence-error").textContent = "Record its information, institutional, funding, or source dependence."; return; }
-  if (incentives.length < 20) { byId("evidence-error").textContent = "Record plausible gains and costs for this source or state why they remain unknown."; return; }
-  if (custody.length < 20) { byId("evidence-error").textContent = "Record custody and transformations, including what remains unknown."; return; }
-  if (falsifier.length < 20) { byId("evidence-error").textContent = "State what would weaken or disqualify this source."; return; }
+  if (title.length < 4) { reportFormError(nodes.evidenceForm, errorNode, "Name the exact source.", byId("source-title")); return; }
+  if (rawUrl && !url) { reportFormError(nodes.evidenceForm, errorNode, "Use a valid HTTP or HTTPS source URL.", byId("source-url")); return; }
+  if (url && state.evidence.some(item => dedupeUrl(item.url) === dedupeUrl(url))) { reportFormError(nodes.evidenceForm, errorNode, "That source is already attached. Repetition is not corroboration.", byId("source-url")); return; }
+  if (target.length < 4) { reportFormError(nodes.evidenceForm, errorNode, "Name the exact claim, component, or hypothesis this evidence targets.", byId("source-target")); return; }
+  if (origin.length < 8) { reportFormError(nodes.evidenceForm, errorNode, "Record who produced the source and its upstream origin.", byId("source-origin")); return; }
+  if (independence.length < 20) { reportFormError(nodes.evidenceForm, errorNode, "Record its information, institutional, funding, or source dependence.", byId("source-independence")); return; }
+  if (incentives.length < 20) { reportFormError(nodes.evidenceForm, errorNode, "Record plausible gains and costs for this source or state why they remain unknown.", byId("source-incentives")); return; }
+  if (custody.length < 20) { reportFormError(nodes.evidenceForm, errorNode, "Record custody and transformations, including what remains unknown.", byId("source-custody")); return; }
+  if (falsifier.length < 20) { reportFormError(nodes.evidenceForm, errorNode, "State what would weaken or disqualify this source.", byId("source-falsifier")); return; }
+  if (notes.length < 20) { reportFormError(nodes.evidenceForm, errorNode, "Record what the source establishes and one limitation.", byId("source-notes")); return; }
   forkReviewedRecord();
   const recordedAt = new Date().toISOString();
   state.evidence.push({
@@ -2315,7 +2405,7 @@ nodes.evidenceForm.addEventListener("submit", event => {
     notes
   });
   nodes.evidenceForm.reset();
-  byId("evidence-error").textContent = "";
+  clearFormError(nodes.evidenceForm, errorNode);
   renderCase();
   showToast("Evidence attached as an unreviewed user entry");
 });

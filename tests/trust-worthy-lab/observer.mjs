@@ -141,7 +141,7 @@ for (let index = 0; index < 40 && nodes.get("run-observer").disabled; index += 1
 }
 
 const api = context.window.TrustObserver;
-assert.equal(api.RELEASE, "trust-worthy-observer-v5");
+assert.equal(api.RELEASE, "trust-worthy-observer-v6");
 const receipt = await api.runObserver(true);
 assert.equal(receipt.checks.length, 8);
 assert.ok(receipt.checks.every(item => item.passed), "the complete observer fixture should pass");
@@ -151,7 +151,7 @@ assert.equal(nodes.get("observer-failure-count").textContent, "0");
 assert.equal(nodes.get("observer-results").children.length, 8);
 assert.equal(nodes.get("release-proof-state").textContent, "VERIFIED LOCALLY");
 assert.equal(nodes.get("release-transform-state").textContent, "Owned bytes served exactly");
-assert.ok(storage.has("trust-worthy-observer:latest-v5"), "the latest local receipt should be retained under the release-15 observer key");
+assert.ok(storage.has("trust-worthy-observer:latest-v6"), "the latest local receipt should be retained under the release-16 observer key");
 
 soft404 = true;
 const routeFailure = await api.routePolicyCheck();

@@ -5,7 +5,7 @@
 #----------------------------------------------------------------cp:ppd
 AuthType Basic
 AuthName "bobosome1 private workspace"
-AuthUserFile "/home/bobsocdw/.htpasswds/public_html/owner/passwd"
+AuthUserFile "/home/bobsome1/.htpasswds/public_html/owner/passwd"
 Require valid-user
 #----------------------------------------------------------------cp:ppd
 # End section managed by cPanel: Password Protected Directories -cp:ppd
