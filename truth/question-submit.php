@@ -5,6 +5,7 @@ header('X-Content-Type-Options: nosniff');
 
 function out(bool $ok,string $message,int $code=200): never {
   http_response_code($code);
+  if($code===405) header('Allow: POST');
   header('Content-Type: application/json; charset=UTF-8');
   echo json_encode(['ok'=>$ok,'message'=>$message],JSON_UNESCAPED_SLASHES);
   exit;
