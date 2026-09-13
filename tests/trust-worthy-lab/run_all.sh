@@ -18,9 +18,15 @@ node tests/trust-worthy-lab/research-sweep.mjs
 node tests/trust-worthy-lab/app-smoke.mjs
 node tests/trust-worthy-lab/observer.mjs
 
-if rg -ni "kcmc" truth/lab --glob '!*.png'; then
+if grep -RIni --exclude='*.png' -- "kcmc" truth/lab; then
   echo "Blocked: KCMC must remain separate from Trust-Worthy." >&2
   exit 1
+else
+  grep_status=$?
+  if [[ "$grep_status" -ne 1 ]]; then
+    echo "Blocked: KCMC separation scan could not run." >&2
+    exit "$grep_status"
+  fi
 fi
 
 echo "Release gate passed: syntax, reproducible manifest, structure, safety copy, research engine, adversarial workflow, provenance negatives, and KCMC separation."
