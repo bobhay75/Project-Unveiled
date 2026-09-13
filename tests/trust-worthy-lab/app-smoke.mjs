@@ -39,6 +39,7 @@ class StubNode {
   append(...children) { this.children.push(...children); }
   focus() { documentStub.activeElement = this; }
   scrollIntoView() {}
+  contains(target) { return target === this || this.descendants().includes(target); }
   reset() { this.resetTargets.forEach(node => { node.value = node.defaultValue; }); }
   closest() { return null; }
   descendants() {
@@ -54,6 +55,7 @@ class StubNode {
         const key = data[1].replace(/-([a-z])/g, (_, letter) => letter.toUpperCase());
         return Object.hasOwn(node.dataset, key);
       }
+      if (part.startsWith(".")) return node.className.split(/\s+/).includes(part.slice(1));
       return node.tagName === part.toUpperCase();
     }));
   }
@@ -401,6 +403,7 @@ assert.ok(api.atmosphereCase.evidence.some(item => /patent/i.test(item.title)));
 
 vm.runInContext('analyze("A testable record exists during 2026.")', context);
 const originalRunFederatedSearch = context.window.TrustResearch.runFederatedSearch;
+let fixtureResearchRun;
 context.window.TrustResearch.runFederatedSearch = async (claim, options = {}) => {
   const completedAt = "2026-09-08T12:00:00.000Z";
   const queries = context.window.TrustResearch.buildResearchPlan(claim).map(item => ({
@@ -408,12 +411,14 @@ context.window.TrustResearch.runFederatedSearch = async (claim, options = {}) =>
     requestedAt: completedAt,
     completedAt,
     status: "complete",
-    resultCount: item.id === "crossref-neutral" ? 1 : 0,
+    resultCount: item.id === "crossref-neutral" ? 2 : 0,
+    retainedResultCount: item.id === "crossref-neutral" ? 1 : 0,
+    lowOverlapResultCount: item.id === "crossref-neutral" ? 1 : 0,
     error: ""
   }));
   queries.forEach(item => options.onProgress?.(item));
-  return {
-    schema: "trust-worthy-source-sweep-v1",
+  fixtureResearchRun = {
+    schema: "trust-worthy-source-sweep-v2",
     startedAt: completedAt,
     completedAt,
     claim,
@@ -437,9 +442,62 @@ context.window.TrustResearch.runFederatedSearch = async (claim, options = {}) =>
       foundBy: ["Crossref"],
       queryIds: ["crossref-neutral"],
       queryStances: ["neutral"],
+      screeningExcerpt: "A testable record exists and is described in the provider metadata.",
+      relevance: {
+        status: "retained",
+        score: 2,
+        ratio: 0.5,
+        requiredMatches: 2,
+        matchedTerms: ["testable", "record"],
+        claimTerms: ["testable", "record", "exists", "during", "2026"],
+        reason: "Shown because 2 of 5 claim terms matched the title or provider description."
+      },
       metadataOnly: true
-    }]
+    }],
+    lowOverlapResults: [{
+      id: "crossref-neutral-2",
+      familyId: "evidence-family-2",
+      familyRelationship: "single-record",
+      providerId: "crossref",
+      provider: "Crossref",
+      repository: "Scholarly DOI metadata",
+      stance: "neutral",
+      queryId: "crossref-neutral",
+      query: claim,
+      title: "To Which Race Did Jesus Belong?",
+      url: "https://doi.org/10.1000/integration-noise",
+      author: "Noise Fixture Author",
+      date: "2025",
+      publisher: "Noise Fixture Publisher",
+      kind: "journal-article",
+      snippet: "Unrelated provider metadata.",
+      externalId: "10.1000/integration-noise",
+      foundBy: ["Crossref"],
+      queryIds: ["crossref-neutral"],
+      queryStances: ["neutral"],
+      relevance: {
+        status: "low-overlap",
+        score: 0,
+        ratio: 0,
+        requiredMatches: 2,
+        matchedTerms: [],
+        claimTerms: ["testable", "record", "exists", "during", "2026"],
+        reason: "Moved to the low-overlap audit because 0 of 5 claim terms matched the title or provider description; 2 were required."
+      },
+      metadataOnly: true
+    }],
+    screening: {
+      policy: "claim-term-overlap-v1",
+      mode: "applied",
+      requiredMatchCount: 2,
+      titleCharacterLimit: 240,
+      descriptionCharacterLimit: 1000,
+      returnedFamilyCount: 2,
+      retainedFamilyCount: 1,
+      screenedOutFamilyCount: 1
+    }
   };
+  return fixtureResearchRun;
 };
 await nodes.get("run-research").listeners.get("click")();
 const sweepReceipt = JSON.parse(api.receiptPayload());
@@ -447,12 +505,68 @@ assert.equal(sweepReceipt.automated_source_sweep.status, "complete");
 assert.equal(sweepReceipt.automated_source_sweep.queries.length, 6);
 assert.equal(sweepReceipt.automated_source_sweep.discovered_evidence_families.length, 1);
 assert.equal(sweepReceipt.automated_source_sweep.discovered_evidence_families[0].status, "DISCOVERY LEAD · NOT INSPECTED EVIDENCE");
+assert.equal(sweepReceipt.automated_source_sweep.schema, "trust-worthy-source-sweep-v2");
+assert.equal(sweepReceipt.automated_source_sweep.screening.policy, "claim-term-overlap-v1");
+assert.equal(sweepReceipt.automated_source_sweep.screening.mode, "applied");
+assert.equal(sweepReceipt.automated_source_sweep.screening.provider_description_character_limit, 1000);
+assert.equal(sweepReceipt.automated_source_sweep.screening.screened_out_family_count, 1);
+assert.equal(sweepReceipt.automated_source_sweep.low_overlap_metadata_families.length, 1);
+assert.equal(sweepReceipt.automated_source_sweep.low_overlap_metadata_families[0].status, "LOWER-OVERLAP METADATA FAMILY · NOT INSPECTED EVIDENCE");
+assert.match(researchStatusText.textContent, /1 lower-overlap family remains/);
+const relevanceAudit = nodes.get("research-results").children.find(node => node.tagName === "DETAILS");
+assert.ok(relevanceAudit, "lower-overlap provider returns must remain inspectable in the audit drawer");
+assert.match(relevanceAudit.children[0].textContent, /1 lower-overlap metadata family preserved for audit/);
+const lowerOverlapLink = relevanceAudit.descendants().find(node => node.tagName === "A");
+assert.match(lowerOverlapLink.getAttribute("aria-label"), /Crossref: To Which Race Did Jesus Belong/);
+relevanceAudit.open = true;
+relevanceAudit.children[0].focus();
+const preMutationReceipt = api.receiptPayload();
+fixtureResearchRun.lowOverlapResults[0].author = "Changed Lower-Overlap Author";
+assert.notEqual(digest(api.receiptPayload()), digest(preMutationReceipt), "every preserved lower-overlap bibliographic field must affect the canonical fingerprint payload");
+fixtureResearchRun.lowOverlapResults[0].author = "Noise Fixture Author";
+assert.equal(api.receiptPayload(), preMutationReceipt, "restoring lower-overlap metadata must restore the canonical payload exactly");
+vm.runInContext(`
+  globalThis.__appliedResearch = state.research;
+  globalThis.__appliedCoverage = state.coverage;
+  state.research = {
+    ...state.research,
+    results: [...state.research.results, ...state.research.lowOverlapResults],
+    lowOverlapResults: [],
+    queries: state.research.queries.map(item => ({ ...item, retainedResultCount: item.resultCount, lowOverlapResultCount: 0 })),
+    screening: {
+      ...state.research.screening,
+      mode: "bypassed-no-usable-terms",
+      requiredMatchCount: 0,
+      retainedFamilyCount: 2,
+      screenedOutFamilyCount: 0
+    }
+  };
+  globalThis.__bypassCoverage = coverageFromResearch(state.research);
+  state.coverage = globalThis.__bypassCoverage;
+  globalThis.__bypassReport = buildPlainReport();
+  renderResearch();
+`, context);
+const bypassQueryState = nodes.get("research-query-list").children[0].children[2].textContent;
+assert.match(bypassQueryState, /unscreened/);
+assert.doesNotMatch(bypassQueryState, /higher|lower/);
+assert.match(context.__bypassCoverage.scope, /metadata was left unscreened/);
+assert.doesNotMatch(context.__bypassCoverage.scope, /higher-overlap counts|lower-overlap counts/);
+assert.match(context.__bypassCoverage.gaps, /No higher\/lower split was made/);
+assert.match(context.__bypassReport, /Display screen: bypassed/);
+assert.doesNotMatch(context.__bypassReport, /0 distinct claim terms required|higher[- ]overlap|lower[- ]overlap/);
+vm.runInContext("state.research = globalThis.__appliedResearch; state.coverage = globalThis.__appliedCoverage; renderResearch();", context);
+const restoredAppliedAudit = nodes.get("research-results").children.find(node => node.tagName === "DETAILS");
+restoredAppliedAudit.open = true;
+restoredAppliedAudit.children[0].focus();
 assert.match(sweepReceipt.search_coverage.scope, /Automatic Source Sweep execution receipt/);
 const dynamicSweepGaps = sweepReceipt.reasoning.missing_evidence;
 nodes.get("research-results").listeners.get("click")({
   target: { closest(selector) { return selector === "[data-attach-research]" ? { dataset: { attachResearch: "crossref-neutral-1" } } : null; } }
 });
 const attachedSweepReceipt = JSON.parse(api.receiptPayload());
+const rerenderedAudit = nodes.get("research-results").children.find(node => node.tagName === "DETAILS");
+assert.equal(rerenderedAudit.open, true, "the audit drawer must stay open across evidence-workbench rerenders");
+assert.equal(documentStub.activeElement, rerenderedAudit.children[0], "audit focus must return to the recreated summary");
 const attachedSweepLead = attachedSweepReceipt.evidence[0];
 assert.equal(attachedSweepLead.className, "lead");
 assert.match(attachedSweepLead.origin, /underlying artifact has not been opened or authenticated/);
@@ -691,13 +805,13 @@ const forgedResearch = {
     queryId: fixedPlan[0].id,
     queryIds: [fixedPlan[0].id],
     query: "FORGED QUERY",
-    title: "Restored catalog result",
+    title: "Unrelated catalog entry",
     url: "https://example.com/restored-result",
     author: "Catalog author",
     date: "2026",
     publisher: "Catalog publisher",
     kind: "record",
-    snippet: "Locally restored metadata that cannot prove a request occurred.",
+    snippet: "A generic index entry about weather.",
     externalId: "restored-1",
     foundBy: ["FORGED PROVIDER"],
     queryStances: ["support"],
@@ -724,14 +838,45 @@ await settle();
 const restoredReceipt = JSON.parse(api.receiptPayload());
 const restoredSweep = restoredReceipt.automated_source_sweep;
 assert.equal(restoredSweep.status, "restored-unverified");
+assert.equal(restoredSweep.schema, "trust-worthy-source-sweep-v2");
 assert.equal(restoredSweep.queries.length, fixedPlan.length);
 assert.deepEqual(restoredSweep.queries.map(item => item.provider), Array.from(fixedPlan, item => item.provider));
 assert.deepEqual(restoredSweep.queries.map(item => item.endpoint), Array.from(fixedPlan, item => item.url));
 assert.doesNotMatch(JSON.stringify(restoredSweep), /FORGED PROVIDER|FORGED REPOSITORY|FORGED QUERY|forged\.invalid/);
 assert.ok(restoredSweep.discovered_evidence_families.every(item => item.providers.every(provider => fixedPlan.some(lane => lane.provider === provider))));
+assert.equal(restoredSweep.discovered_evidence_families.length, 0, "legacy v1 metadata must be re-screened instead of being forced into the primary list");
+assert.equal(restoredSweep.low_overlap_metadata_families.length, 1);
+assert.equal(restoredSweep.screening.screened_out_family_count, 1);
 assert.equal(researchStatusCode.textContent, "RESTORED · EXECUTION UNVERIFIED");
 assert.equal(readinessCards.get("coverage").strong.textContent, "Missing", "restored coverage cannot self-award the coverage safeguard");
 assert.match(restoredReceipt.reasoning.missing_evidence.join(" "), /reset to the fixed Source Sweep plan/i);
+
+// A forged v2 bucket cannot force high-overlap metadata into the lower-overlap drawer.
+const forgedV2Research = {
+  ...forgedResearch,
+  schema: "trust-worthy-source-sweep-v2",
+  results: [],
+  lowOverlapResults: [{
+    ...forgedResearch.results[0],
+    id: "forged-low-bucket",
+    title: "Provider execution research receipt",
+    snippet: "A restored research receipt about provider execution."
+  }]
+};
+const forgedV2Snapshot = snapshotFixture({
+  caseId: "TW-LOCAL-FORGED-BUCKET",
+  claim: restoredClaim,
+  savedAt: "2026-09-08T12:02:00.000Z",
+  research: forgedV2Research
+});
+storage.set(STORAGE_KEY, JSON.stringify([forgedV2Snapshot]));
+dispatchStorage();
+savedAction("open", api.localRecordKey(forgedV2Snapshot));
+await settle();
+const reclassifiedSweep = JSON.parse(api.receiptPayload()).automated_source_sweep;
+assert.equal(reclassifiedSweep.discovered_evidence_families.length, 1);
+assert.equal(reclassifiedSweep.low_overlap_metadata_families.length, 0);
+assert.equal(reclassifiedSweep.screening.retained_family_count, 1);
 
 // Coverage and evidence drafts stay isolated: one form's submit preserves the other draft, while case changes clear both.
 vm.runInContext('analyze("Draft isolation must preserve work only inside the current case.")', context);

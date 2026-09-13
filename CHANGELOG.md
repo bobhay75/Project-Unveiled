@@ -1,5 +1,12 @@
 # Evidence Phase 2 Changelog
 
+## Trust-Worthy Release 15 — September 13, 2026
+
+- Added a deterministic claim-term-overlap display screen so Source Sweep presents higher-overlap metadata first while preserving lower-overlap families, every provider variant, exact query counts, and screening details in an audit drawer and canonical receipt.
+- Applied screening only after DOI and canonical-URL family merging, preventing a lower-overlap provider variant from erasing the provenance of an identity-linked higher-overlap record.
+- Corrected the public hosting disclosure to Namecheap shared hosting and removed the stale ChatGPT Sites delivery claim.
+- Advanced the exact-byte release manifest and local observer to release 15 / observer v5, with verified release 14 commit `10c0b4b140264808aebdf0d18cdd0b3632c358f2` as the rollback point.
+
 ## Trust-Worthy Canonical Evidence Lab — September 12, 2026
 
 - Added the verified Trust-Worthy Evidence Lab at `/truth/lab/` without replacing any published Truth Trial, PHP intake path, private owner route, or payment boundary.

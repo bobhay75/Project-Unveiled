@@ -42,10 +42,11 @@ assert (DIST / "release-manifest.json").is_file(), "release manifest is missing"
 assert (DIST / "404.html").is_file(), "custom 404 page is missing"
 assert (DIST / ".well-known" / "security.txt").is_file(), "security contact is missing"
 status = json.loads((DIST / "status.json").read_text(encoding="utf-8"))
-assert status["release"] == 14, "public status release is incorrect"
-assert status["observer"] == "trust-worthy-observer-v4", "public observer release is incorrect"
+assert status["release"] == 15, "public status release is incorrect"
+assert status["observer"] == "trust-worthy-observer-v5", "public observer release is incorrect"
 assert status["release_manifest"] == "/truth/lab/release-manifest.json", "public release-manifest route is incorrect"
-assert status["rollback_release"] == 13, "last-known-good rollback release is incorrect"
+assert status["rollback_release"] == 14, "last-known-good rollback release is incorrect"
+assert status["rollback_source_commit"] == "10c0b4b140264808aebdf0d18cdd0b3632c358f2", "release-14 rollback commit is incorrect"
 assert status["unknown_route_status"] == 404, "unknown routes must be declared as 404"
 assert status["expected_denials"]["OPTIONS"] == 405, "unsupported methods must remain denied"
 robots = DIST / "robots.txt"
@@ -115,6 +116,9 @@ for required in (
     "private PayPal payment link matching that written order",
     "written start notice receives a full refund",
     "No external search runs until you press “Run Source Sweep.”",
+    "When the claim has usable terms, higher-overlap matches appear first.",
+    "Lower-overlap metadata remains inspectable in the audit drawer instead of disappearing.",
+    "Namecheap shared hosting",
     "Search hits remain unreviewed leads until the underlying record is opened and tested",
     "Starts external transmission",
     "A saved case stays on this device unless",
@@ -125,7 +129,8 @@ for required in (
     "ordinary email, not an encrypted or legally privileged channel",
     "A customer may request access or deletion by email",
     "Local receipts are not a trust authority",
-    "Release 14 provenance",
+    "Release 15 provenance",
+    "Release 14 · tested known-good",
     "Open machine-readable manifest",
     "fails closed on any difference",
     "not a digital signature, proof of authorship, or external timestamp",
@@ -176,6 +181,7 @@ for forbidden in (
     "paypal.me",
     "supported, contradicted, mixed",
     "Verified record",
+    "delivered through ChatGPT Sites",
 ):
     assert forbidden.lower() not in text.lower(), f"forbidden product claim found: {forbidden}"
 
@@ -195,6 +201,11 @@ observer_source = (DIST / "observer.js").read_text(encoding="utf-8")
 assert "trustedRegistryRecordForSaved" in app_source, "reviewed local records lack an immutable registry gate"
 assert "Local review claims are never trusted" in app_source, "forged review downgrade is missing"
 assert "DISCOVERY LEAD · NOT INSPECTED EVIDENCE" in app_source, "automated leads are not explicitly bounded"
+assert "low_overlap_metadata_families" in app_source, "lower-overlap families are missing from the canonical audit receipt"
+assert "first 1,000 cleaned characters of its provider description" in app_source, "the visible screen omits its provider-description limit"
+assert "assessResultRelevance" in research_source, "Source Sweep lacks its deterministic display screen"
+assert "claim-term-overlap-v1" in research_source, "Source Sweep screening policy is not named"
+assert "screeningExcerpt" in research_source, "the bounded screening input is not retained for audit"
 assert 'behavior: "smooth"' not in app_source, "scripted smooth scrolling must respect the reduced-motion baseline"
 assert "open.innerHTML" not in app_source, "saved-case content must not be injected as HTML"
 assert "eval(" not in app_source and "eval(" not in research_source and "eval(" not in observer_source, "dynamic code execution is forbidden"
@@ -217,15 +228,18 @@ styles = (DIST / "styles.css").read_text(encoding="utf-8")
 assert ".result-shell[hidden]" in styles, "print styles may expose a hidden stale result"
 assert "attr(href)" in styles, "printed reports must expose their source URLs"
 assert ".query-receipt:not([open])" in styles, "printed reports must expose the exact query receipt"
+assert ".relevance-audit:not([open])" in styles, "printed reports must expose lower-overlap metadata"
 
 truth_home = (ROOT / "truth" / "index.php").read_text(encoding="utf-8")
 assert 'href="/truth/lab/">Evidence Lab</a>' in truth_home, "Truth on Trial navigation does not expose the Evidence Lab"
-assert 'id="lab"' in truth_home and "LIVE EVIDENCE WORKBENCH · RELEASE 14" in truth_home, "Truth on Trial lacks the integrated release card"
+assert 'id="lab"' in truth_home and "LIVE EVIDENCE WORKBENCH · RELEASE 15" in truth_home, "Truth on Trial lacks the integrated release card"
 assert 'action="/truth/investigate.php" method="post"' in truth_home, "the existing Truth Trial submission contract changed"
 assert all(f"/truth/case-00000{number}.php" in truth_home for number in range(1, 5)), "an existing Truth Trial route disappeared"
 
 root_sitemap = (ROOT / "sitemap.xml").read_text(encoding="utf-8")
 assert "https://bobsome1.com/truth/lab/" in root_sitemap, "the canonical sitemap omits the Evidence Lab"
+assert "https://bobsome1.com/truth/lab/</loc><lastmod>2026-09-13</lastmod>" in root_sitemap, "the canonical sitemap has a stale Evidence Lab date"
+assert "https://bobsome1.com/truth/</loc><lastmod>2026-09-13</lastmod>" in root_sitemap, "the Truth on Trial sitemap date is stale"
 
 lab_htaccess = (DIST / ".htaccess").read_text(encoding="utf-8")
 for required in ("ErrorDocument 404 /truth/lab/404.html", "R=405", "Content-Security-Policy", "X-Frame-Options \"DENY\""):

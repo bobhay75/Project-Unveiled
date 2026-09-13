@@ -1,9 +1,9 @@
 "use strict";
 
 (() => {
-  const RELEASE = "trust-worthy-observer-v4";
-  const STORAGE_KEY = "trust-worthy-observer:latest-v4";
-  const PUBLIC_RELEASE = 14;
+  const RELEASE = "trust-worthy-observer-v5";
+  const STORAGE_KEY = "trust-worthy-observer:latest-v5";
+  const PUBLIC_RELEASE = 15;
   const MANIFEST_SCHEMA = "trust-worthy-release-manifest-v1";
   const DELIVERY_POLICY = "exact-owned-static-v1";
   const DAY_MS = 24 * 60 * 60 * 1000;

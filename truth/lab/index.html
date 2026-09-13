@@ -148,11 +148,11 @@
         <li>Waiting for the first local observation.</li>
       </ul>
       <details class="release-proof" id="release-proof">
-        <summary><span>Release 14 provenance</span><strong id="release-proof-state">CHECK PENDING</strong></summary>
+        <summary><span>Release 15 provenance</span><strong id="release-proof-state">CHECK PENDING</strong></summary>
         <div class="release-proof-grid">
           <div><span>Owned-asset root</span><code id="release-root">Pending local verification</code></div>
           <div><span>Public receipt</span><a href="./release-manifest.json">Open machine-readable manifest</a></div>
-          <div><span>Rollback point</span><strong>Release 11 · tested known-good</strong></div>
+          <div><span>Rollback point</span><strong>Release 14 · tested known-good</strong></div>
           <div><span>Delivery layer</span><strong id="release-transform-state">Not observed yet</strong></div>
         </div>
         <p>SHA-256 fingerprints cover every owned public asset. The observer requires the Bobsome1 server to deliver those owned bytes exactly and fails closed on any difference. This receipt is tamper evidence relative to a separately trusted copy—not a digital signature, proof of authorship, or external timestamp.</p>
@@ -234,7 +234,7 @@
         </div>
         <div class="sweep-meter" aria-label="Source sweep progress">
           <div><span>Query lanes</span><strong id="research-query-count">0/6</strong></div>
-          <div><span>Evidence families</span><strong id="research-result-count">0</strong></div>
+          <div><span>Primary metadata families</span><strong id="research-result-count">0</strong></div>
           <div><span>Provider failures</span><strong id="research-failure-count">0</strong></div>
         </div>
         <details class="query-receipt" id="research-query-receipt">
@@ -242,7 +242,7 @@
           <div id="research-query-list"><p class="empty-state">Run the sweep to create an execution receipt.</p></div>
         </details>
         <div class="research-results-head">
-          <div><h3>Discovery leads</h3><p>Open the source, inspect it, then attach only what survives review.</p></div>
+          <div><h3>Discovery leads</h3><p>When the claim has usable terms, higher-overlap matches appear first. Lower-overlap metadata remains inspectable in the audit drawer instead of disappearing.</p></div>
           <button class="quiet-action" id="copy-search-receipt" type="button" disabled>Copy search receipt</button>
         </div>
         <div class="research-results" id="research-results">
@@ -482,7 +482,7 @@
         <p>Typing, mapping, attaching, fingerprinting, and saving a case happen in this browser. Saving uses this browser profile's local storage; another person using the same profile may see it.</p>
         <p><strong>No external search runs until you press “Run Source Sweep.”</strong> Starting it sends the claim-derived query text to Crossref, OpenAlex, Europe PMC, Internet Archive, and the Federal Register. Their privacy and logging practices apply. Trust-Worthy records returned metadata and failures locally; it does not send your saved docket or manually attached evidence to those indexes.</p>
         <p><strong>Local receipts are not a trust authority.</strong> Browser storage can be edited, cleared, or forged by a user, extension, or local software. On reopen, provider identities and queries are rebuilt from the fixed plan and prior execution is labeled unverified. The app preserves the exact save-time canonical JSON and checks its stored fingerprint when possible, but neither one is an external timestamp or proof of review.</p>
-        <p><strong>Hosting boundary:</strong> This public app is delivered through ChatGPT Sites and network/security providers. They may process ordinary request metadata, IP addresses, security cookies, and access logs under their own terms; Trust-Worthy does not receive a private analytics dashboard from this browser-local case file.</p>
+        <p><strong>Hosting boundary:</strong> This public app is served from the owned bobsome1.com domain through Namecheap shared hosting and its network/security providers. They may process ordinary request metadata, IP addresses, security cookies, and access logs under their own terms; Trust-Worthy does not receive a private analytics dashboard from this browser-local case file.</p>
         <p>“Share via device” hands the displayed report and public app URL to the destination you choose. “Share public lab on Facebook” sends only the public lab URL—not the draft case. Copy actions use your clipboard. Source links, email, Facebook, and later payment instructions leave this site and are handled by those services.</p>
         <p>Do not enter or email passwords, account numbers, private medical or legal records, unlawful material, or private third-party accusations. Delete local cases with “Clear all local cases” when finished.</p>
         <p><strong>Paid email intake:</strong> Bobsome1 uses emailed intake, scope, work, delivery, and payment-confirmation records only to evaluate, perform, support, document, and legally account for the requested service. Access is limited to Robert and necessary email, storage, and payment providers. Bobsome1 does not sell intake data or publish a customer's identity or private submission without written permission. This is ordinary email, not an encrypted or legally privileged channel.</p>
