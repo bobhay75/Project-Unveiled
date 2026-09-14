@@ -47,11 +47,13 @@ RewriteRule ^ https://bobsome1.com%{REQUEST_URI} [R=301,L,NE]
 # methods here while leaving the site's named PHP form/API endpoints alone.
 RewriteCond %{REQUEST_METHOD} !^(?:GET|HEAD)$ [NC]
 RewriteCond %{REQUEST_URI} !^/(?:owner|unveiltheinsideofme)(?:/|$) [NC]
+RewriteCond %{REQUEST_URI} !^/truth/lab(?:/|$) [NC]
 RewriteCond %{REQUEST_FILENAME} -f
 RewriteRule \.(?:avif|css|gif|html?|ico|jpe?g|js|json|mjs|mp3|mp4|pdf|png|svg|txt|webmanifest|webp|xml)$ - [R=405,L,E=PU_READ_ONLY_METHOD_DENIED:1,NC]
 
 RewriteCond %{REQUEST_METHOD} !^(?:GET|HEAD)$ [NC]
 RewriteCond %{REQUEST_URI} !^/(?:owner|unveiltheinsideofme)(?:/|$) [NC]
+RewriteCond %{REQUEST_URI} !^/truth/lab(?:/|$) [NC]
 RewriteCond %{REQUEST_FILENAME} -d
 RewriteCond %{REQUEST_FILENAME}/index.html -f
 RewriteRule ^ - [R=405,L,E=PU_READ_ONLY_METHOD_DENIED:1]
