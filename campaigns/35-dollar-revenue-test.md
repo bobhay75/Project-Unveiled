@@ -8,12 +8,16 @@ Validate whether cold Meta traffic will buy the $7 Project Unveiled digital edit
 
 - Platform: Meta Ads Manager
 - Budget: $5/day for 7 days; $35 lifetime maximum
-- Objective: Sales if the verified conversion event is available; otherwise Landing Page Views
+- Objective: Traffic
+- Performance goal: Maximize landing-page views
 - Destination: `https://bobsome1.com/store/?utm_source=facebook&utm_medium=paid_social&utm_campaign=pu_7_dollar_test_2026_09&utm_content=truth_questions_v1#books`
-- Audience: United States, age 30+, interests related to Bible study, church history, Christian deconstruction and historical Jesus; Advantage expansion off for the first clean test when available
+- Audience controls: United States, age 30+
+- Audience approach: broad. Let the creative identify interested readers. Do not use or imply sensitive religious-belief targeting. If the current Ads Manager flow uses Advantage+ audience, treat any available interests only as suggestions rather than guaranteed limits.
 - Placements: Advantage+ placements
 - Creative: one 4:5 static image or 9:16 short video; no split test at this budget
 - Frequency: stop early if frequency exceeds 2.5 with no checkout clicks
+
+This release has owned first-party analytics, not a Meta Pixel or Conversions API purchase event. Do not select Sales or claim Meta purchase optimization for this test. A future Meta conversion integration requires a separate privacy and data-sharing decision.
 
 ## Primary copy
 
@@ -35,11 +39,20 @@ Truth is not afraid of questions.
 
 ## Required preflight
 
-1. Open the destination on a phone and desktop.
-2. Click the $7 button and confirm PayPal shows exactly $7 USD to the intended recipient.
-3. Complete one controlled purchase and confirm the fulfillment handoff works.
-4. Confirm `pageview` and `product_checkout_click` appear in owned analytics.
-5. Only then activate the ad with a $35 lifetime cap and no automatic budget increase.
+1. Confirm the exact approved repository commit is deployed and both `node tests/trust-worthy-lab/live-release-gate.mjs` and `node tests/revenue-funnel/live-preflight.mjs` pass from the repository root.
+2. Open the destination on a phone and desktop; verify layout, copy, privacy link, free-reader link, and checkout handoff.
+3. Replace the personal PayPal.Me path with a fixed-price PayPal Payment Link for the digital edition. Confirm the hosted page names Project Unveiled, shows exactly $7 USD, identifies the intended merchant, collects no shipping address, and treats the transaction as goods/services. Do not send ad traffic to a generic person-to-person payment page.
+4. Complete one controlled purchase. Confirm settlement in PayPal, receipt delivery, the buyer-to-seller email handoff, and delivery of both `Project_Unveiled_Print_Ready_Interior_FINAL.pdf` and `Project_Unveiled_Kindle_FINAL.epub`. Refund the controlled purchase after verification.
+5. Confirm `pageview`, `engaged_30s`, and `product_checkout_click` appear in the private owned-analytics dashboard. Confirm the checkout click is not displayed as a completed payment.
+6. In Ads Manager, verify Traffic, landing-page-view optimization, one creative, the exact UTM destination, and a $35 lifetime cap with no automatic budget increase.
+7. Only then activate the ad.
+
+## Platform guardrails checked September 14, 2026
+
+- Meta removed detailed-targeting options tied to sensitive topics such as religious beliefs. Source: https://www.facebook.com/business/news/removing-certain-ad-targeting-options-and-expanding-our-ad-controls
+- Meta's current Advantage+ audience controls and suggestions do not guarantee that audience suggestions remain hard limits. Source: https://www.facebook.com/business/help/938372127764391
+- Meta describes the Pixel as the mechanism for measuring website actions in its ad system; this release intentionally uses owned analytics only. Source: https://www.facebook.com/business/help/742478679120153
+- PayPal recommends fixed product/service Payment Links for a hosted checkout. Source: https://www.paypal.com/us/business/accept-payments/payment-links
 
 ## Scorecard
 

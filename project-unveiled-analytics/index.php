@@ -149,7 +149,7 @@ function labelPath(string $path): string {
 
 if (!$authenticated) {
     echo '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Project Unveiled Traffic Dashboard</title>';
-    echo '<style>body{margin:0;background:#070605;color:#f4ead2;font-family:Arial,sans-serif;min-height:100vh;display:grid;place-items:center}.panel{width:min(440px,calc(100% - 36px));box-sizing:border-box;background:#12100c;border:1px solid #d7ad51;padding:30px;box-shadow:0 25px 80px #000}h1{font-family:Georgia,serif;color:#f3d47d;margin-top:0}label{display:block;margin:18px 0 7px}input{width:100%;box-sizing:border-box;padding:13px;background:#080706;border:1px solid #7e692f;color:#fff;font-size:17px}button{width:100%;margin-top:16px;padding:13px;border:0;background:#d7ad51;color:#080706;font-weight:800;font-size:16px;cursor:pointer}.bad{color:#ff958f}.muted{color:#bdb49f;font-size:14px}</style></head><body><main class="panel"><h1>Project Unveiled</h1><h2>Private Traffic Dashboard</h2><p>View reading sessions, chapter activity, campaign sources, support-page visits, and PayPal clicks.</p>';
+    echo '<style>body{margin:0;background:#070605;color:#f4ead2;font-family:Arial,sans-serif;min-height:100vh;display:grid;place-items:center}.panel{width:min(440px,calc(100% - 36px));box-sizing:border-box;background:#12100c;border:1px solid #d7ad51;padding:30px;box-shadow:0 25px 80px #000}h1{font-family:Georgia,serif;color:#f3d47d;margin-top:0}label{display:block;margin:18px 0 7px}input{width:100%;box-sizing:border-box;padding:13px;background:#080706;border:1px solid #7e692f;color:#fff;font-size:17px}button{width:100%;margin-top:16px;padding:13px;border:0;background:#d7ad51;color:#080706;font-weight:800;font-size:16px;cursor:pointer}.bad{color:#ff958f}.muted{color:#bdb49f;font-size:14px}</style></head><body><main class="panel"><h1>Project Unveiled</h1><h2>Private Traffic Dashboard</h2><p>View readership, campaign sources, store visits, checkout-link clicks, and qualified inquiries. Payments remain confirmed separately in PayPal.</p>';
     if ($loginError !== '') echo '<p class="bad">' . h($loginError) . '</p>';
     echo '<form method="post"><input type="hidden" name="action" value="login"><input type="hidden" name="csrf" value="' . h($_SESSION['csrf']) . '"><label for="password">Dashboard password</label><input id="password" name="password" type="password" autocomplete="current-password" maxlength="512" required autofocus><button type="submit">Open Dashboard</button></form><p class="muted">No cookies or IP addresses are used for reader tracking. The login uses a secure session cookie only for this private dashboard.</p></main></body></html>';
     exit;
@@ -293,10 +293,12 @@ if ($exportCsv) {
 }
 
 $completedSessions = 0;
+$storeSessions = 0;
 foreach ($sessionPaths as $paths) {
     $hasOne = isset($paths['/book/read/chapter-01.html']);
     $hasThirteen = isset($paths['/book/read/chapter-13.html']);
     if ($hasOne && $hasThirteen) $completedSessions++;
+    if (isset($paths['/store/']) || isset($paths['/store'])) $storeSessions++;
 }
 
 $pageviews = (int)($counts['pageview'] ?? 0);
@@ -305,14 +307,22 @@ $paypalClicks = (int)($counts['paypal_click'] ?? 0);
 $supportClicks = (int)($counts['support_page_click'] ?? 0);
 $shares = (int)($counts['share_click'] ?? 0);
 $nextClicks = (int)($counts['chapter_next'] ?? 0);
+$engagedVisits = (int)($counts['engaged_30s'] ?? 0);
+$storeClicks = (int)($counts['store_click'] ?? 0);
+$productCheckoutClicks = (int)($counts['product_checkout_click'] ?? 0);
+$serviceCheckoutClicks = (int)($counts['service_checkout_click'] ?? 0);
+$qualifiedLeadClicks = (int)($counts['qualified_lead_click'] ?? 0);
+$partnerInquiryClicks = (int)($counts['partner_inquiry_click'] ?? 0);
 $pageviewsPerSession = $sessionCount ? $pageviews / $sessionCount : 0;
 $paypalRate = $sessionCount ? ($paypalClicks / $sessionCount) * 100 : 0;
 $completionRate = $sessionCount ? ($completedSessions / $sessionCount) * 100 : 0;
+$productCheckoutRate = $storeSessions ? ($productCheckoutClicks / $storeSessions) * 100 : 0;
 
 arsort($pages); arsort($chapters); arsort($sources); arsort($campaigns); ksort($daily);
 $maxDaily = max([1, ...array_values($daily)]);
 
 $campaignLinks = [
+    '$7 Meta revenue test' => 'https://bobsome1.com/store/?utm_source=facebook&utm_medium=paid_social&utm_campaign=pu_7_dollar_test_2026_09&utm_content=truth_questions_v1#books',
     'Facebook launch' => 'https://bobsome1.com/book/read/?utm_source=facebook&utm_medium=organic_social&utm_campaign=project_unveiled_launch&utm_content=main_launch',
     'Facebook Chapter 1' => 'https://bobsome1.com/book/read/chapter-01.html?utm_source=facebook&utm_medium=organic_social&utm_campaign=project_unveiled_launch&utm_content=chapter_01',
     'Instagram bio' => 'https://bobsome1.com/book/read/?utm_source=instagram&utm_medium=organic_social&utm_campaign=project_unveiled_launch&utm_content=bio',
@@ -334,10 +344,16 @@ $campaignLinks = [
 <body>
 <header><div class="wrap top"><div><div class="label">Private analytics</div><h1>Project Unveiled Traffic Dashboard</h1></div><nav class="nav"><a href="?range=7">7 days</a><a href="?range=30">30 days</a><a href="?range=90">90 days</a><a href="?range=<?= $range ?>&amp;export=csv">Export CSV</a><form method="post"><input type="hidden" name="action" value="logout"><input type="hidden" name="csrf" value="<?= h($_SESSION['csrf']) ?>"><button type="submit">Log out</button></form></nav></div></header>
 <main class="wrap">
-<div class="notice"><strong>What this measures:</strong> anonymous reading sessions, page views, chapter movement, shares, support-page visits, and PayPal link clicks. It does <strong>not</strong> confirm whether a PayPal payment was completed.</div>
+<div class="notice"><strong>What this measures:</strong> anonymous visits and on-site actions, including store visits and outbound checkout-link clicks. A checkout click is <strong>not</strong> a completed payment; confirm settled payments in PayPal before fulfillment or campaign decisions.</div>
 <section class="grid">
 <div class="card"><div class="label">Reading sessions</div><div class="metric"><?= number_format($sessionCount) ?></div><div class="sub">Anonymous browser-tab sessions</div></div>
 <div class="card"><div class="label">Page views</div><div class="metric"><?= number_format($pageviews) ?></div><div class="sub"><?= number_format($pageviewsPerSession, 1) ?> pages per session</div></div>
+<div class="card"><div class="label">Store visits</div><div class="metric"><?= number_format($storeSessions) ?></div><div class="sub">Unique tab sessions reaching /store/</div></div>
+<div class="card"><div class="label">30-second engaged</div><div class="metric"><?= number_format($engagedVisits) ?></div><div class="sub">Engagement signal, not a purchase</div></div>
+<div class="card"><div class="label">$7 checkout clicks</div><div class="metric"><?= number_format($productCheckoutClicks) ?></div><div class="sub"><?= pct($productCheckoutRate) ?> of store sessions</div></div>
+<div class="card"><div class="label">$250 checkout clicks</div><div class="metric"><?= number_format($serviceCheckoutClicks) ?></div><div class="sub">Visibility Starter interest</div></div>
+<div class="card"><div class="label">Qualified lead clicks</div><div class="metric"><?= number_format($qualifiedLeadClicks) ?></div><div class="sub">Selected the scoped inquiry action</div></div>
+<div class="card"><div class="label">Partner inquiry clicks</div><div class="metric"><?= number_format($partnerInquiryClicks) ?></div><div class="sub">Selected the partner proposal action</div></div>
 <div class="card"><div class="label">Reached Chapter 13</div><div class="metric"><?= number_format((int)($chapters[13] ?? 0)) ?></div><div class="sub"><?= pct($completionRate) ?> full-session completion estimate</div></div>
 <div class="card"><div class="label">PayPal clicks</div><div class="metric"><?= number_format($paypalClicks) ?></div><div class="sub"><?= pct($paypalRate) ?> of sessions clicked PayPal</div></div>
 <div class="card"><div class="label">Support page clicks</div><div class="metric"><?= number_format($supportClicks) ?></div><div class="sub">Interest before PayPal</div></div>
@@ -345,6 +361,16 @@ $campaignLinks = [
 <div class="card"><div class="label">Share clicks</div><div class="metric"><?= number_format($shares) ?></div><div class="sub">On-site share controls</div></div>
 <div class="card"><div class="label">Reporting window</div><div class="metric"><?= $range ?></div><div class="sub">days ending today</div></div>
 </section>
+
+<section class="panel" style="margin-top:18px"><h2>Revenue-funnel event ledger</h2><p class="sub">Use this ledger with PayPal settlement records. On-site analytics never count an outbound click as revenue.</p><table class="table"><thead><tr><th>Signal</th><th>Count</th><th>What it proves</th></tr></thead><tbody>
+<tr><td>Store visits</td><td><?= number_format($storeSessions) ?></td><td>At least one /store/ pageview in the browser-tab session.</td></tr>
+<tr><td>Store navigation clicks</td><td><?= number_format($storeClicks) ?></td><td>An on-site Store link was selected.</td></tr>
+<tr><td>$7 checkout clicks</td><td><?= number_format($productCheckoutClicks) ?></td><td>The Project Unveiled payment-link control was selected.</td></tr>
+<tr><td>$250 checkout clicks</td><td><?= number_format($serviceCheckoutClicks) ?></td><td>The Visibility Starter payment-link control was selected.</td></tr>
+<tr><td>Qualified lead clicks</td><td><?= number_format($qualifiedLeadClicks) ?></td><td>The service inquiry email action was selected.</td></tr>
+<tr><td>Partner inquiry clicks</td><td><?= number_format($partnerInquiryClicks) ?></td><td>The partner proposal email action was selected.</td></tr>
+<tr><td>Completed payments</td><td>Confirm in PayPal</td><td>Not measured by this site; never infer settlement from a click.</td></tr>
+</tbody></table></section>
 
 <?php if ($eventTotal === 0): ?>
 <div class="panel empty" style="margin-top:18px"><h2>No traffic recorded yet</h2><p>Open the public reader in a separate browser tab, then reload this dashboard. Tracking starts after this installer is live.</p></div>
@@ -358,7 +384,7 @@ $campaignLinks = [
 <?php endif; ?>
 
 <section class="panel" style="margin-top:18px"><h2>Copy-and-paste campaign links</h2><p class="sub">Use these exact links so the dashboard can identify where readers came from.</p><?php foreach($campaignLinks as $name=>$url): ?><div class="campaign"><strong><?= h($name) ?></strong><code><?= h($url) ?></code><button class="copy" type="button" data-copy="<?= h($url) ?>">Copy</button></div><?php endforeach; ?></section>
-<section class="panel" style="margin-top:18px"><h2>Privacy design</h2><p>No advertising tracker is installed. No IP address is stored with events; a secret-protected address digest exists only for abuse prevention, and stale entries are discarded when rate controls next run. No cross-site cookie is used. A random session identifier exists only in the visitor’s current browser tab. Search text is not collected. Do Not Track and Global Privacy Control are respected.</p><p><a href="/privacy.html" target="_blank" rel="noopener">View the public privacy notice</a></p></section>
+<section class="panel" style="margin-top:18px"><h2>Privacy design</h2><p>No advertising tracker is installed. No IP address is stored with events; a secret-protected address digest exists only for abuse prevention, and stale entries are discarded when rate controls next run. Payment details and typed email content are not collected. No cross-site cookie is used. A random session identifier exists only in the visitor’s current browser tab. Search text is not collected. Do Not Track and Global Privacy Control are respected.</p><p><a href="/privacy.html" target="_blank" rel="noopener">View the public privacy notice</a></p></section>
 </main>
 <script>document.querySelectorAll('[data-copy]').forEach(function(button){button.addEventListener('click',function(){var value=button.getAttribute('data-copy')||'';navigator.clipboard.writeText(value).then(function(){var old=button.textContent;button.textContent='Copied';setTimeout(function(){button.textContent=old},1200)}).catch(function(){window.prompt('Copy this link:',value)})})});</script>
 </body></html>
