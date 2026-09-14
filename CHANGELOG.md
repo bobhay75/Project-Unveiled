@@ -1,5 +1,10 @@
 # Evidence Phase 2 Changelog
 
+## Trust-Worthy Release 16.1 — September 14, 2026
+
+- Delegated unsupported Evidence Lab methods to its child Apache policy so live `405 Method Not Allowed` responses retain the required `Allow: GET, HEAD` header and route-specific Content Security Policy.
+- Added a static regression check that prevents the public-root method rules from intercepting Evidence Lab denials before its child headers run.
+
 ## Trust-Worthy Release 16 — September 13, 2026
 
 - Replaced the Daily Desk's reusable URL token with one-use, ten-minute fragment sign-in codes, short-lived secure sessions, same-origin checks, and CSRF protection; credentials no longer enter HTTP URLs, referrers, redirects, or cron logs.
