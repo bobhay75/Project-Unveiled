@@ -273,6 +273,7 @@ for required in (
 ):
     assert required in root_htaccess, f"root hosting hardening is missing: {required}"
 assert root_htaccess.count("RewriteCond %{REQUEST_URI} !^/(?:owner|unveiltheinsideofme)(?:/|$) [NC]") == 2, "read-only method rules must preserve authenticated application routing"
+assert root_htaccess.count("RewriteCond %{REQUEST_URI} !^/truth/lab(?:/|$) [NC]") == 2, "root method rules must delegate Evidence Lab denials to its child header policy"
 
 for protected_route in ("owner", "unveiltheinsideofme"):
     protected_htaccess = (ROOT / protected_route / ".htaccess").read_text(encoding="utf-8")

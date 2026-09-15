@@ -516,6 +516,8 @@ function pu_analytics_allowed_events(): array
         'product_checkout_click',
         'service_checkout_click',
         'free_reader_click',
+        'journey_cta_click',
+        'journey_signup_click',
         'qualified_lead_click',
         'partner_inquiry_click',
     ];

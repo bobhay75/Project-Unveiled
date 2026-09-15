@@ -84,7 +84,7 @@
           </label>
           <input type="hidden" name="journey" value="7-day-unveiled">
           <input type="hidden" name="source_page" value="/unveiled/">
-          <button type="submit" id="signup-button">Send Me Day One <span aria-hidden="true">→</span></button>
+          <button type="submit" id="signup-button" data-pu-event="journey_signup_click">Send Me Day One <span aria-hidden="true">→</span></button>
           <p class="form-status" id="form-status" role="status" aria-live="polite">Connecting securely to the reader list…</p>
         </form>
 
@@ -199,6 +199,7 @@
     <p>© 2026 Bobsome1.com</p>
   </footer>
 
+  <script id="project-unveiled-traffic-tracker" src="/project-unveiled-analytics/tracker.js?v=5" defer></script>
   <script src="/assets/js/unveiled-form-config.js"></script>
   <script src="/assets/js/unveiled-journey.js" defer></script>
 </body>
