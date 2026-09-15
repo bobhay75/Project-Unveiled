@@ -79,6 +79,36 @@ bash scripts/rollback-trust-worthy-lab.sh /home/bobsome1/public_html/truth/lab
 
 The guarded rollback restores only the verified release-15 Evidence Lab bytes from Project-Unveiled commit `9c4faa71e9c4955c1e597b2b3f9c8a861cac3bf1`. It rejects symlinked or unexpected destination files and verifies every copied byte. Do **not** check out or deploy that older commit as a whole site: its legacy broad-copy deployment would not remove files introduced by release 16 and could leave an inconsistent public tree.
 
+## Revenue-funnel launch gate
+
+Paid traffic is a separate release decision. A merge, successful cPanel deployment, healthy public store, or checkout-link click is not ad-launch approval and is not proof of payment.
+
+Before deploying a revenue-funnel change:
+
+1. Require `bash tests/trust-worthy-lab/run_all.sh` and the GitHub **Site safety checks** workflow to pass on the exact merge commit.
+2. Record that merge SHA and the current verified Release 16+ SHA before making the production change.
+3. Keep the Meta campaign paused with no scheduled start.
+
+After cPanel deployment, run both live gates from the repository—not from the account home directory:
+
+```bash
+cd /home/bobsome1/repositories/Project-Unveiled || exit 1
+/opt/alt/alt-nodejs24/root/usr/bin/node tests/trust-worthy-lab/live-release-gate.mjs
+/opt/alt/alt-nodejs24/root/usr/bin/node tests/revenue-funnel/live-preflight.mjs
+```
+
+The revenue gate intentionally fails while the store still uses the personal PayPal.Me URL. Replace it through a reviewed repository change with a named, fixed-price $7 PayPal Payment Link, deploy that exact commit, and rerun both gates. A payment-link hold does not require a whole-site rollback; it requires keeping paid traffic off.
+
+If both automated gates pass, record one clearly labeled synthetic checkout event:
+
+```bash
+/opt/alt/alt-nodejs24/root/usr/bin/node tests/revenue-funnel/live-preflight.mjs --record-analytics
+```
+
+Open the private dashboard and confirm the synthetic `product_checkout_click` appears without being represented as a completed payment. Then complete the controlled $7 purchase, PDF + EPUB delivery, attachment-open, and refund procedure in `campaigns/digital-edition-fulfillment.md`.
+
+Do not activate the Meta test until both automated gates, controlled purchase, dashboard visibility, PDF + EPUB delivery, phone/desktop review, and $35 lifetime-cap checks all pass. If a file, route, collector, dashboard, or security-boundary check fails, keep paid traffic off and restore or redeploy only from the current guarded Release 16+ line; never use a pre-Release-16 whole-site checkout as a revenue rollback.
+
 ## Self-hosted 7-Day Unveiled Journey
 
 No Kit or third-party newsletter service is required. Subscriber data and credentials stay outside `public_html`.
