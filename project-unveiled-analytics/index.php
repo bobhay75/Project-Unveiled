@@ -293,10 +293,16 @@ if ($exportCsv) {
 }
 
 $completedSessions = 0;
+$journeyLandingSessions = 0;
+$journeyRequestSessions = 0;
+$journeyConfirmedSessions = 0;
 foreach ($sessionPaths as $paths) {
     $hasOne = isset($paths['/book/read/chapter-01.html']);
     $hasThirteen = isset($paths['/book/read/chapter-13.html']);
     if ($hasOne && $hasThirteen) $completedSessions++;
+    if (isset($paths['/unveiled/']) || isset($paths['/unveiled/index.html'])) $journeyLandingSessions++;
+    if (isset($paths['/unveiled/confirmed.html'])) $journeyRequestSessions++;
+    if (isset($paths['/unveiled/welcome.html'])) $journeyConfirmedSessions++;
 }
 
 $pageviews = (int)($counts['pageview'] ?? 0);
@@ -305,14 +311,22 @@ $paypalClicks = (int)($counts['paypal_click'] ?? 0);
 $supportClicks = (int)($counts['support_page_click'] ?? 0);
 $shares = (int)($counts['share_click'] ?? 0);
 $nextClicks = (int)($counts['chapter_next'] ?? 0);
+$journeyCtaClicks = (int)($counts['journey_cta_click'] ?? 0);
+$journeySignupClicks = (int)($counts['journey_signup_click'] ?? 0);
 $pageviewsPerSession = $sessionCount ? $pageviews / $sessionCount : 0;
 $paypalRate = $sessionCount ? ($paypalClicks / $sessionCount) * 100 : 0;
 $completionRate = $sessionCount ? ($completedSessions / $sessionCount) * 100 : 0;
+$journeyRequestRate = $journeyLandingSessions ? ($journeyRequestSessions / $journeyLandingSessions) * 100 : 0;
+$journeyConfirmRate = $journeyRequestSessions ? ($journeyConfirmedSessions / $journeyRequestSessions) * 100 : 0;
 
 arsort($pages); arsort($chapters); arsort($sources); arsort($campaigns); ksort($daily);
 $maxDaily = max([1, ...array_values($daily)]);
 
 $campaignLinks = [
+    'Facebook Journey post' => 'https://bobsome1.com/unveiled/?utm_source=facebook&utm_medium=organic&utm_campaign=unveiled_14_day_sprint&utm_content=day_01_pinned',
+    'Instagram Journey bio' => 'https://bobsome1.com/unveiled/?utm_source=instagram&utm_medium=organic&utm_campaign=unveiled_14_day_sprint&utm_content=bio',
+    'YouTube Journey description' => 'https://bobsome1.com/unveiled/?utm_source=youtube&utm_medium=organic&utm_campaign=unveiled_14_day_sprint&utm_content=description',
+    'Partner referral' => 'https://bobsome1.com/unveiled/?utm_source=partner&utm_medium=referral&utm_campaign=unveiled_14_day_sprint&utm_content=partner_name',
     'Facebook launch' => 'https://bobsome1.com/book/read/?utm_source=facebook&utm_medium=organic_social&utm_campaign=project_unveiled_launch&utm_content=main_launch',
     'Facebook Chapter 1' => 'https://bobsome1.com/book/read/chapter-01.html?utm_source=facebook&utm_medium=organic_social&utm_campaign=project_unveiled_launch&utm_content=chapter_01',
     'Instagram bio' => 'https://bobsome1.com/book/read/?utm_source=instagram&utm_medium=organic_social&utm_campaign=project_unveiled_launch&utm_content=bio',
@@ -334,7 +348,7 @@ $campaignLinks = [
 <body>
 <header><div class="wrap top"><div><div class="label">Private analytics</div><h1>Project Unveiled Traffic Dashboard</h1></div><nav class="nav"><a href="?range=7">7 days</a><a href="?range=30">30 days</a><a href="?range=90">90 days</a><a href="?range=<?= $range ?>&amp;export=csv">Export CSV</a><form method="post"><input type="hidden" name="action" value="logout"><input type="hidden" name="csrf" value="<?= h($_SESSION['csrf']) ?>"><button type="submit">Log out</button></form></nav></div></header>
 <main class="wrap">
-<div class="notice"><strong>What this measures:</strong> anonymous reading sessions, page views, chapter movement, shares, support-page visits, and PayPal link clicks. It does <strong>not</strong> confirm whether a PayPal payment was completed.</div>
+<div class="notice"><strong>What this measures:</strong> anonymous reading sessions, page views, Journey calls to action, signup-button selections, visits to the check-email page, confirmed-reader visits, chapter movement, shares, support-page visits, and PayPal link clicks. It does <strong>not</strong> collect form names or email addresses, and it does not confirm whether a PayPal payment was completed.</div>
 <section class="grid">
 <div class="card"><div class="label">Reading sessions</div><div class="metric"><?= number_format($sessionCount) ?></div><div class="sub">Anonymous browser-tab sessions</div></div>
 <div class="card"><div class="label">Page views</div><div class="metric"><?= number_format($pageviews) ?></div><div class="sub"><?= number_format($pageviewsPerSession, 1) ?> pages per session</div></div>
@@ -343,6 +357,11 @@ $campaignLinks = [
 <div class="card"><div class="label">Support page clicks</div><div class="metric"><?= number_format($supportClicks) ?></div><div class="sub">Interest before PayPal</div></div>
 <div class="card"><div class="label">Chapter-next clicks</div><div class="metric"><?= number_format($nextClicks) ?></div><div class="sub">Reader progression</div></div>
 <div class="card"><div class="label">Share clicks</div><div class="metric"><?= number_format($shares) ?></div><div class="sub">On-site share controls</div></div>
+<div class="card"><div class="label">Journey CTA clicks</div><div class="metric"><?= number_format($journeyCtaClicks) ?></div><div class="sub">Homepage and campaign calls to action</div></div>
+<div class="card"><div class="label">Journey visitors</div><div class="metric"><?= number_format($journeyLandingSessions) ?></div><div class="sub">Anonymous landing-page sessions</div></div>
+<div class="card"><div class="label">Signup selections</div><div class="metric"><?= number_format($journeySignupClicks) ?></div><div class="sub">No names or addresses collected here</div></div>
+<div class="card"><div class="label">Signup requests</div><div class="metric"><?= number_format($journeyRequestSessions) ?></div><div class="sub"><?= pct($journeyRequestRate) ?> of Journey sessions</div></div>
+<div class="card"><div class="label">Confirmed readers</div><div class="metric"><?= number_format($journeyConfirmedSessions) ?></div><div class="sub"><?= pct($journeyConfirmRate) ?> of signup requests</div></div>
 <div class="card"><div class="label">Reporting window</div><div class="metric"><?= $range ?></div><div class="sub">days ending today</div></div>
 </section>
 
