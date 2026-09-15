@@ -13,7 +13,7 @@
   <style>
     .confirmation-shell{min-height:100vh;display:grid;place-items:center;padding:2rem;background:radial-gradient(circle at 50% 35%,rgba(210,168,79,.14),transparent 28rem)}
     .confirmation-card{width:min(720px,100%);padding:clamp(2rem,7vw,5rem);border:1px solid var(--line);background:linear-gradient(150deg,rgba(30,35,41,.98),rgba(13,16,20,.99));text-align:center;box-shadow:0 35px 90px rgba(0,0,0,.38)}
-    .confirmation-card .symbol{color:var(--gold);font-size:1.2rem}.confirmation-card h1{margin:.8rem 0 1.2rem;font:600 clamp(3rem,9vw,6rem)/.9 var(--serif);letter-spacing:-.04em}.confirmation-card h1 em{display:block;color:var(--gold-light);font-style:normal}.confirmation-card>p{max-width:560px;margin:1rem auto;color:#cfc7b9}
+    .confirmation-card .symbol{color:var(--gold);font-size:1.2rem}.confirmation-card h1{margin:.8rem 0 1.2rem;font:600 clamp(3rem,9vw,6rem)/.9 var(--serif);letter-spacing:-.04em}.confirmation-card h1 em{display:block;color:var(--gold-light);font-style:normal}.confirmation-card>p{max-width:560px;margin:1rem auto;color:#cfc7b9}.share-row{display:flex;justify-content:center;flex-wrap:wrap;gap:.7rem;margin:1.5rem 0 2rem}.share-row a{padding:.7rem .9rem;border:1px solid rgba(255,255,255,.18);color:#e8e1d5;font-size:.75rem;font-weight:700;text-decoration:none;text-transform:uppercase;letter-spacing:.07em}.share-row a:hover,.share-row a:focus-visible{border-color:var(--gold);color:var(--gold-light)}
   </style>
 </head>
 <body>
@@ -24,8 +24,15 @@
       <h1 id="welcome-title">The door <em>is open.</em></h1>
       <p>Day One is queued and normally arrives within an hour. Add <strong>letter@bobsome1.com</strong> to your contacts and check Spam or Promotions if you do not see it.</p>
       <p>While you wait, you can begin reading Project Unveiled now.</p>
+      <p><strong>Know one person who is asking honest questions without wanting to lose God?</strong> Invite them to walk beside you.</p>
+      <div class="share-row" aria-label="Share the journey">
+        <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fbobsome1.com%2Funveiled%2F%3Futm_source%3Dreader_share%26utm_medium%3Dfacebook%26utm_campaign%3Dunveiled_14_day_sprint%26utm_content%3Dconfirmed_reader" rel="noopener noreferrer" target="_blank" data-pu-event="share_click">Share on Facebook</a>
+        <a href="sms:?&body=I%20thought%20you%20might%20connect%20with%20this%20free%207-Day%20Unveiled%20Journey%3A%20https%3A%2F%2Fbobsome1.com%2Funveiled%2F%3Futm_source%3Dreader_share%26utm_medium%3Dsms%26utm_campaign%3Dunveiled_14_day_sprint%26utm_content%3Dconfirmed_reader" data-pu-event="share_click">Send by text</a>
+        <a href="mailto:?subject=The%207-Day%20Unveiled%20Journey&amp;body=I%20thought%20you%20might%20connect%20with%20this%20free%20journey%3A%20https%3A%2F%2Fbobsome1.com%2Funveiled%2F%3Futm_source%3Dreader_share%26utm_medium%3Demail%26utm_campaign%3Dunveiled_14_day_sprint%26utm_content%3Dconfirmed_reader" data-pu-event="share_click">Send by email</a>
+      </div>
       <p><a class="gold-button" href="/book/read/">Read the Book <span aria-hidden="true">→</span></a></p>
     </section>
   </main>
+  <script id="project-unveiled-traffic-tracker" src="/project-unveiled-analytics/tracker.js?v=5" defer></script>
 </body>
 </html>
