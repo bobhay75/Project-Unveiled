@@ -682,3 +682,161 @@ footer p { margin: 0; }
   .print-record-meta { display: block; padding: .6rem 0; border-block: 1px solid #777; font: .75rem/1.45 ui-monospace, monospace; overflow-wrap: anywhere; }
   .source-entry a[href]::after, .research-lead a[href]::after, .low-overlap-lead a[href]::after { content: " — " attr(href); font: .75rem/1.35 ui-monospace, monospace; overflow-wrap: anywhere; }
 }
+
+/* Evidence-field cinematic layer. It visualizes relationships; it never assigns truth. */
+:root {
+  --page-progress: 0;
+  --stage-progress: 0;
+  --pointer-x: 50vw;
+  --pointer-y: 30vh;
+}
+
+.cinematic-progress {
+  position: fixed;
+  z-index: 1000;
+  inset: 0 0 auto;
+  height: 2px;
+  pointer-events: none;
+  transform: scaleX(var(--page-progress));
+  transform-origin: left;
+  background: linear-gradient(90deg, var(--gold), var(--blue), var(--green));
+  box-shadow: 0 0 20px rgba(98, 205, 241, .48);
+}
+
+body[data-cinematic-theme="trustworthy"]::before {
+  position: fixed;
+  z-index: 10;
+  inset: 0;
+  pointer-events: none;
+  content: "";
+  background:
+    radial-gradient(300px circle at var(--pointer-x) var(--pointer-y), rgba(98, 205, 241, .055), transparent 75%),
+    linear-gradient(rgba(98, 205, 241, .015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(98, 205, 241, .015) 1px, transparent 1px);
+  background-size: auto, 44px 44px, 44px 44px;
+}
+
+.case-workspace {
+  position: relative;
+  isolation: isolate;
+  overflow: clip;
+  background:
+    radial-gradient(circle at 78% 18%, rgba(98, 205, 241, .09), transparent 28rem),
+    linear-gradient(145deg, rgba(17,45,61,.98), rgba(8,24,35,.98));
+}
+
+.case-workspace::after {
+  position: absolute;
+  z-index: -1;
+  inset: -65% -20%;
+  pointer-events: none;
+  content: "";
+  background: conic-gradient(from 180deg at 50% 50%, transparent, rgba(232,184,95,.055), transparent 18%, rgba(98,205,241,.05), transparent 42%);
+  animation: trust-field-turn 32s linear infinite;
+}
+
+.cinematic-canvas {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: .82;
+}
+
+.stage-rail {
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.stage-rail::before {
+  position: absolute;
+  z-index: 2;
+  inset: 0 auto 0 0;
+  width: 3px;
+  content: "";
+  background: linear-gradient(var(--gold), var(--blue), var(--green));
+  transform: scaleY(var(--stage-progress));
+  transform-origin: top;
+  transition: transform 500ms cubic-bezier(.2,.72,.2,1);
+}
+
+.stage {
+  position: relative;
+  transition: background 240ms ease, transform 240ms ease;
+}
+
+.stage.is-active {
+  transform: translateX(3px);
+  box-shadow: inset 3px 0 0 transparent;
+}
+
+.stage.is-active::after {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: .55rem;
+  height: .55rem;
+  border-radius: 50%;
+  content: "";
+  background: var(--green);
+  box-shadow: 0 0 0 .32rem rgba(117,222,176,.1), 0 0 20px rgba(117,222,176,.75);
+}
+
+body.claim-focused .case-workspace {
+  border-color: rgba(98,205,241,.62);
+  box-shadow: var(--shadow), 0 0 0 1px rgba(98,205,241,.12), 0 0 62px rgba(98,205,241,.08);
+}
+
+body.claim-engaged .method-promise > div {
+  border-color: rgba(232,184,95,.24);
+}
+
+.cinematic-ready .cinematic-reveal {
+  opacity: 0;
+  transform: translate3d(0, 24px, 0);
+  filter: blur(6px);
+  transition:
+    opacity 660ms cubic-bezier(.2,.72,.2,1) var(--reveal-delay, 0ms),
+    transform 660ms cubic-bezier(.2,.72,.2,1) var(--reveal-delay, 0ms),
+    filter 660ms ease var(--reveal-delay, 0ms);
+}
+
+.cinematic-ready .cinematic-reveal.is-visible {
+  opacity: 1;
+  transform: none;
+  filter: none;
+}
+
+.report-card,
+.evidence-workbench,
+.judgment-card,
+.proof-desk {
+  transition: border-color 240ms ease, box-shadow 240ms ease, transform 240ms ease;
+}
+
+.report-card:hover,
+.evidence-workbench:hover,
+.judgment-card:hover,
+.proof-desk:hover {
+  border-color: rgba(98,205,241,.34);
+  box-shadow: 0 22px 65px rgba(0,0,0,.24), inset 0 1px 0 rgba(255,255,255,.025);
+}
+
+@keyframes trust-field-turn {
+  to { transform: rotate(360deg); }
+}
+
+@media (max-width: 760px) {
+  body[data-cinematic-theme="trustworthy"]::before { display: none; }
+  .cinematic-canvas { opacity: .5; }
+  .stage.is-active { transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .case-workspace::after { animation: none; opacity: .35; }
+  .cinematic-ready .cinematic-reveal { opacity: 1; transform: none; filter: none; transition: none; }
+  .stage, .stage-rail::before { transition: none; }
+  .cinematic-progress { display: none; }
+}
