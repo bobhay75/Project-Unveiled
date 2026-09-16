@@ -1,9 +1,9 @@
 {
   "schema": "trust-worthy-release-manifest-v1",
-  "release_id": "trust-worthy-evidence-lab-r16",
-  "release": 16,
-  "observer": "trust-worthy-observer-v6",
-  "recorded_at": "2026-09-13T13:48:49Z",
+  "release_id": "trust-worthy-evidence-lab-r17",
+  "release": 17,
+  "observer": "trust-worthy-observer-v7",
+  "recorded_at": "2026-09-16T22:40:06Z",
   "event_category": "corrective-maintenance",
   "organization": {
     "name": "Bobsome1 / Project Unveiled",
@@ -15,23 +15,23 @@
     "public_origin": "https://bobsome1.com/truth/lab/"
   },
   "predecessor": {
-    "release": 15,
-    "source_commit": "aea90c55a31e7d158f1d092e2509fcc3b9147a34",
-    "build_root_sha256": "92deed2f60f249b01f2b12869c66b49e25238291fe7e74a3e9a82f6117a4c520",
+    "release": 16,
+    "source_commit": "37ad89d77205d9479cee96834288d5cbb4b309b0",
+    "build_root_sha256": "31035b2675d52f16863537ed7165e546c81a44cf38bdbe11d69a7b1096d85236",
     "public_origin": "https://bobsome1.com/truth/lab/",
     "relationship": "supersedes",
-    "note": "Release 15 is the verified canonical predecessor. Release 16 restores canonical HTTPS/apex delivery, strengthens Source Sweep query precision and accessibility, and keeps commercial navigation on the owned bobsome1.com surface."
+    "note": "Release 16 is the verified canonical predecessor. Release 17 adds a progressive evidence-field experience while preserving exact provenance, source boundaries, and human judgment."
   },
   "rollback": {
-    "project_unveiled_source_commit": "9c4faa71e9c4955c1e597b2b3f9c8a861cac3bf1",
-    "evidence_lab_release": 15,
+    "project_unveiled_source_commit": "37ad89d77205d9479cee96834288d5cbb4b309b0",
+    "evidence_lab_release": 16,
     "tested_live_fallback": "https://bobsome1.com/truth/lab/",
     "scope": "Evidence Lab files only; do not check out or redeploy the older whole-site commit.",
-    "instruction": "From the release 16 checkout, run scripts/rollback-trust-worthy-lab.sh against /home/bobsome1/public_html/truth/lab to restore the verified release 15 lab bytes from the named commit."
+    "instruction": "From the release 17 checkout, run scripts/rollback-trust-worthy-lab.sh against /home/bobsome1/public_html/truth/lab to restore the verified release 16 lab bytes from the named commit."
   },
   "digest": {
     "algorithm": "SHA-256",
-    "root": "31035b2675d52f16863537ed7165e546c81a44cf38bdbe11d69a7b1096d85236",
+    "root": "6ddb5c71968ef6ebb07175114967a08a857768cba9fd261a68ffd379bd9c0d25",
     "canonicalization": "UTF-8 JSON array of path, route, expected_status, sha256, bytes, content_type, delivery mode, and delivery policy rows sorted by path, followed by LF."
   },
   "scope": {
@@ -109,8 +109,8 @@
         "path": "index.html",
         "route": "/truth/lab/",
         "expected_status": 200,
-        "sha256": "1f034500b5bc65aca0db68ece1bd4f22d3546b6c6d3e5d5b628cbfc9a81f08f5",
-        "bytes": 40052,
+        "sha256": "371132cb06391d9a59dc80bbc56e8b75511b467aaff0bcbc6f87f3c7a58a76ed",
+        "bytes": 40155,
         "content_type": "text/html",
         "delivery": {
           "mode": "exact"
@@ -131,7 +131,7 @@
         "path": "observer.js",
         "route": "/truth/lab/observer.js",
         "expected_status": 200,
-        "sha256": "6aa51888fbf93e539441258db65fe6aa9c34ae47bb5bc97ee5199ae59a167ab4",
+        "sha256": "7697397fffe1bbb912e74a7374ee884892d37f5717b2667b5bd5dd807963acd8",
         "bytes": 17017,
         "content_type": "javascript",
         "delivery": {
@@ -197,8 +197,8 @@
         "path": "status.json",
         "route": "/truth/lab/status.json",
         "expected_status": 200,
-        "sha256": "f4398d2099a439b9a58f060ab81d671532a7a61435a359819af1d840d30c80f6",
-        "bytes": 809,
+        "sha256": "aaf3fd4aea22117a153411c2580541686eccc163cbcfc3a1351772babec8b99a",
+        "bytes": 821,
         "content_type": "application/json",
         "delivery": {
           "mode": "exact"
@@ -208,8 +208,8 @@
         "path": "styles.css",
         "route": "/truth/lab/styles.css",
         "expected_status": 200,
-        "sha256": "a1c7013a1e4e9e46e8e794e0f2c53e94d989ea29d0ca305bc587a895dcc92185",
-        "bytes": 40593,
+        "sha256": "facd6a6c4053c44703cf60df4b68ac117028cf1d755901b03316d4f356a46aa5",
+        "bytes": 44661,
         "content_type": "text/css",
         "delivery": {
           "mode": "exact"
