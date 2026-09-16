@@ -43,11 +43,11 @@ assert (DIST / "release-manifest.json").is_file(), "release manifest is missing"
 assert (DIST / "404.html").is_file(), "custom 404 page is missing"
 assert (DIST / ".well-known" / "security.txt").is_file(), "security contact is missing"
 status = json.loads((DIST / "status.json").read_text(encoding="utf-8"))
-assert status["release"] == 16, "public status release is incorrect"
-assert status["observer"] == "trust-worthy-observer-v6", "public observer release is incorrect"
+assert status["release"] == 17, "public status release is incorrect"
+assert status["observer"] == "trust-worthy-observer-v7", "public observer release is incorrect"
 assert status["release_manifest"] == "/truth/lab/release-manifest.json", "public release-manifest route is incorrect"
-assert status["rollback_release"] == 15, "last-known-good rollback release is incorrect"
-assert status["rollback_source_commit"] == "9c4faa71e9c4955c1e597b2b3f9c8a861cac3bf1", "release-16 rollback commit is incorrect"
+assert status["rollback_release"] == 16, "last-known-good rollback release is incorrect"
+assert status["rollback_source_commit"] == "37ad89d77205d9479cee96834288d5cbb4b309b0", "release-17 rollback commit is incorrect"
 assert status["unknown_route_status"] == 404, "unknown routes must be declared as 404"
 assert status["expected_denials"]["OPTIONS"] == 405, "unsupported methods must remain denied"
 robots = DIST / "robots.txt"
@@ -130,8 +130,8 @@ for required in (
     "ordinary email, not an encrypted or legally privileged channel",
     "A customer may request access or deletion by email",
     "Local receipts are not a trust authority",
-    "Release 16 provenance",
-    "Release 15 · tested known-good",
+    "Release 17 provenance",
+    "Release 16 · tested known-good",
     "Open machine-readable manifest",
     "fails closed on any difference",
     "not a digital signature, proof of authorship, or external timestamp",
