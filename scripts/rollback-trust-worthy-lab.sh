@@ -14,7 +14,7 @@ fi
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
 target="${1%/}"
 expected_target="/home/bobsome1/public_html/truth/lab"
-rollback_commit="9c4faa71e9c4955c1e597b2b3f9c8a861cac3bf1"
+rollback_commit="37ad89d77205d9479cee96834288d5cbb4b309b0"
 
 [[ -n "$target" && "$target" == /* ]] || fail "target must be an absolute path"
 [[ -d "$target" && ! -L "$target" ]] || fail "target must be an existing, real directory"
@@ -117,4 +117,4 @@ while IFS= read -r path || [[ -n "$path" ]]; do
   cmp -s "$source_root/$path" "$target/$path" || fail "post-rollback verification failed: $path"
 done < "$rollback_paths"
 
-echo "Evidence Lab restored exactly to release 15 from $rollback_commit."
+echo "Evidence Lab restored exactly to release 16 from $rollback_commit."

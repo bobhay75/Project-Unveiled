@@ -1,10 +1,13 @@
 {
   "schema": "trust-worthy-public-status-v1",
-  "release": 16,
-  "observer": "trust-worthy-observer-v6",
-  "published_date": "2026-09-13",
+  "release": 17,
+  "observer": "trust-worthy-observer-v7",
+  "published_date": "2026-09-16",
   "role": "observe-test-report",
-  "allowed_methods": ["GET", "HEAD"],
+  "allowed_methods": [
+    "GET",
+    "HEAD"
+  ],
   "expected_denials": {
     "OPTIONS": 405,
     "POST": 405,
@@ -17,8 +20,8 @@
   "release_manifest_schema": "trust-worthy-release-manifest-v1",
   "owned_asset_digest": "SHA-256",
   "delivery_transform_policy": "exact-owned-static-v1",
-  "rollback_release": 15,
-  "rollback_source_commit": "9c4faa71e9c4955c1e597b2b3f9c8a861cac3bf1",
+  "rollback_release": 16,
+  "rollback_source_commit": "37ad89d77205d9479cee96834288d5cbb4b309b0",
   "finance_boundary": "private-read-only-never-public",
   "deception_boundary": "synthetic-only-no-retaliation-no-identity-enrichment"
 }

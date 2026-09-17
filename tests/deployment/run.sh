@@ -131,9 +131,9 @@ cmp -s "$tmp_root/status-before-blocked-rollback.json" "$rollback_target/status.
 
 PROJECT_UNVEILED_ROLLBACK_TEST_MODE=1 \
   /bin/bash scripts/rollback-trust-worthy-lab.sh "$rollback_target"
-"$(command -v git)" show 9c4faa71e9c4955c1e597b2b3f9c8a861cac3bf1:truth/lab/status.json \
+"$(command -v git)" show 37ad89d77205d9479cee96834288d5cbb4b309b0:truth/lab/status.json \
   | cmp -s - "$rollback_target/status.json"
-"$(command -v git)" show 9c4faa71e9c4955c1e597b2b3f9c8a861cac3bf1:truth/lab/app.js \
+"$(command -v git)" show 37ad89d77205d9479cee96834288d5cbb4b309b0:truth/lab/app.js \
   | cmp -s - "$rollback_target/app.js"
 
 # A destination-file symlink must block before any write can escape the lab.
