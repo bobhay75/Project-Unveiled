@@ -1,0 +1,11 @@
+{
+  "appId": "com.bobsome1.oois",
+  "appName": "OOIS Field Mapper",
+  "webDir": "dist",
+  "bundledWebRuntime": false,
+  "server": { "androidScheme": "https" },
+  "plugins": {
+    "Geolocation": { "permissions": ["location"] },
+    "Camera": { "permissions": ["camera", "photos"] }
+  }
+}

@@ -1,0 +1,14 @@
+node_modules
+dist
+android
+ios
+.env
+.env.local
+.DS_Store
+firebase-debug.log
+firestore-debug.log
+*.keystore
+*.jks
+local.properties
+google-services.json
+service-account*.json

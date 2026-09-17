@@ -1,0 +1,23 @@
+name: OOIS Web Build
+
+on:
+  push:
+    paths:
+      - 'oois/field-mapper/**'
+  pull_request:
+    paths:
+      - 'oois/field-mapper/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: oois/field-mapper
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm install
+      - run: npm run build
