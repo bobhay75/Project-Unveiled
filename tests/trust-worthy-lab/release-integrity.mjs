@@ -9,7 +9,7 @@ export const MANIFEST_PATH = path.join(DIST, "release-manifest.json");
 export const MANIFEST_SCHEMA = "trust-worthy-release-manifest-v1";
 export const PUBLIC_RELEASE = 17;
 export const OBSERVER_RELEASE = "trust-worthy-observer-v7";
-export const BUILD_RECORDED_AT = "2026-09-16T22:40:06Z";
+export const BUILD_RECORDED_AT = "2026-09-17T03:19:27Z";
 export const PREDECESSOR_COMMIT = "37ad89d77205d9479cee96834288d5cbb4b309b0";
 export const PREDECESSOR_ROOT = "31035b2675d52f16863537ed7165e546c81a44cf38bdbe11d69a7b1096d85236";
 export const ROLLBACK_SOURCE_COMMIT = "37ad89d77205d9479cee96834288d5cbb4b309b0";
@@ -25,6 +25,7 @@ export const ASSET_DEFINITIONS = Object.freeze([
   { path: "app-icon-192.png", route: "/truth/lab/app-icon-192.png", content_type: "image/png", delivery: EXACT },
   { path: "app-icon-512.png", route: "/truth/lab/app-icon-512.png", content_type: "image/png", delivery: EXACT },
   { path: "app-icon.svg", route: "/truth/lab/app-icon.svg", content_type: "image/svg+xml", delivery: EXACT },
+  { path: "assets/js/cinematic-effects.js", source_path: "assets/js/cinematic-effects.js", route: "/assets/js/cinematic-effects.js", content_type: "javascript", delivery: EXACT },
   { path: "app.js", route: "/truth/lab/app.js", content_type: "javascript", delivery: EXACT },
   { path: "index.html", route: LAB_PATH, content_type: "text/html", delivery: EXACT },
   { path: "manifest.webmanifest", route: "/truth/lab/manifest.webmanifest", content_type: "application/manifest+json", delivery: EXACT },
@@ -62,6 +63,15 @@ export function buildRootDigest(files) {
   return sha256Hex(Buffer.from(canonicalAssetRootInput(files), "utf8"));
 }
 
+export function assetAbsolutePath(definition) {
+  if (!definition.source_path) return path.join(DIST, definition.path);
+  const segments = definition.source_path.split("/");
+  if (path.isAbsolute(definition.source_path) || segments.includes("..")) {
+    throw new Error(`Invalid release asset source path: ${definition.source_path}`);
+  }
+  return path.join(PROJECT_ROOT, ...segments);
+}
+
 export function listDistFiles() {
   const found = [];
   const visit = directory => {
@@ -80,7 +90,7 @@ export function listDistFiles() {
 
 export function buildManifest() {
   const files = ASSET_DEFINITIONS.map(definition => {
-    const absolute = path.join(DIST, definition.path);
+    const absolute = assetAbsolutePath(definition);
     if (!fs.statSync(absolute).isFile()) throw new Error(`Missing owned release asset: ${definition.path}`);
     const bytes = fs.readFileSync(absolute);
     return {

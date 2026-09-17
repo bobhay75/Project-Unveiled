@@ -3,7 +3,7 @@
   "release_id": "trust-worthy-evidence-lab-r17",
   "release": 17,
   "observer": "trust-worthy-observer-v7",
-  "recorded_at": "2026-09-16T22:40:06Z",
+  "recorded_at": "2026-09-17T03:19:27Z",
   "event_category": "corrective-maintenance",
   "organization": {
     "name": "Bobsome1 / Project Unveiled",
@@ -31,11 +31,11 @@
   },
   "digest": {
     "algorithm": "SHA-256",
-    "root": "6ddb5c71968ef6ebb07175114967a08a857768cba9fd261a68ffd379bd9c0d25",
+    "root": "2d40fb08d308c13fec5ff3153826d4e35487b22e97507cbad22ee361ef134d2d",
     "canonicalization": "UTF-8 JSON array of path, route, expected_status, sha256, bytes, content_type, delivery mode, and delivery policy rows sorted by path, followed by LF."
   },
   "scope": {
-    "owned_asset_count": 16,
+    "owned_asset_count": 17,
     "self_path": "/truth/lab/release-manifest.json",
     "self_exclusion": "The manifest cannot contain its own digest. Live verification compares its bytes with the source copy before using it.",
     "files": [
@@ -95,6 +95,17 @@
         }
       },
       {
+        "path": "assets/js/cinematic-effects.js",
+        "route": "/assets/js/cinematic-effects.js",
+        "expected_status": 200,
+        "sha256": "75d1a705b1681cb8676bd1a56b05e4ae482e321b4f6b544c1e5f6f5e19128fa9",
+        "bytes": 10734,
+        "content_type": "javascript",
+        "delivery": {
+          "mode": "exact"
+        }
+      },
+      {
         "path": "app.js",
         "route": "/truth/lab/app.js",
         "expected_status": 200,
@@ -131,8 +142,8 @@
         "path": "observer.js",
         "route": "/truth/lab/observer.js",
         "expected_status": 200,
-        "sha256": "7697397fffe1bbb912e74a7374ee884892d37f5717b2667b5bd5dd807963acd8",
-        "bytes": 17017,
+        "sha256": "a5db1b09fb61ccd85392b164b67cc6ada925a65fc7f16e0db281d4133ac7d1c4",
+        "bytes": 17148,
         "content_type": "javascript",
         "delivery": {
           "mode": "exact"

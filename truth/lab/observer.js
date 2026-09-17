@@ -186,6 +186,7 @@
       ["./research-sweep.js", "javascript", false],
       ["./app.js", "javascript", false],
       ["./observer.js", "javascript", false],
+      ["/assets/js/cinematic-effects.js", "javascript", false],
       ["./manifest.webmanifest", "json", false],
       ["./status.json", "json", false],
       ["./release-manifest.json", "json", false],
@@ -234,7 +235,9 @@
 
       const results = await Promise.all(files.map(async file => {
         const route = String(file?.route || "");
-        const routeAllowed = route.startsWith("/truth/lab/") || route === "/.well-known/security.txt";
+        const routeAllowed = route.startsWith("/truth/lab/") ||
+          route === "/.well-known/security.txt" ||
+          route === "/assets/js/cinematic-effects.js";
         if (!routeAllowed || route.includes("..")) throw new Error("An asset route escaped the public release boundary.");
         const target = new URL(route, location.href);
         if (target.origin !== location.origin) throw new Error("An asset route escaped the public origin.");
