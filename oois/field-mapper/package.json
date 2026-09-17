@@ -5,7 +5,7 @@
   "description": "Ozark Occupation Intelligence System - private field mapping app",
   "type": "module",
   "engines": {
-    "node": ">=22.0.0"
+    "node": ">=22.12.0"
   },
   "scripts": {
     "dev": "vite --host 0.0.0.0",
@@ -13,29 +13,33 @@
     "preview": "vite preview --host 0.0.0.0",
     "cap:init": "npx cap init \"OOIS Field Mapper\" com.bobsome1.oois --web-dir=dist",
     "cap:add:android": "npx cap add android",
-    "cap:sync": "npm run build && npx cap sync android",
+    "cap:sync": "npm run build && node scripts/prepare-android.mjs",
     "android": "npm run cap:sync && npx cap open android",
     "firebase:deploy:rules": "firebase deploy --only firestore:rules,storage",
     "firebase:deploy:functions": "firebase deploy --only functions",
-    "firebase:deploy:hosting": "npm run build && firebase deploy --only hosting"
+    "firebase:deploy:hosting": "npm run build && firebase deploy --only hosting",
+    "test": "node --test tests/data.test.js",
+    "android:prepare": "npm run cap:sync"
   },
   "dependencies": {
     "@capacitor/android": "^8.5.2",
     "@capacitor/app": "^8.0.0",
     "@capacitor/camera": "^8.0.0",
     "@capacitor/core": "^8.5.2",
+    "@capacitor/filesystem": "^8.1.3",
     "@capacitor/geolocation": "^8.0.0",
     "@capacitor/network": "^8.0.0",
+    "@capacitor/share": "^8.0.2",
     "firebase": "^11.0.0",
     "leaflet": "^1.9.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-leaflet": "^4.2.1",
-    "vite": "^5.4.11"
+    "react-leaflet": "^4.2.1"
   },
   "devDependencies": {
     "@capacitor/cli": "^8.5.2",
-    "@vitejs/plugin-react": "^4.3.3",
-    "typescript": "^5.6.3"
+    "@vitejs/plugin-react": "^6.1.1",
+    "typescript": "^5.6.3",
+    "vite": "^8.3.0"
   }
 }

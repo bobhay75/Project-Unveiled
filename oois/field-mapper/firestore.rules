@@ -1,8 +1,12 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    function owner() { return request.auth != null && exists(/databases/$(database)/documents/owners/$(request.auth.uid)); }
+    match /owners/{userId} { allow get: if request.auth != null && request.auth.uid == userId; allow list, write: if false; }
     match /users/{userId}/sites/{siteId} {
-      allow read, create, update, delete: if request.auth != null && request.auth.uid == userId;
+      allow read, delete: if owner() && request.auth.uid == userId;
+      allow create, update: if owner() && request.auth.uid == userId && request.resource.data.id == siteId && request.resource.data.createdBy == userId && request.resource.data.isPrivate == true && request.resource.data.photos.size() <= 5;
     }
+    match /aiLimits/{id} { allow read, write: if false; }
   }
 }

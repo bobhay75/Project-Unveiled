@@ -1,8 +1,10 @@
 rules_version = '2';
 service firebase.storage {
   match /b/{bucket}/o {
+    function owner(userId) { return request.auth != null && request.auth.uid == userId && firestore.exists(/databases/(default)/documents/owners/$(request.auth.uid)); }
     match /users/{userId}/sites/{siteId}/photos/{fileName} {
-      allow read, write, delete: if request.auth != null && request.auth.uid == userId;
+      allow read, delete: if owner(userId);
+      allow create, update: if owner(userId) && request.resource.size <= 700000 && request.resource.contentType == 'image/jpeg';
     }
   }
 }
