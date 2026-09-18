@@ -10,6 +10,8 @@ node --check truth/lab/observer.js
 node --check tests/trust-worthy-lab/release-integrity.mjs
 node --check tests/trust-worthy-lab/release-manifest.mjs
 node --check tests/trust-worthy-lab/live-release-gate.mjs
+node --check tests/trust-worthy-lab/claim-validator.mjs
+node --check tests/trust-worthy-lab/claim-validation.mjs
 bash tests/trust-worthy-lab/investigate-method-gate.sh
 bash tests/trust-worthy-lab/health-method-gate.sh
 if command -v php >/dev/null 2>&1; then
@@ -28,6 +30,7 @@ python3 tests/trust-worthy-lab/static_checks.py
 python3 tests/trust-worthy-intake/static_checks.py
 python3 tests/trust-worthy-daily/static_checks.py
 python3 tests/project-unveiled-analytics/static_checks.py
+node tests/trust-worthy-lab/claim-validation.mjs
 node tests/trust-worthy-lab/research-sweep.mjs
 node tests/trust-worthy-lab/app-smoke.mjs
 node tests/trust-worthy-lab/observer.mjs
@@ -43,4 +46,4 @@ else
   fi
 fi
 
-echo "Release gate passed: syntax, reproducible manifest, structure, safety copy, research engine, adversarial workflow, provenance negatives, and KCMC separation."
+echo "Release gate passed: syntax, reproducible manifest, structure, safety copy, claim-level fail-closed validation, research engine, adversarial workflow, provenance negatives, and KCMC separation."
