@@ -9,6 +9,7 @@ header('Pragma: no-cache');
 header('X-Content-Type-Options: nosniff');
 header('X-Robots-Tag: noindex, nofollow, noarchive');
 header('Referrer-Policy: no-referrer');
+header('X-PU-Analytics-Schema: revenue-funnel-v1');
 
 function pu_analytics_json_response(bool $ok, int $status, ?int $retryAfter = null): never
 {

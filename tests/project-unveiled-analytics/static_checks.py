@@ -11,6 +11,7 @@ TRACKER = (ROOT / "project-unveiled-analytics/tracker.js").read_text(encoding="u
 HTACCESS = (ROOT / "project-unveiled-analytics/.htaccess").read_text(encoding="utf-8")
 ROOT_HTACCESS = (ROOT / ".htaccess").read_text(encoding="utf-8")
 PRIVACY = (ROOT / "privacy.html").read_text(encoding="utf-8")
+STORE = (ROOT / "store/index.html").read_text(encoding="utf-8")
 MIGRATION = (ROOT / "scripts/migrate-intake-permissions.php").read_text(encoding="utf-8")
 DEPLOY = (ROOT / "scripts/deploy-public.sh").read_text(encoding="utf-8")
 
@@ -48,6 +49,7 @@ require(allowed_events <= emitted_events, f"stale collector events are not emitt
 require(tracker_references and set(tracker_references) == {"5"}, "public pages do not all use the hardened tracker cache token")
 
 for token in [
+    "X-PU-Analytics-Schema: revenue-funnel-v1",
     "pu_analytics_request_origin_is_allowed(true)",
     "pu_analytics_read_request_body",
     "pu_analytics_parse_payload",
@@ -127,6 +129,19 @@ require("session.use_only_cookies" in DASHBOARD and "session.use_trans_sid" in D
 require("if (!@session_start())" in DASHBOARD, "dashboard does not fail closed when session storage fails")
 require("glob($dataDir" not in DASHBOARD, "dashboard returned to an unbounded glob/read path")
 require("file_get_contents($file)" not in DASHBOARD, "dashboard returned to whole-file event reads")
+for event in (
+    "engaged_30s",
+    "store_click",
+    "product_checkout_click",
+    "service_checkout_click",
+    "qualified_lead_click",
+    "partner_inquiry_click",
+):
+    require(event in DASHBOARD, f"dashboard omits the launch signal: {event}")
+require("A checkout click is <strong>not</strong> a completed payment" in DASHBOARD, "dashboard can blur checkout clicks with completed payments")
+require("Confirm in PayPal" in DASHBOARD, "dashboard lacks the external payment-settlement boundary")
+require("PayPal processes payment details under its own privacy terms." in PRIVACY, "public privacy notice omits the payment-provider boundary")
+require("PDF and EPUB files" in STORE and "within two business days" in STORE, "store omits the manual digital-delivery contract")
 
 require("'/home/bobsome1/site-private/project-unveiled-analytics'" in MIGRATION, "deployment migration lacks the exact private analytics root")
 require("PU_ANALYTICS_MIGRATION_TEST_DIR" in MIGRATION, "analytics migration lacks an isolated behavior-test override")
