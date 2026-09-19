@@ -52,6 +52,25 @@ jobs:
             node --check "$file"
           done < <(find . -path './.git' -prune -o -type f -name '*.js' -print0)
 
+      - name: Verify Journey evidence gates
+        shell: bash
+        run: |
+          set -euo pipefail
+          evidence_root="$RUNNER_TEMP/project-unveiled-journey-evidence"
+          mkdir -p "$evidence_root"
+          php tests/project-unveiled-analytics/dashboard-evidence.php "$evidence_root/dashboard.html"
+          php tests/unveiled-journey/suppression.php
+          node tests/project-unveiled-analytics/dashboard-layout.mjs "$evidence_root/dashboard.html" "$evidence_root/browser"
+
+      - name: Preserve synthetic dashboard review
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: journey-evidence-${{ github.run_id }}
+          path: ${{ runner.temp }}/project-unveiled-journey-evidence
+          if-no-files-found: warn
+          retention-days: 14
+
       - name: Validate public files and local links
         run: python3 scripts/validate_site.py
 

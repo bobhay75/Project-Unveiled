@@ -1316,3 +1316,160 @@ h3 {
     transition: none !important;
   }
 }
+
+/* Progressive cinematic layer: enhancement only; the page remains complete without JavaScript. */
+:root {
+  --page-progress: 0;
+  --hero-scroll: 0px;
+  --hero-x: 0px;
+  --hero-pointer-y: 0px;
+  --pointer-x: 50vw;
+  --pointer-y: 30vh;
+}
+
+.cinematic-progress {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 1000;
+  height: 2px;
+  pointer-events: none;
+  transform: scaleX(var(--page-progress));
+  transform-origin: left;
+  background: linear-gradient(90deg, var(--amber), var(--blue));
+  box-shadow: 0 0 18px rgba(255, 178, 63, .55);
+}
+
+body[data-cinematic-theme="bobsome1"]::before {
+  position: fixed;
+  z-index: 20;
+  inset: 0;
+  pointer-events: none;
+  content: "";
+  background: radial-gradient(320px circle at var(--pointer-x) var(--pointer-y), rgba(114, 196, 232, .065), transparent 72%);
+  mix-blend-mode: screen;
+}
+
+.hero {
+  --field-opacity: .72;
+  overflow: clip;
+}
+
+.hero-media {
+  transform: translate3d(var(--hero-x), calc(var(--hero-pointer-y) + var(--hero-scroll)), 0) scale(1.045);
+  transition: transform 180ms linear;
+  will-change: transform;
+}
+
+.hero::after {
+  position: absolute;
+  z-index: -1;
+  inset: -30% -20%;
+  pointer-events: none;
+  content: "";
+  background: linear-gradient(110deg, transparent 43%, rgba(255, 212, 138, .07) 49%, rgba(114, 196, 232, .09) 51%, transparent 58%);
+  transform: translate3d(-45%, 0, 0);
+  animation: bobsome-signal-sweep 11s ease-in-out infinite;
+}
+
+.cinematic-canvas {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: var(--field-opacity);
+}
+
+.cinematic-ready .cinematic-reveal {
+  opacity: 0;
+  transform: translate3d(0, 28px, 0);
+  filter: blur(7px);
+  transition:
+    opacity 720ms cubic-bezier(.2,.72,.2,1) var(--reveal-delay, 0ms),
+    transform 720ms cubic-bezier(.2,.72,.2,1) var(--reveal-delay, 0ms),
+    filter 720ms ease var(--reveal-delay, 0ms);
+}
+
+.cinematic-ready .cinematic-reveal.is-visible {
+  opacity: 1;
+  transform: none;
+  filter: none;
+}
+
+.project-card {
+  --tilt-x: 0deg;
+  --tilt-y: 0deg;
+  --card-x: 50%;
+  --card-y: 50%;
+  transform: perspective(1100px) rotateX(var(--tilt-x)) rotateY(var(--tilt-y));
+  transform-style: preserve-3d;
+  transition: transform 180ms ease, border-color 240ms ease, box-shadow 240ms ease;
+  will-change: transform;
+}
+
+.project-card::before {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  pointer-events: none;
+  content: "";
+  background: radial-gradient(360px circle at var(--card-x) var(--card-y), rgba(255, 178, 63, .14), transparent 64%);
+  opacity: 0;
+  transition: opacity 220ms ease;
+}
+
+.project-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+.project-card:hover {
+  border-color: rgba(255, 178, 63, .38);
+  box-shadow: 0 28px 76px rgba(0, 0, 0, .34), 0 0 0 1px rgba(114, 196, 232, .05);
+}
+
+.project-card:hover::before { opacity: 1; }
+
+.process-list li {
+  position: relative;
+  transition: padding-left 260ms ease, background 260ms ease;
+}
+
+.process-list li::before {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 2px;
+  content: "";
+  background: linear-gradient(var(--amber), var(--blue));
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform 320ms ease;
+}
+
+.process-list li.is-current {
+  padding-left: 1rem;
+  background: linear-gradient(90deg, rgba(255, 178, 63, .08), transparent 72%);
+}
+
+.process-list li.is-current::before { transform: scaleY(1); }
+
+@keyframes bobsome-signal-sweep {
+  0%, 18% { transform: translate3d(-45%, 0, 0); opacity: 0; }
+  34%, 58% { opacity: 1; }
+  76%, 100% { transform: translate3d(45%, 0, 0); opacity: 0; }
+}
+
+@media (max-width: 760px) {
+  body[data-cinematic-theme="bobsome1"]::before { display: none; }
+  .hero { --field-opacity: .46; }
+  .hero-media { transform: translate3d(0, calc(var(--hero-scroll) * .45), 0) scale(1.025); }
+  .project-card { transform: none; will-change: auto; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero::after { animation: none; opacity: 0; }
+  .hero-media, .project-card { transform: none; transition: none; will-change: auto; }
+  .cinematic-ready .cinematic-reveal { opacity: 1; transform: none; filter: none; transition: none; }
+  .cinematic-progress { display: none; }
+}

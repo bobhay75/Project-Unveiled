@@ -32,7 +32,7 @@
   <title>Project Unveiled Evidence Lab | Put a Claim on Trial</title>
   <link rel="stylesheet" href="./styles.css">
 </head>
-<body>
+<body data-cinematic-theme="trustworthy">
   <a class="skip-link" href="#claim-input">Skip to the claim</a>
 
   <header class="topbar">
@@ -148,11 +148,11 @@
         <li>Waiting for the first local observation.</li>
       </ul>
       <details class="release-proof" id="release-proof">
-        <summary><span>Release 16 provenance</span><strong id="release-proof-state">CHECK PENDING</strong></summary>
+        <summary><span>Release 17 provenance</span><strong id="release-proof-state">CHECK PENDING</strong></summary>
         <div class="release-proof-grid">
           <div><span>Owned-asset root</span><code id="release-root">Pending local verification</code></div>
           <div><span>Public receipt</span><a href="./release-manifest.json">Open machine-readable manifest</a></div>
-          <div><span>Rollback point</span><strong>Release 15 · tested known-good</strong></div>
+          <div><span>Rollback point</span><strong>Release 16 · tested known-good</strong></div>
           <div><span>Delivery layer</span><strong id="release-transform-state">Not observed yet</strong></div>
         </div>
         <p>SHA-256 fingerprints cover every owned public asset. The observer requires the Bobsome1 server to deliver those owned bytes exactly and fails closed on any difference. This receipt is tamper evidence relative to a separately trusted copy—not a digital signature, proof of authorship, or external timestamp.</p>
@@ -500,5 +500,6 @@
   <script src="./research-sweep.js" defer></script>
   <script src="./app.js" defer></script>
   <script src="./observer.js" defer></script>
+  <script src="/assets/js/cinematic-effects.js?v=1" defer></script>
 </body>
 </html>

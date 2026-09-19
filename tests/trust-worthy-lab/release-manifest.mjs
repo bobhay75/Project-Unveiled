@@ -14,7 +14,29 @@ if (!["--check", "--write"].includes(mode)) {
 }
 
 const expected = buildManifest();
-const expectedFiles = [...ASSET_DEFINITIONS.map(item => item.path), "release-manifest.json"].sort();
+const expectedFiles = [
+  ...ASSET_DEFINITIONS.filter(item => !item.source_path).map(item => item.path),
+  "release-manifest.json"
+].sort();
+
+const indexHtml = fs.readFileSync(new URL("../../truth/lab/index.html", import.meta.url), "utf8");
+const dependencyTags = indexHtml.match(/<(?:script|link)\b[^>]*>/gi) || [];
+const dependencyRoutes = dependencyTags.flatMap(tag => {
+  const source = tag.match(/\bsrc=["']([^"']+)["']/i)?.[1];
+  const stylesheet = /<link\b/i.test(tag) && /\brel=["'][^"']*\bstylesheet\b[^"']*["']/i.test(tag)
+    ? tag.match(/\bhref=["']([^"']+)["']/i)?.[1]
+    : undefined;
+  const reference = source || stylesheet;
+  if (!reference) return [];
+  const resolved = new URL(reference, "https://bobsome1.com/truth/lab/");
+  return resolved.origin === "https://bobsome1.com" ? [resolved.pathname] : [];
+});
+const ownedRoutes = new Set(ASSET_DEFINITIONS.map(item => item.route));
+assert.deepEqual(
+  dependencyRoutes.filter(route => !ownedRoutes.has(route)),
+  [],
+  "every same-origin script and stylesheet loaded by the Evidence Lab must be release-manifested"
+);
 
 if (mode === "--write") {
   fs.writeFileSync(MANIFEST_PATH, `${JSON.stringify(expected, null, 2)}\n`, "utf8");

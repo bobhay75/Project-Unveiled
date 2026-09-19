@@ -2,6 +2,8 @@
 .well-known/security.txt
 assets/css/unveiled-journey.css
 assets/css/unveiled-prompt.css
+assets/js/cinematic-effects.js
+assets/js/project-unveiled-cinematic.js
 assets/js/unveiled-form-config.js
 assets/js/unveiled-journey.js
 assets/js/unveiled-prompt.js

@@ -364,7 +364,7 @@ Treat these as investigation prompts, not proven causes or universal benchmarks:
 
 ## Controlled delivery test — required before promotion
 
-Status: NOT RUN by this change. Passing repository checks is not delivery evidence.
+Status: PRE-DEPLOYMENT EVIDENCE ONLY. Site safety CI renders the authenticated dashboard from synthetic events at 360 px and 1365 px, checks responsive columns, horizontal overflow, focusability, accessible control names, page-session deduplication, and Journey-only share counting. It also runs an isolated unsubscribed queue entry through the real CLI cron twice and requires zero send attempts plus a persistent stopped state. These checks do not prove deployed production bytes, real private subscriber/queue state, hosted cron execution, or mailbox delivery. Keep public promotion blocked until those production facts are verified.
 
 1. Record the approved deployment commit and test start time privately. Check phone-width layout, keyboard signup, and protected dashboard access.
 2. Use a dedicated address Robert controls, avoiding an existing subscription. Record its identifier only in the private test record. Submit once with explicit consent and a `utm_content=owner_test` tag.
