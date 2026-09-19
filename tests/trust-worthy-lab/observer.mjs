@@ -4,6 +4,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import vm from "node:vm";
+import { ASSET_DEFINITIONS, assetAbsolutePath } from "./release-integrity.mjs";
 
 class StubNode {
   constructor(id = "") {
@@ -65,18 +66,19 @@ const localStorageStub = {
 const dist = fileURLToPath(new URL("../../truth/lab/", import.meta.url));
 const manifest = JSON.parse(fs.readFileSync(path.join(dist, "release-manifest.json"), "utf8"));
 const recordByRoute = new Map(manifest.scope.files.map(file => [file.route, file]));
+const sourceByRoute = new Map(ASSET_DEFINITIONS.map(definition => [definition.route, assetAbsolutePath(definition)]));
 const typeByPath = new Map(manifest.scope.files.map(file => [file.route, file.content_type]));
 typeByPath.set("/truth/lab/release-manifest.json", "application/json");
 
 let soft404 = false;
 let tamperPath = "";
 function bodyForPath(pathname) {
-  const relative = pathname === "/truth/lab/release-manifest.json"
-    ? "release-manifest.json"
-    : recordByRoute.get(pathname)?.path;
-  if (!relative) return Buffer.alloc(0);
-  let body = fs.readFileSync(path.join(dist, relative));
-  if (relative === tamperPath) body = Buffer.concat([body, Buffer.from("\nsynthetic-tamper")]);
+  const absolute = pathname === "/truth/lab/release-manifest.json"
+    ? path.join(dist, "release-manifest.json")
+    : sourceByRoute.get(pathname);
+  if (!absolute) return Buffer.alloc(0);
+  let body = fs.readFileSync(absolute);
+  if (recordByRoute.get(pathname)?.path === tamperPath) body = Buffer.concat([body, Buffer.from("\nsynthetic-tamper")]);
   return body;
 }
 
@@ -141,7 +143,7 @@ for (let index = 0; index < 40 && nodes.get("run-observer").disabled; index += 1
 }
 
 const api = context.window.TrustObserver;
-assert.equal(api.RELEASE, "trust-worthy-observer-v6");
+assert.equal(api.RELEASE, "trust-worthy-observer-v7");
 const receipt = await api.runObserver(true);
 assert.equal(receipt.checks.length, 8);
 assert.ok(receipt.checks.every(item => item.passed), "the complete observer fixture should pass");
@@ -151,7 +153,7 @@ assert.equal(nodes.get("observer-failure-count").textContent, "0");
 assert.equal(nodes.get("observer-results").children.length, 8);
 assert.equal(nodes.get("release-proof-state").textContent, "VERIFIED LOCALLY");
 assert.equal(nodes.get("release-transform-state").textContent, "Owned bytes served exactly");
-assert.ok(storage.has("trust-worthy-observer:latest-v6"), "the latest local receipt should be retained under the release-16 observer key");
+assert.ok(storage.has("trust-worthy-observer:latest-v7"), "the latest local receipt should be retained under the release-17 observer key");
 
 soft404 = true;
 const routeFailure = await api.routePolicyCheck();
@@ -161,6 +163,11 @@ soft404 = false;
 tamperPath = "app.js";
 const assetFailure = await api.releaseProvenanceCheck();
 assert.equal(assetFailure.passed, false, "a changed owned asset must fail provenance verification");
+tamperPath = "";
+
+tamperPath = "assets/js/cinematic-effects.js";
+const sharedScriptFailure = await api.releaseProvenanceCheck();
+assert.equal(sharedScriptFailure.passed, false, "a changed shared cinematic script must fail provenance verification");
 tamperPath = "";
 
 const exactPass = await api.releaseProvenanceCheck();

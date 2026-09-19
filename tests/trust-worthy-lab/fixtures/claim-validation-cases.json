@@ -1,0 +1,315 @@
+{
+  "schema_version": 1,
+  "description": "Synthetic offline cases for deterministic claim-level evidence policy tests.",
+  "cases": [
+    {
+      "id": "supported-01",
+      "category": "supported",
+      "claim": { "text": "The fictional Meridian footbridge opened in 2019 and spans 84 metres.", "required_atoms": ["opened:2019", "span_m:84"], "minimum_independent_origins": 2 },
+      "citations": ["s01-a", "s01-b"],
+      "driver_source_ids": ["s01-a", "s01-b"],
+      "sources": [
+        { "id": "s01-a", "origin_id": "meridian-register", "supports": ["opened:2019", "span_m:84"], "contradicts": [] },
+        { "id": "s01-b", "origin_id": "meridian-audit", "supports": ["opened:2019", "span_m:84"], "contradicts": [] }
+      ],
+      "expected": { "proof_state": "verified", "assessment": "fully_supported", "delivery": "candidate_for_human_review" }
+    },
+    {
+      "id": "supported-02",
+      "category": "supported",
+      "claim": { "text": "The fictional North Quay archive contains 12 editions and began digitization in 2024.", "required_atoms": ["edition_count:12", "digitization_start:2024"], "minimum_independent_origins": 2 },
+      "citations": ["s02-a", "s02-b"],
+      "driver_source_ids": ["s02-a", "s02-b"],
+      "sources": [
+        { "id": "s02-a", "origin_id": "north-quay-catalog", "supports": ["edition_count:12", "digitization_start:2024"], "contradicts": [] },
+        { "id": "s02-b", "origin_id": "digitization-log", "supports": ["edition_count:12", "digitization_start:2024"], "contradicts": [] }
+      ],
+      "expected": { "proof_state": "verified", "assessment": "fully_supported", "delivery": "candidate_for_human_review" }
+    },
+    {
+      "id": "supported-03",
+      "category": "supported",
+      "claim": { "text": "Test sensor A failed at 14:32 UTC and its backup activated within six seconds.", "required_atoms": ["failure_time:14:32Z", "backup_delay_s:6"], "minimum_independent_origins": 2 },
+      "citations": ["s03-a", "s03-b"],
+      "driver_source_ids": ["s03-a", "s03-b"],
+      "sources": [
+        { "id": "s03-a", "origin_id": "sensor-event-log", "supports": ["failure_time:14:32Z", "backup_delay_s:6"], "contradicts": [] },
+        { "id": "s03-b", "origin_id": "independent-clock-log", "supports": ["failure_time:14:32Z", "backup_delay_s:6"], "contradicts": [] }
+      ],
+      "expected": { "proof_state": "verified", "assessment": "fully_supported", "delivery": "candidate_for_human_review" }
+    },
+    {
+      "id": "supported-04",
+      "category": "supported",
+      "claim": { "text": "Fictional Ordinance 18 passed 7–2 on 2026-04-11.", "required_atoms": ["vote:7-2", "vote_date:2026-04-11"], "minimum_independent_origins": 2 },
+      "citations": ["s04-a", "s04-b"],
+      "driver_source_ids": ["s04-a", "s04-b"],
+      "sources": [
+        { "id": "s04-a", "origin_id": "clerk-minutes", "supports": ["vote:7-2", "vote_date:2026-04-11"], "contradicts": [] },
+        { "id": "s04-b", "origin_id": "meeting-video", "supports": ["vote:7-2", "vote_date:2026-04-11"], "contradicts": [] }
+      ],
+      "expected": { "proof_state": "verified", "assessment": "fully_supported", "delivery": "candidate_for_human_review" }
+    },
+    {
+      "id": "supported-05",
+      "category": "supported",
+      "claim": { "text": "Synthetic build K-41 received two-person review and had its SHA-256 recorded before release.", "required_atoms": ["reviewers:2", "digest_recorded:pre_release"], "minimum_independent_origins": 2 },
+      "citations": ["s05-a", "s05-b"],
+      "driver_source_ids": ["s05-a", "s05-b"],
+      "sources": [
+        { "id": "s05-a", "origin_id": "review-ledger", "supports": ["reviewers:2", "digest_recorded:pre_release"], "contradicts": [] },
+        { "id": "s05-b", "origin_id": "artifact-registry", "supports": ["reviewers:2", "digest_recorded:pre_release"], "contradicts": [] }
+      ],
+      "expected": { "proof_state": "verified", "assessment": "fully_supported", "delivery": "candidate_for_human_review" }
+    },
+
+    {
+      "id": "partial-01",
+      "category": "partially_supported",
+      "claim": { "text": "The test maintenance ended on January 14 and inspection was signed on January 15.", "required_atoms": ["maintenance_end:01-14", "inspection_signed:01-15"], "minimum_independent_origins": 2 },
+      "citations": ["p01-a", "p01-b"],
+      "driver_source_ids": ["p01-a", "p01-b"],
+      "sources": [
+        { "id": "p01-a", "origin_id": "maintenance-log", "supports": ["maintenance_end:01-14"], "contradicts": [] },
+        { "id": "p01-b", "origin_id": "work-order", "supports": ["maintenance_end:01-14"], "contradicts": [] }
+      ],
+      "expected": { "proof_state": "questionable", "assessment": "partially_supported", "delivery": "block_and_escalate" }
+    },
+    {
+      "id": "partial-02",
+      "category": "partially_supported",
+      "claim": { "text": "The synthetic dataset has 480 records and excluded three duplicates.", "required_atoms": ["record_count:480", "duplicates_excluded:3"], "minimum_independent_origins": 2 },
+      "citations": ["p02-a", "p02-b"],
+      "driver_source_ids": ["p02-a", "p02-b"],
+      "sources": [
+        { "id": "p02-a", "origin_id": "dataset-manifest", "supports": ["record_count:480"], "contradicts": [] },
+        { "id": "p02-b", "origin_id": "row-audit", "supports": ["record_count:480"], "contradicts": [] }
+      ],
+      "expected": { "proof_state": "questionable", "assessment": "partially_supported", "delivery": "block_and_escalate" }
+    },
+    {
+      "id": "partial-03",
+      "category": "partially_supported",
+      "claim": { "text": "The drill outage began at 02:10 and service returned at 02:43.", "required_atoms": ["outage_start:02:10", "service_restore:02:43"], "minimum_independent_origins": 2 },
+      "citations": ["p03-a", "p03-b"],
+      "driver_source_ids": ["p03-a", "p03-b"],
+      "sources": [
+        { "id": "p03-a", "origin_id": "status-log", "supports": ["outage_start:02:10"], "contradicts": [] },
+        { "id": "p03-b", "origin_id": "operator-notes", "supports": ["outage_start:02:10"], "contradicts": [] }
+      ],
+      "expected": { "proof_state": "questionable", "assessment": "partially_supported", "delivery": "block_and_escalate" }
+    },
+    {
+      "id": "partial-04",
+      "category": "partially_supported",
+      "claim": { "text": "Prototype R-8 passed the load test and the accessibility review.", "required_atoms": ["load_test:pass", "accessibility_review:pass"], "minimum_independent_origins": 2 },
+      "citations": ["p04-a", "p04-b"],
+      "driver_source_ids": ["p04-a", "p04-b"],
+      "sources": [
+        { "id": "p04-a", "origin_id": "load-harness", "supports": ["load_test:pass"], "contradicts": [] },
+        { "id": "p04-b", "origin_id": "build-report", "supports": ["load_test:pass"], "contradicts": [] }
+      ],
+      "expected": { "proof_state": "questionable", "assessment": "partially_supported", "delivery": "block_and_escalate" }
+    },
+    {
+      "id": "partial-05",
+      "category": "partially_supported",
+      "claim": { "text": "The mock grant funded four teams and ran for 18 months.", "required_atoms": ["team_count:4", "duration_months:18"], "minimum_independent_origins": 2 },
+      "citations": ["p05-a", "p05-b"],
+      "driver_source_ids": ["p05-a", "p05-b"],
+      "sources": [
+        { "id": "p05-a", "origin_id": "award-record", "supports": ["team_count:4"], "contradicts": [] },
+        { "id": "p05-b", "origin_id": "team-register", "supports": ["team_count:4"], "contradicts": [] }
+      ],
+      "expected": { "proof_state": "questionable", "assessment": "partially_supported", "delivery": "block_and_escalate" }
+    },
+
+    {
+      "id": "contradicted-01",
+      "category": "contradicted",
+      "claim": { "text": "The synthetic study evaluated 42 samples and reported four failures.", "required_atoms": ["sample_count:42", "failure_count:4"], "minimum_independent_origins": 2 },
+      "citations": ["c01-a", "c01-b"],
+      "driver_source_ids": ["c01-a", "c01-b"],
+      "sources": [
+        { "id": "c01-a", "origin_id": "study-summary", "supports": ["sample_count:42", "failure_count:4"], "contradicts": [] },
+        { "id": "c01-b", "origin_id": "sample-ledger", "supports": ["failure_count:4"], "contradicts": ["sample_count:42"] }
+      ],
+      "expected": { "proof_state": "questionable", "assessment": "contradicted", "delivery": "block_and_escalate" }
+    },
+    {
+      "id": "contradicted-02",
+      "category": "contradicted",
+      "claim": { "text": "Test gateway Q enabled TLS 1.3 and disabled TLS 1.2.", "required_atoms": ["tls_1_3:enabled", "tls_1_2:disabled"], "minimum_independent_origins": 2 },
+      "citations": ["c02-a", "c02-b"],
+      "driver_source_ids": ["c02-a", "c02-b"],
+      "sources": [
+        { "id": "c02-a", "origin_id": "gateway-config", "supports": ["tls_1_3:enabled", "tls_1_2:disabled"], "contradicts": [] },
+        { "id": "c02-b", "origin_id": "protocol-scan", "supports": ["tls_1_3:enabled"], "contradicts": ["tls_1_2:disabled"] }
+      ],
+      "expected": { "proof_state": "questionable", "assessment": "contradicted", "delivery": "block_and_escalate" }
+    },
+    {
+      "id": "contradicted-03",
+      "category": "contradicted",
+      "claim": { "text": "The fictional board approved measure Z unanimously on May 8.", "required_atoms": ["approval:unanimous", "approval_date:05-08"], "minimum_independent_origins": 2 },
+      "citations": ["c03-a", "c03-b"],
+      "driver_source_ids": ["c03-a", "c03-b"],
+      "sources": [
+        { "id": "c03-a", "origin_id": "board-release", "supports": ["approval:unanimous", "approval_date:05-08"], "contradicts": [] },
+        { "id": "c03-b", "origin_id": "roll-call", "supports": ["approval_date:05-08"], "contradicts": ["approval:unanimous"] }
+      ],
+      "expected": { "proof_state": "questionable", "assessment": "contradicted", "delivery": "block_and_escalate" }
+    },
+    {
+      "id": "contradicted-04",
+      "category": "contradicted",
+      "claim": { "text": "Mock package 7.2 contains no network client and uses a permissive license.", "required_atoms": ["network_client:absent", "license:permissive"], "minimum_independent_origins": 2 },
+      "citations": ["c04-a", "c04-b"],
+      "driver_source_ids": ["c04-a", "c04-b"],
+      "sources": [
+        { "id": "c04-a", "origin_id": "package-readme", "supports": ["network_client:absent", "license:permissive"], "contradicts": [] },
+        { "id": "c04-b", "origin_id": "code-inspection", "supports": ["license:permissive"], "contradicts": ["network_client:absent"] }
+      ],
+      "expected": { "proof_state": "questionable", "assessment": "contradicted", "delivery": "block_and_escalate" }
+    },
+    {
+      "id": "contradicted-05",
+      "category": "contradicted",
+      "claim": { "text": "Synthetic control M blocks unsigned input and logs every rejection.", "required_atoms": ["unsigned_input:blocked", "rejections:fully_logged"], "minimum_independent_origins": 2 },
+      "citations": ["c05-a", "c05-b"],
+      "driver_source_ids": ["c05-a", "c05-b"],
+      "sources": [
+        { "id": "c05-a", "origin_id": "control-spec", "supports": ["unsigned_input:blocked", "rejections:fully_logged"], "contradicts": [] },
+        { "id": "c05-b", "origin_id": "red-team-log", "supports": ["unsigned_input:blocked"], "contradicts": ["rejections:fully_logged"] }
+      ],
+      "expected": { "proof_state": "questionable", "assessment": "contradicted", "delivery": "block_and_escalate" }
+    },
+
+    {
+      "id": "duplicate-01",
+      "category": "duplicate_origin",
+      "claim": { "text": "Fictional Lake Ember is 31 metres deep and freezes in January.", "required_atoms": ["depth_m:31", "freeze_month:january"], "minimum_independent_origins": 2 },
+      "citations": ["d01-a", "d01-b"],
+      "driver_source_ids": ["d01-a", "d01-b"],
+      "sources": [
+        { "id": "d01-a", "origin_id": "lake-agency-release", "supports": ["depth_m:31", "freeze_month:january"], "contradicts": [] },
+        { "id": "d01-b", "origin_id": "lake-agency-release", "supports": ["depth_m:31", "freeze_month:january"], "contradicts": [] }
+      ],
+      "expected": { "proof_state": "questionable", "assessment": "insufficient_independence", "delivery": "block_and_escalate" }
+    },
+    {
+      "id": "duplicate-02",
+      "category": "duplicate_origin",
+      "claim": { "text": "The mock observatory recorded 18 events and released them under CC BY.", "required_atoms": ["event_count:18", "license:cc-by"], "minimum_independent_origins": 2 },
+      "citations": ["d02-a", "d02-b"],
+      "driver_source_ids": ["d02-a", "d02-b"],
+      "sources": [
+        { "id": "d02-a", "origin_id": "observatory-bulletin", "supports": ["event_count:18", "license:cc-by"], "contradicts": [] },
+        { "id": "d02-b", "origin_id": "observatory-bulletin", "supports": ["event_count:18", "license:cc-by"], "contradicts": [] }
+      ],
+      "expected": { "proof_state": "questionable", "assessment": "insufficient_independence", "delivery": "block_and_escalate" }
+    },
+    {
+      "id": "duplicate-03",
+      "category": "duplicate_origin",
+      "claim": { "text": "Synthetic policy P took effect in June and applies to three units.", "required_atoms": ["effective_month:june", "unit_count:3"], "minimum_independent_origins": 2 },
+      "citations": ["d03-a", "d03-b"],
+      "driver_source_ids": ["d03-a", "d03-b"],
+      "sources": [
+        { "id": "d03-a", "origin_id": "policy-press-wire", "supports": ["effective_month:june", "unit_count:3"], "contradicts": [] },
+        { "id": "d03-b", "origin_id": "policy-press-wire", "supports": ["effective_month:june", "unit_count:3"], "contradicts": [] }
+      ],
+      "expected": { "proof_state": "questionable", "assessment": "insufficient_independence", "delivery": "block_and_escalate" }
+    },
+    {
+      "id": "duplicate-04",
+      "category": "duplicate_origin",
+      "claim": { "text": "Test vessel N carries 60 units and completed certification in 2025.", "required_atoms": ["capacity:60", "certification_year:2025"], "minimum_independent_origins": 2 },
+      "citations": ["d04-a", "d04-b"],
+      "driver_source_ids": ["d04-a", "d04-b"],
+      "sources": [
+        { "id": "d04-a", "origin_id": "manufacturer-sheet", "supports": ["capacity:60", "certification_year:2025"], "contradicts": [] },
+        { "id": "d04-b", "origin_id": "manufacturer-sheet", "supports": ["capacity:60", "certification_year:2025"], "contradicts": [] }
+      ],
+      "expected": { "proof_state": "questionable", "assessment": "insufficient_independence", "delivery": "block_and_escalate" }
+    },
+    {
+      "id": "duplicate-05",
+      "category": "duplicate_origin",
+      "claim": { "text": "The fictional Helix trial began in March and enrolled 90 participants.", "required_atoms": ["start_month:march", "participant_count:90"], "minimum_independent_origins": 2 },
+      "citations": ["d05-a", "d05-b"],
+      "driver_source_ids": ["d05-a", "d05-b"],
+      "sources": [
+        { "id": "d05-a", "origin_id": "trial-news-release", "supports": ["start_month:march", "participant_count:90"], "contradicts": [] },
+        { "id": "d05-b", "origin_id": "trial-news-release", "supports": ["start_month:march", "participant_count:90"], "contradicts": [] }
+      ],
+      "expected": { "proof_state": "questionable", "assessment": "insufficient_independence", "delivery": "block_and_escalate" }
+    },
+
+    {
+      "id": "laundering-01",
+      "category": "citation_laundering",
+      "claim": { "text": "Synthetic engine V reduced latency by 20% and used the same hardware.", "required_atoms": ["latency_change:-20pct", "hardware:same"], "minimum_independent_origins": 2 },
+      "citations": ["l01-a", "l01-b"],
+      "driver_source_ids": ["l01-shadow"],
+      "sources": [
+        { "id": "l01-a", "origin_id": "benchmark-report", "supports": ["latency_change:-20pct", "hardware:same"], "contradicts": [] },
+        { "id": "l01-b", "origin_id": "hardware-log", "supports": ["latency_change:-20pct", "hardware:same"], "contradicts": [] },
+        { "id": "l01-shadow", "origin_id": "uncited-prompt", "supports": ["latency_change:-20pct", "hardware:same"], "contradicts": [] }
+      ],
+      "expected": { "proof_state": "manipulated", "assessment": "provenance_mismatch", "delivery": "block_and_escalate" }
+    },
+    {
+      "id": "laundering-02",
+      "category": "citation_laundering",
+      "claim": { "text": "Mock library T has 99.9% uptime and retains logs for 30 days.", "required_atoms": ["uptime:99.9pct", "log_retention_days:30"], "minimum_independent_origins": 2 },
+      "citations": ["l02-a", "l02-b"],
+      "driver_source_ids": ["l02-shadow"],
+      "sources": [
+        { "id": "l02-a", "origin_id": "availability-report", "supports": ["uptime:99.9pct", "log_retention_days:30"], "contradicts": [] },
+        { "id": "l02-b", "origin_id": "retention-audit", "supports": ["uptime:99.9pct", "log_retention_days:30"], "contradicts": [] },
+        { "id": "l02-shadow", "origin_id": "uncited-retrieval", "supports": ["uptime:99.9pct", "log_retention_days:30"], "contradicts": [] }
+      ],
+      "expected": { "proof_state": "manipulated", "assessment": "provenance_mismatch", "delivery": "block_and_escalate" }
+    },
+    {
+      "id": "laundering-03",
+      "category": "citation_laundering",
+      "claim": { "text": "The fictional Cedar protocol requires signatures and rejects expired keys.", "required_atoms": ["signatures:required", "expired_keys:rejected"], "minimum_independent_origins": 2 },
+      "citations": ["l03-a", "l03-b"],
+      "driver_source_ids": ["l03-shadow"],
+      "sources": [
+        { "id": "l03-a", "origin_id": "protocol-spec", "supports": ["signatures:required", "expired_keys:rejected"], "contradicts": [] },
+        { "id": "l03-b", "origin_id": "conformance-suite", "supports": ["signatures:required", "expired_keys:rejected"], "contradicts": [] },
+        { "id": "l03-shadow", "origin_id": "hostile-context", "supports": ["signatures:required", "expired_keys:rejected"], "contradicts": [] }
+      ],
+      "expected": { "proof_state": "manipulated", "assessment": "provenance_mismatch", "delivery": "block_and_escalate" }
+    },
+    {
+      "id": "laundering-04",
+      "category": "citation_laundering",
+      "claim": { "text": "Synthetic model J abstains below 0.7 confidence and records the reason.", "required_atoms": ["abstention_threshold:0.7", "abstention_reason:recorded"], "minimum_independent_origins": 2 },
+      "citations": ["l04-a", "l04-b"],
+      "driver_source_ids": ["l04-shadow"],
+      "sources": [
+        { "id": "l04-a", "origin_id": "model-card", "supports": ["abstention_threshold:0.7", "abstention_reason:recorded"], "contradicts": [] },
+        { "id": "l04-b", "origin_id": "evaluation-report", "supports": ["abstention_threshold:0.7", "abstention_reason:recorded"], "contradicts": [] },
+        { "id": "l04-shadow", "origin_id": "hidden-instruction", "supports": ["abstention_threshold:0.7", "abstention_reason:recorded"], "contradicts": [] }
+      ],
+      "expected": { "proof_state": "manipulated", "assessment": "provenance_mismatch", "delivery": "block_and_escalate" }
+    },
+    {
+      "id": "laundering-05",
+      "category": "citation_laundering",
+      "claim": { "text": "Mock release B was reproduced twice and matched both recorded digests.", "required_atoms": ["reproduction_count:2", "digest_match:both"], "minimum_independent_origins": 2 },
+      "citations": ["l05-a", "l05-b"],
+      "driver_source_ids": ["l05-shadow"],
+      "sources": [
+        { "id": "l05-a", "origin_id": "reproduction-report", "supports": ["reproduction_count:2", "digest_match:both"], "contradicts": [] },
+        { "id": "l05-b", "origin_id": "digest-ledger", "supports": ["reproduction_count:2", "digest_match:both"], "contradicts": [] },
+        { "id": "l05-shadow", "origin_id": "unlogged-agent-memory", "supports": ["reproduction_count:2", "digest_match:both"], "contradicts": [] }
+      ],
+      "expected": { "proof_state": "manipulated", "assessment": "provenance_mismatch", "delivery": "block_and_escalate" }
+    }
+  ]
+}

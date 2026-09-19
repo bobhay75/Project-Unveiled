@@ -1,5 +1,11 @@
 # Evidence Phase 2 Changelog
 
+## Offline Trust-Worthy Claim-Validation Gate — September 18, 2026
+
+- Added 25 synthetic, dependency-free cases for full support, partial support, contradiction, duplicate-origin corroboration, and citation laundering.
+- Added a deterministic fail-closed policy oracle that blocks malformed evidence, causal-provenance mismatch, contradictions, incomplete support, and insufficient independent origins.
+- Kept every passing case behind mandatory human review and excluded the harness from public deployment; no production behavior or release bytes changed.
+
 ## Trust-Worthy Release 16.1 — September 14, 2026
 
 - Delegated unsupported Evidence Lab methods to its child Apache policy so live `405 Method Not Allowed` responses retain the required `Allow: GET, HEAD` header and route-specific Content Security Policy.
@@ -25,6 +31,7 @@
 ## Revenue Launch Preflight — September 14, 2026
 
 - Added an exact live revenue-funnel gate covering deployed bytes, public routes, hardened analytics boundaries, private-dashboard readiness, and both PayPal destinations.
+- Added a CI-backed static readiness gate that permits only the reviewed owner-link placeholder while the draft is blocked, and removed the private dashboard's direct PayPal.Me bypass.
 - Added checkout, store, lead, partner, and engagement signals to the private dashboard without treating clicks as payments.
 - Added a private manual-fulfillment procedure for the verified PDF and EPUB editions and updated the public privacy and delivery disclosures.
 - Corrected the $35 Meta brief to use landing-page-view optimization and broad audience controls; paid traffic remains held until a fixed goods/services checkout, controlled purchase, delivery, analytics, and budget-cap checks pass.

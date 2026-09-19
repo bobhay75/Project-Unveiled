@@ -89,6 +89,24 @@ Before deploying a revenue-funnel change:
 2. Record that merge SHA and the current verified Release 16+ SHA before making the production change.
 3. Keep the Meta campaign paused with no scheduled start.
 
+While the owner Payment Link is pending, this command must finish with
+`ready_except_owner_payment_link` and no other blocker:
+
+```bash
+node tests/revenue-funnel/static-readiness.mjs --allow-owner-link-pending
+```
+
+After replacing the `$7` Store href, rerun the strict form without the exception.
+It must return `pass` before the branch can leave draft:
+
+```bash
+node tests/revenue-funnel/static-readiness.mjs
+```
+
+GitHub applies the same rule: draft pull requests may carry only the exact
+reviewed placeholder, while ready-for-review, manual, and `main` runs require
+the strict gate to pass.
+
 After cPanel deployment, run both live gates from the repository—not from the account home directory:
 
 ```bash

@@ -5,6 +5,7 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+    types: [opened, synchronize, reopened, ready_for_review, converted_to_draft]
   workflow_dispatch:
 
 concurrency:
@@ -54,6 +55,17 @@ jobs:
 
       - name: Validate public files and local links
         run: python3 scripts/validate_site.py
+
+      - name: Validate revenue-funnel code readiness
+        env:
+          PR_IS_DRAFT: ${{ github.event.pull_request.draft || false }}
+        shell: bash
+        run: |
+          if [[ "$PR_IS_DRAFT" == "true" ]]; then
+            node tests/revenue-funnel/static-readiness.mjs --allow-owner-link-pending
+          else
+            node tests/revenue-funnel/static-readiness.mjs
+          fi
 
       - name: Validate Trust-Worthy release contract
         run: bash tests/trust-worthy-lab/run_all.sh

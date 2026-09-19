@@ -341,7 +341,6 @@ $campaignLinks = [
     'Facebook Chapter 1' => 'https://bobsome1.com/book/read/chapter-01.html?utm_source=facebook&utm_medium=organic_social&utm_campaign=project_unveiled_launch&utm_content=chapter_01',
     'Instagram bio' => 'https://bobsome1.com/book/read/?utm_source=instagram&utm_medium=organic_social&utm_campaign=project_unveiled_launch&utm_content=bio',
     'Facebook support post' => 'https://bobsome1.com/book/read/support-right-hand.html?utm_source=facebook&utm_medium=organic_social&utm_campaign=project_unveiled_launch&utm_content=support_post',
-    'Direct PayPal' => 'https://paypal.me/Bobsome1975',
 ];
 
 ?><!doctype html>
