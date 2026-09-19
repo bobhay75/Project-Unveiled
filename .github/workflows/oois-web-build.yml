@@ -2,9 +2,9 @@ name: OOIS Web Build
 on:
   push:
     branches: [build/oois-field-mapper]
-    paths: ['oois/field-mapper/**', '.github/workflows/oois-web-build.yml']
+    paths: ['oois/field-mapper/**', '.github/workflows/oois-web-build.yml', '.github/workflows/oois-android-internal.yml']
   pull_request:
-    paths: ['oois/field-mapper/**', '.github/workflows/oois-web-build.yml']
+    paths: ['oois/field-mapper/**', '.github/workflows/oois-web-build.yml', '.github/workflows/oois-android-internal.yml']
 permissions:
   contents: read
 jobs:
@@ -24,7 +24,10 @@ jobs:
       - name: Install locked dependencies
         run: npm ci
       - name: Check field data and build
-        run: npm test && npm run build
+        run: npm test && npm run release:check -- --allow-cloud-disabled && npm run build
+      - name: Check production function dependencies and syntax
+        working-directory: oois/field-mapper/functions
+        run: npm ci && npm audit --omit=dev --audit-level=moderate && node --check index.js
   cloud-rules:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
@@ -89,3 +92,14 @@ jobs:
           path: oois/field-mapper/preview-package/
           if-no-files-found: error
           retention-days: 7
+      - name: Compile unsigned production-identity bundle
+        env:
+          VITE_ENABLE_FIREBASE: 'false'
+          OOIS_VERSION_CODE: '1'
+          OOIS_VERSION_NAME: '1.0.0'
+        run: |
+          npm run build
+          node scripts/prepare-android.mjs
+          cd android
+          ./gradlew --no-daemon bundleRelease lintRelease
+          test -s app/build/outputs/bundle/release/app-release.aab

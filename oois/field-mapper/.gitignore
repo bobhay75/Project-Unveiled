@@ -14,3 +14,4 @@ preview-package
 local.properties
 google-services.json
 service-account*.json
+verification-receipts

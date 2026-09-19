@@ -1,0 +1,15 @@
+[
+  {
+    "origin": ["https://bobsome1.com", "https://localhost"],
+    "method": ["GET", "HEAD", "POST", "PUT", "DELETE"],
+    "responseHeader": [
+      "Content-Type",
+      "Content-Length",
+      "ETag",
+      "x-goog-generation",
+      "x-goog-metageneration",
+      "x-goog-hash"
+    ],
+    "maxAgeSeconds": 3600
+  }
+]

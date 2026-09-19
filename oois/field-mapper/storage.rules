@@ -4,7 +4,13 @@ service firebase.storage {
     function owner(userId) { return request.auth != null && request.auth.uid == userId && firestore.exists(/databases/(default)/documents/owners/$(request.auth.uid)); }
     match /users/{userId}/sites/{siteId}/photos/{fileName} {
       allow read, delete: if owner(userId);
-      allow create, update: if owner(userId) && request.resource.size <= 700000 && request.resource.contentType == 'image/jpeg';
+      allow create: if resource == null && owner(userId) &&
+        siteId.matches('^[A-Za-z0-9_-]{1,80}$') &&
+        fileName.matches('^[A-Za-z0-9_-]+[.]jpg$') &&
+        request.resource.size > 0 &&
+        request.resource.size <= 700000 &&
+        request.resource.contentType == 'image/jpeg';
+      allow update: if false;
     }
   }
 }

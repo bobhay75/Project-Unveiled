@@ -6,6 +6,7 @@
   "server": { "androidScheme": "https" },
   "plugins": {
     "Geolocation": { "permissions": ["location"] },
-    "Camera": { "permissions": ["camera", "photos"] }
+    "Filesystem": {},
+    "Share": {}
   }
 }

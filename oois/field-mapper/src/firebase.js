@@ -40,10 +40,13 @@ export const cloudUser = () => auth?.currentUser || null;
 export async function cloudLogin(email, password) {
   if (!auth) throw Error("Cloud is not configured.");
   await signInWithEmailAndPassword(auth, email, password);
-  const owner = await getDoc(doc(db, "owners", auth.currentUser.uid));
-  if (!owner.exists()) {
+  try {
+    const owner = await getDoc(doc(db, "owners", auth.currentUser.uid));
+    if (!owner.exists())
+      throw Error("This account is not authorized as an OOIS owner.");
+  } catch (error) {
     await signOut(auth);
-    throw Error("This account is not authorized as an OOIS owner.");
+    throw error;
   }
 }
 export const cloudLogout = () => (auth ? signOut(auth) : Promise.resolve());
@@ -60,6 +63,37 @@ function dataUrl(buffer) {
   for (const byte of new Uint8Array(buffer))
     binary += String.fromCharCode(byte);
   return "data:image/jpeg;base64," + btoa(binary);
+}
+function photoPath(userId, siteId, path) {
+  const prefix = `users/${userId}/sites/${siteId}/photos/`;
+  if (
+    typeof path !== "string" ||
+    !path.startsWith(prefix) ||
+    !/^[\w-]+\.jpg$/.test(path.slice(prefix.length))
+  )
+    throw Error("Unexpected cloud photo path.");
+  return path;
+}
+function cloudRecord(site, userId, photos, revision) {
+  return {
+    id: site.id,
+    createdAt: site.createdAt || site.updatedAt,
+    updatedAt: site.updatedAt,
+    name: site.name,
+    type: site.type,
+    confidence: site.confidence,
+    coords: { lat: site.coords.lat, lng: site.coords.lng },
+    accuracyMeters: site.accuracyMeters ?? null,
+    notes: site.notes,
+    observedIndicators: site.observedIndicators,
+    photos,
+    isPrivate: true,
+    isSynced: true,
+    cloudRevision: revision,
+    ai: site.ai ?? null,
+    linkedSites: Array.isArray(site.linkedSites) ? site.linkedSites : [],
+    createdBy: userId,
+  };
 }
 export async function saveSiteCloud(site) {
   validateSite(site);
@@ -87,22 +121,18 @@ export async function saveSiteCloud(site) {
           "Cloud copy changed on another device. Export both versions before reconciling.",
         );
       oldPhotos = previous.exists() ? previous.data().photos || [] : [];
-      const next = {
-        ...site,
-        photos,
-        createdBy: u.uid,
-        isPrivate: true,
-        cloudRevision: version + 1,
-      };
+      const next = cloudRecord(site, u.uid, photos, version + 1);
       tx.set(target, next);
       return version + 1;
     });
     await Promise.allSettled(
       oldPhotos.map((p) =>
-        p.path ? deleteObject(ref(storage, p.path)) : Promise.resolve(),
+        p.path
+          ? deleteObject(ref(storage, photoPath(u.uid, site.id, p.path)))
+          : Promise.resolve(),
       ),
     );
-    return { ...site, cloudRevision: revision };
+    return { ...site, isSynced: true, cloudRevision: revision };
   } catch (error) {
     await Promise.allSettled(paths.map((p) => deleteObject(ref(storage, p))));
     throw error;
@@ -118,16 +148,12 @@ export async function loadSitesCloud() {
     const s = d.data();
     s.photos = await Promise.all(
       (s.photos || []).map(async (p) => {
-        if (
-          typeof p.path !== "string" ||
-          !p.path.startsWith(`users/${u.uid}/sites/${s.id}/photos/`)
-        )
-          throw Error("Unexpected cloud photo path.");
+        const path = photoPath(u.uid, s.id, p.path);
         return {
           id: p.id,
           name: p.name,
           type: "image/jpeg",
-          dataUrl: dataUrl(await getBytes(ref(storage, p.path), 700000)),
+          dataUrl: dataUrl(await getBytes(ref(storage, path), 700000)),
         };
       }),
     );
@@ -143,7 +169,8 @@ export async function deleteSiteCloud(id) {
   const previous = await getDoc(target);
   if (!previous.exists()) return;
   for (const p of previous.data().photos || [])
-    if (p.path) await deleteObject(ref(storage, p.path));
+    if (p.path)
+      await deleteObject(ref(storage, photoPath(u.uid, id, p.path)));
   await deleteDoc(target);
 }
 export async function analyzeSiteCloud(site) {
