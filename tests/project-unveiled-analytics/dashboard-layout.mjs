@@ -45,11 +45,12 @@ window.addEventListener('load', function () {
   var focusFailures = [];
   var unnamedControls = [];
   focusables.forEach(function (element, index) {
-    element.focus();
+    element.focus({ preventScroll: true });
     if (document.activeElement !== element) focusFailures.push(index);
     var name = (element.getAttribute('aria-label') || element.textContent || element.getAttribute('value') || '').trim();
     if (!name && element.getAttribute('type') !== 'hidden') unnamedControls.push(index);
   });
+  window.scrollTo(0, 0);
   var overflows = Array.prototype.slice.call(document.querySelectorAll('header *, main *')).filter(shown).filter(function (element) {
     var rect = element.getBoundingClientRect();
     return rect.left < -1 || rect.right > window.innerWidth + 1;
