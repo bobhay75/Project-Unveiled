@@ -79,6 +79,9 @@ window.addEventListener('load', function () {
   evidence.hidden = true;
   evidence.textContent = btoa(JSON.stringify(result));
   document.body.appendChild(evidence);
+  if (window.parent !== window) {
+    window.parent.postMessage({ type: 'dashboard-layout-result', result: result }, '*');
+  }
 });
 </script>`;
 
@@ -100,10 +103,17 @@ const expectedLabels = [
 ];
 
 for (const review of cases) {
+  const contentHtml = join(outputDirectory, `dashboard-${review.name}-content.html`);
   const caseHtml = join(outputDirectory, `dashboard-${review.name}.html`);
   const screenshot = join(outputDirectory, `dashboard-${review.name}.png`);
   const resultPath = join(outputDirectory, `dashboard-${review.name}-result.json`);
-  writeFileSync(caseHtml, instrumented, { encoding: 'utf8', mode: 0o600 });
+  writeFileSync(contentHtml, instrumented, { encoding: 'utf8', mode: 0o600 });
+  const wrapper = `<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>${review.name} dashboard evidence</title>
+<style>html,body{margin:0;background:#070605;overflow:hidden}iframe{display:block;width:${review.width}px;height:${review.height}px;border:0}</style>
+<script>window.addEventListener('message',function(event){if(!event.data||event.data.type!=='dashboard-layout-result')return;var evidence=document.createElement('pre');evidence.id='dashboard-layout-result';evidence.hidden=true;evidence.textContent=btoa(JSON.stringify(event.data.result));document.body.appendChild(evidence)});</script>
+</head><body><iframe title="Synthetic dashboard ${review.name} viewport" src="${basename(contentHtml)}"></iframe></body></html>`;
+  writeFileSync(caseHtml, wrapper, { encoding: 'utf8', mode: 0o600 });
   const url = pathToFileURL(caseHtml).href;
   const common = [
     '--headless=new',
@@ -111,9 +121,10 @@ for (const review of cases) {
     '--disable-gpu',
     '--disable-dev-shm-usage',
     '--hide-scrollbars',
+    '--allow-file-access-from-files',
     '--run-all-compositor-stages-before-draw',
     '--force-device-scale-factor=1',
-    `--window-size=${review.width},${review.height}`,
+    `--window-size=${Math.max(500, review.width)},${review.height}`,
     '--virtual-time-budget=1500',
   ];
   const dump = spawnSync(chrome, [...common, '--dump-dom', url], {
