@@ -41,7 +41,7 @@ $mustContain($claimMap, 'Request origin was not accepted.', 'claim-map endpoint 
 $mustContain($stream, 'tw_deep_run(', 'stream endpoint does not invoke deep engine');
 $mustContain($stream, "'type'=>'receipt'", 'stream endpoint does not emit evidence receipts');
 $mustContain($stream, 'tw_deep_consume_authorization(', 'deep endpoint does not consume one-time authorization');
-$mustContain($stream, "$_POST['confirmed_map']", 'deep endpoint does not require the user-confirmed map');
+$mustContain($stream, '$confirmedMap=$_POST[\'confirmed_map\']??\'\';', 'deep endpoint does not require the user-confirmed map');
 $mustContain($stream, 'Request origin was not accepted.', 'deep endpoint lacks same-origin enforcement');
 $mustNotContain($stream, 'tw_rate_limit(', 'deep research should use the already charged one-time claim-map authorization');
 
