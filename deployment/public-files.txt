@@ -181,6 +181,7 @@ truth/lab/styles.css
 truth/lib/intake.php
 truth/lib/trust-worthy-ai.php
 truth/lib/trust-worthy-deep.php
+truth/lib/trust-worthy-deep-reuse-v1.php
 truth/question-received.php
 truth/question-submit.php
 truth/today.php
