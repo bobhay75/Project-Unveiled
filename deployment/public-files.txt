@@ -132,6 +132,7 @@ truth/cases/TW-CLAIM-000001.json
 truth/cases/TW-CLAIM-000002.json
 truth/challenge-received.php
 truth/challenge-submit.php
+truth/claim-map.php
 truth/daily/.htaccess
 truth/daily/admin-url.php
 truth/daily/compat.php
