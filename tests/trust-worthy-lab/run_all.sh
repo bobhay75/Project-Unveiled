@@ -7,6 +7,8 @@ cd "$repo_dir"
 node --check truth/lab/research-sweep.js
 node --check truth/lab/app.js
 node --check truth/lab/observer.js
+node --check truth/entry-v2.js
+node --check truth/investigation-ui.js
 node --check tests/trust-worthy-lab/release-integrity.mjs
 node --check tests/trust-worthy-lab/release-manifest.mjs
 node --check tests/trust-worthy-lab/live-release-gate.mjs
@@ -16,6 +18,10 @@ bash tests/trust-worthy-lab/investigate-method-gate.sh
 bash tests/trust-worthy-lab/health-method-gate.sh
 if command -v php >/dev/null 2>&1; then
   php -r 'if (PHP_VERSION_ID < 80100) { fwrite(STDERR, "PHP 8.1 or newer is required.\n"); exit(1); }'
+  php -l truth/lib/trust-worthy-deep.php >/dev/null
+  php -l truth/deep-stream.php >/dev/null
+  php -l truth/investigation.php >/dev/null
+  php tests/trust-worthy-public/deep-v2-contract.php
   php tests/trust-worthy-public/backend-hardening.php
   php tests/trust-worthy-intake/intake-storage.php
   bash tests/trust-worthy-intake/request-gate.sh
@@ -46,4 +52,4 @@ else
   fi
 fi
 
-echo "Release gate passed: syntax, reproducible manifest, structure, safety copy, claim-level fail-closed validation, research engine, adversarial workflow, provenance negatives, and KCMC separation."
+echo "Release gate passed: syntax, dynamic deep-investigation receipts, reproducible manifest, structure, safety copy, claim-level fail-closed validation, research engine, adversarial workflow, provenance negatives, and KCMC separation."
