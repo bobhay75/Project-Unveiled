@@ -182,6 +182,13 @@ truth/lib/intake.php
 truth/lib/trust-worthy-ai.php
 truth/lib/trust-worthy-deep-reuse-v1.php
 truth/lib/trust-worthy-deep.php
+truth/lib/trust-worthy-funnel-v1.php
+truth/lib/trust-worthy-paid.php
+truth/paid-continue.js
+truth/paid-continue.php
+truth/paid-resume.php
+truth/paypal-return.php
+truth/paypal-start.php
 truth/question-received.php
 truth/question-submit.php
 truth/today.php
