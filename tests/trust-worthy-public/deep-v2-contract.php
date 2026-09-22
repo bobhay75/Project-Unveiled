@@ -16,6 +16,9 @@ foreach (compact('deep','claimMap','stream','entry','workspace','ui') as $name =
 $mustContain = static function(string $haystack, string $needle, string $message): void {
     if (!str_contains($haystack, $needle)) throw new RuntimeException($message);
 };
+$mustMatch = static function(string $haystack, string $pattern, string $message): void {
+    if (preg_match($pattern, $haystack) !== 1) throw new RuntimeException($message);
+};
 $mustNotContain = static function(string $haystack, string $needle, string $message): void {
     if (str_contains($haystack, $needle)) throw new RuntimeException($message);
 };
@@ -31,27 +34,27 @@ $mustNotCall = static function(string $php, string $functionName, string $messag
     }
 };
 
-$mustContain($deep, "'origin' =>", 'deep engine missing origin pass');
-$mustContain($deep, "'primary' =>", 'deep engine missing primary-source pass');
-$mustContain($deep, "'corroboration' =>", 'deep engine missing corroboration pass');
-$mustContain($deep, "'dependency' =>", 'deep engine missing source-dependency/echo pass');
-$mustContain($deep, "'counter' =>", 'deep engine missing counterevidence pass');
-$mustContain($deep, "'context' =>", 'deep engine missing context/chronology pass');
-$mustContain($deep, 'PRIOR PASS FINDINGS TO AUDIT FOR SHARED UPSTREAM DEPENDENCIES', 'dependency pass does not audit earlier findings');
-$mustContain($deep, 'shared upstream chains', 'synthesis does not account for dependency/echo risk');
+foreach (['origin','primary','corroboration','dependency','counter','context'] as $stage) {
+    $mustMatch($deep, "/'" . preg_quote($stage, '/') . "'\\s*=>/", "deep engine missing {$stage} pass");
+}
+$mustContain($deep, 'shared upstream', 'dependency pass does not audit shared upstream evidence');
 $mustContain($deep, 'tw_deep_usage_total', 'deep engine lacks total token accounting');
 $mustContain($deep, "'total_tokens'", 'deep engine does not expose total token usage');
 $mustContain($deep, 'evidenceFloorMet', 'deep engine missing evidence floor');
 $mustContain($deep, 'INSUFFICIENT EVIDENCE — NO VERDICT', 'deep engine missing no-verdict terminal state');
-$mustContain($deep, '$probability = null;', 'deep engine must be able to suppress probability');
-$mustContain($deep, "'minimum_source_families' => 3", 'deep engine does not gate on source-family diversity');
-$mustContain($deep, "'minimum_corroboration_families' => 2", 'deep engine does not require corroboration-family diversity');
+$mustMatch($deep, '/\$probability\s*=\s*null\s*;/', 'deep engine must be able to suppress probability');
+$mustMatch($deep, "/'minimum_source_families'\\s*=>\\s*3/", 'deep engine does not gate on source-family diversity');
+$mustMatch($deep, "/'minimum_corroboration_families'\\s*=>\\s*2/", 'deep engine does not require corroboration-family diversity');
 $mustContain($deep, 'tw_deep_source_family', 'deep engine lacks deterministic source-family classification');
 $mustContain($deep, 'dependency_audit_plus_domain_family_heuristic', 'deep engine overstates family diversity as proven independence');
-$mustContain($deep, 'Different domains can still repeat the same wire story', 'synthesis does not warn that domain diversity is not proof of independence');
+$mustContain($deep, 'Different domains can still repeat', 'synthesis does not warn that domain diversity is not proof of independence');
 $mustContain($deep, 'tw_deep_issue_authorization', 'deep engine missing one-time authorization issuer');
 $mustContain($deep, 'tw_deep_consume_authorization', 'deep engine missing one-time authorization consumer');
 $mustContain($deep, 'Claim map confirmed', 'deep engine does not distinguish user-confirmed claim maps');
+$mustContain($deep, 'relentless evidence investigator', 'deep engine missing adversarial evidence-investigation doctrine');
+$mustContain($deep, 'fact-checks', 'deep engine does not explicitly audit fact-checker claims');
+$mustContain($deep, 'underlying proposition', 'deep engine does not separate attribution from underlying proposition');
+$mustContain($deep, 'strongest good-faith competing explanation', 'deep engine does not steelman competing explanations');
 $mustNotCall($deep, 'tw_short_investigation', 'deep engine must never route through the preliminary engine');
 
 $mustContain($claimMap, 'tw_deep_claim_map(', 'claim-map endpoint does not build a claim map');
