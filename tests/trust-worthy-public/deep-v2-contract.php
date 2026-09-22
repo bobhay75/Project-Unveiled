@@ -27,7 +27,7 @@ $mustContain($deep, "'counter' =>", 'deep engine missing counterevidence pass');
 $mustContain($deep, "'context' =>", 'deep engine missing context/chronology pass');
 $mustContain($deep, 'evidenceFloorMet', 'deep engine missing evidence floor');
 $mustContain($deep, 'INSUFFICIENT EVIDENCE — NO VERDICT', 'deep engine missing no-verdict terminal state');
-$mustContain($deep, "'probability'=>null", 'deep engine must be able to suppress probability');
+$mustContain($deep, '$probability = null;', 'deep engine must be able to suppress probability');
 $mustContain($deep, 'tw_deep_issue_authorization', 'deep engine missing one-time authorization issuer');
 $mustContain($deep, 'tw_deep_consume_authorization', 'deep engine missing one-time authorization consumer');
 $mustContain($deep, 'Claim map confirmed', 'deep engine does not distinguish user-confirmed claim maps');
