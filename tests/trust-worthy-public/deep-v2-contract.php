@@ -39,6 +39,11 @@ $mustContain($deep, "'context' =>", 'deep engine missing context/chronology pass
 $mustContain($deep, 'evidenceFloorMet', 'deep engine missing evidence floor');
 $mustContain($deep, 'INSUFFICIENT EVIDENCE — NO VERDICT', 'deep engine missing no-verdict terminal state');
 $mustContain($deep, '$probability = null;', 'deep engine must be able to suppress probability');
+$mustContain($deep, "'minimum_source_families' => 3", 'deep engine does not gate on source-family diversity');
+$mustContain($deep, "'minimum_corroboration_families' => 2", 'deep engine does not require corroboration-family diversity');
+$mustContain($deep, 'tw_deep_source_family', 'deep engine lacks deterministic source-family classification');
+$mustContain($deep, 'domain_family_heuristic_only', 'deep engine overstates source-family diversity as independence');
+$mustContain($deep, 'Different domains can still repeat the same wire story', 'synthesis does not warn that domain diversity is not proof of independence');
 $mustContain($deep, 'tw_deep_issue_authorization', 'deep engine missing one-time authorization issuer');
 $mustContain($deep, 'tw_deep_consume_authorization', 'deep engine missing one-time authorization consumer');
 $mustContain($deep, 'Claim map confirmed', 'deep engine does not distinguish user-confirmed claim maps');
@@ -58,7 +63,7 @@ $mustNotContain($stream, 'tw_rate_limit(', 'deep research should use the already
 
 $mustContain($entry, 'START GUIDED DEEP INVESTIGATION', 'entry page does not lead with guided investigation');
 $mustContain($entry, 'QUICK PRELIMINARY CHECK', 'entry page does not distinguish preliminary mode');
-$mustContain($entry, 'action="/truth/investigation.php"', 'deep entry does not route to workspace');
+$mustContain($entry, 'action="/truth/investigate.php"', 'deep entry does not route to workspace');
 $mustContain($workspace, 'Choose what matters', 'workspace does not guide the user through investigation intent');
 $mustContain($workspace, 'REVIEW THE CLAIM MAP', 'workspace does not stop for claim-map review');
 $mustContain($workspace, 'YOUR APPROVAL REQUIRED', 'workspace does not make user confirmation explicit');
