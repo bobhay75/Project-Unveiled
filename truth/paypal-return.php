@@ -22,6 +22,11 @@ if($cancel){
     exit;
 }
 if(!tw_paid_ready()){http_response_code(503);exit('Paid continuation is not configured.');}
+$case=tw_paid_load_case($caseId);
+if(!is_array($case)||($case['state']??'')!=='awaiting_payment'){
+    http_response_code(409);
+    exit('This payment return has already been processed or the investigation checkout is no longer active.');
+}
 $orderId=is_string($_GET['token']??null)?trim((string)$_GET['token']):'';
 $result=tw_paid_capture_paypal_order($caseId,$orderId);
 if(!($result['ok']??false)){http_response_code(402);exit(htmlspecialchars((string)($result['message']??'Payment could not be verified.'),ENT_QUOTES|ENT_SUBSTITUTE,'UTF-8'));}
