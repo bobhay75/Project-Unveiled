@@ -148,6 +148,7 @@ truth/daily/meat-desk.php
 truth/daily/publish.php
 truth/daily/queue-rotation.php
 truth/daily/refresh.php
+truth/daily/story-scout.php
 truth/daily/traditions-of-men.php
 truth/daily/trial-filter.php
 truth/deep-dive.php
