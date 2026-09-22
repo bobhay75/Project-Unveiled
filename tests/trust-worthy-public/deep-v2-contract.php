@@ -74,6 +74,12 @@ $mustContain($workspace, 'REVIEW THE CLAIM MAP', 'workspace does not stop for cl
 $mustContain($workspace, 'YOUR APPROVAL REQUIRED', 'workspace does not make user confirmation explicit');
 $mustContain($workspace, 'LIVE RECEIPTS', 'workspace does not expose actual investigation receipts');
 $mustContain($workspace, 'Trace source dependencies + echo chains', 'workspace hides the dependency audit stage');
+$mustContain($workspace, 'UNVEILING THE TRUTH', 'workspace is missing the paid continuation identity');
+$mustContain($workspace, '$2.99', 'workspace is missing the proposed one-time continuation price');
+$mustContain($workspace, 'id="unveilGate" hidden data-checkout-state="owner-link-required"', 'paid continuation gate must remain hidden until checkout is verified');
+$mustContain($workspace, 'id="unveilCheckoutButton" disabled', 'paid continuation button must remain disabled until checkout is verified');
+$mustContain($workspace, 'No charge can occur from this button yet.', 'draft checkout state is not disclosed clearly');
+$mustContain($workspace, 'Trust-Worthy never invents findings to create urgency.', 'conversion gate lacks evidence-integrity protection');
 $mustContain($ui, "fetch('/truth/claim-map.php'", 'workspace UI does not request a pre-research claim map');
 $mustContain($ui, "data.set('confirmed_map',map)", 'workspace UI does not submit the edited claim map');
 $mustContain($ui, "event.type==='receipt'", 'workspace UI does not consume receipt events');
