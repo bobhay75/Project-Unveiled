@@ -40,7 +40,7 @@ foreach (['origin','primary','corroboration','dependency','counter','context'] a
 $mustContain($deep, 'shared upstream', 'dependency pass does not audit shared upstream evidence');
 $mustContain($deep, 'tw_deep_usage_total', 'deep engine lacks total token accounting');
 $mustContain($deep, "'total_tokens'", 'deep engine does not expose total token usage');
-$mustMatch($deep, '/\$evidenceFloorMet\s*=/', 'deep engine missing evidence floor');
+$mustMatch($deep, '/\$floor\s*=\s*count\(\$unique\)/', 'deep engine missing evidence floor');
 $mustContain($deep, 'INSUFFICIENT EVIDENCE — NO VERDICT', 'deep engine missing no-verdict terminal state');
 $mustMatch($deep, '/\$probability\s*=\s*null\s*;/', 'deep engine must be able to suppress probability');
 $mustMatch($deep, "/'minimum_source_families'\\s*=>\\s*3/", 'deep engine does not gate on source-family diversity');
