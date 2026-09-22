@@ -14,7 +14,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
     http_response_code(405); header('Allow: POST'); exit('POST required.');
 }
 
-require_once __DIR__ . '/lib/trust-worthy-deep.php';
+require_once __DIR__ . '/lib/trust-worthy-funnel-v1.php';
 
 function tw_deep_stream_fail(int $status, string $message): never {
     http_response_code($status);
@@ -84,6 +84,19 @@ $emit=static function(array $event): void {
 };
 
 $emit(['type'=>'start','label'=>'Confirmed deep investigation started','at_utc'=>gmdate('c')]);
+
+if (tw_paid_ready()) {
+    $free=tw_funnel_free_run($question,$context,$confirmedMap,$secret,static function(array $receipt) use ($emit): void {
+        $emit(['type'=>'receipt','receipt'=>$receipt]);
+    });
+    if(!($free['ok']??false)) {
+        $emit(['type'=>'error','message'=>(string)($free['message']??'Free investigation phase failed.'),'stage'=>$free['stage']??null]);
+        exit;
+    }
+    $emit(['type'=>'paywall','handoff'=>$free['handoff']]);
+    exit;
+}
+
 $result=tw_deep_run($question,$context,static function(array $receipt) use ($emit): void {
     $emit(['type'=>'receipt','receipt'=>$receipt]);
 },$confirmedMap);
