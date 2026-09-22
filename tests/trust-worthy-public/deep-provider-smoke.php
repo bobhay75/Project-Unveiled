@@ -104,7 +104,7 @@ if (!($result['ok'] ?? false)) {
     exit(5);
 }
 
-$requiredStages = ['decompose','origin','primary','corroboration','counter','context','synthesis'];
+$requiredStages = ['decompose','origin','primary','corroboration','dependency','counter','context','synthesis'];
 $seen = [];
 foreach ($receipts as $receipt) {
     if (is_array($receipt) && is_string($receipt['stage'] ?? null)) $seen[$receipt['stage']] = true;
@@ -116,15 +116,22 @@ foreach ($requiredStages as $stage) {
     }
 }
 
+$usage=is_array($result['metrics']['usage'] ?? null)?$result['metrics']['usage']:[];
 printf(
-    "FULL DEEP PROVIDER SMOKE PASSED; unique_sources=%d; source_families=%d; counter_sources=%d; counter_families=%d; corroboration_sources=%d; corroboration_families=%d; independence=%s; evidence_floor=%s; verdict=%s; probability=%s\n",
+    "FULL DEEP PROVIDER SMOKE PASSED; unique_sources=%d; source_families=%d; dependency_sources=%d; dependency_families=%d; counter_sources=%d; counter_families=%d; corroboration_sources=%d; corroboration_families=%d; independence=%s; input_tokens=%d; output_tokens=%d; reasoning_tokens=%d; total_tokens=%d; evidence_floor=%s; verdict=%s; probability=%s\n",
     (int)($result['metrics']['unique_sources'] ?? 0),
     (int)($result['metrics']['source_families'] ?? 0),
+    (int)($result['metrics']['dependency_sources'] ?? 0),
+    (int)($result['metrics']['dependency_families'] ?? 0),
     (int)($result['metrics']['counter_sources'] ?? 0),
     (int)($result['metrics']['counter_families'] ?? 0),
     (int)($result['metrics']['corroboration_sources'] ?? 0),
     (int)($result['metrics']['corroboration_families'] ?? 0),
     preg_replace('/[^a-z0-9_-]/i','',(string)($result['metrics']['source_independence_status'] ?? 'unknown')),
+    (int)($usage['input_tokens'] ?? 0),
+    (int)($usage['output_tokens'] ?? 0),
+    (int)($usage['reasoning_tokens'] ?? 0),
+    (int)($usage['total_tokens'] ?? 0),
     ($result['metrics']['evidence_floor_met'] ?? false) ? 'met' : 'not_met',
     preg_replace('/[^A-Z _—-]/u', '', strtoupper((string)($result['verdict'] ?? 'UNKNOWN'))),
     is_int($result['probability'] ?? null) ? (string)$result['probability'] : 'NONE'
