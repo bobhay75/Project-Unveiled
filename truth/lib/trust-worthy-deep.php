@@ -104,6 +104,17 @@ function tw_deep_family_metrics(array $sources): array {
     return ['family_count'=>count($families),'families'=>array_keys($families)];
 }
 
+function tw_deep_usage_total(array $passes): array {
+    $total = ['input_tokens'=>0,'output_tokens'=>0,'reasoning_tokens'=>0];
+    foreach ($passes as $pass) {
+        if (!is_array($pass)) continue;
+        $usage = is_array($pass['usage'] ?? null) ? $pass['usage'] : [];
+        foreach (array_keys($total) as $key) $total[$key] += (int)($usage[$key] ?? 0);
+    }
+    $total['total_tokens'] = $total['input_tokens'] + $total['output_tokens'];
+    return $total;
+}
+
 function tw_deep_extract_sources(array $response): array {
     $sources = [];
     foreach (($response['output'] ?? []) as $item) {
@@ -342,7 +353,7 @@ function tw_deep_run(string $question, string $context = '', ?callable $onReceip
         if (mb_strlen($confirmedClaimMap,'UTF-8') > (int)$cfg['max_confirmed_map_characters']) {
             return ['ok'=>false,'message'=>'Confirmed claim map was too large.'];
         }
-        $decompose=['ok'=>true,'text'=>$confirmedClaimMap,'sources'=>[],'quota_consumed'=>false];
+        $decompose=['ok'=>true,'text'=>$confirmedClaimMap,'sources'=>[],'usage'=>[],'quota_consumed'=>false];
         $receipt=tw_deep_receipt('decompose','Claim map confirmed',$decompose); $emit($receipt);
     } else {
         $decompose = tw_deep_claim_map($question,$context);
@@ -355,14 +366,23 @@ function tw_deep_run(string $question, string $context = '', ?callable $onReceip
         'origin' => ['Trace origin','Search for the earliest accessible origin of the claim, quote, statistic, image narrative, or allegation. Distinguish original evidence from later repetition. Identify likely first publication or earliest confirmed appearance and any uncertainty.'],
         'primary' => ['Primary evidence','Search specifically for primary or first-party records capable of verifying the material assertions: court records, laws, filings, transcripts, datasets, official documents, original studies, direct statements, archived pages, or equivalent records. Say explicitly when no primary record is found.'],
         'corroboration' => ['Independent corroboration','Search for independent corroboration. Detect when multiple outlets merely repeat one underlying source. Prefer sources with independent reporting or direct access to records. Do not treat different URLs or different domains as proof of editorial independence.'],
+        'dependency' => ['Source dependency and echo tracing','Trace upstream evidence dependencies among the apparently separate sources. Determine whether different outlets ultimately rely on the same wire story, press release, court filing, study, dataset, witness, screenshot, archived page, or originating claim. Identify shared upstream sources, likely echo chains, and genuinely separate evidence paths. Treat domain diversity as a lead, not proof of independence.'],
         'counter' => ['Counterevidence','Actively try to disprove or materially weaken the claim. Search for contradictory records, corrections, alternate explanations, expert criticism, missing qualifiers, changed facts, and evidence that the framing overstates what the underlying event proves.'],
         'context' => ['Context and chronology','Build the relevant chronology and context. Identify what happened before and after, which facts are current versus historical, and which omitted facts materially change interpretation.'],
     ];
 
     foreach ($researchPlan as $stage => [$label,$instruction]) {
+        $prior = '';
+        if ($stage === 'dependency' && $passes !== []) {
+            $chunks=[];
+            foreach ($passes as $priorStage=>$priorPass) {
+                $chunks[] = strtoupper((string)$priorStage) . " PASS:\n" . (string)($priorPass['text'] ?? '');
+            }
+            $prior = "\n\nPRIOR PASS FINDINGS TO AUDIT FOR SHARED UPSTREAM DEPENDENCIES:\n" . implode("\n\n", $chunks);
+        }
         $pass = tw_deep_provider_pass(
             $baseSystem,
-            $subject . "\n\nCONFIRMED CLAIM MAP:\n" . $decompose['text'] . "\n\nPASS OBJECTIVE:\n{$instruction}\n\nReturn concise findings plus what remains unresolved.",
+            $subject . "\n\nCONFIRMED CLAIM MAP:\n" . $decompose['text'] . $prior . "\n\nPASS OBJECTIVE:\n{$instruction}\n\nReturn concise findings plus what remains unresolved.",
             true
         );
         if (!($pass['ok'] ?? false)) return ['ok'=>false,'message'=>'Deep investigation stopped during ' . strtolower($label) . '.','stage'=>$stage,'detail'=>$pass['message'] ?? 'unknown'];
@@ -384,9 +404,12 @@ function tw_deep_run(string $question, string $context = '', ?callable $onReceip
     $counterFamilyMetrics=tw_deep_family_metrics($passes['counter']['sources'] ?? []);
     $corroborationSources = count($passes['corroboration']['sources'] ?? []);
     $corroborationFamilyMetrics=tw_deep_family_metrics($passes['corroboration']['sources'] ?? []);
+    $dependencySources = count($passes['dependency']['sources'] ?? []);
+    $dependencyFamilyMetrics=tw_deep_family_metrics($passes['dependency']['sources'] ?? []);
     $sourceFamilies=(int)$allFamilyMetrics['family_count'];
     $counterFamilies=(int)$counterFamilyMetrics['family_count'];
     $corroborationFamilies=(int)$corroborationFamilyMetrics['family_count'];
+    $dependencyFamilies=(int)$dependencyFamilyMetrics['family_count'];
 
     $evidenceFloorMet = count($uniqueSources) >= $cfg['minimum_unique_sources']
         && $sourceFamilies >= $cfg['minimum_source_families']
@@ -399,11 +422,11 @@ function tw_deep_run(string $question, string $context = '', ?callable $onReceip
     foreach ($passes as $stage => $pass) {
         $evidencePacket[] = strtoupper($stage) . " PASS:\n" . $pass['text'];
     }
-    $independenceNote="SOURCE-DIVERSITY RECEIPT:\nUnique URLs: ".count($uniqueSources)."\nDistinct domain families: {$sourceFamilies}\nCounterevidence domain families: {$counterFamilies}\nCorroboration domain families: {$corroborationFamilies}\nA domain-family count is only a conservative diversity heuristic. Different domains can still repeat the same wire story, press release, filing, study, witness, or originating claim. Never describe these counts as proof of editorial independence.";
+    $independenceNote="SOURCE-DIVERSITY RECEIPT:\nUnique URLs: ".count($uniqueSources)."\nDistinct domain families: {$sourceFamilies}\nCounterevidence domain families: {$counterFamilies}\nCorroboration domain families: {$corroborationFamilies}\nDependency-audit domain families: {$dependencyFamilies}\nA domain-family count is only a conservative diversity heuristic. Different domains can still repeat the same wire story, press release, filing, study, witness, or originating claim. Use the SOURCE DEPENDENCY AND ECHO TRACING pass to discount shared upstream chains; never describe domain-family counts as proof of editorial independence.";
 
     $synthesisInstruction = $evidenceFloorMet
-        ? "The evidence floor is met. Produce a final synthesis. Begin with exactly two machine-readable lines: VERDICT: one of SUPPORTED, LIKELY, MIXED, UNLIKELY, CONTRADICTED; PROBABILITY: integer 0-100. The probability is your evidence-conditioned confidence in the central factual claim, not objective truth. Then explain: what is verified; what is inferred; what is misleading or omitted; strongest evidence; strongest counterevidence; unresolved unknowns; why the probability is not higher or lower. Explicitly distinguish source diversity from proven source independence."
-        : "The evidence floor is NOT met. You must not issue a probability. Begin with exactly: VERDICT: INSUFFICIENT EVIDENCE — NO VERDICT and PROBABILITY: NONE. Then explain what was searched, what evidence was found, which material gaps remain, and what would be needed to reach a responsible verdict. Explicitly state which source-diversity gate failed.";
+        ? "The evidence floor is met. Produce a final synthesis. Begin with exactly two machine-readable lines: VERDICT: one of SUPPORTED, LIKELY, MIXED, UNLIKELY, CONTRADICTED; PROBABILITY: integer 0-100. The probability is your evidence-conditioned confidence in the central factual claim, not objective truth. Then explain: what is verified; what is inferred; what is misleading or omitted; strongest evidence; strongest counterevidence; identified source-dependency or echo chains; genuinely separate evidence paths; unresolved unknowns; why the probability is not higher or lower. Explicitly distinguish source diversity from proven source independence."
+        : "The evidence floor is NOT met. You must not issue a probability. Begin with exactly: VERDICT: INSUFFICIENT EVIDENCE — NO VERDICT and PROBABILITY: NONE. Then explain what was searched, what evidence was found, which material gaps remain, what source-dependency or echo risks were identified, and what would be needed to reach a responsible verdict. Explicitly state which source-diversity gate failed.";
 
     $synthesis = tw_deep_provider_pass(
         $baseSystem,
@@ -424,6 +447,8 @@ function tw_deep_run(string $question, string $context = '', ?callable $onReceip
         $probability = null;
     }
 
+    $usage = tw_deep_usage_total(array_merge([$decompose], array_values($passes), [$synthesis]));
+
     $finalReceipt = [
         'stage'=>'synthesis',
         'label'=>'Finding generated',
@@ -432,9 +457,11 @@ function tw_deep_run(string $question, string $context = '', ?callable $onReceip
         'source_family_count'=>$sourceFamilies,
         'counter_family_count'=>$counterFamilies,
         'corroboration_family_count'=>$corroborationFamilies,
+        'dependency_family_count'=>$dependencyFamilies,
         'evidence_floor_met'=>$evidenceFloorMet,
         'verdict'=>$verdict,
         'probability'=>$probability,
+        'usage'=>$usage,
         'at_utc'=>gmdate('c'),
     ];
     $emit($finalReceipt);
@@ -460,8 +487,11 @@ function tw_deep_run(string $question, string $context = '', ?callable $onReceip
             'counter_families'=>$counterFamilies,
             'corroboration_sources'=>$corroborationSources,
             'corroboration_families'=>$corroborationFamilies,
-            'source_independence_status'=>'domain_family_heuristic_only',
+            'dependency_sources'=>$dependencySources,
+            'dependency_families'=>$dependencyFamilies,
+            'source_independence_status'=>'dependency_audit_plus_domain_family_heuristic',
             'evidence_floor_met'=>$evidenceFloorMet,
+            'usage'=>$usage,
         ],
         'verdict'=>$verdict,
         'probability'=>$probability,
