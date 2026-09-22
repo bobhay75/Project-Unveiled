@@ -4,7 +4,7 @@ declare(strict_types=1);
 $private = sys_get_temp_dir() . '/tw-paid-' . bin2hex(random_bytes(6));
 if (!mkdir($private, 0750, true) || !chmod($private, 0750)) throw new RuntimeException('temp private dir failed');
 define('TW_PRIVATE_DIR_OVERRIDE', $private);
-require_once dirname(__DIR__, 2) . '/truth/lib/trust-worthy-paid.php';
+require_once dirname(__DIR__, 2) . '/truth/lib/trust-worthy-funnel-v1.php';
 
 $fail = static function(bool $condition, string $message): void { if (!$condition) throw new RuntimeException($message); };
 $secret = str_repeat('a', 64);
@@ -58,6 +58,14 @@ $fail(tw_paid_order_is_exact($wrongCase, $caseId) === false, 'payment for anothe
 $pending = $completed;
 $pending['status'] = 'APPROVED';
 $fail(tw_paid_order_is_exact($pending, $caseId) === false, 'uncaptured payment was accepted');
+
+$paid = tw_paid_update_case($createdId, static function(array $record): array { $record['state']='paid'; $record['paid_at']=time(); return $record; });
+$fail(is_array($paid) && ($paid['state'] ?? '') === 'paid', 'test case could not enter paid state');
+$resume = tw_paid_sign_state($createdId, 'resume', $secret, 600);
+$first = tw_funnel_consume_resume($createdId, $resume, $secret);
+$fail(is_array($first) && ($first['state'] ?? '') === 'resume_authorized', 'first paid resume authorization failed');
+$second = tw_funnel_consume_resume($createdId, $resume, $secret);
+$fail($second === null, 'paid resume token replay was accepted');
 
 foreach (glob($private . '/*') ?: [] as $path) @unlink($path);
 @rmdir($private);
