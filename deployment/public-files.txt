@@ -150,9 +150,15 @@ truth/daily/refresh.php
 truth/daily/traditions-of-men.php
 truth/daily/trial-filter.php
 truth/deep-dive.php
+truth/deep-stream.php
+truth/entry-v2.css
+truth/entry-v2.js
 truth/health.php
 truth/index.php
 truth/investigate.php
+truth/investigation-ui.js
+truth/investigation.css
+truth/investigation.php
 truth/lab/.htaccess
 truth/lab/.well-known/security.txt
 truth/lab/404.html
@@ -173,6 +179,7 @@ truth/lab/status.json
 truth/lab/styles.css
 truth/lib/intake.php
 truth/lib/trust-worthy-ai.php
+truth/lib/trust-worthy-deep.php
 truth/question-received.php
 truth/question-submit.php
 truth/today.php
