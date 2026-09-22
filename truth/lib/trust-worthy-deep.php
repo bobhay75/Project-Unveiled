@@ -23,6 +23,8 @@ function tw_deep_config(): array {
         'minimum_unique_sources' => 4,
         'minimum_counter_sources' => 1,
         'minimum_corroboration_sources' => 1,
+        'authorization_ttl_seconds' => 900,
+        'max_confirmed_map_characters' => 7000,
     ];
 }
 
@@ -83,8 +85,8 @@ function tw_deep_extract_sources(array $response): array {
 function tw_deep_provider_pass(string $system, string $user, bool $withWeb): array {
     $cfg = tw_deep_config();
     $key = tw_openai_key();
-    if ($key === '') return ['ok'=>false,'message'=>'Research provider key unavailable.'];
-    if ($cfg['model'] === '') return ['ok'=>false,'message'=>'Research model unavailable.'];
+    if ($key === '') return ['ok'=>false,'message'=>'Research provider key unavailable.','quota_consumed'=>false];
+    if ($cfg['model'] === '') return ['ok'=>false,'message'=>'Research model unavailable.','quota_consumed'=>false];
 
     $payload = [
         'model' => $cfg['model'],
@@ -104,12 +106,12 @@ function tw_deep_provider_pass(string $system, string $user, bool $withWeb): arr
     }
 
     $encoded = json_encode($payload, JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE);
-    if (!is_string($encoded)) return ['ok'=>false,'message'=>'Research request encoding failed.'];
+    if (!is_string($encoded)) return ['ok'=>false,'message'=>'Research request encoding failed.','quota_consumed'=>false];
 
     $raw = '';
     $tooLarge = false;
     $ch = curl_init('https://api.openai.com/v1/responses');
-    if ($ch === false) return ['ok'=>false,'message'=>'Research provider initialization failed.'];
+    if ($ch === false) return ['ok'=>false,'message'=>'Research provider initialization failed.','quota_consumed'=>false];
     $configured = curl_setopt_array($ch, [
         CURLOPT_POST => true,
         CURLOPT_HTTPHEADER => ['Authorization: Bearer ' . $key, 'Content-Type: application/json'],
@@ -128,20 +130,20 @@ function tw_deep_provider_pass(string $system, string $user, bool $withWeb): arr
     ]);
     if (!$configured) {
         curl_close($ch);
-        return ['ok'=>false,'message'=>'Research provider request setup failed.'];
+        return ['ok'=>false,'message'=>'Research provider request setup failed.','quota_consumed'=>false];
     }
     $executed = curl_exec($ch);
     $http = (int)curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
     $curlError = curl_error($ch);
     curl_close($ch);
-    if ($tooLarge) return ['ok'=>false,'message'=>'Research provider response exceeded safety limit.'];
+    if ($tooLarge) return ['ok'=>false,'message'=>'Research provider response exceeded safety limit.','quota_consumed'=>true];
     if ($executed === false || $http < 200 || $http >= 300) {
-        return ['ok'=>false,'message'=>'Research provider request failed.','diagnostic'=>$curlError !== '' ? $curlError : 'http_' . $http];
+        return ['ok'=>false,'message'=>'Research provider request failed.','diagnostic'=>$curlError !== '' ? $curlError : 'http_' . $http,'quota_consumed'=>true];
     }
     $decoded = json_decode($raw, true);
-    if (!is_array($decoded)) return ['ok'=>false,'message'=>'Research provider response was invalid.'];
+    if (!is_array($decoded)) return ['ok'=>false,'message'=>'Research provider response was invalid.','quota_consumed'=>true];
     $text = tw_deep_extract_text($decoded);
-    if ($text === '') return ['ok'=>false,'message'=>'Research provider returned no usable analysis.'];
+    if ($text === '') return ['ok'=>false,'message'=>'Research provider returned no usable analysis.','quota_consumed'=>true];
 
     $usage = is_array($decoded['usage'] ?? null) ? $decoded['usage'] : [];
     return [
@@ -154,7 +156,115 @@ function tw_deep_provider_pass(string $system, string $user, bool $withWeb): arr
             'output_tokens'=>(int)($usage['output_tokens'] ?? 0),
             'reasoning_tokens'=>(int)($usage['output_tokens_details']['reasoning_tokens'] ?? 0),
         ],
+        'quota_consumed'=>true,
     ];
+}
+
+function tw_deep_base_system(): string {
+    return "You are Trust-Worthy, an evidence investigator. Distinguish verified fact, allegation, inference, framing, missing context, contradiction, and unknowns. Never treat absence of evidence as evidence of falsity. Cite and characterize sources honestly. Your job is to investigate, not to defend a side.";
+}
+
+function tw_deep_subject(string $question, string $context): string {
+    return "CLAIM OR QUESTION:\n{$question}" . ($context !== '' ? "\n\nUSER CONTEXT:\n{$context}" : '');
+}
+
+function tw_deep_claim_map(string $question, string $context = ''): array {
+    [$valid, $question, $context, $error] = tw_validate_trial_input($question, $context);
+    if (!$valid) return ['ok'=>false,'message'=>$error,'quota_consumed'=>false];
+    return tw_deep_provider_pass(
+        tw_deep_base_system(),
+        tw_deep_subject($question, $context) . "\n\nBefore any web research, decompose this into independently testable assertions. Identify: CENTRAL CLAIM; TESTABLE SUBCLAIMS; IMPLIED CLAIMS; KEY ENTITIES; IMPORTANT DATES OR TIME WINDOWS; LOADED OR PERSUASIVE FRAMING; and MATERIAL QUESTIONS THE EVIDENCE MUST ANSWER. Keep each item concise and editable by a user. Do not research yet and do not issue a verdict.",
+        false
+    );
+}
+
+function tw_deep_b64url_encode(string $bytes): string {
+    return rtrim(strtr(base64_encode($bytes), '+/', '-_'), '=');
+}
+
+function tw_deep_b64url_decode(string $value): ?string {
+    if ($value === '' || preg_match('/^[A-Za-z0-9_-]+$/D', $value) !== 1) return null;
+    $padding = (4 - (strlen($value) % 4)) % 4;
+    $decoded = base64_decode(strtr($value . str_repeat('=', $padding), '-_', '+/'), true);
+    return is_string($decoded) ? $decoded : null;
+}
+
+function tw_deep_authorization_path(string $nonce): string {
+    return tw_private_dir() . '/deep-auth-' . $nonce . '.json';
+}
+
+function tw_deep_cleanup_authorizations(): void {
+    if (!tw_ai_prepare_private_dir()) return;
+    $matches = glob(tw_private_dir() . '/deep-auth-*.json');
+    if (!is_array($matches) || count($matches) > 10000) return;
+    $cutoff = time() - 3600;
+    foreach ($matches as $path) {
+        if (!preg_match('/^deep-auth-[a-f0-9]{32}\.json$/D', basename($path))) continue;
+        if (!tw_ai_private_path_exists($path) || !tw_ai_secure_existing_regular_file($path, 0600)) continue;
+        $modified = @filemtime($path);
+        if (is_int($modified) && $modified < $cutoff) @unlink($path);
+    }
+}
+
+function tw_deep_issue_authorization(string $ipHash, string $question, string $context, string $secret): string {
+    if (!preg_match('/^[a-f0-9]{64}$/D', $ipHash) || $secret === '') return '';
+    try { $nonce = bin2hex(random_bytes(16)); } catch (Throwable $error) { return ''; }
+    $cfg = tw_deep_config();
+    $payload = [
+        'v'=>1,
+        'nonce'=>$nonce,
+        'exp'=>time() + (int)$cfg['authorization_ttl_seconds'],
+        'ip_hash'=>$ipHash,
+        'question_hash'=>hash_hmac('sha256','deep-question|'.$question,$secret),
+        'context_hash'=>hash_hmac('sha256','deep-context|'.$context,$secret),
+    ];
+    $json = json_encode($payload, JSON_UNESCAPED_SLASHES);
+    if (!is_string($json)) return '';
+    $body = tw_deep_b64url_encode($json);
+    $signature = hash_hmac('sha256','deep-auth|'.$body,$secret);
+    $record = json_encode([
+        'state'=>'issued',
+        'exp'=>$payload['exp'],
+        'payload_hash'=>hash('sha256',$body),
+    ], JSON_UNESCAPED_SLASHES);
+    if (!is_string($record) || !tw_ai_atomic_private_write(tw_deep_authorization_path($nonce), $record . "\n")) return '';
+    tw_deep_cleanup_authorizations();
+    return $body . '.' . $signature;
+}
+
+function tw_deep_consume_authorization(string $token, string $ipHash, string $question, string $context, string $secret): bool {
+    if ($secret === '' || strlen($token) > 4096 || !str_contains($token,'.')) return false;
+    [$body,$signature] = explode('.',$token,2);
+    if (!preg_match('/^[a-f0-9]{64}$/D',$signature)) return false;
+    $expected = hash_hmac('sha256','deep-auth|'.$body,$secret);
+    if (!hash_equals($expected,$signature)) return false;
+    $decoded = tw_deep_b64url_decode($body);
+    if (!is_string($decoded)) return false;
+    $payload = json_decode($decoded,true);
+    if (!is_array($payload) || (int)($payload['v']??0)!==1) return false;
+    $nonce=(string)($payload['nonce']??'');
+    if (!preg_match('/^[a-f0-9]{32}$/D',$nonce)) return false;
+    $exp=(int)($payload['exp']??0);
+    if ($exp < time() || $exp > time() + 1800) return false;
+    if (!hash_equals((string)($payload['ip_hash']??''),$ipHash)) return false;
+    if (!hash_equals((string)($payload['question_hash']??''),hash_hmac('sha256','deep-question|'.$question,$secret))) return false;
+    if (!hash_equals((string)($payload['context_hash']??''),hash_hmac('sha256','deep-context|'.$context,$secret))) return false;
+
+    try {
+        return (bool)tw_ai_with_private_file_lock(tw_private_dir().'/deep-auth.lock', static function() use ($nonce,$body,$exp): bool {
+            $path=tw_deep_authorization_path($nonce);
+            $raw=tw_ai_read_secure_regular_file($path,2,4096);
+            if (!is_string($raw)) return false;
+            $record=json_decode(trim($raw),true);
+            if (!is_array($record) || ($record['state']??'')!=='issued') return false;
+            if ((int)($record['exp']??0)!==$exp || $exp < time()) return false;
+            if (!hash_equals((string)($record['payload_hash']??''),hash('sha256',$body))) return false;
+            $consumed=json_encode(['state'=>'consumed','exp'=>$exp,'payload_hash'=>hash('sha256',$body),'consumed_at'=>time()],JSON_UNESCAPED_SLASHES);
+            return is_string($consumed) && tw_ai_atomic_private_write($path,$consumed."\n");
+        });
+    } catch (Throwable $error) {
+        return false;
+    }
 }
 
 function tw_deep_receipt(string $stage, string $label, array $pass): array {
@@ -169,7 +279,7 @@ function tw_deep_receipt(string $stage, string $label, array $pass): array {
     ];
 }
 
-function tw_deep_run(string $question, string $context = '', ?callable $onReceipt = null): array {
+function tw_deep_run(string $question, string $context = '', ?callable $onReceipt = null, string $confirmedClaimMap = ''): array {
     [$valid, $question, $context, $error] = tw_validate_trial_input($question, $context);
     if (!$valid) return ['ok'=>false,'message'=>$error];
 
@@ -177,16 +287,22 @@ function tw_deep_run(string $question, string $context = '', ?callable $onReceip
         if ($onReceipt !== null) $onReceipt($receipt);
     };
 
-    $baseSystem = "You are Trust-Worthy, an evidence investigator. Distinguish verified fact, allegation, inference, framing, missing context, contradiction, and unknowns. Never treat absence of evidence as evidence of falsity. Cite and characterize sources honestly. Your job is to investigate, not to defend a side.";
-    $subject = "CLAIM OR QUESTION:\n{$question}" . ($context !== '' ? "\n\nUSER CONTEXT:\n{$context}" : '');
+    $baseSystem = tw_deep_base_system();
+    $subject = tw_deep_subject($question,$context);
+    $cfg = tw_deep_config();
 
-    $decompose = tw_deep_provider_pass(
-        $baseSystem,
-        $subject . "\n\nDecompose this into independently testable assertions. Identify the literal claim, implied claims, loaded framing, key entities, dates, and what would have to be true for the overall narrative to hold. Do not research yet.",
-        false
-    );
-    if (!($decompose['ok'] ?? false)) return $decompose;
-    $receipt = tw_deep_receipt('decompose','Claim decomposed',$decompose); $emit($receipt);
+    $confirmedClaimMap = trim($confirmedClaimMap);
+    if ($confirmedClaimMap !== '') {
+        if (mb_strlen($confirmedClaimMap,'UTF-8') > (int)$cfg['max_confirmed_map_characters']) {
+            return ['ok'=>false,'message'=>'Confirmed claim map was too large.'];
+        }
+        $decompose=['ok'=>true,'text'=>$confirmedClaimMap,'sources'=>[],'quota_consumed'=>false];
+        $receipt=tw_deep_receipt('decompose','Claim map confirmed',$decompose); $emit($receipt);
+    } else {
+        $decompose = tw_deep_claim_map($question,$context);
+        if (!($decompose['ok'] ?? false)) return $decompose;
+        $receipt = tw_deep_receipt('decompose','Claim decomposed',$decompose); $emit($receipt);
+    }
 
     $passes = [];
     $researchPlan = [
@@ -200,7 +316,7 @@ function tw_deep_run(string $question, string $context = '', ?callable $onReceip
     foreach ($researchPlan as $stage => [$label,$instruction]) {
         $pass = tw_deep_provider_pass(
             $baseSystem,
-            $subject . "\n\nDECOMPOSED CLAIM MAP:\n" . $decompose['text'] . "\n\nPASS OBJECTIVE:\n{$instruction}\n\nReturn concise findings plus what remains unresolved.",
+            $subject . "\n\nCONFIRMED CLAIM MAP:\n" . $decompose['text'] . "\n\nPASS OBJECTIVE:\n{$instruction}\n\nReturn concise findings plus what remains unresolved.",
             true
         );
         if (!($pass['ok'] ?? false)) return ['ok'=>false,'message'=>'Deep investigation stopped during ' . strtolower($label) . '.','stage'=>$stage,'detail'=>$pass['message'] ?? 'unknown'];
@@ -217,7 +333,6 @@ function tw_deep_run(string $question, string $context = '', ?callable $onReceip
         }
     }
 
-    $cfg = tw_deep_config();
     $counterSources = count($passes['counter']['sources'] ?? []);
     $corroborationSources = count($passes['corroboration']['sources'] ?? []);
     $evidenceFloorMet = count($uniqueSources) >= $cfg['minimum_unique_sources']
@@ -235,7 +350,7 @@ function tw_deep_run(string $question, string $context = '', ?callable $onReceip
 
     $synthesis = tw_deep_provider_pass(
         $baseSystem,
-        $subject . "\n\nDECOMPOSED CLAIM MAP:\n" . $decompose['text'] . "\n\nEVIDENCE PACKET:\n" . implode("\n\n", $evidencePacket) . "\n\n" . $synthesisInstruction,
+        $subject . "\n\nCONFIRMED CLAIM MAP:\n" . $decompose['text'] . "\n\nEVIDENCE PACKET:\n" . implode("\n\n", $evidencePacket) . "\n\n" . $synthesisInstruction,
         false
     );
     if (!($synthesis['ok'] ?? false)) return $synthesis;
@@ -264,16 +379,19 @@ function tw_deep_run(string $question, string $context = '', ?callable $onReceip
     ];
     $emit($finalReceipt);
 
+    try { $investigationId='TW-' . gmdate('Ymd') . '-' . strtoupper(bin2hex(random_bytes(3))); }
+    catch (Throwable $error) { $investigationId='TW-' . gmdate('Ymd-His'); }
+
+    $receipts=[tw_deep_receipt('decompose',$confirmedClaimMap!==''?'Claim map confirmed':'Claim decomposed',$decompose)];
+    foreach($passes as $stage=>$pass) $receipts[]=tw_deep_receipt($stage,$researchPlan[$stage][0],$pass);
+    $receipts[]=$finalReceipt;
+
     return [
         'ok'=>true,
-        'investigation_id'=>'TW-' . gmdate('Ymd') . '-' . strtoupper(bin2hex(random_bytes(3))),
+        'investigation_id'=>$investigationId,
         'claim'=>$question,
         'claim_map'=>$decompose['text'],
-        'receipts'=>array_merge(
-            [tw_deep_receipt('decompose','Claim decomposed',$decompose)],
-            array_map(static fn(string $stage, array $pass): array => tw_deep_receipt($stage, $researchPlan[$stage][0], $pass), array_keys($passes), array_values($passes)),
-            [$finalReceipt]
-        ),
+        'receipts'=>$receipts,
         'sources'=>array_values($uniqueSources),
         'metrics'=>[
             'unique_sources'=>count($uniqueSources),
