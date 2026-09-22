@@ -17,7 +17,7 @@ $needles = [
     "'research_profile'=>'evidence_reuse_v1'" => 'reuse profile identity missing',
     'Using only these already-collected receipts' => 'dependency audit is not constrained to collected evidence',
     'Do not browse.' => 'reuse stages are not explicitly no-browse',
-    'mark it unresolved rather than guessing' => 'reuse profile does not fail honest on dependency gaps',
+    'label it unresolved rather than guessing' => 'reuse profile does not fail honest on dependency gaps',
     'mark it unresolved instead of filling it from memory' => 'context reuse does not fail honest on chronology gaps',
     'tw_deep_usage_total' => 'reuse profile does not account provider usage',
 ];
