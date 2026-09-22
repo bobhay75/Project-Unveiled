@@ -24,10 +24,10 @@ function tw_deep_stream_fail(int $status, string $message): never {
 }
 
 $contentLength=(string)($_SERVER['CONTENT_LENGTH']??'');
-if($contentLength!==''&&(!ctype_digit($contentLength)||(int)$contentLength>20000)) tw_deep_stream_fail(413,'Submission was too large.');
+if($contentLength!==''&&(!ctype_digit($contentLength)||(int)$contentLength>30000)) tw_deep_stream_fail(413,'Submission was too large.');
 $contentType=strtolower(trim(explode(';',(string)($_SERVER['CONTENT_TYPE']??''),2)[0]));
 if($contentType!=='application/x-www-form-urlencoded') tw_deep_stream_fail(415,'Form encoding was not accepted.');
-try { tw_intake_enforce_raw_body_limit(20000); } catch (TwIntakeException $e) { tw_deep_stream_fail($e->httpStatus,$e->getMessage()); }
+try { tw_intake_enforce_raw_body_limit(30000); } catch (TwIntakeException $e) { tw_deep_stream_fail($e->httpStatus,$e->getMessage()); }
 
 $hostValue=strtolower(rtrim((string)($_SERVER['HTTP_HOST']??''),'.'));
 $host=preg_match('/^((?:www\.)?bobsome1\.com)(?::443)?$/',$hostValue,$hm)?$hm[1]:'';
@@ -36,8 +36,9 @@ $originParts=$originValue!==''?parse_url($originValue):false;
 $originHost=is_array($originParts)?strtolower((string)($originParts['host']??'')):'';
 $originScheme=is_array($originParts)?strtolower((string)($originParts['scheme']??'')):'';
 $originPort=is_array($originParts)?($originParts['port']??null):null;
+$originHasExtra=is_array($originParts)&&(isset($originParts['user'])||isset($originParts['pass'])||isset($originParts['query'])||isset($originParts['fragment'])||!in_array((string)($originParts['path']??''),['','/'],true));
 $fetchSite=strtolower(trim((string)($_SERVER['HTTP_SEC_FETCH_SITE']??'')));
-if(!in_array($host,['bobsome1.com','www.bobsome1.com'],true)||$originHost!==$host||$originScheme!=='https'||($originPort!==null&&$originPort!==443)||($fetchSite!==''&&$fetchSite!=='same-origin')) tw_deep_stream_fail(403,'Request origin was not accepted.');
+if(!in_array($host,['bobsome1.com','www.bobsome1.com'],true)||$originHost!==$host||$originScheme!=='https'||($originPort!==null&&$originPort!==443)||$originHasExtra||($fetchSite!==''&&$fetchSite!=='same-origin')) tw_deep_stream_fail(403,'Request origin was not accepted.');
 
 $website=$_POST['website']??'';
 if(!is_string($website)||trim($website)!=='') tw_deep_stream_fail(422,'Submission was not accepted.');
@@ -46,23 +47,33 @@ $opened=is_string($openedValue)&&preg_match('/^\d{1,12}$/',$openedValue)?(int)$o
 $age=time()-$opened;
 if($opened<1||$age<4||$age>7200) tw_deep_stream_fail(422,'Please reload and review the claim before starting the investigation.');
 
-[$valid,$question,$context,$inputError]=tw_validate_trial_input($_POST['question']??null,$_POST['context']??'');
+[$valid,$question,$baseContext,$inputError]=tw_validate_trial_input($_POST['question']??null,$_POST['context']??'');
 if(!$valid) tw_deep_stream_fail(422,$inputError);
+$confirmedMap=$_POST['confirmed_map']??'';
+if(!is_string($confirmedMap)||trim($confirmedMap)==='') tw_deep_stream_fail(422,'Confirm the claim map before research begins.');
+$confirmedMap=trim($confirmedMap);
+if(mb_strlen($confirmedMap,'UTF-8')>(int)tw_deep_config()['max_confirmed_map_characters']) tw_deep_stream_fail(413,'Confirmed claim map was too large.');
+$authorization=$_POST['authorization_token']??'';
+if(!is_string($authorization)||trim($authorization)==='') tw_deep_stream_fail(403,'Deep research authorization was missing. Rebuild the claim map.');
+$authorization=trim($authorization);
 $goals=$_POST['goals']??'';
 if(!is_string($goals)) tw_deep_stream_fail(422,'Investigation goals were invalid.');
 $goals=mb_substr(trim($goals),0,1000,'UTF-8');
-if($goals!=='') $context=trim($context."\n\nUSER INVESTIGATION GOALS:\n".$goals);
 
 $secret=tw_question_secret();
 if($secret==='') tw_deep_stream_fail(503,'Private research storage is unavailable.');
 $remote=(string)($_SERVER['REMOTE_ADDR']??'');
 if(filter_var($remote,FILTER_VALIDATE_IP)===false) tw_deep_stream_fail(403,'Request address could not be validated.');
 $ipHash=hash_hmac('sha256','ai-ip|'.$remote,$secret);
-[$allowed,$reason,$reservation,$rateStatus]=tw_rate_limit($ipHash);
-if(!$allowed) tw_deep_stream_fail($rateStatus==='allowance_exhausted'?429:503,$reason);
+if(!tw_deep_consume_authorization($authorization,$ipHash,$question,$baseContext,$secret)) {
+    tw_deep_stream_fail(403,'Deep research authorization was expired, already used, or did not match this claim. Rebuild the claim map.');
+}
+
+$context=$baseContext;
+if($goals!=='') $context=trim($context."\n\nUSER INVESTIGATION GOALS:\n".$goals);
 
 header('Content-Type: application/x-ndjson; charset=UTF-8');
-header('Content-Security-Policy: default-src \'none\'');
+header("Content-Security-Policy: default-src 'none'");
 @ini_set('output_buffering','off');
 @ini_set('zlib.output_compression','0');
 while (ob_get_level() > 0) @ob_end_flush();
@@ -72,18 +83,13 @@ $emit=static function(array $event): void {
     @flush();
 };
 
-$emit(['type'=>'start','label'=>'Deep investigation started','at_utc'=>gmdate('c')]);
+$emit(['type'=>'start','label'=>'Confirmed deep investigation started','at_utc'=>gmdate('c')]);
 $result=tw_deep_run($question,$context,static function(array $receipt) use ($emit): void {
     $emit(['type'=>'receipt','receipt'=>$receipt]);
-});
+},$confirmedMap);
 
 if(!($result['ok']??false)) {
-    tw_finalize_rate_limit($ipHash,$reservation,(bool)($result['quota_consumed']??true));
     $emit(['type'=>'error','message'=>(string)($result['message']??'Deep investigation failed.'),'stage'=>$result['stage']??null]);
-    exit;
-}
-if(!tw_finalize_rate_limit($ipHash,$reservation,true)) {
-    $emit(['type'=>'error','message'=>'The investigation completed but the research allowance could not be finalized safely.']);
     exit;
 }
 
