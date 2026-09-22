@@ -19,6 +19,17 @@ $mustContain = static function(string $haystack, string $needle, string $message
 $mustNotContain = static function(string $haystack, string $needle, string $message): void {
     if (str_contains($haystack, $needle)) throw new RuntimeException($message);
 };
+$mustNotCall = static function(string $php, string $functionName, string $message): void {
+    $tokens = token_get_all($php);
+    $count = count($tokens);
+    for ($i = 0; $i < $count; $i++) {
+        $token = $tokens[$i];
+        if (!is_array($token) || $token[0] !== T_STRING || strcasecmp($token[1], $functionName) !== 0) continue;
+        $j = $i + 1;
+        while ($j < $count && is_array($tokens[$j]) && in_array($tokens[$j][0], [T_WHITESPACE, T_COMMENT, T_DOC_COMMENT], true)) $j++;
+        if (($tokens[$j] ?? null) === '(') throw new RuntimeException($message);
+    }
+};
 
 $mustContain($deep, "'origin' =>", 'deep engine missing origin pass');
 $mustContain($deep, "'primary' =>", 'deep engine missing primary-source pass');
@@ -31,7 +42,7 @@ $mustContain($deep, '$probability = null;', 'deep engine must be able to suppres
 $mustContain($deep, 'tw_deep_issue_authorization', 'deep engine missing one-time authorization issuer');
 $mustContain($deep, 'tw_deep_consume_authorization', 'deep engine missing one-time authorization consumer');
 $mustContain($deep, 'Claim map confirmed', 'deep engine does not distinguish user-confirmed claim maps');
-$mustNotContain($deep, 'tw_short_investigation(', 'deep engine must never route through the preliminary engine');
+$mustNotCall($deep, 'tw_short_investigation', 'deep engine must never route through the preliminary engine');
 
 $mustContain($claimMap, 'tw_deep_claim_map(', 'claim-map endpoint does not build a claim map');
 $mustContain($claimMap, 'tw_rate_limit(', 'claim-map endpoint bypasses public research allowance');
