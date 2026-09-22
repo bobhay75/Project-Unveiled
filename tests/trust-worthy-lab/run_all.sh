@@ -23,6 +23,7 @@ if command -v php >/dev/null 2>&1; then
   php -l truth/deep-stream.php >/dev/null
   php -l truth/investigation.php >/dev/null
   php tests/trust-worthy-public/deep-v2-contract.php
+  php tests/trust-worthy-public/source-family.php
   php tests/trust-worthy-public/deep-auth.php
   php tests/trust-worthy-public/backend-hardening.php
   php tests/trust-worthy-intake/intake-storage.php
@@ -54,4 +55,4 @@ else
   fi
 fi
 
-echo "Release gate passed: syntax, guided claim-map confirmation, one-time deep authorization, dynamic research receipts, reproducible manifest, structure, safety copy, claim-level fail-closed validation, research engine, adversarial workflow, provenance negatives, and KCMC separation."
+echo "Release gate passed: syntax, guided claim-map confirmation, one-time deep authorization, source-family diversity gates, dynamic research receipts, reproducible manifest, structure, safety copy, claim-level fail-closed validation, research engine, adversarial workflow, provenance negatives, and KCMC separation."
