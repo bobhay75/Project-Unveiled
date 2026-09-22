@@ -52,10 +52,13 @@ $printPass = static function(string $name, array $pass): void {
         exit(4);
     }
     $usage = is_array($pass['usage'] ?? null) ? $pass['usage'] : [];
+    $sources=is_array($pass['sources'] ?? null) ? $pass['sources'] : [];
+    $families=tw_deep_family_metrics($sources);
     printf(
-        "%s PASS; sources=%d; input_tokens=%d; output_tokens=%d; reasoning_tokens=%d\n",
+        "%s PASS; sources=%d; families=%d; input_tokens=%d; output_tokens=%d; reasoning_tokens=%d\n",
         strtoupper($name),
-        count(is_array($pass['sources'] ?? null) ? $pass['sources'] : []),
+        count($sources),
+        (int)($families['family_count'] ?? 0),
         (int)($usage['input_tokens'] ?? 0),
         (int)($usage['output_tokens'] ?? 0),
         (int)($usage['reasoning_tokens'] ?? 0)
@@ -87,10 +90,11 @@ $receipts = [];
 $result = tw_deep_run($claim, 'Owner-run benign release smoke test. Prefer official primary records.', static function(array $receipt) use (&$receipts): void {
     $receipts[] = $receipt;
     printf(
-        "RECEIPT stage=%s completed=%s sources=%d floor=%s\n",
+        "RECEIPT stage=%s completed=%s sources=%d families=%d floor=%s\n",
         preg_replace('/[^a-z0-9_-]/i', '', (string)($receipt['stage'] ?? 'unknown')),
         ($receipt['completed'] ?? false) ? 'yes' : 'no',
         (int)($receipt['source_count'] ?? 0),
+        (int)($receipt['source_family_count'] ?? 0),
         array_key_exists('evidence_floor_met', $receipt) ? (($receipt['evidence_floor_met'] ?? false) ? 'met' : 'not_met') : 'n/a'
     );
 });
@@ -113,10 +117,14 @@ foreach ($requiredStages as $stage) {
 }
 
 printf(
-    "FULL DEEP PROVIDER SMOKE PASSED; unique_sources=%d; counter_sources=%d; corroboration_sources=%d; evidence_floor=%s; verdict=%s; probability=%s\n",
+    "FULL DEEP PROVIDER SMOKE PASSED; unique_sources=%d; source_families=%d; counter_sources=%d; counter_families=%d; corroboration_sources=%d; corroboration_families=%d; independence=%s; evidence_floor=%s; verdict=%s; probability=%s\n",
     (int)($result['metrics']['unique_sources'] ?? 0),
+    (int)($result['metrics']['source_families'] ?? 0),
     (int)($result['metrics']['counter_sources'] ?? 0),
+    (int)($result['metrics']['counter_families'] ?? 0),
     (int)($result['metrics']['corroboration_sources'] ?? 0),
+    (int)($result['metrics']['corroboration_families'] ?? 0),
+    preg_replace('/[^a-z0-9_-]/i','',(string)($result['metrics']['source_independence_status'] ?? 'unknown')),
     ($result['metrics']['evidence_floor_met'] ?? false) ? 'met' : 'not_met',
     preg_replace('/[^A-Z _—-]/u', '', strtoupper((string)($result['verdict'] ?? 'UNKNOWN'))),
     is_int($result['probability'] ?? null) ? (string)$result['probability'] : 'NONE'
