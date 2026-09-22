@@ -176,6 +176,7 @@ truth/lib/trust-worthy-ai.php
 truth/question-received.php
 truth/question-submit.php
 truth/today.php
+truth/trust-worthy-ui.js
 truth/truth-worthy.css
 unveiled/confirmed.html
 unveiled/index.html
