@@ -33,16 +33,21 @@ $mustNotCall = static function(string $php, string $functionName, string $messag
 
 $mustContain($deep, "'origin' =>", 'deep engine missing origin pass');
 $mustContain($deep, "'primary' =>", 'deep engine missing primary-source pass');
-$mustContain($deep, "'corroboration' =>", 'deep engine missing independent corroboration pass');
+$mustContain($deep, "'corroboration' =>", 'deep engine missing corroboration pass');
+$mustContain($deep, "'dependency' =>", 'deep engine missing source-dependency/echo pass');
 $mustContain($deep, "'counter' =>", 'deep engine missing counterevidence pass');
 $mustContain($deep, "'context' =>", 'deep engine missing context/chronology pass');
+$mustContain($deep, 'PRIOR PASS FINDINGS TO AUDIT FOR SHARED UPSTREAM DEPENDENCIES', 'dependency pass does not audit earlier findings');
+$mustContain($deep, 'shared upstream chains', 'synthesis does not account for dependency/echo risk');
+$mustContain($deep, 'tw_deep_usage_total', 'deep engine lacks total token accounting');
+$mustContain($deep, "'total_tokens'", 'deep engine does not expose total token usage');
 $mustContain($deep, 'evidenceFloorMet', 'deep engine missing evidence floor');
 $mustContain($deep, 'INSUFFICIENT EVIDENCE — NO VERDICT', 'deep engine missing no-verdict terminal state');
 $mustContain($deep, '$probability = null;', 'deep engine must be able to suppress probability');
 $mustContain($deep, "'minimum_source_families' => 3", 'deep engine does not gate on source-family diversity');
 $mustContain($deep, "'minimum_corroboration_families' => 2", 'deep engine does not require corroboration-family diversity');
 $mustContain($deep, 'tw_deep_source_family', 'deep engine lacks deterministic source-family classification');
-$mustContain($deep, 'domain_family_heuristic_only', 'deep engine overstates source-family diversity as independence');
+$mustContain($deep, 'dependency_audit_plus_domain_family_heuristic', 'deep engine overstates family diversity as proven independence');
 $mustContain($deep, 'Different domains can still repeat the same wire story', 'synthesis does not warn that domain diversity is not proof of independence');
 $mustContain($deep, 'tw_deep_issue_authorization', 'deep engine missing one-time authorization issuer');
 $mustContain($deep, 'tw_deep_consume_authorization', 'deep engine missing one-time authorization consumer');
@@ -68,9 +73,12 @@ $mustContain($workspace, 'Choose what matters', 'workspace does not guide the us
 $mustContain($workspace, 'REVIEW THE CLAIM MAP', 'workspace does not stop for claim-map review');
 $mustContain($workspace, 'YOUR APPROVAL REQUIRED', 'workspace does not make user confirmation explicit');
 $mustContain($workspace, 'LIVE RECEIPTS', 'workspace does not expose actual investigation receipts');
+$mustContain($workspace, 'Trace source dependencies + echo chains', 'workspace hides the dependency audit stage');
 $mustContain($ui, "fetch('/truth/claim-map.php'", 'workspace UI does not request a pre-research claim map');
 $mustContain($ui, "data.set('confirmed_map',map)", 'workspace UI does not submit the edited claim map');
 $mustContain($ui, "event.type==='receipt'", 'workspace UI does not consume receipt events');
+$mustContain($ui, "'dependency'", 'workspace UI does not advance through dependency receipts');
+$mustContain($ui, 'total_tokens', 'workspace UI does not disclose Deep token usage');
 $mustContain($ui, 'Evidence floor not met', 'workspace UI does not explain blocked probability');
 
 echo "Deep Investigation V2 contract passed.\n";
