@@ -78,6 +78,10 @@ V2 reduces `/truth` to four principal surfaces: entry/investigation box, guided-
 - New PHP and JS syntax plus the V2 contract are added to the existing release gate.
 - New public files are registered in the sorted fail-closed deployment manifest.
 
+## Validation boundary
+
+The source-level V2 implementation is complete enough for review, but it is intentionally **not release-approved yet**. No claim is made that the new provider path has passed a real production-style OpenAI request from the shared host. That must be demonstrated before merge/deploy.
+
 ## Still required before merge/deploy
 
 1. Run the full repository release gate in a PHP/Node environment.
