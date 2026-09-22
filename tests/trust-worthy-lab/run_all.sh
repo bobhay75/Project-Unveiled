@@ -9,6 +9,7 @@ node --check truth/lab/app.js
 node --check truth/lab/observer.js
 node --check truth/entry-v2.js
 node --check truth/investigation-ui.js
+node --check truth/paid-continue.js
 node --check tests/trust-worthy-lab/release-integrity.mjs
 node --check tests/trust-worthy-lab/release-manifest.mjs
 node --check tests/trust-worthy-lab/live-release-gate.mjs
@@ -20,12 +21,22 @@ if command -v php >/dev/null 2>&1; then
   php -r 'if (PHP_VERSION_ID < 80100) { fwrite(STDERR, "PHP 8.1 or newer is required.\n"); exit(1); }'
   php -l truth/lib/trust-worthy-deep.php >/dev/null
   php -l truth/lib/trust-worthy-deep-reuse-v1.php >/dev/null
+  php -l truth/lib/trust-worthy-paid.php >/dev/null
+  php -l truth/lib/trust-worthy-funnel-v1.php >/dev/null
   php -l tests/trust-worthy-public/deep-reuse-smoke.php >/dev/null
+  php -l tests/trust-worthy-public/paid-continuation.php >/dev/null
+  php -l tests/trust-worthy-public/paid-funnel-contract.php >/dev/null
   php -l truth/claim-map.php >/dev/null
   php -l truth/deep-stream.php >/dev/null
   php -l truth/investigation.php >/dev/null
+  php -l truth/paypal-start.php >/dev/null
+  php -l truth/paypal-return.php >/dev/null
+  php -l truth/paid-continue.php >/dev/null
+  php -l truth/paid-resume.php >/dev/null
   php tests/trust-worthy-public/deep-v2-contract.php
   php tests/trust-worthy-public/deep-reuse-contract.php
+  php tests/trust-worthy-public/paid-continuation.php
+  php tests/trust-worthy-public/paid-funnel-contract.php
   php tests/trust-worthy-public/source-family.php
   php tests/trust-worthy-public/deep-auth.php
   php tests/trust-worthy-public/backend-hardening.php
@@ -58,4 +69,4 @@ else
   fi
 fi
 
-echo "Release gate passed: syntax, guided claim-map confirmation, one-time deep authorization, source-family diversity gates, dependency audit, lower-amplification evidence reuse profile, dynamic research receipts, reproducible manifest, structure, safety copy, claim-level fail-closed validation, research engine, adversarial workflow, provenance negatives, and KCMC separation."
+echo "Release gate passed: syntax, guided claim-map confirmation, one-time deep authorization, source-family diversity gates, dependency audit, lower-amplification evidence reuse, fail-closed $2.99 PayPal order verification, one-time paid continuation, dynamic research receipts, reproducible manifest, structure, safety copy, claim-level fail-closed validation, adversarial workflow, provenance negatives, and KCMC separation."
