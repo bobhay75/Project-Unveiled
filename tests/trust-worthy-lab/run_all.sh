@@ -23,9 +23,11 @@ if command -v php >/dev/null 2>&1; then
   php -l truth/lib/trust-worthy-deep-reuse-v1.php >/dev/null
   php -l truth/lib/trust-worthy-paid.php >/dev/null
   php -l truth/lib/trust-worthy-funnel-v1.php >/dev/null
+  php -l truth/daily/story-scout.php >/dev/null
   php -l tests/trust-worthy-public/deep-reuse-smoke.php >/dev/null
   php -l tests/trust-worthy-public/paid-continuation.php >/dev/null
   php -l tests/trust-worthy-public/paid-funnel-contract.php >/dev/null
+  php -l tests/trust-worthy-public/story-scout-contract.php >/dev/null
   php -l truth/claim-map.php >/dev/null
   php -l truth/deep-stream.php >/dev/null
   php -l truth/investigation.php >/dev/null
@@ -37,6 +39,7 @@ if command -v php >/dev/null 2>&1; then
   php tests/trust-worthy-public/deep-reuse-contract.php
   php tests/trust-worthy-public/paid-continuation.php
   php tests/trust-worthy-public/paid-funnel-contract.php
+  php tests/trust-worthy-public/story-scout-contract.php
   php tests/trust-worthy-public/source-family.php
   php tests/trust-worthy-public/deep-auth.php
   php tests/trust-worthy-public/backend-hardening.php
@@ -69,4 +72,4 @@ else
   fi
 fi
 
-echo "Release gate passed: syntax, guided claim-map confirmation, one-time deep authorization, source-family diversity gates, dependency audit, lower-amplification evidence reuse, fail-closed \$2.99 PayPal order verification, one-time paid continuation, dynamic research receipts, reproducible manifest, structure, safety copy, claim-level fail-closed validation, adversarial workflow, provenance negatives, and KCMC separation."
+echo "Release gate passed: syntax, Story Scout fail-closed ranking, guided claim-map confirmation, one-time deep authorization, source-family diversity gates, dependency audit, lower-amplification evidence reuse, fail-closed \$2.99 PayPal order verification, one-time paid continuation, dynamic research receipts, reproducible manifest, structure, safety copy, claim-level fail-closed validation, adversarial workflow, provenance negatives, and KCMC separation."
