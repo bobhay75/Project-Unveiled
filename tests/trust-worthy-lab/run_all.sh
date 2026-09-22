@@ -69,4 +69,4 @@ else
   fi
 fi
 
-echo "Release gate passed: syntax, guided claim-map confirmation, one-time deep authorization, source-family diversity gates, dependency audit, lower-amplification evidence reuse, fail-closed $2.99 PayPal order verification, one-time paid continuation, dynamic research receipts, reproducible manifest, structure, safety copy, claim-level fail-closed validation, adversarial workflow, provenance negatives, and KCMC separation."
+echo "Release gate passed: syntax, guided claim-map confirmation, one-time deep authorization, source-family diversity gates, dependency audit, lower-amplification evidence reuse, fail-closed \$2.99 PayPal order verification, one-time paid continuation, dynamic research receipts, reproducible manifest, structure, safety copy, claim-level fail-closed validation, adversarial workflow, provenance negatives, and KCMC separation."
