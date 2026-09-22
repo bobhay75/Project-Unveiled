@@ -21,8 +21,11 @@ function tw_deep_config(): array {
         'timeout_seconds' => 90,
         'max_provider_body_bytes' => 2097152,
         'minimum_unique_sources' => 4,
+        'minimum_source_families' => 3,
         'minimum_counter_sources' => 1,
+        'minimum_counter_families' => 1,
         'minimum_corroboration_sources' => 1,
+        'minimum_corroboration_families' => 2,
         'authorization_ttl_seconds' => 900,
         'max_confirmed_map_characters' => 7000,
     ];
@@ -65,6 +68,42 @@ function tw_deep_normalize_url(string $url): string {
     return $normalized;
 }
 
+function tw_deep_source_family(string $url): string {
+    $parts = parse_url($url);
+    if (!is_array($parts)) return '';
+    $host = strtolower(rtrim((string)($parts['host'] ?? ''), '.'));
+    if ($host === '') return '';
+    foreach (['www.','m.','amp.'] as $prefix) {
+        if (str_starts_with($host, $prefix)) {
+            $host = substr($host, strlen($prefix));
+            break;
+        }
+    }
+    if (filter_var($host, FILTER_VALIDATE_IP) !== false) return $host;
+    $labels = array_values(array_filter(explode('.', $host), static fn(string $part): bool => $part !== ''));
+    $count = count($labels);
+    if ($count <= 2) return $host;
+    $tld = $labels[$count - 1];
+    $second = $labels[$count - 2];
+    $countrySecondLevels = ['ac','co','com','edu','gov','net','org'];
+    $countryTlds = ['au','br','jp','nz','uk','za'];
+    if ($count >= 3 && in_array($second, $countrySecondLevels, true) && in_array($tld, $countryTlds, true)) {
+        return implode('.', array_slice($labels, -3));
+    }
+    return implode('.', array_slice($labels, -2));
+}
+
+function tw_deep_family_metrics(array $sources): array {
+    $families = [];
+    foreach ($sources as $source) {
+        if (!is_array($source)) continue;
+        $family = (string)($source['family'] ?? '');
+        if ($family === '') $family = tw_deep_source_family((string)($source['url'] ?? ''));
+        if ($family !== '') $families[$family] = true;
+    }
+    return ['family_count'=>count($families),'families'=>array_keys($families)];
+}
+
 function tw_deep_extract_sources(array $response): array {
     $sources = [];
     foreach (($response['output'] ?? []) as $item) {
@@ -76,7 +115,11 @@ function tw_deep_extract_sources(array $response): array {
             $url = tw_deep_normalize_url((string)($source['url'] ?? ''));
             if ($url === '') continue;
             $title = trim((string)($source['title'] ?? 'Source'));
-            $sources[$url] = ['url' => $url, 'title' => $title !== '' ? $title : 'Source'];
+            $sources[$url] = [
+                'url' => $url,
+                'title' => $title !== '' ? $title : 'Source',
+                'family' => tw_deep_source_family($url),
+            ];
         }
     }
     return array_values($sources);
@@ -268,12 +311,15 @@ function tw_deep_consume_authorization(string $token, string $ipHash, string $qu
 }
 
 function tw_deep_receipt(string $stage, string $label, array $pass): array {
+    $sources=is_array($pass['sources'] ?? null) ? $pass['sources'] : [];
+    $familyMetrics=tw_deep_family_metrics($sources);
     return [
         'stage'=>$stage,
         'label'=>$label,
         'completed'=>(bool)($pass['ok'] ?? false),
-        'source_count'=>count(is_array($pass['sources'] ?? null) ? $pass['sources'] : []),
-        'sources'=>is_array($pass['sources'] ?? null) ? $pass['sources'] : [],
+        'source_count'=>count($sources),
+        'source_family_count'=>(int)$familyMetrics['family_count'],
+        'sources'=>$sources,
         'summary'=>is_string($pass['text'] ?? null) ? $pass['text'] : '',
         'at_utc'=>gmdate('c'),
     ];
@@ -308,7 +354,7 @@ function tw_deep_run(string $question, string $context = '', ?callable $onReceip
     $researchPlan = [
         'origin' => ['Trace origin','Search for the earliest accessible origin of the claim, quote, statistic, image narrative, or allegation. Distinguish original evidence from later repetition. Identify likely first publication or earliest confirmed appearance and any uncertainty.'],
         'primary' => ['Primary evidence','Search specifically for primary or first-party records capable of verifying the material assertions: court records, laws, filings, transcripts, datasets, official documents, original studies, direct statements, archived pages, or equivalent records. Say explicitly when no primary record is found.'],
-        'corroboration' => ['Independent corroboration','Search for independent corroboration. Detect when multiple outlets merely repeat one underlying source. Prefer sources with independent reporting or direct access to records.'],
+        'corroboration' => ['Independent corroboration','Search for independent corroboration. Detect when multiple outlets merely repeat one underlying source. Prefer sources with independent reporting or direct access to records. Do not treat different URLs or different domains as proof of editorial independence.'],
         'counter' => ['Counterevidence','Actively try to disprove or materially weaken the claim. Search for contradictory records, corrections, alternate explanations, expert criticism, missing qualifiers, changed facts, and evidence that the framing overstates what the underlying event proves.'],
         'context' => ['Context and chronology','Build the relevant chronology and context. Identify what happened before and after, which facts are current versus historical, and which omitted facts materially change interpretation.'],
     ];
@@ -333,24 +379,35 @@ function tw_deep_run(string $question, string $context = '', ?callable $onReceip
         }
     }
 
+    $allFamilyMetrics=tw_deep_family_metrics(array_values($uniqueSources));
     $counterSources = count($passes['counter']['sources'] ?? []);
+    $counterFamilyMetrics=tw_deep_family_metrics($passes['counter']['sources'] ?? []);
     $corroborationSources = count($passes['corroboration']['sources'] ?? []);
+    $corroborationFamilyMetrics=tw_deep_family_metrics($passes['corroboration']['sources'] ?? []);
+    $sourceFamilies=(int)$allFamilyMetrics['family_count'];
+    $counterFamilies=(int)$counterFamilyMetrics['family_count'];
+    $corroborationFamilies=(int)$corroborationFamilyMetrics['family_count'];
+
     $evidenceFloorMet = count($uniqueSources) >= $cfg['minimum_unique_sources']
+        && $sourceFamilies >= $cfg['minimum_source_families']
         && $counterSources >= $cfg['minimum_counter_sources']
-        && $corroborationSources >= $cfg['minimum_corroboration_sources'];
+        && $counterFamilies >= $cfg['minimum_counter_families']
+        && $corroborationSources >= $cfg['minimum_corroboration_sources']
+        && $corroborationFamilies >= $cfg['minimum_corroboration_families'];
 
     $evidencePacket = [];
     foreach ($passes as $stage => $pass) {
         $evidencePacket[] = strtoupper($stage) . " PASS:\n" . $pass['text'];
     }
+    $independenceNote="SOURCE-DIVERSITY RECEIPT:\nUnique URLs: ".count($uniqueSources)."\nDistinct domain families: {$sourceFamilies}\nCounterevidence domain families: {$counterFamilies}\nCorroboration domain families: {$corroborationFamilies}\nA domain-family count is only a conservative diversity heuristic. Different domains can still repeat the same wire story, press release, filing, study, witness, or originating claim. Never describe these counts as proof of editorial independence.";
 
     $synthesisInstruction = $evidenceFloorMet
-        ? "The evidence floor is met. Produce a final synthesis. Begin with exactly two machine-readable lines: VERDICT: one of SUPPORTED, LIKELY, MIXED, UNLIKELY, CONTRADICTED; PROBABILITY: integer 0-100. The probability is your evidence-conditioned confidence in the central factual claim, not objective truth. Then explain: what is verified; what is inferred; what is misleading or omitted; strongest evidence; strongest counterevidence; unresolved unknowns; why the probability is not higher or lower."
-        : "The evidence floor is NOT met. You must not issue a probability. Begin with exactly: VERDICT: INSUFFICIENT EVIDENCE — NO VERDICT and PROBABILITY: NONE. Then explain what was searched, what evidence was found, which material gaps remain, and what would be needed to reach a responsible verdict.";
+        ? "The evidence floor is met. Produce a final synthesis. Begin with exactly two machine-readable lines: VERDICT: one of SUPPORTED, LIKELY, MIXED, UNLIKELY, CONTRADICTED; PROBABILITY: integer 0-100. The probability is your evidence-conditioned confidence in the central factual claim, not objective truth. Then explain: what is verified; what is inferred; what is misleading or omitted; strongest evidence; strongest counterevidence; unresolved unknowns; why the probability is not higher or lower. Explicitly distinguish source diversity from proven source independence."
+        : "The evidence floor is NOT met. You must not issue a probability. Begin with exactly: VERDICT: INSUFFICIENT EVIDENCE — NO VERDICT and PROBABILITY: NONE. Then explain what was searched, what evidence was found, which material gaps remain, and what would be needed to reach a responsible verdict. Explicitly state which source-diversity gate failed.";
 
     $synthesis = tw_deep_provider_pass(
         $baseSystem,
-        $subject . "\n\nCONFIRMED CLAIM MAP:\n" . $decompose['text'] . "\n\nEVIDENCE PACKET:\n" . implode("\n\n", $evidencePacket) . "\n\n" . $synthesisInstruction,
+        $subject . "\n\nCONFIRMED CLAIM MAP:\n" . $decompose['text'] . "\n\nEVIDENCE PACKET:\n" . implode("\n\n", $evidencePacket) . "\n\n" . $independenceNote . "\n\n" . $synthesisInstruction,
         false
     );
     if (!($synthesis['ok'] ?? false)) return $synthesis;
@@ -372,6 +429,9 @@ function tw_deep_run(string $question, string $context = '', ?callable $onReceip
         'label'=>'Finding generated',
         'completed'=>true,
         'source_count'=>count($uniqueSources),
+        'source_family_count'=>$sourceFamilies,
+        'counter_family_count'=>$counterFamilies,
+        'corroboration_family_count'=>$corroborationFamilies,
         'evidence_floor_met'=>$evidenceFloorMet,
         'verdict'=>$verdict,
         'probability'=>$probability,
@@ -395,8 +455,12 @@ function tw_deep_run(string $question, string $context = '', ?callable $onReceip
         'sources'=>array_values($uniqueSources),
         'metrics'=>[
             'unique_sources'=>count($uniqueSources),
+            'source_families'=>$sourceFamilies,
             'counter_sources'=>$counterSources,
+            'counter_families'=>$counterFamilies,
             'corroboration_sources'=>$corroborationSources,
+            'corroboration_families'=>$corroborationFamilies,
+            'source_independence_status'=>'domain_family_heuristic_only',
             'evidence_floor_met'=>$evidenceFloorMet,
         ],
         'verdict'=>$verdict,
