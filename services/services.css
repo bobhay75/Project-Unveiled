@@ -1473,3 +1473,24 @@ body[data-cinematic-theme="bobsome1"]::before {
   .cinematic-ready .cinematic-reveal { opacity: 1; transform: none; filter: none; transition: none; }
   .cinematic-progress { display: none; }
 }
+
+
+/* Services lead intake */
+.contact-panel{align-items:start}
+.contact-form{width:100%;max-width:720px}
+.contact-form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.9rem}
+.contact-form label{display:grid;gap:.42rem}
+.contact-form label>span{color:#d8e0e5;font-size:.72rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
+.contact-form input,.contact-form textarea{width:100%;border:1px solid var(--line);border-radius:2px;padding:.86rem .9rem;color:#fff;background:#090d10;font:inherit;line-height:1.45}
+.contact-form input:focus,.contact-form textarea:focus{outline:2px solid var(--amber);outline-offset:2px;border-color:var(--amber)}
+.contact-form textarea{resize:vertical;min-height:110px}
+.contact-form-wide{grid-column:1/-1}
+.contact-form-hp{position:absolute!important;left:-10000px!important;width:1px!important;height:1px!important;overflow:hidden!important}
+.contact-submit-row{display:flex;align-items:center;gap:1rem;justify-content:space-between;flex-wrap:wrap;margin-top:1rem}
+.contact-submit-row>div{display:grid;gap:.25rem;color:var(--quiet);font-size:.78rem}
+.contact-privacy{margin-top:.9rem;color:var(--quiet);font-size:.78rem;line-height:1.5}
+.contact-received{min-height:70vh;display:grid;place-items:center;padding:4rem 0}
+.contact-received-card{width:min(760px,calc(100% - 2rem));padding:clamp(1.5rem,4vw,3rem);border:1px solid var(--line-strong);background:var(--panel);box-shadow:var(--shadow)}
+.contact-received-card h1{margin:.4rem 0 1rem;color:#fff;font-size:clamp(2.4rem,6vw,4.8rem);line-height:.95}
+.contact-received-card p{color:var(--muted);max-width:640px}
+@media(max-width:700px){.contact-form-grid{grid-template-columns:1fr}.contact-form-wide{grid-column:auto}.contact-submit-row{align-items:stretch}.contact-submit-row .button{width:100%}}
