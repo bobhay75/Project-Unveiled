@@ -24,8 +24,8 @@ function renderEntry(item,kind,onReply,ownerName){
   else if(item.reader_completed)badges.append(node('span',{class:'pu-community-badge muted'},'Read the book'));
   head.append(who,badges);article.append(head);
   if(kind==='review'){
-    const rating=node('div',{class:'pu-community-rating','aria-label':`${item.rating} out of 5 stars`},stars(item.rating));article.append(rating);
-    if(item.title)article.append(node('h4',{},item.title));
+    const rating=node('span',{class:'pu-community-rating',role:'img','aria-label':`${item.rating} out of 5 stars`},stars(item.rating));article.append(rating);
+    if(item.title)article.append(node('h3',{},item.title));
   }
   article.append(node('p',{class:'pu-community-body'},item.body||''));
   const foot=node('div',{class:'pu-community-entry-foot'});foot.append(node('time',{},prettyDate(item.created_at_utc)));
