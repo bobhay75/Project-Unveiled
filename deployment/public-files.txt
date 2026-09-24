@@ -121,6 +121,8 @@ questions/what-did-nicaea-decide.html
 questions/who-decided-bible-canon.html
 robots.txt
 services/assets/bobsome1-operations-desk.webp
+services/contact-received.html
+services/contact-submit.php
 services/index.html
 services/services.css
 sitemap.xml
