@@ -253,7 +253,7 @@ Project Unveiled says yes. Jesus is not being removed. Truth is not afraid of qu
 If you have been watching but have not stepped in, the free seven-day Journey begins here:
 https://bobsome1.com/unveiled/?utm_source=facebook&utm_medium=organic&utm_campaign=unveiled_14_day_sprint&utm_content=day_14_post
 
-After posting, publish only measured facts: visits, signup requests, confirmations, and shares. Do not call the sprint successful or unsuccessful without the dashboard record.
+After posting, report only what the records establish: page sessions and share-button clicks. Report actual signup requests, confirmed subscribers, or email delivery only from verified private backend or mailbox evidence, as aggregate totals. The analytics dashboard alone does not prove those outcomes or completed shares.
 
 ## Short-video production template
 
@@ -328,49 +328,57 @@ Do not argue for reach. Answer one factual question calmly if useful. If the per
 - Record positive reader language only with permission before quoting it publicly.
 - Check the private dashboard once after the post has had time to circulate.
 - Record no subscriber name or email in campaign notes.
-- Note what topic and format produced qualified Journey visits.
+- Note tagged Journey landing traffic. Tags indicate a labeled source, not a verified person, qualified lead, or causal effect.
 - Do not change multiple parts of the funnel in the middle of the same test unless it is broken.
 
 ## Scoreboard
 
-Record these totals at baseline, Day 3, Day 7, Day 10, and Day 14:
+Record the selected reporting window, UTC timestamps, and baseline at Day 0, Day 3, Day 7, Day 10, and Day 14. Use one fixed interval from the event CSV for comparisons; subtracting rolling dashboard totals can lose events as they age out. Keep owner tests separate from campaign observations. Store no subscriber identities in this document.
 
 | Measure | Baseline | Day 3 | Day 7 | Day 10 | Day 14 |
 |---|---:|---:|---:|---:|---:|
-| Journey landing sessions |  |  |  |  |  |
-| Journey CTA clicks |  |  |  |  |  |
-| Signup-button selections |  |  |  |  |  |
-| Check-email sessions |  |  |  |  |  |
-| Confirmed-reader sessions |  |  |  |  |  |
-| Share clicks |  |  |  |  |  |
-| Top source |  |  |  |  |  |
-| Top content tag |  |  |  |  |  |
+| Journey landing sessions (all sources) |  |  |  |  |  |
+| On-site Journey CTA clicks |  |  |  |  |  |
+| Signup-button selections (not successful submissions) |  |  |  |  |  |
+| Check-email-page sessions |  |  |  |  |  |
+| Welcome-page sessions |  |  |  |  |  |
+| Journey share-button clicks (not completed shares) |  |  |  |  |  |
+| Verified new Journey confirmations (private backend; otherwise unknown) |  |  |  |  |  |
 
-Calculate:
+The Journey dashboard cards cover all sources. Its general source and campaign tables count sitewide page views, not Journey conversions. For tagged landing traffic, filter the CSV to `pageview`, path `/unveiled/` or `/unveiled/index.html`, and campaign `unveiled_14_day_sprint`; group by source/content and deduplicate session IDs within each group. A session may appear in multiple groups, so do not sum those group totals as unique visitors. Tags may be missing or overwritten and do not establish which post caused a confirmation.
 
-- Landing-to-request rate = check-email sessions divided by Journey landing sessions.
-- Request-to-confirm rate = confirmed-reader sessions divided by check-email sessions.
-- Confirmations per post = confirmed-reader sessions divided by published primary items.
-- Referral share rate = share clicks divided by confirmed-reader sessions.
-
-These are privacy-safe funnel indicators, not subscriber identities or guarantees.
+Do not divide these independent page-session counts into subscriber conversion rates, confirmations per post, or referral share rates. Direct page visits, new tabs, other devices, blocked tracking, reporting boundaries, invalid signup attempts, and repeat button clicks can distort the counts. Welcome-page visits do not verify confirmation; share-button clicks do not verify sharing. Use verified private backend totals for subscriber claims without copying names, addresses, or tokens into analytics or campaign notes.
 
 ## Decision rules after 14 days
 
-Use the record, not hope:
+Treat these as investigation prompts, not proven causes or universal benchmarks:
 
-- Traffic is low but request rate is healthy: distribution is the constraint. Repeat the strongest topic with more partner sharing and short video.
-- At least 100 qualified landing sessions but fewer than 5 percent reach check-email: the post promise and landing page are mismatched. Test a clearer headline or tighter audience.
-- People select signup but do not reach check-email: inspect the form, mail handoff, and error rate before sending more traffic.
-- At least 20 signup requests but fewer than half reach confirmed-reader: test confirmation deliverability, sender recognition, and check-email instructions.
-- Confirmations occur but shares do not: strengthen the one-person invitation on the welcome page and in Day Seven.
-- One topic repeatedly brings confirmations: build the next two-week series around that question.
+- Low tagged landing traffic: first check links and measurement, then test distribution or one new format.
+- Landing traffic with little check-email activity: investigate form errors, tracking exclusions, traffic quality, and message fit before choosing a headline change. The former 100-session/5-percent rule does not prove a mismatch.
+- Signup selections without check-email visits: selections can include invalid forms; inspect validation and successful request handling in a controlled test.
+- Few verified confirmations: inspect private pending/confirmed totals, confirmation deliverability, sender recognition, and instructions. The former 20-request/50-percent threshold is only a possible investigation trigger when counts describe the same verified cohort and allow time to confirm; it is not derivable from page visits.
+- Few Journey share-button clicks: check the controls and invitation. Do not infer that no one shared through another route.
+- A topic repeatedly attracts tagged landing sessions: repeat it as a hypothesis. Post-to-confirmation attribution remains unproven.
 - Courtesy reactions without Journey visits are goodwill, not conversion.
-- Do not evaluate revenue from this sprint alone. First establish a consenting audience; then measure clearly labeled, optional book or support actions separately.
+- Do not evaluate revenue from this sprint alone. First establish a consenting audience; measure clearly labeled optional purchases separately using verified records.
+
+## Controlled delivery test — required before promotion
+
+Status: PRE-DEPLOYMENT EVIDENCE ONLY. Site safety CI renders the authenticated dashboard from synthetic events at 360 px and 1365 px, checks responsive columns, horizontal overflow, focusability, accessible control names, page-session deduplication, and Journey-only share counting. It also runs an isolated unsubscribed queue entry through the real CLI cron twice and requires zero send attempts plus a persistent stopped state. These checks do not prove deployed production bytes, real private subscriber/queue state, hosted cron execution, or mailbox delivery. Keep public promotion blocked until those production facts are verified.
+
+1. Record the approved deployment commit and test start time privately. Check phone-width layout, keyboard signup, and protected dashboard access.
+2. Use a dedicated address Robert controls, avoiding an existing subscription. Record its identifier only in the private test record. Submit once with explicit consent and a `utm_content=owner_test` tag.
+3. Confirm receipt of the confirmation email, follow its private link, and verify that the backend changes from pending to active. Never paste tokens or personal records into Git or analytics.
+4. Verify Day One actually arrives; record elapsed time. A welcome-page visit or mail-send return value is insufficient. Check sender configuration, required mailing address, and scheduled queue processing if delivery fails.
+5. Unsubscribe using the delivered message, verify the backend suppresses future Journey mail, and observe at least the next scheduled send opportunity. No later message should arrive.
+6. With synthetic local or staging data, verify that opening the follow-up pages without signup counts only page sessions, repeated visits in one tab deduplicate, and unrelated share clicks stay out of the Journey share count. Check that DNT/GPC disable analytics and signup still works.
+7. Record pass/fail and evidence for each step. Keep promotion on hold if delivery or suppression is unverified. Do not re-enroll an unsubscribed test address merely to fill a scoreboard.
+
+Deployment: merge only after review and passing Site safety checks, then deploy through the existing guarded cPanel workflow when Robert authorizes it. Rollback: revert this correction commit through a new reviewed change and redeploy through that same workflow; it changes no subscriber storage or mail queue schema. Reverting restores the misleading labels, so hold public measurement claims until corrected again.
 
 ## What changes after the sprint
 
-Keep only the winning topic, format, source, and call to action. Turn that combination into a weekly system:
+Repeat the strongest observed topic, format, source, and call to action as the next test; do not declare a conversion winner from page traffic alone. Turn that combination into a weekly system:
 
 - One evidence-led anchor post.
 - Two short videos cut from the same question.
