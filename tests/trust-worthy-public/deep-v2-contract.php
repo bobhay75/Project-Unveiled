@@ -42,7 +42,9 @@ $mustContain($deep, 'tw_deep_usage_total', 'deep engine lacks total token accoun
 $mustContain($deep, "'total_tokens'", 'deep engine does not expose total token usage');
 $mustMatch($deep, '/\$floor\s*=\s*count\(\$unique\)/', 'deep engine missing evidence floor');
 $mustContain($deep, 'INSUFFICIENT EVIDENCE — NO VERDICT', 'deep engine missing no-verdict terminal state');
-$mustMatch($deep, '/\$probability\s*=\s*null\s*;/', 'deep engine must be able to suppress probability');
+$mustContain($deep, 'PROBABILITY: NONE', 'deep engine must explicitly suppress probability when the evidence floor fails');
+$mustMatch($deep, "/'probability'\s*=>\s*\$prob/", 'deep engine must expose parsed probability separately from verdict');
+$mustMatch($deep, "/if\s*\(\s*\$floor\s*&&\s*preg_match\(/", 'deep engine must only parse numeric probability after the evidence floor is met');
 $mustMatch($deep, "/'minimum_source_families'\\s*=>\\s*3/", 'deep engine does not gate on source-family diversity');
 $mustMatch($deep, "/'minimum_corroboration_families'\\s*=>\\s*2/", 'deep engine does not require corroboration-family diversity');
 $mustContain($deep, 'tw_deep_source_family', 'deep engine lacks deterministic source-family classification');
