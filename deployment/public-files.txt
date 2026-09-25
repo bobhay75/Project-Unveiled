@@ -110,6 +110,7 @@ owner/funnel-servant/v7-1-shell.js
 owner/funnel-servant/v7-2-shell.js
 owner/funnel-servant/v7-foundation.css
 owner/index.html
+owner/leads.php
 privacy.html
 project-unveiled-analytics/.htaccess
 project-unveiled-analytics/collect.php
@@ -123,6 +124,7 @@ robots.txt
 services/assets/bobsome1-operations-desk.webp
 services/contact-received.html
 services/contact-submit.php
+services/contact.js
 services/index.html
 services/services.css
 sitemap.xml

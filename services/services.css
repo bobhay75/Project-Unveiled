@@ -1477,6 +1477,14 @@ body[data-cinematic-theme="bobsome1"]::before {
 
 /* Services lead intake */
 .contact-panel{align-items:start}
+.contact-panel:has(.contact-form){grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr)}
+.contact-panel>*{min-width:0}
+.contact-status{color:var(--paper);overflow-wrap:anywhere}
+.contact-status:empty{display:none}
+.contact-status:focus{outline:2px solid var(--amber);outline-offset:4px}
+.contact-form button:disabled{opacity:.65;cursor:wait}
+.contact-form .contact-privacy,.contact-submit-row>div{color:var(--muted)}
+.contact-form a,.contact-submit-row>div{overflow-wrap:anywhere}
 .contact-form{width:100%;max-width:720px}
 .contact-form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.9rem}
 .contact-form label{display:grid;gap:.42rem}
@@ -1494,3 +1502,10 @@ body[data-cinematic-theme="bobsome1"]::before {
 .contact-received-card h1{margin:.4rem 0 1rem;color:#fff;font-size:clamp(2.4rem,6vw,4.8rem);line-height:.95}
 .contact-received-card p{color:var(--muted);max-width:640px}
 @media(max-width:700px){.contact-form-grid{grid-template-columns:1fr}.contact-form-wide{grid-column:auto}.contact-submit-row{align-items:stretch}.contact-submit-row .button{width:100%}}
+.lead-inbox{padding-block:3rem;max-width:960px;overflow-wrap:anywhere}
+.lead-inbox h1{font-size:clamp(2rem,6vw,3.5rem);line-height:1.2}
+.lead-card{margin-block:1.5rem;padding:clamp(1rem,4vw,2rem);border:1px solid var(--line);background:var(--panel)}
+.lead-card h2{font-size:1.5rem}
+.lead-card dt{font-weight:700;color:var(--amber-light);margin-top:1rem}
+.lead-card dd{margin:0;white-space:pre-wrap;overflow-wrap:anywhere}
+@media(max-width:900px){.contact-panel:has(.contact-form){grid-template-columns:minmax(0,1fr)}.contact-form{max-width:none}}

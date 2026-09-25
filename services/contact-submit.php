@@ -12,8 +12,24 @@ function services_out(string $message, int $code = 400, ?int $retryAfter = null)
     http_response_code($code);
     if ($code === 405) header('Allow: POST');
     if ($retryAfter !== null) header('Retry-After: ' . $retryAfter);
-    header('Content-Type: text/plain; charset=UTF-8');
-    echo $message;
+    if (str_contains((string)($_SERVER['HTTP_ACCEPT'] ?? ''), 'application/json')) {
+        header('Content-Type: application/json; charset=UTF-8');
+        echo json_encode(['ok' => false, 'message' => $message]);
+    } else {
+        header('Content-Type: text/plain; charset=UTF-8');
+        echo $message;
+    }
+    exit;
+}
+
+function services_received(): never
+{
+    if (str_contains((string)($_SERVER['HTTP_ACCEPT'] ?? ''), 'application/json')) {
+        header('Content-Type: application/json; charset=UTF-8');
+        echo json_encode(['ok' => true]);
+    } else {
+        header('Location: /services/contact-received.html', true, 303);
+    }
     exit;
 }
 
@@ -21,8 +37,7 @@ try {
     tw_intake_enforce_post_request(32768);
 
     if (trim(tw_intake_post_scalar('fax')) !== '') {
-        header('Location: /services/contact-received.html', true, 303);
-        exit;
+        services_received();
     }
 
     $openedAt = tw_intake_opened_at();
@@ -43,7 +58,11 @@ try {
     $win = tw_intake_clean_text(tw_intake_post_scalar('win', true), 5, 1200);
     $deadline = tw_intake_clean_text(tw_intake_post_scalar('deadline'), 0, 100, true);
     $website = tw_intake_clean_text(tw_intake_post_scalar('website_url'), 0, 300, true);
-    if ($website !== '' && filter_var($website, FILTER_VALIDATE_URL) === false) {
+    $websiteParts = $website === '' ? [] : parse_url($website);
+    if ($website !== '' && (filter_var($website, FILTER_VALIDATE_URL) === false
+        || !is_array($websiteParts)
+        || !in_array(strtolower((string)($websiteParts['scheme'] ?? '')), ['http', 'https'], true)
+        || isset($websiteParts['user']) || isset($websiteParts['pass']))) {
         throw new TwIntakeException('Enter a valid website URL or leave it blank.', 422);
     }
 
@@ -65,8 +84,7 @@ try {
         'ip_hash' => tw_intake_client_ip_hash('lead'),
     ]);
 
-    header('Location: /services/contact-received.html', true, 303);
-    exit;
+    services_received();
 } catch (TwIntakeException $error) {
     services_out($error->getMessage(), $error->httpStatus, $error->retryAfter);
 } catch (Throwable $error) {
