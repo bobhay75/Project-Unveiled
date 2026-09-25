@@ -9,7 +9,7 @@
   <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
   <meta name="theme-color" content="#07090b">
   <link rel="canonical" href="https://bobsome1.com/services/">
-  <link rel="stylesheet" href="/services/services.css?v=1">
+  <link rel="stylesheet" href="/services/services.css?v=3">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Bobsome1.com">
   <meta property="og:title" content="Bobsome1 Media + IT | Find the leak. Build the fix.">
@@ -294,7 +294,7 @@
             <span>Source and correction system</span>
             <span>Owned analytics</span>
           </div>
-          <a class="project-link" href="https://bobsome1.com/" target="_blank" rel="noopener noreferrer">Explore Project Unveiled <span aria-hidden="true">↗</span></a>
+          <a class="project-link" href="/book/read/">Explore Project Unveiled <span aria-hidden="true">↗</span></a>
         </article>
 
         <article class="project-card">
@@ -431,11 +431,27 @@
           <h2 id="contact-title">What is the problem costing you right now?</h2>
           <p>Send four lines: what you run, what is not working, what a win looks like and whether a date or deadline is driving it.</p>
         </div>
-        <div class="contact-actions">
-          <a class="button button-primary button-large" href="mailto:thebobsomest1@gmail.com?subject=Bobsome1%20project%20inquiry&amp;body=Business%20or%20project%3A%0AWebsite%20or%20public%20page%3A%0AWhat%20is%20not%20working%3A%0AWhat%20would%20a%20win%20look%20like%3A%0ADeadline%20or%20event%20date%3A%0A">Start the conversation <span aria-hidden="true">↗</span></a>
-          <a class="email-link" href="mailto:thebobsomest1@gmail.com">thebobsomest1@gmail.com</a>
-          <span>Branson / Table Rock Lake area · Remote-ready</span>
-        </div>
+        <form class="contact-form" action="/services/contact-submit.php" method="post" data-services-intake aria-describedby="contact-privacy">
+          <div class="contact-form-grid">
+            <label><span>Name</span><input name="name" autocomplete="name" minlength="2" maxlength="100" required></label>
+            <label><span>Email</span><input name="email" type="email" autocomplete="email" maxlength="190" required></label>
+            <label class="contact-form-wide"><span>What do you run?</span><input name="business" minlength="2" maxlength="180" placeholder="Business, venue, church, crew or project" required></label>
+            <label class="contact-form-wide"><span>What is not working?</span><textarea name="problem" rows="4" minlength="10" maxlength="2000" required></textarea></label>
+            <label class="contact-form-wide"><span>What is it costing you right now? (optional)</span><textarea name="cost" rows="3" maxlength="1200" placeholder="Lost sales, time, missed leads, staff hours, confusion—whatever you can estimate."></textarea></label>
+            <label class="contact-form-wide"><span>What would a win look like?</span><textarea name="win" rows="3" minlength="5" maxlength="1200" required></textarea></label>
+            <label><span>Deadline or event date (optional)</span><input name="deadline" maxlength="100" placeholder="Optional"></label>
+            <label><span>Website or public page (optional)</span><input name="website_url" type="url" maxlength="300" placeholder="https://"></label>
+          </div>
+          <div class="contact-form-hp" aria-hidden="true"><label>Company fax<input name="fax" tabindex="-1" autocomplete="off"></label></div>
+          <input type="hidden" name="opened_at" value="" data-opened-at>
+          <div class="contact-submit-row">
+            <button class="button button-primary button-large" type="submit">Send the problem brief <span aria-hidden="true">↗</span></button>
+            <div><a class="email-link" href="mailto:thebobsomest1@gmail.com">Prefer email? thebobsomest1@gmail.com</a><span>Branson / Table Rock Lake area · Remote-ready</span></div>
+          </div>
+          <p data-contact-status class="contact-status" role="status" aria-live="polite" tabindex="-1"></p>
+          <p class="contact-privacy" id="contact-privacy">By sending, you ask Robert to review your brief and contact you about it. Your details stay private and are not added to a marketing list. <a href="/privacy.html#services-intake-privacy">How we handle your brief</a>. Please leave out passwords, account numbers and confidential records.</p>
+          <noscript><p class="contact-privacy">JavaScript is required only for the anti-spam timestamp. You can still email <a href="mailto:thebobsomest1@gmail.com">thebobsomest1@gmail.com</a>.</p></noscript>
+        </form>
       </div>
     </section>
 
@@ -449,7 +465,7 @@
         <div class="contact-actions">
           <a class="button button-primary button-large" href="https://www.paypal.com/ncp/payment/X77R4KF9E2VXC" target="_blank" rel="noopener noreferrer" data-pu-event="service_checkout_click">Start for $250 <span aria-hidden="true">↗</span></a>
           <a class="email-link" href="/store/#services">Read the exact scope first</a>
-          <span>Larger engagements begin with a value-first diagnostic conversation.</span>
+          <span>Pay only after written agreement on scope and delivery date. <a href="#contact">Send a brief first</a>.</span>
         </div>
       </div>
     </section>
@@ -468,7 +484,8 @@
         <a href="#services">Services</a>
         <a href="#work">Work</a>
         <a href="#venues">Venues</a>
-        <a href="https://bobsome1.com/">Project Unveiled</a>
+        <a href="/">Bobsome1</a>
+        <a href="/book/">Project Unveiled</a>
         <a href="/store/">Store</a>
         <a href="/privacy.html">Privacy</a>
       </nav>
@@ -479,6 +496,7 @@
     </div>
   </footer>
 
+  <script src="/services/contact.js?v=1" defer></script>
   <script id="project-unveiled-traffic-tracker" src="/project-unveiled-analytics/tracker.js?v=5" defer></script>
   <script src="/assets/js/cinematic-effects.js?v=1" defer></script>
 </body>
