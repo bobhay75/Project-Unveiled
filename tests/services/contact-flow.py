@@ -66,6 +66,8 @@ with tempfile.TemporaryDirectory(prefix='bobsome1-contact-') as temporary:
         assert request(data='problem=' + 'x' * 33000)[0] == 413
         assert request(data=brief(opened_at='0'))[0] == 422
         assert request(data=brief(email='invalid'))[0] == 422
+        assert request(data=brief(offer='unapproved-offer'))[0] == 422
+        assert request(data=brief(**{'offer[]': 'visibility-starter'}))[0] == 422
         assert request(data=brief(website_url='javascript:alert(1)'))[0] == 422
         assert request(data=brief(website_url='ftp://example.invalid/file'))[0] == 422
         assert request(data=brief(website_url='https://user:password@example.invalid'))[0] == 422
@@ -75,12 +77,14 @@ with tempfile.TemporaryDirectory(prefix='bobsome1-contact-') as temporary:
         assert status == 200 and json.loads(body)['ok'] is True
         assert not (private / 'leads.json').exists(), 'Honeypot stored a lead'
 
-        status, headers, body = request(data=brief(problem='<script>alert(1)</script> is the supplied problem.'))
+        status, headers, body = request(data=brief(problem='<script>alert(1)</script> is the supplied problem.',
+                                                 offer='visibility-starter'))
         assert status == 200 and json.loads(body) == {'ok': True}
         assert headers['Cache-Control'].startswith('no-store')
         queue = private / 'leads.json'
         rows = json.loads(queue.read_text())
         assert len(rows) == 1 and rows[0]['email'] == 'visitor@example.invalid'
+        assert rows[0]['offer'] == 'visibility-starter'
         assert '127.0.0.1' not in queue.read_text()
         assert rows[0]['delete_after_utc'] > rows[0]['submitted_at_utc']
         assert (queue.stat().st_mode & 0o777) == 0o600
@@ -95,6 +99,7 @@ with tempfile.TemporaryDirectory(prefix='bobsome1-contact-') as temporary:
         auth = {'X-Fixture-Owner': 'fixture'}
         status, headers, body = request('/owner/leads.php', 'GET', headers=auth)
         assert status == 200 and 'visitor@example.invalid' in body
+        assert '$250 Visibility Starter' in body and 'scope request only' in body
         assert '<script>alert(1)</script>' not in body and '&lt;script&gt;alert(1)&lt;/script&gt;' in body
         assert headers['Cache-Control'].startswith('no-store')
         assert headers['X-Robots-Tag'] == 'noindex, nofollow, noarchive'

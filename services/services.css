@@ -1509,3 +1509,16 @@ body[data-cinematic-theme="bobsome1"]::before {
 .lead-card dt{font-weight:700;color:var(--amber-light);margin-top:1rem}
 .lead-card dd{margin:0;white-space:pre-wrap;overflow-wrap:anywhere}
 @media(max-width:900px){.contact-panel:has(.contact-form){grid-template-columns:minmax(0,1fr)}.contact-form{max-width:none}}
+
+/* A short brief first; optional discovery detail stays out of the main path. */
+.contact-form-help{margin-bottom:1rem;color:var(--muted);font-size:.87rem}
+.selected-offer{margin-bottom:1rem;padding:.9rem 1rem;border-left:3px solid var(--amber);color:var(--paper);background:rgba(255,178,63,.08);font-size:.9rem}
+.selected-offer[hidden]{display:none}
+.contact-optional{margin-top:1.2rem;padding-block:.8rem;border-block:1px solid var(--line)}
+.contact-optional summary{padding:.25rem 0;color:var(--amber-light);cursor:pointer;font-size:.88rem;font-weight:700}
+.contact-optional .contact-form-grid{margin-top:1rem}
+.contact-optional textarea{min-height:80px}
+.intake-next-steps{display:grid;gap:1rem;margin:1.5rem 0 0;padding-left:1.2rem;color:var(--muted);font-size:.9rem}
+.intake-next-steps strong{color:var(--paper)}
+.contact-received-card a{overflow-wrap:anywhere}
+.contact-form .button{font-size:.83rem}

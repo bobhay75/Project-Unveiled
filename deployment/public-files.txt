@@ -128,6 +128,14 @@ services/contact.js
 services/index.html
 services/services.css
 sitemap.xml
+store/checkout/.htaccess
+store/checkout/capture.php
+store/checkout/config.example.php
+store/checkout/download.php
+store/checkout/index.php
+store/checkout/lib.php
+store/checkout/return.php
+store/checkout/start.php
 store/index.html
 store/store.css
 truth/case-000001.php

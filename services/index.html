@@ -9,7 +9,7 @@
   <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
   <meta name="theme-color" content="#07090b">
   <link rel="canonical" href="https://bobsome1.com/services/">
-  <link rel="stylesheet" href="/services/services.css?v=3">
+  <link rel="stylesheet" href="/services/services.css?v=4">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Bobsome1.com">
   <meta property="og:title" content="Bobsome1 Media + IT | Find the leak. Build the fix.">
@@ -111,8 +111,8 @@
           <h1 id="hero-title">Find the leak.<br><span>Build the fix.</span><br>Make the work count.</h1>
           <p class="hero-lead">Bobsome1 turns scattered websites, promotion, technology and daily workflows into one practical system people can actually use.</p>
           <div class="button-row">
-            <a class="button button-primary" href="#work">See the work <span aria-hidden="true">↘</span></a>
-            <a class="button button-quiet" href="#contact">Bring us the problem</a>
+            <a class="button button-primary" href="#contact" data-pu-event="qualified_lead_click">Tell Robert what needs fixing <span aria-hidden="true">↘</span></a>
+            <a class="button button-quiet" href="#work">See the work</a>
           </div>
           <p class="trust-line">No inflated case studies. No mystery retainers. Clear scope, visible work and honest boundaries.</p>
         </div>
@@ -350,7 +350,7 @@
           <h2 id="venue-title">A strong stage can still lose the audience before they reach the ticket page.</h2>
           <p>We connect the parts that decide whether a date gets noticed, trusted, planned and purchased—from discovery and listings through campaign timing, local partners, live coverage and post-event follow-up.</p>
           <p class="scope-note"><strong>Important:</strong> prospect audits stay private. A public portfolio should prove capability—not hand a company-specific recovery plan to the market.</p>
-          <a class="button button-primary" href="#contact">Request a venue opportunity scan</a>
+          <a class="button button-primary" href="#contact" data-pu-event="qualified_lead_click">Discuss a venue opportunity scan</a>
         </div>
 
         <div class="venue-map" aria-label="Venue audience path">
@@ -428,24 +428,34 @@
       <div class="shell contact-panel">
         <div>
           <p class="eyebrow">Bring us the bottleneck</p>
-          <h2 id="contact-title">What is the problem costing you right now?</h2>
-          <p>Send four lines: what you run, what is not working, what a win looks like and whether a date or deadline is driving it.</p>
+          <h2 id="contact-title" tabindex="-1">What needs to work better?</h2>
+          <p>Short answers are enough. Tell Robert what you run, the problem and the result you need. No payment, account creation or marketing subscription.</p>
+          <ol class="intake-next-steps" aria-label="What happens next">
+            <li><strong>Send your brief.</strong> The site saves it privately for review.</li>
+            <li><strong>Confirm the fit.</strong> Robert can reply by email with questions or a proposed next step.</li>
+            <li><strong>Approve before paying.</strong> Scope, delivery and payment instructions are agreed in writing before work starts.</li>
+          </ol>
         </div>
         <form class="contact-form" action="/services/contact-submit.php" method="post" data-services-intake aria-describedby="contact-privacy">
+          <p class="selected-offer" data-selected-offer hidden>Selected: <strong>$250 Visibility Starter</strong>. You are requesting written scope, not making a purchase.</p>
+          <p class="contact-form-help">All five fields below are required. A sentence for each answer is enough.</p>
           <div class="contact-form-grid">
-            <label><span>Name</span><input name="name" autocomplete="name" minlength="2" maxlength="100" required></label>
-            <label><span>Email</span><input name="email" type="email" autocomplete="email" maxlength="190" required></label>
-            <label class="contact-form-wide"><span>What do you run?</span><input name="business" minlength="2" maxlength="180" placeholder="Business, venue, church, crew or project" required></label>
-            <label class="contact-form-wide"><span>What is not working?</span><textarea name="problem" rows="4" minlength="10" maxlength="2000" required></textarea></label>
-            <label class="contact-form-wide"><span>What is it costing you right now? (optional)</span><textarea name="cost" rows="3" maxlength="1200" placeholder="Lost sales, time, missed leads, staff hours, confusion—whatever you can estimate."></textarea></label>
-            <label class="contact-form-wide"><span>What would a win look like?</span><textarea name="win" rows="3" minlength="5" maxlength="1200" required></textarea></label>
-            <label><span>Deadline or event date (optional)</span><input name="deadline" maxlength="100" placeholder="Optional"></label>
-            <label><span>Website or public page (optional)</span><input name="website_url" type="url" maxlength="300" placeholder="https://"></label>
+            <label for="contact-name"><span>Your name</span><input id="contact-name" name="name" autocomplete="name" minlength="2" maxlength="100" required></label>
+            <label for="contact-email"><span>Reply email</span><input id="contact-email" name="email" type="email" autocomplete="email" inputmode="email" maxlength="190" required></label>
+            <label class="contact-form-wide" for="contact-business"><span>Business or project</span><input id="contact-business" name="business" autocomplete="organization" minlength="2" maxlength="180" placeholder="What you run" required></label>
+            <label class="contact-form-wide" for="contact-problem"><span>What needs fixing?</span><textarea id="contact-problem" name="problem" rows="3" minlength="10" maxlength="2000" placeholder="For example: customers cannot find how to request a quote." required></textarea></label>
+            <label class="contact-form-wide" for="contact-win"><span>What result do you need?</span><input id="contact-win" name="win" minlength="5" maxlength="1200" placeholder="For example: a clear quote-request path." required></label>
           </div>
+          <details class="contact-optional"><summary>Add a website, deadline or impact estimate (optional)</summary><div class="contact-form-grid">
+            <label class="contact-form-wide" for="contact-website"><span>Website or public page</span><input id="contact-website" name="website_url" type="url" autocomplete="url" maxlength="300" placeholder="https://"></label>
+            <label class="contact-form-wide" for="contact-deadline"><span>Deadline or event date</span><input id="contact-deadline" name="deadline" maxlength="100" placeholder="If a particular date matters"></label>
+            <label class="contact-form-wide" for="contact-cost"><span>What is the problem costing you?</span><textarea id="contact-cost" name="cost" rows="2" maxlength="1200" placeholder="Time, missed inquiries, repeated work—an estimate is fine."></textarea></label>
+          </div></details>
           <div class="contact-form-hp" aria-hidden="true"><label>Company fax<input name="fax" tabindex="-1" autocomplete="off"></label></div>
+          <input type="hidden" name="offer" value="" data-selected-offer-id>
           <input type="hidden" name="opened_at" value="" data-opened-at>
           <div class="contact-submit-row">
-            <button class="button button-primary button-large" type="submit">Send the problem brief <span aria-hidden="true">↗</span></button>
+            <button class="button button-primary button-large" type="submit">Request a next step <span aria-hidden="true">↗</span></button>
             <div><a class="email-link" href="mailto:thebobsomest1@gmail.com">Prefer email? thebobsomest1@gmail.com</a><span>Branson / Table Rock Lake area · Remote-ready</span></div>
           </div>
           <p data-contact-status class="contact-status" role="status" aria-live="polite" tabindex="-1"></p>
@@ -463,9 +473,9 @@
           <p>The $250 Visibility Starter turns one public-offer or customer-path problem into a focused direction, ranked fixes and a clean next move.</p>
         </div>
         <div class="contact-actions">
-          <a class="button button-primary button-large" href="https://www.paypal.com/ncp/payment/X77R4KF9E2VXC" target="_blank" rel="noopener noreferrer" data-pu-event="service_checkout_click">Start for $250 <span aria-hidden="true">↗</span></a>
+          <a class="button button-primary button-large" href="/services/?offer=visibility-starter#contact" data-starter-scope data-pu-event="qualified_lead_click" data-product="visibility-starter">Request the $250 starter scope <span aria-hidden="true">↗</span></a>
           <a class="email-link" href="/store/#services">Read the exact scope first</a>
-          <span>Pay only after written agreement on scope and delivery date. <a href="#contact">Send a brief first</a>.</span>
+          <span>No payment now. The brief starts a conversation; it does not approve work or reserve a delivery date.</span>
         </div>
       </div>
     </section>
@@ -496,7 +506,7 @@
     </div>
   </footer>
 
-  <script src="/services/contact.js?v=1" defer></script>
+  <script src="/services/contact.js?v=2" defer></script>
   <script id="project-unveiled-traffic-tracker" src="/project-unveiled-analytics/tracker.js?v=5" defer></script>
   <script src="/assets/js/cinematic-effects.js?v=1" defer></script>
 </body>

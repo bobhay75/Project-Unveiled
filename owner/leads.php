@@ -70,6 +70,7 @@ $rows = array_slice($rows, ($page - 1) * 20, 20);
 <p class="eyebrow"><?= lead_h($row['submitted_at_utc']) ?></p>
 <h2><?= lead_h($row['business'] ?? '') ?></h2>
 <p><strong><?= lead_h($row['name'] ?? '') ?></strong> · <?= lead_h($row['email'] ?? '') ?></p>
+<?php if (($row['offer'] ?? '') === 'visibility-starter'): ?><p><strong>Requested offer:</strong> $250 Visibility Starter — scope request only, not payment or work approval.</p><?php endif; ?>
 <dl><?php foreach (['problem' => 'What is not working', 'cost' => 'Current cost', 'win' => 'Desired result', 'deadline' => 'Deadline', 'website_url' => 'Public page'] as $key => $label): ?>
 <dt><?= lead_h($label) ?></dt><dd><?= lead_h(($row[$key] ?? '') === '' ? 'Not supplied' : $row[$key]) ?></dd>
 <?php endforeach; ?></dl>

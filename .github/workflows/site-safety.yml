@@ -58,5 +58,11 @@ jobs:
       - name: Test service briefs and protected owner inbox
         run: python3 tests/services/contact-flow.py
 
+      - name: Test conversion paths and service form behavior
+        run: node tests/services/conversion-flow.mjs
+
+      - name: Test verified-book payment and private delivery controls
+        run: php tests/commerce/backend.php
+
       - name: Validate Trust-Worthy release contract
         run: bash tests/trust-worthy-lab/run_all.sh

@@ -53,6 +53,10 @@ try {
     }
 
     $business = tw_intake_clean_text(tw_intake_post_scalar('business', true), 2, 180, true);
+    $offer = tw_intake_post_scalar('offer');
+    if (!in_array($offer, ['', 'visibility-starter'], true)) {
+        throw new TwIntakeException('Choose a published offer or send a general brief.', 422);
+    }
     $problem = tw_intake_clean_text(tw_intake_post_scalar('problem', true), 10, 2000);
     $cost = tw_intake_clean_text(tw_intake_post_scalar('cost'), 0, 1200);
     $win = tw_intake_clean_text(tw_intake_post_scalar('win', true), 5, 1200);
@@ -73,6 +77,7 @@ try {
         'name' => $name,
         'email' => $email,
         'business' => $business,
+        'offer' => $offer,
         'problem' => $problem,
         'cost' => $cost,
         'win' => $win,
