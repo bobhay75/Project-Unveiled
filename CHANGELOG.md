@@ -28,6 +28,14 @@
 - Exposed exact provider endpoints and UTC request/completion times in visible and printed search receipts, and moved commercial navigation from hosted previews to owned Bobsome1 routes.
 - Advanced the exact-byte manifest and local observer to release 16 / observer v6, retaining release 15 commit `aea90c55a31e7d158f1d092e2509fcc3b9147a34` as provenance and adding a guarded, Evidence-Lab-only rollback to the verified lab bytes in pre-release main commit `9c4faa71e9c4955c1e597b2b3f9c8a861cac3bf1`.
 
+## Revenue Launch Preflight — September 14, 2026
+
+- Added an exact live revenue-funnel gate covering deployed bytes, public routes, hardened analytics boundaries, private-dashboard readiness, and both PayPal destinations.
+- Added a CI-backed static readiness gate that permits only the reviewed owner-link placeholder while the draft is blocked, and removed the private dashboard's direct PayPal.Me bypass.
+- Added checkout, store, lead, partner, and engagement signals to the private dashboard without treating clicks as payments.
+- Added a private manual-fulfillment procedure for the verified PDF and EPUB editions and updated the public privacy and delivery disclosures.
+- Corrected the $35 Meta brief to use landing-page-view optimization and broad audience controls; paid traffic remains held until a fixed goods/services checkout, controlled purchase, delivery, analytics, and budget-cap checks pass.
+
 ## Revenue Funnel Foundation — September 13, 2026
 
 - Added `/store/` as the clear revenue hub for the $7 Project Unveiled digital edition, the exact $250 Visibility Starter checkout, qualified service inquiries, and partner/sponsor proposals.
