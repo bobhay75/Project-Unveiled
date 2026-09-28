@@ -1,8 +1,10 @@
 .htaccess
 .well-known/security.txt
+assets/brand/watchdawg-bobsome1.png
 assets/css/bobsome1-command-center.css
 assets/css/unveiled-journey.css
 assets/css/unveiled-prompt.css
+assets/css/watchdawg-attribution.css
 assets/js/bobsome1-command-center.js
 assets/js/cinematic-effects.js
 assets/js/project-unveiled-cinematic.js
