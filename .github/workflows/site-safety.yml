@@ -61,6 +61,9 @@ jobs:
       - name: Test conversion paths and service form behavior
         run: node tests/services/conversion-flow.mjs
 
+      - name: Test smart-store intent routing and guarded walkthrough actions
+        run: node tests/services/smart-store.mjs
+
       - name: Test verified-book payment and private delivery controls
         run: php tests/commerce/backend.php
 

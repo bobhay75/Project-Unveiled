@@ -2,8 +2,13 @@
 
 ## Scope and current state
 
-This change builds on the service-intake work in PR #41. It does not merge,
-replace or alter the separate homepage-restoration proposal in PR #42.
+This change includes the service-intake work from PR #41. PR #43 now integrates
+main at `9847c761646e123d8f7977b0c5f0492c4b38474d`, including the merged homepage
+restoration and PR #45 smart store. The restored homepage is unchanged from
+that main commit. The four intent routes, eight walkthroughs and
+`store/store.js` public-manifest entry are retained. Book walkthrough actions
+use guarded checkout; service and partnership actions use the protected intake
+path. Automatic checkout remains disabled by default.
 No production deployment, PayPal transaction, customer email or advertising
 spend is performed by this change.
 
@@ -62,17 +67,18 @@ bash tests/deployment/run.sh
 python3 scripts/validate_site.py
 node --check services/contact.js
 node tests/services/conversion-flow.mjs
+node tests/services/smart-store.mjs
 python3 tests/services/contact-flow.py
 php tests/commerce/backend.php
 bash tests/trust-worthy-lab/run_all.sh
 ```
 
-A pre-existing PHP 8.3 CLI can check syntax and offline commerce logic, but it
-does not provide the cURL and mbstring modules required for full runtime tests.
-No additional runtime was installed after environment permissions blocked
-installation. Full PHP behavior checks must pass in CI; a locally skipped test
-is not a pass. The cloud preview does not provide a verified local
-mobile/keyboard result, so browser acceptance remains a release gate.
+Use PHP 8.1 or newer with cURL and mbstring for the full runtime suite.
+All PHP behavior checks must pass; a skipped test is not a pass. The smart-store
+regression uses synthetic DOM events and cannot establish browser layout or
+keyboard acceptance. Record local browser results separately from configured
+PayPal sandbox and production-host acceptance. Passing local checks does not
+enable checkout or satisfy the owner-controlled activation gates above.
 
 ## Private configuration contract
 
@@ -119,7 +125,10 @@ Retain private order records and reconcile any interrupted payment in PayPal
 before asking a customer to try a new purchase. A site rollback cannot undo a
 payment or retrieve an already downloaded file. Preserve manual order support.
 
-For code rollback, revert the reviewed conversion/checkout commit and redeploy
+For code rollback, prepare a reviewed patch against the deployed commit that
+removes only the checkout changes while preserving the merged smart store,
+homepage and service intake. Do not revert the main-integration merge as a
+whole: that would discard unrelated main work. Redeploy only after approval,
 through the guarded process. Register each removed public checkout file in
 `deployment/retired-public-paths.txt`; do not delete a broad directory or restore
 an old whole-site snapshot. Preserve the service-intake work and private leads.

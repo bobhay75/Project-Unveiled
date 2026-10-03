@@ -138,6 +138,7 @@ store/checkout/return.php
 store/checkout/start.php
 store/index.html
 store/store.css
+store/store.js
 truth/case-000001.php
 truth/case-000002.php
 truth/case-000003.php

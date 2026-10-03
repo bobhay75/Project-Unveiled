@@ -32,10 +32,9 @@ origin/method/body limits, honeypot behavior, rate limits, owner authorization,
 escaped output, private file modes, expiry, and corrupt/symlink rejection. It
 does not call production or send messages. CI must pass on the current PR head.
 
-This workspace has no PHP binary; local checks that skip PHP are not sufficient
-evidence. Use the mandatory contact-flow CI step and existing PHP release checks.
-The cloud browser rejected local file previews, so mobile visual and keyboard
-acceptance of the changed form remains a release gate.
+Local checks that skip PHP are not sufficient evidence. Use the mandatory
+contact-flow CI step and existing PHP release checks, and record mobile visual
+and keyboard acceptance of the changed form separately.
 
 ## Approval and deployment
 
@@ -45,7 +44,9 @@ tab through the labelled fields and submit button, verify error focus and
 retained input, and inspect the confirmation page. Do not treat a static
 confirmation-page visit as evidence that a brief was stored.
 
-After approval and all gates, merge PR #41. In cPanel, use the **Project-Unveiled**
+PR #43 includes this PR #41 work; do not merge or deploy the older branch
+separately. After approval and all gates, use the reviewed PR #43 candidate.
+In cPanel, use the **Project-Unveiled**
 repository at `/home/bobsome1/repositories/Project-Unveiled`, branch `main`.
 Update from remote, verify the approved merge SHA, then deploy with the existing
 guarded `.cpanel.yml` policy. The deployment target is `/home/bobsome1/public_html`.
@@ -64,8 +65,9 @@ Verify on production:
 
 ## Rollback
 
-Revert this PR's changes in Git and redeploy the resulting reviewed commit with
-the guarded deploy script. Register new public paths in
+Prepare a reviewed, scoped rollback of the intake changes that preserves the
+restored homepage and smart store, then deploy only after approval with the
+guarded deploy script. Register removed public paths in
 `deployment/retired-public-paths.txt` if the revert removes them, so the allowlist
 deployment removes only those exact paths. Do not broadly delete `public_html`.
 Preserve the private `site-private/trust-worthy/leads.json` queue and its secrets;

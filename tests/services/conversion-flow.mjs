@@ -159,8 +159,8 @@ assert.match(services, /name="email" type="email" autocomplete="email" inputmode
 assert.match(services, /type="hidden" name="offer" value="" data-selected-offer-id/);
 assert(!/<a\b[^>]*href="https?:\/\/[^"\s]*paypal/i.test(services), 'Services must request scope before payment');
 assert(!/<a\b[^>]*href="https?:\/\/[^"\s]*paypal/i.test(store), 'Store must use guarded checkout or scope request');
-assert.equal((store.match(/href="\/store\/checkout\/index.php"/g) || []).length, 2);
-assert.equal((store.match(/href="\/services\/\?offer=visibility-starter#contact"/g) || []).length, 2);
+assert.equal((store.match(/href="\/store\/checkout\/index.php"/g) || []).length, 1);
+assert.equal((store.match(/href="\/services\/\?offer=visibility-starter#contact"/g) || []).length, 1);
 assert.match(services, /href="\/services\/\?offer=visibility-starter#contact"/);
 assert.match(store, /Digital edition · \$7/);
 assert.match(store, /Fixed-scope starter · \$250/);
