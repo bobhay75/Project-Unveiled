@@ -152,5 +152,5 @@ function pu_journey_footer(string $unsubscribeToken): string
 {
     $address = pu_journey_mailing_address();
     $unsubscribe = 'https://bobsome1.com/book/unsubscribe.php?token=' . rawurlencode($unsubscribeToken);
-    return "\n\n---\nProject Unveiled\n{$address}\nhttps://bobsome1.com\n\nYou requested this email at bobsome1.com.\nUnsubscribe: {$unsubscribe}\n";
+    return "\n\n---\nProject Unveiled\n{$address}\nhttps://bobsome1.com\n\nWatch-Dawg AI — A Bobsome1 production\nhttps://watchdawgai.com\n\nYou requested this email at bobsome1.com.\nUnsubscribe: {$unsubscribe}\n";
 }
