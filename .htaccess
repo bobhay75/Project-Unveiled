@@ -38,6 +38,9 @@ Options -Indexes
 
 RewriteEngine On
 
+# OOIS source is not a deployed web build.
+RewriteRule ^oois/field-mapper(?:/|$) - [F,L,NC]
+
 # Keep one secure, indexable public origin.
 RewriteCond %{HTTPS} !=on [OR]
 RewriteCond %{HTTP_HOST} !^bobsome1\.com$ [NC]
@@ -91,14 +94,15 @@ RewriteRule (^|/)[^/]*BACKUP[^/]*\.html$ - [F,L,NC]
   Header always set Allow "GET, HEAD" env=REDIRECT_PU_READ_ONLY_METHOD_DENIED
   Header always set X-Content-Type-Options "nosniff"
   Header always set Referrer-Policy "strict-origin-when-cross-origin"
-  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=()"
+  SetEnvIf Request_URI "^/oois/app(?:/|$)" OOIS_APP=1
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=()" env=!OOIS_APP
   Header always set X-Frame-Options "SAMEORIGIN"
   Header always set X-Permitted-Cross-Domain-Policies "none"
   Header always set Strict-Transport-Security "max-age=31536000"
   <IfModule mod_setenvif.c>
     # The lab declares a stricter route-specific policy with approved research
     # providers. Avoid intersecting it with this broader public-site policy.
-    SetEnvIf Request_URI "^/truth/lab(?:/|$)" PU_LAB_SCOPE=1
+    SetEnvIf Request_URI "^/(?:truth/lab|oois/app)(?:/|$)" PU_LAB_SCOPE=1
     Header always set Content-Security-Policy "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; frame-src 'none'; form-action 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self'; media-src 'self' blob:; worker-src 'self' blob:; manifest-src 'self'; upgrade-insecure-requests" env=!PU_LAB_SCOPE
   </IfModule>
 </IfModule>
