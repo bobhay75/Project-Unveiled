@@ -17,6 +17,13 @@ const BC_DOWNLOAD_LIMIT = 10;
 const BC_PAID_RETENTION = 15552000; // 180 days after verified capture.
 const BC_ABANDONED_RETENTION = 604800; // Seven days after checkout creation.
 const BC_HOURLY_CREATION_LIMIT = 60;
+const BC_BUNDLE_MAX_BYTES = 52428800; // Archive and any one expanded file: 50 MiB.
+const BC_BUNDLE_MAX_EXPANDED_BYTES = 104857600; // Entire expanded bundle: 100 MiB.
+const BC_BUNDLE_MAX_ENTRIES = 512;
+const BC_BUNDLE_MANIFEST = 'bundle-manifest.json';
+const BC_BUNDLE_DOWNLOAD_NAME = 'Project-Unveiled-Complete-Study-Bundle.zip';
+const BC_BUNDLE_CONTENT_TYPE = 'application/zip';
+const BC_BUNDLE_COMPONENTS = ['illustrated-ebook', 'timeline', 'deep-study-guide', 'no-more-milk'];
 
 final class BcException extends RuntimeException
 {
@@ -81,16 +88,197 @@ function bc_validate_config(array $config, string $publicRoot): array
     }
     $config['private_dir'] = bc_private_path((string)($config['private_dir'] ?? ''), $publicRoot, true);
     $config['asset_path'] = bc_private_path((string)($config['asset_path'] ?? ''), $publicRoot);
-    $size = filesize($config['asset_path']);
-    $handle = fopen($config['asset_path'], 'rb');
-    $magic = $handle === false ? '' : fread($handle, 5);
-    if (is_resource($handle)) fclose($handle);
-    if (!is_int($size) || $size < 100 || $size > 52428800 || $magic !== '%PDF-'
-        || !hash_equals($config['asset_sha256'], (string)hash_file('sha256', $config['asset_path']))) {
-        bc_fail('The approved digital edition is not ready for automatic delivery.');
-    }
+    $config['bundle'] = bc_validate_bundle($config);
     if (!function_exists('curl_init')) bc_fail('Automatic checkout is not available on this server yet.');
     return $config;
+}
+
+/* The archive is owner-reviewed content, never executable server code. It is
+ * checked in place and streamed as an attachment; it is NEVER extracted here.
+ */
+function bc_exact_keys(array $value, array $keys): bool
+{
+    $actual = array_keys($value); sort($actual); sort($keys);
+    return $actual === $keys;
+}
+
+function bc_bundle_path(string $path): bool
+{
+    if (strlen($path) > 200 || !preg_match('#^[A-Za-z0-9][A-Za-z0-9._/-]*$#D', $path)) return false;
+    $segments = explode('/', $path);
+    if (count($segments) > 8) return false;
+    foreach ($segments as $part) {
+        if ($part === '' || $part === '.' || $part === '..' || str_ends_with($part, '.')
+            || preg_match('/^(?:con|prn|aux|nul|com[1-9]|lpt[1-9])(?:\.|$)/i', $part)) return false;
+    }
+    return in_array(strtolower(pathinfo($path, PATHINFO_EXTENSION)),
+        ['pdf', 'epub', 'html', 'css', 'js', 'json', 'jpg', 'jpeg', 'png', 'svg', 'webp', 'gif', 'woff2', 'txt', 'md'], true);
+}
+
+function bc_bundle_unavailable(): never
+{
+    bc_fail('The complete study bundle needs owner review and delivery verification before automatic checkout.');
+}
+
+function bc_validate_bundle(array $config): array
+{
+    $approved = $config['owner_approved_sha256'] ?? null;
+    $approvedAt = $config['owner_approved_at'] ?? null;
+    if (!is_string($approved) || !preg_match('/^[a-f0-9]{64}$/D', $approved)
+        || !hash_equals($config['asset_sha256'], $approved)
+        || !is_string($approvedAt) || !preg_match('/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/D', $approvedAt)) bc_bundle_unavailable();
+    $date = DateTimeImmutable::createFromFormat('!Y-m-d\TH:i:s\Z', $approvedAt, new DateTimeZone('UTC'));
+    if ($date === false || $date->format('Y-m-d\TH:i:s\Z') !== $approvedAt || $date->getTimestamp() > time() + 300) bc_bundle_unavailable();
+    if (!class_exists('ZipArchive')) bc_fail('Automatic bundle checkout requires the PHP ZIP extension.');
+    $path = $config['asset_path'];
+    $size = filesize($path);
+    if (!is_int($size) || $size < 100 || $size > BC_BUNDLE_MAX_BYTES
+        || !hash_equals($config['asset_sha256'], (string)hash_file('sha256', $path))) bc_bundle_unavailable();
+    $zip = new ZipArchive();
+    if ($zip->open($path, ZipArchive::RDONLY | ZipArchive::CHECKCONS) !== true) bc_bundle_unavailable();
+    try {
+        if ($zip->numFiles < 5 || $zip->numFiles > BC_BUNDLE_MAX_ENTRIES) bc_bundle_unavailable();
+        $entries = []; $folded = []; $expanded = 0;
+        for ($i = 0; $i < $zip->numFiles; $i++) {
+            $stat = $zip->statIndex($i);
+            if (!is_array($stat) || !is_string($stat['name'] ?? null) || !bc_bundle_path($stat['name'])
+                || !is_int($stat['size'] ?? null) || $stat['size'] < 1 || $stat['size'] > BC_BUNDLE_MAX_BYTES
+                || !in_array($stat['comp_method'] ?? null, [0, 8], true)
+                || ($stat['encryption_method'] ?? 0) !== 0
+                || isset($folded[strtolower($stat['name'])])) bc_bundle_unavailable();
+            $opsys = 0; $attributes = 0;
+            if (!$zip->getExternalAttributesIndex($i, $opsys, $attributes)
+                || ($attributes & 0x10) !== 0
+                || !in_array($opsys, [0, 3], true)
+                || !in_array(($attributes >> 16) & 0170000, [0, 0100000], true)) bc_bundle_unavailable();
+            $expanded += $stat['size'];
+            if ($expanded > BC_BUNDLE_MAX_EXPANDED_BYTES) bc_bundle_unavailable();
+            $folded[strtolower($stat['name'])] = true;
+            $entries[$stat['name']] = $stat;
+        }
+        // Every listed path is a file. An ancestor file cannot also become
+        // an extraction directory, including on case-insensitive devices.
+        foreach (array_keys($folded) as $name) {
+            $parent = dirname($name);
+            while ($parent !== '.') {
+                if (isset($folded[$parent])) bc_bundle_unavailable();
+                $parent = dirname($parent);
+            }
+        }
+        if (!isset($entries[BC_BUNDLE_MANIFEST]) || $entries[BC_BUNDLE_MANIFEST]['size'] > 65536) bc_bundle_unavailable();
+        $manifestBytes = $zip->getFromName(BC_BUNDLE_MANIFEST, 65537);
+        if (!is_string($manifestBytes) || strlen($manifestBytes) !== $entries[BC_BUNDLE_MANIFEST]['size']) bc_bundle_unavailable();
+        try { $manifest = json_decode($manifestBytes, true, 16, JSON_THROW_ON_ERROR); }
+        catch (JsonException $error) { bc_bundle_unavailable(); }
+        if (!is_array($manifest) || !bc_exact_keys($manifest, ['schema', 'product', 'release_id', 'components'])
+            || ($manifest['schema'] ?? null) !== 1 || ($manifest['product'] ?? null) !== BC_SKU
+            || !is_string($manifest['release_id'] ?? null) || !preg_match('/^[a-z0-9][a-z0-9._-]{0,79}$/D', $manifest['release_id'])
+            || !is_array($manifest['components'] ?? null) || !array_is_list($manifest['components'])
+            || count($manifest['components']) !== count(BC_BUNDLE_COMPONENTS)) bc_bundle_unavailable();
+        $seenComponents = []; $expected = [BC_BUNDLE_MANIFEST => true];
+        foreach ($manifest['components'] as $component) {
+            if (!is_array($component) || !bc_exact_keys($component, ['id', 'entrypoint', 'files'])
+                || !in_array($component['id'], BC_BUNDLE_COMPONENTS, true) || isset($seenComponents[$component['id']])
+                || !is_string($component['entrypoint']) || !is_array($component['files'])
+                || !array_is_list($component['files']) || count($component['files']) < 1) bc_bundle_unavailable();
+            $id = $component['id']; $seenComponents[$id] = true;
+            $entrypoint = $component['entrypoint'];
+            if (($id === 'timeline' && $entrypoint !== 'timeline/index.html')
+                || ($id !== 'timeline' && !str_ends_with($entrypoint, '.pdf'))) bc_bundle_unavailable();
+            $hasEntrypoint = false;
+            foreach ($component['files'] as $file) {
+                if (!is_array($file) || !bc_exact_keys($file, ['path', 'bytes', 'sha256'])
+                    || !is_string($file['path']) || !bc_bundle_path($file['path']) || !str_starts_with($file['path'], $id . '/')
+                    || isset($expected[$file['path']]) || !isset($entries[$file['path']])
+                    || !is_int($file['bytes']) || $file['bytes'] !== $entries[$file['path']]['size']
+                    || !is_string($file['sha256']) || !preg_match('/^[a-f0-9]{64}$/D', $file['sha256'])) bc_bundle_unavailable();
+                $stream = $zip->getStream($file['path']);
+                if ($stream === false) bc_bundle_unavailable();
+                try {
+                    $context = hash_init('sha256'); $read = 0; $magic = '';
+                    while (!feof($stream)) {
+                        $chunk = fread($stream, 65536);
+                        if ($chunk === false || ($chunk === '' && !feof($stream))) bc_bundle_unavailable();
+                        $read += strlen($chunk);
+                        if ($read > $file['bytes']) bc_bundle_unavailable();
+                        if (strlen($magic) < 5) $magic .= substr($chunk, 0, 5 - strlen($magic));
+                        hash_update($context, $chunk);
+                    }
+                    if ($read !== $file['bytes'] || !hash_equals($file['sha256'], hash_final($context))) bc_bundle_unavailable();
+                    if ($file['path'] === $entrypoint) {
+                        $hasEntrypoint = true;
+                        if ($read < 100 || ($id !== 'timeline' && $magic !== '%PDF-')) bc_bundle_unavailable();
+                    }
+                } finally { fclose($stream); }
+                $expected[$file['path']] = true;
+            }
+            if (!$hasEntrypoint) bc_bundle_unavailable();
+        }
+        if (count($expected) !== count($entries)
+            || !hash_equals($config['asset_sha256'], (string)hash_file('sha256', $path))) bc_bundle_unavailable();
+        return ['release_id' => $manifest['release_id'], 'manifest_sha256' => hash('sha256', $manifestBytes),
+            'bytes' => $size, 'content_type' => BC_BUNDLE_CONTENT_TYPE, 'download_name' => BC_BUNDLE_DOWNLOAD_NAME];
+    } finally { $zip->close(); }
+}
+
+function bc_require_order_asset(array $config, array $order): void
+{
+    if (($order['sku'] ?? null) !== BC_SKU || !is_string($order['asset_sha256'] ?? null)
+        || !hash_equals($config['asset_sha256'], $order['asset_sha256'])
+        || ($order['bundle_release_id'] ?? null) !== $config['bundle']['release_id']
+        || ($order['bundle_manifest_sha256'] ?? null) !== $config['bundle']['manifest_sha256']) {
+        bc_fail('This order needs its original approved bundle. Do not pay again; contact purchase support.', 409);
+    }
+}
+
+/* Snapshot verified bytes privately before any provider check. An open source
+ * handle alone would still permit an in-place upload to alter later delivery.
+ * The snapshot is unlinked immediately and removed automatically on close.
+ */
+function bc_open_delivery_file(array $config): mixed
+{
+    $source = fopen($config['asset_path'], 'rb');
+    if ($source === false) bc_bundle_unavailable();
+    $snapshot = null; $snapshotPath = null;
+    try {
+        $stat = fstat($source);
+        if (!is_array($stat) || ($stat['mode'] & 0170000) !== 0100000 || ($stat['mode'] & 0077) !== 0
+            || $stat['size'] !== $config['bundle']['bytes']) bc_bundle_unavailable();
+        $snapshotPath = $config['private_dir'] . '/.delivery-' . bin2hex(random_bytes(16)) . '.tmp';
+        $mask = umask(0077);
+        try { $snapshot = fopen($snapshotPath, 'x+b'); } finally { umask($mask); }
+        if ($snapshot === false) bc_bundle_unavailable();
+        $snapshotStat = fstat($snapshot);
+        if (!is_array($snapshotStat) || ($snapshotStat['mode'] & 0077) !== 0 || !unlink($snapshotPath)) bc_bundle_unavailable();
+        $snapshotPath = null;
+        $context = hash_init('sha256'); $read = 0;
+        while (!feof($source)) {
+            $chunk = fread($source, 65536);
+            if ($chunk === false || ($chunk === '' && !feof($source))) bc_bundle_unavailable();
+            $read += strlen($chunk);
+            if ($read > $config['bundle']['bytes']) bc_bundle_unavailable();
+            hash_update($context, $chunk);
+            for ($offset = 0; $offset < strlen($chunk); $offset += $written) {
+                $written = fwrite($snapshot, substr($chunk, $offset));
+                if ($written === false || $written === 0) bc_bundle_unavailable();
+            }
+        }
+        if ($read !== $config['bundle']['bytes'] || !hash_equals($config['asset_sha256'], hash_final($context))
+            || !fflush($snapshot) || !rewind($snapshot)) bc_bundle_unavailable();
+        $verified = $snapshot; $snapshot = null;
+        return $verified;
+    } finally {
+        fclose($source);
+        if (is_resource($snapshot)) fclose($snapshot);
+        if (is_string($snapshotPath) && is_file($snapshotPath)) unlink($snapshotPath);
+    }
+}
+
+function bc_download_headers(array $config): array
+{
+    return ['Content-Type: ' . BC_BUNDLE_CONTENT_TYPE,
+        'Content-Disposition: attachment; filename="' . BC_BUNDLE_DOWNLOAD_NAME . '"',
+        'Content-Length: ' . (string)$config['bundle']['bytes']];
 }
 
 function bc_headers(): void
@@ -277,13 +465,19 @@ function bc_session_order(array $config): array
 {
     $id = $_SESSION['order_id'] ?? null;
     if (!is_string($id)) bc_fail('Your checkout session expired. If you paid, contact purchase support.', 400);
-    return bc_order($config, $id);
+    $order = bc_order($config, $id);
+    bc_require_order_asset($config, $order);
+    return $order;
 }
 
-function bc_new_order(string $id, string $token, int $now): array
+function bc_new_order(string $id, string $token, int $now, array $config): array
 {
     if (!bc_id($id) || !preg_match('/^[a-f0-9]{64}$/D', $token)) bc_fail();
+    if (!is_string($config['asset_sha256'] ?? null) || !preg_match('/^[a-f0-9]{64}$/D', $config['asset_sha256'])
+        || !is_string($config['bundle']['release_id'] ?? null) || !is_string($config['bundle']['manifest_sha256'] ?? null)) bc_bundle_unavailable();
     return ['id' => $id, 'sku' => BC_SKU, 'state' => 'creating', 'created_at' => $now,
+        'asset_sha256' => $config['asset_sha256'], 'bundle_release_id' => $config['bundle']['release_id'],
+        'bundle_manifest_sha256' => $config['bundle']['manifest_sha256'],
         'checkout_expires_at' => $now + BC_CHECKOUT_TTL, 'paypal_order_id' => null,
         'capture_id' => null, 'approval_url' => null, 'paid_at' => null, 'capture_attempted_at' => null,
         'download_expires_at' => null, 'download_count' => 0,
@@ -317,14 +511,15 @@ function bc_capture_may_charge(array $order, int $now): bool
 
 function bc_manual_content(): string
 {
-    return '<p><strong>Project Unveiled digital edition · $7 USD</strong></p><p>Automatic delivery is not active yet. You can still purchase using the existing PayPal path and personal delivery.</p><p><a href="https://paypal.me/Bobsome1975/7USD" rel="noopener noreferrer">Pay $7 USD with PayPal</a></p><p>Current fulfillment is personal: after payment, send the PayPal transaction number and delivery email to <a href="mailto:thebobsomest1@gmail.com?subject=Project%20Unveiled%20digital%20edition&amp;body=PayPal%20transaction%20number%3A%0ADelivery%20email%3A%0A">Robert</a>. Delivery is not instant yet.</p><p>If you have already paid, do not pay again. Send your existing PayPal transaction number for verification.</p><p><a href="/book/read/">Read free before buying</a></p>';
+    return '<p class="notice"><strong>Complete study bundle: owner review pending.</strong> The illustrated ebook, timeline, Deep Study Guide, and No More Milk advanced theology kit must receive Robert’s approval before automatic release.</p><p><strong>Existing digital edition · $7 USD · personal delivery</strong></p><p>Contact Robert before payment to confirm the available edition and exactly what is included. Automatic bundle delivery is not active yet.</p><p><a href="https://paypal.me/Bobsome1975/7USD" rel="noopener noreferrer">Pay $7 USD with PayPal</a></p><p>Current fulfillment is personal: after payment, send the PayPal transaction number and delivery email to <a href="mailto:thebobsomest1@gmail.com?subject=Project%20Unveiled%20digital%20edition&amp;body=PayPal%20transaction%20number%3A%0ADelivery%20email%3A%0A">Robert</a>. Delivery is not instant yet.</p><p>If you have already paid, do not pay again. Send your existing PayPal transaction number for verification.</p><p><a href="/book/read/">Read free before buying</a></p>';
 }
 
 function bc_create_payload(array $config, array $order): array
 {
+    bc_require_order_asset($config, $order);
     return ['intent' => 'CAPTURE', 'purchase_units' => [[
         'reference_id' => BC_SKU, 'custom_id' => $order['id'], 'invoice_id' => 'PU-' . $order['id'],
-        'description' => 'Project Unveiled digital edition (PDF)',
+        'description' => 'Project Unveiled complete study bundle (ZIP)',
         'payee' => ['merchant_id' => $config['merchant_id']],
         'amount' => ['currency_code' => BC_CURRENCY, 'value' => BC_AMOUNT],
     ]], 'payment_source' => ['paypal' => ['experience_context' => [
@@ -466,5 +661,5 @@ function bc_success(array $order): never
     $token = $_SESSION['download_token'] ?? '';
     if (!is_string($token)) bc_fail();
     bc_download_eligible($order, $token, time());
-    bc_page('Your digital edition is ready', '<p>Your $7 USD payment was verified with PayPal. Download your Project Unveiled PDF below.</p><form action="download.php" method="post"><input type="hidden" name="csrf" value="' . bc_h((string)$_SESSION['csrf']) . '"><input type="hidden" name="token" value="' . bc_h($token) . '"><button type="submit">Download my digital edition</button></form><p class="small">Keep this browser session open until your download completes. Access lasts 24 hours with up to 10 download attempts. Save the PDF to your device. If you lose access, contact purchase support with your PayPal receipt. No marketing subscription was added.</p>');
+    bc_page('Your complete study bundle is ready', '<p>Your $7 USD payment was verified with PayPal. Download one ZIP containing the illustrated ebook, timeline, Deep Study Guide, and No More Milk advanced theology kit.</p><form action="download.php" method="post"><input type="hidden" name="csrf" value="' . bc_h((string)$_SESSION['csrf']) . '"><input type="hidden" name="token" value="' . bc_h($token) . '"><button type="submit">Download my complete study bundle</button></form><p class="small">Keep this browser session open until your download completes. Access lasts 24 hours with up to 10 download attempts. Save the ZIP to your device and extract it to read the PDFs and open the offline timeline. If you lose access, contact purchase support with your PayPal receipt. No marketing subscription was added.</p>');
 }

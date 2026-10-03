@@ -163,6 +163,9 @@ assert.equal((store.match(/href="\/store\/checkout\/index.php"/g) || []).length,
 assert.equal((store.match(/href="\/services\/\?offer=visibility-starter#contact"/g) || []).length, 1);
 assert.match(services, /href="\/services\/\?offer=visibility-starter#contact"/);
 assert.match(store, /Digital edition · \$7/);
+for (const component of ["Illustrated ebook", "Illustrated timeline", "Deep Study Guide", "No More Milk"]) assert.ok(store.includes(component));
+assert.match(store, /Four components in one ZIP download/);
+assert.match(store, /complete package goes to Robert for review before buyer release/);
 assert.match(store, /Fixed-scope starter · \$250/);
 assert.match(store, /Automatic download is offered only when verified-payment delivery is enabled/);
 console.log('Conversion flow passed: safe offer selection, restored input, accessible controls, failure retention, duplicate-click guard, success-only redirect, published prices and scope-first CTAs.');

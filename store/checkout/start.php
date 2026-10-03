@@ -19,7 +19,7 @@ try {
     if (!is_array($order)) {
         $id = bin2hex(random_bytes(16));
         $token = bin2hex(random_bytes(32));
-        $order = bc_new_order($id, $token, $now);
+        $order = bc_new_order($id, $token, $now, $config);
         bc_store($config['private_dir'], static function (array &$ledger) use ($id, $order): void {
             bc_allow_new_order($ledger, null, time());
             if (count($ledger['orders']) >= BC_MAX_RECORDS) bc_fail('Checkout capacity needs an owner review.');

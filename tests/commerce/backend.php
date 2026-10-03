@@ -32,7 +32,9 @@ function fixture(array $order): array
 $temp = sys_get_temp_dir() . '/bobsome1-commerce-test-' . bin2hex(random_bytes(8));
 mkdir($temp, 0700);
 $token = str_repeat('d', 64);
-$local = bc_new_order(str_repeat('a', 32), $token, time());
+$identity = ['asset_sha256' => str_repeat('f', 64), 'bundle' => [
+    'release_id' => 'synthetic-v1', 'manifest_sha256' => str_repeat('e', 64)]];
+$local = bc_new_order(str_repeat('a', 32), $token, time(), $identity);
 $local['paypal_order_id'] = 'ORDERTEST1234567';
 $local['state'] = 'created';
 try {
@@ -40,10 +42,10 @@ try {
     check(!str_contains(json_encode($local), $token), 'Raw token must not enter record');
     check($local['create_request_id'] !== $local['capture_request_id'], 'API operation IDs differ');
     check(strlen($local['create_request_id']) <= 38, 'Idempotency key compatible with conservative limit');
-    rejects(fn() => bc_new_order('invalid', $token, time()), 'Invalid local ID');
-    rejects(fn() => bc_new_order(str_repeat('a', 32), 'short', time()), 'Invalid token entropy');
+    rejects(fn() => bc_new_order('invalid', $token, time(), $identity), 'Invalid local ID');
+    rejects(fn() => bc_new_order(str_repeat('a', 32), 'short', time(), $identity), 'Invalid token entropy');
 
-    $payload = bc_create_payload(['merchant_id' => 'MERCHANTTEST1', 'price' => '0.01'], $local + ['price' => '0.01']);
+    $payload = bc_create_payload($identity + ['merchant_id' => 'MERCHANTTEST1', 'price' => '0.01'], $local + ['price' => '0.01']);
     check($payload['purchase_units'][0]['amount'] === ['currency_code' => 'USD', 'value' => '7.00'], 'Price is server owned');
     check($payload['purchase_units'][0]['payee']['merchant_id'] === 'MERCHANTTEST1', 'Payee explicitly pinned');
     check($payload['payment_source']['paypal']['experience_context']['return_url'] === 'https://bobsome1.com/store/checkout/return.php', 'Canonical return URL');
@@ -123,6 +125,8 @@ try {
     check(!bc_manual_allowed(['bobsome1_checkout' => 'existing'], []), 'Existing session cannot show new manual payment CTA');
     check(!bc_manual_allowed([], ['order_id' => $local['id']]), 'Existing order cannot show new manual payment CTA');
     check(str_contains(bc_manual_content(), 'https://paypal.me/Bobsome1975/7USD'), 'Existing approved PayPal link preserved');
+    check(str_contains(bc_manual_content(), 'Complete study bundle: owner review pending.'), 'Pending bundle review is explicit');
+    check(str_contains(bc_manual_content(), 'Contact Robert before payment'), 'Manual purchase scope confirmed before payment');
     check(str_contains(bc_manual_content(), 'Delivery is not instant yet.'), 'Manual fulfillment limitation remains explicit');
     check(bc_capture_may_charge($local, time()), 'Fresh approved checkout may capture');
     check(!bc_capture_may_charge($local, $local['checkout_expires_at']), 'Expired checkout is read-only reconciliation');
@@ -162,10 +166,10 @@ try {
     file_put_contents($temp . '/orders.json', '{malformed');
     rejects(fn() => bc_store($temp, static fn(array &$ledger) => null), 'Corrupt ledger fails closed');
     file_put_contents($temp . '/orders.json', $contents);
-    bc_store($temp, static function (array &$ledger) use ($token): void {
-        $old = bc_new_order(str_repeat('b', 32), $token, time() - BC_ABANDONED_RETENTION - 1);
+    bc_store($temp, static function (array &$ledger) use ($token, $identity): void {
+        $old = bc_new_order(str_repeat('b', 32), $token, time() - BC_ABANDONED_RETENTION - 1, $identity);
         $ledger['orders'][$old['id']] = $old;
-        $oldPaid = bc_new_order(str_repeat('c', 32), $token, time() - BC_PAID_RETENTION - 20);
+        $oldPaid = bc_new_order(str_repeat('c', 32), $token, time() - BC_PAID_RETENTION - 20, $identity);
         $oldPaid['state'] = 'created';
         $oldPaid = bc_paid_transition($oldPaid, 'OLDCAPTURE123456', time() - BC_PAID_RETENTION - 1);
         $ledger['orders'][$oldPaid['id']] = $oldPaid;
@@ -188,6 +192,7 @@ try {
         foreach ($children as $pid) { pcntl_waitpid($pid, $status); check(pcntl_wexitstatus($status) === 0, 'Concurrent store worker passed'); }
         check(bc_order(['private_dir' => $temp], $local['id'])['download_count'] === 20, 'Concurrent changes are not lost');
     }
+    require __DIR__ . '/bundle-contract.php';
     echo "Commerce backend: {$checks} checks passed (offline; no PayPal calls).\n";
 } finally {
     // Only this exact, randomly named test directory and its known children.
