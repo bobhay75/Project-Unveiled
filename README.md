@@ -4,7 +4,8 @@ The source for [bobsome1.com](https://bobsome1.com), including the complete publ
 
 ## Public entry points
 
-- `/` — Project homepage
+- `/` — Bobsome1 parent homepage and project directory
+- `/book/` — Project Unveiled book home
 - `/book/read/` — Complete reader and table of contents
 - `/book/read/chapter-01.html` — Start reading
 - `/book/timeline.html` — Interactive historical timeline
@@ -13,6 +14,8 @@ The source for [bobsome1.com](https://bobsome1.com), including the complete publ
 - `/truth/` — Published Truth Trials and question intake
 - `/truth/lab/` — Local-first Trust-Worthy claim-mapping and Source Sweep workbench
 - `/services/` — Bobsome1 Media + IT services and selected work
+- `/services/#contact` — Private problem brief form
+- `/owner/leads.php` — Protected owner inbox for problem briefs
 - `/store/` — Digital edition, fixed-scope service checkout, and partner paths
 
 ## Hosting
@@ -28,13 +31,15 @@ The production site targets Apache with PHP on Namecheap shared hosting. Private
 
 ## Verification
 
-Run the repository audit from its parent workspace:
+Run the repository checks from its root:
 
 ```bash
-python3 tools/audit_site.py worksite
-node --check worksite/book/signup-widget.js
-node --check worksite/book/reader-community.js
-node --check worksite/project-unveiled-analytics/tracker.js
+python3 scripts/validate_site.py
+node --check book/signup-widget.js
+node --check book/reader-community.js
+node --check project-unveiled-analytics/tracker.js
+node --check services/contact.js
+python3 tests/services/contact-flow.py
 ```
 
 The current public-site audit covers local links, linked files, URL fragments, duplicate IDs, H1/title counts, and JSON-LD syntax. Run `bash tests/trust-worthy-lab/run_all.sh` for the Trust-Worthy release, research-engine, provenance, hostile-input, privacy, and rollback contract.
