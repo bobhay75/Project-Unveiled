@@ -5,6 +5,7 @@ import vm from 'node:vm';
 const root = new URL('../../', import.meta.url);
 const html = fs.readFileSync(new URL('store/index.html', root), 'utf8');
 const source = fs.readFileSync(new URL('store/store.js', root), 'utf8');
+const css = fs.readFileSync(new URL('store/store.css', root), 'utf8');
 const manifest = fs.readFileSync(new URL('deployment/public-files.txt', root), 'utf8');
 const attr = (markup, name) => markup.match(new RegExp(`\\b${name}="([^"]*)"`))?.[1];
 const buttons = [...html.matchAll(/<button\b([^>]*)>([\s\S]*?)<\/button>/g)];
@@ -85,6 +86,7 @@ assert.match(html, /<script\b[^>]*src="\/store\/store\.js(?:\?[^\"]*)?"[^>]*\bde
 assert.match(html, /<dialog\b[^>]*id="walkthrough-dialog"[^>]*aria-labelledby="walk-title"/);
 assert.match(html, /class="intent-status"[^>]*aria-live="polite"/);
 assert.match(html, /href="#choose"/);
+assert.match(css, /#walkthrough-dialog\s+\[hidden\]\s*\{\s*display:\s*none\s*\}/, 'Final-step controls must stay hidden despite .button display styling');
 assert.equal(manifest.split(/\r?\n/).filter(path => path.trim() === 'store/store.js').length, 1, 'Deploy the smart-store script exactly once');
 for (const path of ['store/index.html', 'store/store.css', 'store/checkout/index.php', 'services/contact.js', 'services/contact-submit.php']) {
   assert(manifest.split(/\r?\n/).includes(path), `Missing integrated public asset: ${path}`);
