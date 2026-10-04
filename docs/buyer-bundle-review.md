@@ -1,54 +1,80 @@
-# Project Unveiled buyer bundle — owner review candidate
+# Project Unveiled buyer bundle — owner-approved content candidate
 
-Status: **OWNER REVIEW PENDING. Automatic checkout remains disabled.**
+Status: **CONTENT APPROVED FOR THE EXACT V3 ARCHIVE. Automatic checkout remains disabled.**
 
-The October 2 product scope contains four components. This October 3 candidate
-aligns draft PR #43 with that scope; it does not approve content, enable payments,
-merge, or deploy. Price remains $7 USD; no pricing decision was introduced.
+Robert approved the exact corrected v3 content candidate on October 4, 2026.
+This approval covers content only. It does not enable payments, authorize merchant
+configuration, merge, or production deployment. Price remains $7 USD; no pricing
+decision was introduced.
 
-## Candidate delivered privately to Robert
+## Exact owner-approved candidate
 
-Release ID: `2026-10-03-owner-review-v2`
+Release ID: `2026-10-04-owner-review-v3`
 
-Archive: `Project_Unveiled_Complete_Study_Bundle_Review_v2.zip`
+Archive: `Project_Unveiled_Complete_Study_Bundle_Review_v3.zip`
 
-- Size: 33,690,194 bytes.
-- SHA-256: `d61bea6ee8c3a8e131ff26b2ed179df45d03c997987870a6459e44ec0faf847b`.
-- Manifest SHA-256: `504376ada0f28e84ec24d214a40aca4d75f8f921de089b2251cc8eb059d2d5dc`.
-- These identify a **review candidate**, not an approved sale asset.
-- No paid ZIP, paid companion content, private configuration, or customer data is committed.
+- Size: 39,706,890 bytes.
+- SHA-256: `ce4dda8bbe1cb8874229737ba5293e62f6c0346cc116b759b9832a4fca51a9a6`.
+- Manifest SHA-256: `3945ae9fd64af475ddee214e960e847e026201c1c1cee666463eb2ef3336dcd3`.
+- Owner approval applies only to these exact archive bytes/hash.
+- Any changed archive requires a new complete review and approval.
+- No paid ZIP, private merchant configuration, credentials, or customer data is committed to Git.
 
-| Component | Included form | Provenance / review state |
+| Component | Included form | Approved v3 scope |
 |---|---|---|
-| Illustrated ebook | 197-page PDF; existing reflowable EPUB also included | Preserves all 183 pages of recovered `Project_Unveiled_Complete_Ebook_Polished.pdf` and adds one edition note and 13 chapter art pages from the online reader. Extracted original page text/order verified unchanged. Original printed page numbers retained; PDF bookmarks target chapters. |
-| Illustrated timeline | Offline interactive HTML, 10 local WebP images, 11-page PDF | Uses all ten original event records from `book/timeline.html` at `ea1a95e5d6acfa91ae1250a2117eb49fe12e987a`; local image paths adapted, no external scripts or background requests. |
-| Deep Study Guide | 12-page PDF | Newly written eight-week companion, all thirteen chapters, Scripture, exercises, source checks, facilitator guidance and worked examples. |
-| No More Milk | 8-page PDF | Newly written six-part advanced kit beginning “In the beginning…” and “The Way Before Christianity Became an Institution”; close reading, canon, Sabbath/Sunday, source criticism, fruit and evidence dossier. |
+| Illustrated ebook | 197-page PDF; revised reflowable EPUB | 183 manuscript pages plus edition note and 13 illustrations. |
+| Illustrated timeline | Offline ten-event HTML; 11-page printable illustrated overview | 10 events, 40 key points and 10 reflections; printable PDF is explicitly an overview. |
+| Deep Study Guide | 11-page PDF | All eight weeks and all thirteen manuscript chapters retained; previously orphaned introductory page eliminated. |
+| No More Milk | 8-page PDF | Concise six-session theology/evidence workshop with labs, worked answers and final assessment. |
 
-The two companions are new drafts, not recovered owner-approved manuscripts.
-The October 2 chapter title/direction was recovered; its exact earlier wording
-was not. Historical art is a generated reconstruction or symbolic illustration,
-not documentary evidence. The guides distinguish Scripture, the author's
-argument, historical sources, interpretation and disputed claims. They do not
-silently rewrite the source manuscript. This is not a full historical fact-check
-of every manuscript claim.
+The corrected v3 historical/context changes include the 311 Galerius toleration
+before the 313 policy, the instructional-reading category from Athanasius Festal
+Letter 39 section 7, explicit labels for the author's imperial-capture/approved-
+shelf interpretation, exact primary-text loci, and identification of modernized
+Acts wording as paraphrase. Artwork scarcity/collectible labels were removed and
+symbolic or imagined scenes were labeled as such. Buyer-facing internal review
+wording was removed and START-HERE instructions were added.
+
+Only 11 of the 183 manuscript pages were changed for the requested corrections.
+The remaining 172 pages matched the original in extracted text and rendered
+pixels. Page order, printed numbering, thirteen chapters, five appendices and the
+author's theological argument remain.
+
+## Verification of the approved bytes
+
+Full component generation was repeated with identical bytes. Two independently
+assembled ZIPs matched exactly. The final archive passed CRC, all 19 payload file
+sizes and hashes, safe-path/regular-file checks, and complete manifest coverage.
+Expanded size is 48,276,054 bytes and remains within the existing delivery limits.
+
+Changed manuscript pages, all fourteen edition/illustration pages, all nineteen
+companion pages and all eleven timeline pages were visually checked. No clipping,
+missing glyphs, missing sections or broken file paths were found. Unchanged
+manuscript pages passed automated text/raster comparison.
+
+EPUB ZIP integrity, 31 XML documents, spine/resource references and internal
+fragments passed. HTML local links and assets resolve; timeline JavaScript syntax
+passed. The ten events, forty key points, ten reflections and ten timeline
+illustrations remain. Core reading files have no remote asset dependency; external
+historical-source links require internet access.
 
 ## Release contract
 
 See `verified-book-checkout-release.md` for the schema and host contract. Delivery
-still uses one private `asset_path` and `asset_sha256`, now for the complete ZIP.
-It additionally requires explicit `owner_approved_sha256` and
-`owner_approved_at`, all blank in the disabled example configuration. The archive
-must contain exactly four manifest components and only enumerated regular files.
-Every byte count and SHA-256 is checked; missing, altered, unsafe, unsupported or
-unapproved content fails before provider access. New orders bind archive hash,
-manifest hash and release ID; old orders need manual reconciliation. Downloads
-stream an owner-private, unlinked verified snapshot to avoid in-place upload races.
+uses one private `asset_path` and `asset_sha256` for the complete ZIP. Runtime
+activation additionally requires `owner_approved_sha256` to equal the exact v3
+archive digest and `owner_approved_at` to record the actual UTC approval time in
+the private configuration.
 
-PHP ZipArchive is now required in addition to existing extensions. Namecheap
-availability remains a release gate. The application never extracts buyer ZIPs
-on the server. Buyers extract the ZIP on their device and open the PDFs or
-`timeline/index.html`; no local server, account or installation is required.
+The checked-in `store/checkout/config.example.php` intentionally remains disabled
+with blank approval fields. Approval evidence belongs in the owner-controlled
+private operational configuration, not in Git. Do not autofill the public template.
+
+The archive must contain exactly four manifest components and only enumerated
+regular files. Every byte count and SHA-256 is checked; missing, altered, unsafe,
+unsupported or unapproved content fails before provider access. New orders bind
+archive hash, manifest hash and release ID; old orders require manual
+reconciliation. Downloads stream an owner-private, unlinked verified snapshot.
 
 ## Rebuild and verify (offline)
 
@@ -64,42 +90,33 @@ no-more-milk/No_More_Milk.pdf
 ```
 python3 scripts/build-buyer-bundle.py \
   --source /PRIVATE/component-directory \
-  --output /PRIVATE/Project_Unveiled_Complete_Study_Bundle_Review_v2.zip \
-  --release-id 2026-10-03-owner-review-v2
-sha256sum -c /PRIVATE/Project_Unveiled_Complete_Study_Bundle_Review_v2.sha256
+  --output /PRIVATE/Project_Unveiled_Complete_Study_Bundle_Review_v3.zip \
+  --release-id 2026-10-04-owner-review-v3
+sha256sum -c /PRIVATE/Project_Unveiled_Complete_Study_Bundle_Review_v3.sha256
 python3 tests/commerce/bundle-build.py
 php tests/commerce/backend.php
 ```
 
 The builder refuses to overwrite an existing candidate and emits the archive,
-manifest, SHA-256 sidecar and a review record with `enabled: false`, empty approval
-fields and `owner_review_status: pending`. Equal input bytes produce equal ZIP
-bytes. Editing or re-rendering a PDF may change its hash; every changed candidate
-requires fresh review. Never copy the candidate hash into approval fields until
-Robert explicitly approves that exact candidate.
+manifest, SHA-256 sidecar and review record. Equal input bytes produce equal ZIP
+bytes. Editing or re-rendering any component changes the archive hash and requires
+fresh owner review.
 
-## Validation and outstanding gates
+## Remaining activation gates
 
-- Full local Site safety workflow passed on this change set: security/history,
-  deployment/rollback, PHP/JS syntax, site links, service/inbox controls,
-  conversion/smart-store regression and Trust-Worthy release tests.
-- Final checkout suite: **200 offline checks**. Builder suite: **15 tests**,
-  including builder-output acceptance by the PHP validator. No PayPal calls.
-- Actual 33.7 MB candidate passed the PHP archive validator using **synthetic
-  approval in memory solely for local testing**. This did not write an approval
-  record, enable checkout, or validate a merchant/host.
-- PDFs rendered and visually inspected; original 183 manuscript pages verified
-  text-preserved. Timeline passed desktop/mobile/no-JS checks with no network requests.
-- Store browser acceptance passed at 320, 360 and 1440px: all four intents,
-  eight walkthroughs, keyboard focus/Back/Next/Escape, service failure retention,
-  disabled/manual checkout and signed-out owner denial. External requests were
-  blocked; no live payment or host/TLS checks were performed.
-- GitHub exact-head CI must pass for the eventual new commit; prior green run
-  `37150239011` applies only to the starting head `ea1a95e`.
+Content approval for the exact v3 archive is complete. The following remain
+separate and are **not** authorized by content approval:
 
-Still required: Robert's content/illustration approval of the exact bundle,
-private merchant and host checks (including ZIP and snapshot disk space), separately
-authorized sandbox create/approve/capture/download and interrupted/refunded flows,
-configured-payment mobile/keyboard acceptance, and explicit deployment approval.
-Keeping this PR draft and the example disabled does not change production.
-Rollback and old-order handling are documented in the checkout release guide.
+1. Exact-head GitHub Site safety / repository checks after this documentation update.
+2. Private PayPal merchant configuration and matching merchant identity.
+3. Namecheap host verification for PHP 8.1+, cURL, ZipArchive, private writable
+   storage, secure sessions, Apache protections, and snapshot disk capacity.
+4. Separately authorized PayPal sandbox create/approve/capture/download tests,
+   including interrupted/cancelled/refunded and provider/file failure paths.
+5. Configured-payment mobile/keyboard acceptance on the actual target devices/browser.
+6. Explicit production deployment approval.
+
+Native EPUB/Kindle rendering, real Chromebook/Android behavior, live browser
+interaction and PHP checkout execution were not recertified by the private v3
+editorial environment. Keep PR #43 draft and checkout disabled until the remaining
+activation gates pass.
