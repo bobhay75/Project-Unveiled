@@ -1,0 +1,74 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function owner() { return request.auth != null && exists(/databases/$(database)/documents/owners/$(request.auth.uid)); }
+    function validPhotoAt(photos, index, userId, siteId) {
+      return photos.size() <= index || (
+        photos[index] is map &&
+        photos[index].keys().hasAll(['id', 'name', 'path']) &&
+        photos[index].keys().hasOnly(['id', 'name', 'path']) &&
+        photos[index].id is string &&
+        photos[index].id.matches('^[A-Za-z0-9_-]{1,80}$') &&
+        photos[index].name is string &&
+        photos[index].name.size() <= 160 &&
+        photos[index].path is string &&
+        photos[index].path.matches('^users/' + userId + '/sites/' + siteId + '/photos/[A-Za-z0-9_-]+[.]jpg$')
+      );
+    }
+    function validSite(userId, siteId) {
+      let d = request.resource.data;
+      return d.keys().hasAll([
+          'id', 'createdAt', 'updatedAt', 'name', 'type', 'confidence',
+          'coords', 'accuracyMeters', 'notes', 'observedIndicators', 'photos',
+          'isPrivate', 'isSynced', 'cloudRevision', 'ai', 'linkedSites',
+          'createdBy'
+        ]) &&
+        d.keys().hasOnly([
+          'id', 'createdAt', 'updatedAt', 'name', 'type', 'confidence',
+          'coords', 'accuracyMeters', 'notes', 'observedIndicators', 'photos',
+          'isPrivate', 'isSynced', 'cloudRevision', 'ai', 'linkedSites',
+          'createdBy'
+        ]) &&
+        d.id == siteId &&
+        d.id.matches('^[A-Za-z0-9_-]{1,80}$') &&
+        d.createdBy == userId &&
+        d.createdAt is string && d.createdAt.size() <= 40 &&
+        d.updatedAt is string && d.updatedAt.size() <= 40 &&
+        d.name is string && d.name.size() > 0 && d.name.size() <= 120 &&
+        d.type in [
+          'Rock Shelter', 'Cave System', 'Surface Flint Source',
+          'Flint Mine / Quarry', 'Lithic Scatter', 'Habitation Zone',
+          'Mining Debris Field', 'Water Source', 'Waterfall Corridor',
+          'Trail / Travel Corridor', 'Overlook', 'Other'
+        ] &&
+        d.confidence in ['Unverified', 'Possible', 'Probable', 'Strong Evidence'] &&
+        d.coords is map &&
+        d.coords.keys().hasAll(['lat', 'lng']) &&
+        d.coords.keys().hasOnly(['lat', 'lng']) &&
+        d.coords.lat is number && d.coords.lat >= -90 && d.coords.lat <= 90 &&
+        d.coords.lng is number && d.coords.lng >= -180 && d.coords.lng <= 180 &&
+        (d.accuracyMeters == null ||
+          (d.accuracyMeters is number && d.accuracyMeters >= 0 && d.accuracyMeters <= 100000)) &&
+        d.notes is string && d.notes.size() <= 6000 &&
+        d.observedIndicators is list && d.observedIndicators.size() <= 50 &&
+        d.photos is list && d.photos.size() <= 5 &&
+        validPhotoAt(d.photos, 0, userId, siteId) &&
+        validPhotoAt(d.photos, 1, userId, siteId) &&
+        validPhotoAt(d.photos, 2, userId, siteId) &&
+        validPhotoAt(d.photos, 3, userId, siteId) &&
+        validPhotoAt(d.photos, 4, userId, siteId) &&
+        d.isPrivate == true &&
+        d.isSynced == true &&
+        d.cloudRevision is int && d.cloudRevision > 0 &&
+        (d.ai == null || d.ai is map) &&
+        d.linkedSites is list && d.linkedSites.size() <= 1000;
+    }
+    match /owners/{userId} { allow get: if request.auth != null && request.auth.uid == userId; allow list, write: if false; }
+    match /users/{userId}/sites/{siteId} {
+      allow read, delete: if owner() && request.auth.uid == userId;
+      allow create: if owner() && request.auth.uid == userId && validSite(userId, siteId) && request.resource.data.cloudRevision == 1;
+      allow update: if owner() && request.auth.uid == userId && validSite(userId, siteId) && request.resource.data.createdAt == resource.data.createdAt && request.resource.data.cloudRevision == resource.data.cloudRevision + 1;
+    }
+    match /aiLimits/{id} { allow read, write: if false; }
+  }
+}

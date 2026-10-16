@@ -65,6 +65,8 @@ def load_retired_paths(errors: List[str]) -> Set[str]:
 
 
 def is_public_file(path: str) -> bool:
+    if path.startswith("oois/field-mapper/"):
+        return False
     parts = Path(path).parts
     if not parts or parts[0].lower() in INTERNAL_DIRS or path in INTERNAL_ROOT_FILES:
         return False

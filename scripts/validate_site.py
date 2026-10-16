@@ -11,7 +11,7 @@ from urllib.parse import unquote, urlsplit
 ROOT = Path(__file__).resolve().parents[1]
 FORBIDDEN_SUFFIXES = {".bak", ".key", ".log", ".old", ".pem", ".sql", ".zip"}
 FORBIDDEN_NAMES = {".env", "error_log", "thumbs.db", ".ds_store"}
-SKIP_DIRS = {".git", ".idea", ".vscode", "site-private"}
+SKIP_DIRS = {".git", ".idea", ".vscode", "site-private", "node_modules", "dist", "android", "ios"}
 SKIP_LINK_AUDIT_DIRS = {"owner"}
 
 
@@ -35,6 +35,13 @@ def public_files() -> List[Path]:
 
 
 def resolve_reference(source: Path, raw: str) -> Optional[Path]:
+    # Vite copies public/ files to the application root in the built output.
+    app_root = ROOT / "oois" / "field-mapper"
+    app_public = app_root / "public"
+    try:
+        source = app_root / source.relative_to(app_public)
+    except ValueError:
+        pass
     if not raw or raw.startswith(("#", "//")):
         return None
     parsed = urlsplit(raw)
