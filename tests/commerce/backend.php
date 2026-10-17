@@ -125,8 +125,8 @@ try {
     check(!bc_manual_allowed(['bobsome1_checkout' => 'existing'], []), 'Existing session cannot show new manual payment CTA');
     check(!bc_manual_allowed([], ['order_id' => $local['id']]), 'Existing order cannot show new manual payment CTA');
     check(str_contains(bc_manual_content(), 'https://paypal.me/Bobsome1975/7USD'), 'Existing approved PayPal link preserved');
-    check(str_contains(bc_manual_content(), 'Complete study bundle: owner review pending.'), 'Pending bundle review is explicit');
-    check(str_contains(bc_manual_content(), 'Contact Robert before payment'), 'Manual purchase scope confirmed before payment');
+    check(str_contains(bc_manual_content(), 'Complete study bundle: owner approved.'), 'Approved bundle status is explicit');
+    check(str_contains(bc_manual_content(), 'Delivery is currently personal rather than instant.'), 'Manual purchase delivery method is explicit');
     check(str_contains(bc_manual_content(), 'Delivery is not instant yet.'), 'Manual fulfillment limitation remains explicit');
     check(bc_capture_may_charge($local, time()), 'Fresh approved checkout may capture');
     check(!bc_capture_may_charge($local, $local['checkout_expires_at']), 'Expired checkout is read-only reconciliation');
