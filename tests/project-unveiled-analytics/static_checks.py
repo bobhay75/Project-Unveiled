@@ -44,7 +44,11 @@ require("send(`scroll_${mark}`)" in TRACKER, "scroll-depth event emission change
 emitted_events.update({"scroll_25", "scroll_50", "scroll_75", "scroll_90"})
 
 require(emitted_events <= allowed_events, f"emitted events missing from collector allowlist: {sorted(emitted_events - allowed_events)}")
-require(allowed_events <= emitted_events, f"stale collector events are not emitted anywhere: {sorted(allowed_events - emitted_events)}")
+# Scope-first service intake retired direct service-checkout buttons. Retain
+# this event in the collector so cached pages and historical records remain
+# valid; do not manufacture a payment click on a scope-request control.
+legacy_events = {"service_checkout_click"}
+require(allowed_events <= emitted_events | legacy_events, f"stale collector events are not emitted anywhere: {sorted(allowed_events - emitted_events - legacy_events)}")
 require(tracker_references and set(tracker_references) == {"5"}, "public pages do not all use the hardened tracker cache token")
 
 for token in [

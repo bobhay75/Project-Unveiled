@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 /**
- * Shared, dependency-free safeguards for the private question and challenge
+ * Shared, dependency-free safeguards for private question, challenge, and lead
  * queues. Runtime data and secrets remain outside public_html and outside Git.
  */
 
@@ -214,6 +214,10 @@ function tw_intake_migrate_private_permissions(): int
         'questions.json.lock',
         'challenges.json',
         'challenges.json.lock',
+        'lead-secret.txt',
+        'lead-secret.txt.lock',
+        'leads.json',
+        'leads.json.lock',
     ];
     $targets = [];
     foreach ($names as $name) {
@@ -260,7 +264,7 @@ function tw_intake_migrate_private_permissions(): int
 
 function tw_intake_secret(string $queue): string
 {
-    if (!in_array($queue, ['question', 'challenge'], true)) {
+    if (!in_array($queue, ['question', 'challenge', 'lead'], true)) {
         throw new TwIntakeException('Unknown intake queue.');
     }
 
@@ -638,7 +642,7 @@ function tw_intake_atomic_replace(string $path, string $json): void
 
 function tw_intake_append_record(string $queue, array $record): void
 {
-    if (!in_array($queue, ['question', 'challenge'], true)) {
+    if (!in_array($queue, ['question', 'challenge', 'lead'], true)) {
         throw new TwIntakeException('Unknown intake queue.');
     }
     $config = tw_intake_config();
