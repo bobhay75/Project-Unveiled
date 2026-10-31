@@ -66,6 +66,11 @@ jobs:
       - name: Validate public files and local links
         run: python3 scripts/validate_site.py
 
+      - name: Test Living Story source grounding and private preview controls
+        run: |
+          php tests/living-story/backend.php
+          python3 tests/living-story/http_flow.py
+
       - name: Test service briefs and protected owner inbox
         run: python3 tests/services/contact-flow.py
 

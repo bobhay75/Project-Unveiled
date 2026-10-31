@@ -81,6 +81,13 @@ images/project-unveiled.jpg
 images/support-right-hand.jpg
 images/tear-the-veil.jpg
 index.html
+living-story/.htaccess
+living-story/api.php
+living-story/app.js
+living-story/demo.json
+living-story/index.html
+living-story/lib.php
+living-story/style.css
 llms.txt
 owner/.htaccess
 owner/funnel-servant/.htaccess

@@ -1,0 +1,8 @@
+Options -Indexes
+DirectoryIndex index.html
+<Files "api.php">
+  LimitRequestBody 8192
+</Files>
+<Files "lib.php">
+  Require all denied
+</Files>
