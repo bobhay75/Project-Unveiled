@@ -16,6 +16,7 @@ bash tests/trust-worthy-lab/investigate-method-gate.sh
 bash tests/trust-worthy-lab/health-method-gate.sh
 if command -v php >/dev/null 2>&1; then
   php -r 'if (PHP_VERSION_ID < 80100) { fwrite(STDERR, "PHP 8.1 or newer is required.\n"); exit(1); }'
+  php tests/trust-worthy-lab/prosper-authorization.php
   php tests/trust-worthy-public/backend-hardening.php
   php tests/trust-worthy-intake/intake-storage.php
   bash tests/trust-worthy-intake/request-gate.sh
