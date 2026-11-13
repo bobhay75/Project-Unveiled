@@ -1,0 +1,23 @@
+name: Trust-Worthy Prosper authorization checks
+on:
+  push:
+    branches:
+      - feature/trust-worthy-prosper-authorization
+  pull_request:
+    paths:
+      - 'truth/lib/prosper-authorization.php'
+      - 'truth/investigate.php'
+      - 'tests/trust-worthy-lab/prosper-authorization.php'
+      - '.github/workflows/trust-worthy-prosper.yml'
+jobs:
+  prosper-php:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: PHP syntax
+        run: |
+          php -l truth/lib/prosper-authorization.php
+          php -l truth/investigate.php
+          php -l tests/trust-worthy-lab/prosper-authorization.php
+      - name: Fail-closed checks
+        run: php tests/trust-worthy-lab/prosper-authorization.php
