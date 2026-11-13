@@ -13,7 +13,9 @@ jobs:
   prosper-php:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
       - name: PHP syntax
         run: |
           php -l truth/lib/prosper-authorization.php
