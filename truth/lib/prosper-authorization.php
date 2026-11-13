@@ -14,7 +14,7 @@ function tw_prosper_authorized(): bool {
         || ($parts['scheme'] ?? '') !== 'http'
         || ($parts['host'] ?? '') !== '127.0.0.1'
         || !isset($parts['port'])
-        || isset($parts['user'], $parts['pass'])
+        || isset($parts['user']) || isset($parts['pass'])
         || isset($parts['query']) || isset($parts['fragment'])
         || !in_array($parts['path'] ?? '', ['', '/'], true)
     ) return false;
