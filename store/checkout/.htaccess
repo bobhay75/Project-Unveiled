@@ -1,0 +1,20 @@
+Options -Indexes
+DirectoryIndex index.php
+LimitRequestBody 8192
+
+# Include-only code and the public, non-secret configuration template.
+<FilesMatch "^(?:lib|maintenance|config\.example)\.php$">
+  Require all denied
+</FilesMatch>
+
+<IfModule mod_headers.c>
+  Header always set Cache-Control "no-store, max-age=0"
+  Header always set Referrer-Policy "no-referrer"
+  Header always set X-Robots-Tag "noindex, nofollow"
+  Header onsuccess unset Content-Security-Policy
+  <IfModule mod_setenvif.c>
+    SetEnvIf Request_URI "^/store/checkout/(?:index\.php|start\.php)?$" BC_START=1
+  </IfModule>
+  Header always set Content-Security-Policy "default-src 'none'; style-src 'self' 'unsafe-inline'; form-action 'self'; base-uri 'none'; frame-ancestors 'none'" env=!BC_START
+  Header always set Content-Security-Policy "default-src 'none'; style-src 'self' 'unsafe-inline'; form-action 'self' https://www.paypal.com https://paypal.com https://www.sandbox.paypal.com https://sandbox.paypal.com; base-uri 'none'; frame-ancestors 'none'" env=BC_START
+</IfModule>

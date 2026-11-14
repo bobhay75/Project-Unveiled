@@ -19,6 +19,10 @@
       prompt.style.pointerEvents = 'none';
       prompt.style.transform = 'translateY(10px)';
       prompt.style.transition = 'opacity .25s ease, transform .25s ease';
+      if (prompt.hasAttribute('tabindex')) {
+        prompt.dataset.puRestoreTabindex = prompt.getAttribute('tabindex') || '';
+      }
+      prompt.setAttribute('tabindex', '-1');
       prompt.setAttribute('aria-hidden', 'true');
     });
     let revealed = false;
@@ -30,6 +34,12 @@
         prompt.style.pointerEvents = 'auto';
         prompt.style.transform = 'translateY(0)';
         prompt.removeAttribute('aria-hidden');
+        if ('puRestoreTabindex' in prompt.dataset) {
+          prompt.setAttribute('tabindex', prompt.dataset.puRestoreTabindex);
+          delete prompt.dataset.puRestoreTabindex;
+        } else {
+          prompt.removeAttribute('tabindex');
+        }
       });
     };
     const checkDepth = () => {
@@ -38,6 +48,55 @@
     };
     window.addEventListener('scroll', checkDepth, { passive: true });
     window.setTimeout(reveal, 45000);
+  };
+
+  const prepareAccessibilityRemediation = () => {
+    const setRole = (selector, role) => {
+      document.querySelectorAll(selector).forEach((element) => {
+        if (!element.hasAttribute('role')) element.setAttribute('role', role);
+      });
+    };
+
+    setRole('.pu-support-footer[aria-label]', 'navigation');
+    setRole('.stats[aria-label],.timeline-list[aria-label],.portal[aria-label],.timeline-photo-grid[aria-label],.text-controls[aria-label],.proof-strip[aria-label],.leak-grid[aria-label],.venue-map[aria-label]', 'group');
+    setRole('.lab-band[aria-labelledby]', 'region');
+
+    document.querySelectorAll('.announcement').forEach((element) => {
+      if (!element.hasAttribute('role')) element.setAttribute('role', 'region');
+      if (!element.hasAttribute('aria-label')) element.setAttribute('aria-label', 'Site announcement');
+    });
+
+    document.querySelectorAll('.floating-read').forEach((link) => {
+      if (link.closest('nav,[role="navigation"]') || !link.parentNode) return;
+      const nav = document.createElement('nav');
+      nav.className = 'pu-floating-read-nav';
+      nav.setAttribute('aria-label', 'Reader shortcut');
+      link.parentNode.insertBefore(nav, link);
+      nav.appendChild(link);
+    });
+
+    document.querySelectorAll('.signal-inner').forEach((element) => {
+      if (!element.hasAttribute('role')) element.setAttribute('role', 'region');
+      if (!element.hasAttribute('aria-label')) element.setAttribute('aria-label', 'Service availability');
+    });
+
+    document.querySelectorAll('.tip').forEach((element) => {
+      if (!element.hasAttribute('role')) element.setAttribute('role', 'region');
+      if (!element.hasAttribute('aria-label')) element.setAttribute('aria-label', 'Timeline tip');
+    });
+
+    document.querySelectorAll('.reader-toolbar').forEach((element) => {
+      if (!element.hasAttribute('role')) element.setAttribute('role', 'navigation');
+      if (!element.hasAttribute('aria-label')) element.setAttribute('aria-label', 'Reader tools');
+    });
+
+    const path = window.location.pathname.replace(/\/index\.html$/i, '/');
+    if (path === '/book/read/') {
+      const pathHeading = document.querySelector('.entry-paths-section[aria-labelledby="choose-path-title"] .entry-paths-heading h2');
+      if (pathHeading && !document.getElementById('choose-path-title')) pathHeading.id = 'choose-path-title';
+      const searchHint = document.querySelector('.search-wrap span');
+      if (searchHint) searchHint.style.color = '#9f927c';
+    }
   };
 
   const preparePublicReviewLinks = () => {
@@ -138,6 +197,7 @@
   };
 
   const prepareUi = () => {
+    prepareAccessibilityRemediation();
     prepareSupportPrompt();
     preparePublicReviewLinks();
     prepareHomepageReviews();

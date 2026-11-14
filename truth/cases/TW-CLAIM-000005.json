@@ -1,0 +1,47 @@
+{
+  "case_id": "TW-CLAIM-000005",
+  "public_case_id": "PU-TOT-000005",
+  "version": 1,
+  "status": "provisional_open_to_challenge",
+  "title": "Did Jesus Really Rise From the Dead — Or Is There a Better Explanation?",
+  "claim_under_test": "After being executed, Jesus of Nazareth was bodily raised from death by God rather than merely remembered, symbolically vindicated, or experienced in visions.",
+  "current_assessment": {
+    "classification": "serious_cumulative_explanation_not_historically_compelled",
+    "summary": "Jesus' execution, very early resurrection belief, and experiences interpreted as appearances are historically well supported or strongly indicated. A bodily resurrection is a serious cumulative explanation, but it is not the raw historical datum and is not compelled independently of disputed evidence and philosophical judgments about miracle claims.",
+    "certainty_note": "High confidence in crucifixion and early belief; lower and disputed confidence in an identifiable empty tomb; theological conclusion remains open to challenge."
+  },
+  "primary_text_tracks": [
+    "1 Corinthians 15:1-28",
+    "Galatians 1:11-2:10",
+    "Mark 15:33-16:8",
+    "Matthew 28",
+    "Luke 24",
+    "John 20-21"
+  ],
+  "competing_explanations": [
+    "bodily resurrection",
+    "visions or bereavement experiences",
+    "body moved or tomb confused plus experiences",
+    "legend and literary development",
+    "deliberate fraud",
+    "survival of crucifixion",
+    "mixed or presently indeterminate causes"
+  ],
+  "strongest_counterargument": "Early sincere experiences, memory, social reinforcement, and later narrative development can account for the available evidence without invoking a unique divine act, especially if the empty tomb is not treated as independently secured.",
+  "what_would_change_the_finding": [
+    "strong evidence that the appearance traditions developed substantially later than currently indicated",
+    "a natural reconstruction that explains Paul and the earliest proclamation with fewer unsupported additions",
+    "evidence that the burial or empty-tomb tradition is demonstrably secondary",
+    "stronger independent evidence for the tomb or named witnesses"
+  ],
+  "protocol": "TWVP-0.1",
+  "revision_history": [
+    {
+      "version": 1,
+      "date": "2026-10-13",
+      "change": "Case opened with historical facts, inference, philosophical judgment, and theological conclusion explicitly separated."
+    }
+  ],
+  "public_url": "https://bobsome1.com/truth/case-000005.php",
+  "challenge_endpoint": "https://bobsome1.com/truth/challenge-submit.php"
+}

@@ -35,7 +35,6 @@ jobs:
       OOIS_EXPECTED_PROJECT_ID: ${{ vars.OOIS_FIREBASE_PROJECT_ID }}
       OOIS_VERSION_CODE: ${{ inputs.version_code }}
       OOIS_VERSION_NAME: ${{ inputs.version_name }}
-      OOIS_UPLOAD_KEYSTORE: ${{ runner.temp }}/oois-upload.jks
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
@@ -50,6 +49,7 @@ jobs:
       - name: Materialize owner-controlled upload key
         shell: bash
         env:
+          OOIS_UPLOAD_KEYSTORE: ${{ runner.temp }}/oois-upload.jks
           OOIS_UPLOAD_KEYSTORE_B64: ${{ secrets.OOIS_UPLOAD_KEYSTORE_B64 }}
         run: |
           set -euo pipefail
@@ -69,6 +69,7 @@ jobs:
       - name: Sign, verify and package AAB
         shell: bash
         env:
+          OOIS_UPLOAD_KEYSTORE: ${{ runner.temp }}/oois-upload.jks
           OOIS_UPLOAD_STORE_PASSWORD: ${{ secrets.OOIS_UPLOAD_STORE_PASSWORD }}
           OOIS_UPLOAD_KEY_ALIAS: ${{ secrets.OOIS_UPLOAD_KEY_ALIAS }}
           OOIS_UPLOAD_KEY_PASSWORD: ${{ secrets.OOIS_UPLOAD_KEY_PASSWORD }}

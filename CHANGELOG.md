@@ -1,5 +1,11 @@
 # Evidence Phase 2 Changelog
 
+## Offline Trust-Worthy Claim-Validation Gate — September 18, 2026
+
+- Added 25 synthetic, dependency-free cases for full support, partial support, contradiction, duplicate-origin corroboration, and citation laundering.
+- Added a deterministic fail-closed policy oracle that blocks malformed evidence, causal-provenance mismatch, contradictions, incomplete support, and insufficient independent origins.
+- Kept every passing case behind mandatory human review and excluded the harness from public deployment; no production behavior or release bytes changed.
+
 ## Trust-Worthy Release 16.1 — September 14, 2026
 
 - Delegated unsupported Evidence Lab methods to its child Apache policy so live `405 Method Not Allowed` responses retain the required `Allow: GET, HEAD` header and route-specific Content Security Policy.

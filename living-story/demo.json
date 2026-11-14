@@ -1,0 +1,44 @@
+{
+  "way": {
+    "title": "Before the walls",
+    "scene": "You pause at an imagined doorway, notebook in hand. Lamplight reaches across a simple room. This scene cannot show you exactly how an ancient gathering looked; it offers a place to begin asking.\n\nWhat holds a community together? Is it the authority of a name, the protection of an institution, or the way people treat one another? In Project Unveiled, the Way opens a question about faith before the machinery that later surrounded it. That is the author’s framing, and it deserves examination alongside the texts.\n\nYou draw three columns on a clean page: what the record says, what someone concludes, and what remains unknown. The door is open. Where do you turn?",
+    "image": "/book/images/timeline/timeline-01-the-way-begins.webp",
+    "chapter": "chapter-02.html",
+    "choices": [{"label":"Examine the question behind the Way","next":"way-evidence"},{"label":"Follow the trail toward imperial power","next":"empire"},{"label":"Ask how writings reached the shelf","next":"manuscripts"}]
+  },
+  "way-evidence": {
+    "title": "Three columns in the notebook",
+    "scene": "You look again at your three columns. A dramatic image can awaken a question, but it cannot settle one. Neither can the force of a familiar saying.\n\nThe chapter begins with a quotation whose attribution is explicitly unverified. That small note matters: an arresting sentence does not become evidence because it sounds right. You keep the question it raises and leave the unknown author unknown.\n\nThen you turn to the chapter’s contrast between the Way and later institutions. You can inspect the biblical references, consider the author’s interpretation, and ask where the argument reaches beyond the surviving record. No one in this imagined room supplies a final answer. Your next step is to read closely enough to tell those things apart.",
+    "image": "/book/images/timeline/timeline-01-the-way-begins.webp",
+    "chapter": "chapter-02.html",
+    "choices": [{"label":"Return to the doorway","next":"way"},{"label":"Investigate power and protection","next":"empire"},{"label":"Examine how texts were recognized","next":"manuscripts"}]
+  },
+  "empire": {
+    "title": "At the edge of power",
+    "scene": "In this imagined reconstruction, you stand at the edge of a public gathering. Stone, cloth, and sunlight make power feel solid. Your notebook asks a less solid question: what changes when a faith gains the protection of an empire?\n\nProject Unveiled explores the relationship between belief and political authority. Its historical evidence desk also separates records from the author’s interpretation. You keep those two layers in view. A government’s action, a believer’s motive, and a later reader’s judgment are not interchangeable.\n\nYou sketch a line through the page and leave space on either side. One side will hold what a document establishes. The other will hold the questions it cannot answer. Which record do you inspect first?",
+    "image": "/book/images/timeline/timeline-05-edict-of-milan.webp",
+    "chapter": "chapter-03.html",
+    "choices": [{"label":"Separate the record from interpretation","next":"empire-evidence"},{"label":"Follow the question into the manuscript archive","next":"manuscripts"},{"label":"Return to the earlier gathering","next":"way"}]
+  },
+  "empire-evidence": {
+    "title": "What a document cannot tell you",
+    "scene": "You place an imagined document beside the notebook. Before deciding what it means, you ask who preserved it, what kind of text it is, and what question it was written to answer.\n\nThe chapter’s evidence desk gives you a way to proceed: examine the surviving record, then identify the interpretation being drawn from it. The scene around you is invented; the linked reading is where the actual argument and source trail can be inspected.\n\nA primary source can still have loyalties and an agenda. A later argument can still preserve a useful question. You do not need to flatten either into certainty. You need to keep your labels honest. The archive offers another test: can the history of the biblical shelf be reduced to one room?",
+    "image": "/book/images/timeline/timeline-06-council-of-nicea.webp",
+    "chapter": "chapter-03.html",
+    "choices": [{"label":"Enter the archive","next":"manuscripts"},{"label":"Return to the edge of power","next":"empire"},{"label":"Revisit the opening question","next":"way"}]
+  },
+  "manuscripts": {
+    "title": "The shelf and the question",
+    "scene": "You enter an imagined archive. The shelves are a storytelling device, not a reconstruction of one known collection. A familiar question follows you inside: who decided what belongs?\n\nProject Unveiled’s fourth chapter places an evidence desk beside its theological argument. It distinguishes the record of a council, the reception of writings, and the author’s warning about confusing an approved shelf with God. Those are different kinds of claims.\n\nYou resist writing one name across the whole page. Instead, you leave room for circulation, disagreement, recognition, and later interpretation. The history must be tested at the level of the actual documents. Your lantern lights a blank line in the notebook: what do I know, and how do I know it?",
+    "image": "/book/images/timeline/timeline-08-athanasius-festal-letter.webp",
+    "chapter": "chapter-04.html",
+    "choices": [{"label":"Open the chapter’s evidence desk","next":"manuscripts-evidence"},{"label":"Examine the reach of empire","next":"empire"},{"label":"Return to the Way","next":"way"}]
+  },
+  "manuscripts-evidence": {
+    "title": "Leave the question open",
+    "scene": "The archive does not hand you a verdict. It hands you work you can inspect.\n\nThe chapter’s evidence desk links council material, Eusebius, and Athanasius, while separately labeling Project Unveiled’s theological interpretation. You can follow those links and examine what each source actually supports. The book’s claim map is a starting point for that reading, not permission to skip it.\n\nYou close the notebook for a moment. What would change your mind? What evidence is missing? Which part of the argument belongs to history, and which belongs to faith? These questions do not end the investigation. They keep it honest.\n\nThe three paths remain open. Return to the question that needs another look, or use the reading links below to step out of the scene and into the text.",
+    "image": "/book/images/timeline/timeline-08-athanasius-festal-letter.webp",
+    "chapter": "chapter-04.html",
+    "choices": [{"label":"Reopen the manuscript trail","next":"manuscripts"},{"label":"Revisit empire and institution","next":"empire"},{"label":"Begin again with the Way","next":"way"}]
+  }
+}

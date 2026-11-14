@@ -301,6 +301,7 @@ try {
     rmdir($tempDir . '/intake-permissions.lock');
 
     tw_intake_assert_known_case('TW-CLAIM-000002');
+    tw_intake_assert_known_case('TW-CLAIM-000005');
     test_expect_status(
         static fn() => tw_intake_assert_known_case('TW-CLAIM-999999'),
         422,

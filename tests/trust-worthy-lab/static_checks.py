@@ -242,12 +242,17 @@ truth_home = (ROOT / "truth" / "index.php").read_text(encoding="utf-8")
 assert 'href="/truth/lab/">Evidence Lab</a>' in truth_home, "Truth on Trial navigation does not expose the Evidence Lab"
 assert 'id="lab"' in truth_home and "LIVE EVIDENCE WORKBENCH · RELEASE 16" in truth_home, "Truth on Trial lacks the integrated release card"
 assert 'action="/truth/investigate.php" method="post"' in truth_home, "the existing Truth Trial submission contract changed"
-assert all(f"/truth/case-00000{number}.php" in truth_home for number in range(1, 5)), "an existing Truth Trial route disappeared"
+assert all(f"/truth/case-00000{number}.php" in truth_home for number in range(1, 6)), "a published Truth Trial route disappeared"
+assert "PROJECT UNVEILED // TRUTH ON TRIAL // POWERED BY TRUST-WORTHY" in truth_home, "the required product hierarchy disappeared"
+featured_case = truth_home[truth_home.index('id="featured"'):truth_home.index('class="section protocol"')]
+assert "CASE ID: PU-TOT-000005" in featured_case, "the resurrection trial is not the featured investigation"
+assert '/truth/case-000005.php' in featured_case, "the featured resurrection trial does not link to its case file"
+assert '/truth/case-000004.php' not in featured_case, "the former featured trial remains mixed into the resurrection feature"
 
 root_sitemap = (ROOT / "sitemap.xml").read_text(encoding="utf-8")
 assert "https://bobsome1.com/truth/lab/" in root_sitemap, "the canonical sitemap omits the Evidence Lab"
 assert "https://bobsome1.com/truth/lab/</loc><lastmod>2026-09-13</lastmod>" in root_sitemap, "the canonical sitemap has a stale Evidence Lab date"
-assert "https://bobsome1.com/truth/</loc><lastmod>2026-09-13</lastmod>" in root_sitemap, "the Truth on Trial sitemap date is stale"
+assert "https://bobsome1.com/truth/</loc><lastmod>2026-10-13</lastmod>" in root_sitemap, "the Truth on Trial sitemap date is stale"
 
 lab_htaccess = (DIST / ".htaccess").read_text(encoding="utf-8")
 for required in ("ErrorDocument 404 /truth/lab/404.html", "R=405", "Content-Security-Policy", "X-Frame-Options \"DENY\""):
