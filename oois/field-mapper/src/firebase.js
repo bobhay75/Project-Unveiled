@@ -81,6 +81,7 @@ function cloudRecord(site, userId, photos, revision) {
     updatedAt: site.updatedAt,
     name: site.name,
     type: site.type,
+    ...(site.categories?.length > 1 ? { categories: site.categories } : {}),
     confidence: site.confidence,
     coords: { lat: site.coords.lat, lng: site.coords.lng },
     accuracyMeters: site.accuracyMeters ?? null,

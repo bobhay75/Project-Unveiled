@@ -27,7 +27,7 @@ service cloud.firestore {
           'id', 'createdAt', 'updatedAt', 'name', 'type', 'confidence',
           'coords', 'accuracyMeters', 'notes', 'observedIndicators', 'photos',
           'isPrivate', 'isSynced', 'cloudRevision', 'ai', 'linkedSites',
-          'createdBy'
+          'createdBy', 'categories'
         ]) &&
         d.id == siteId &&
         d.id.matches('^[A-Za-z0-9_-]{1,80}$') &&
@@ -41,6 +41,16 @@ service cloud.firestore {
           'Mining Debris Field', 'Water Source', 'Waterfall Corridor',
           'Trail / Travel Corridor', 'Overlook', 'Other'
         ] &&
+        (!('categories' in d) ||
+          (d.categories is list && d.categories.size() > 0 &&
+            d.categories[0] == d.type &&
+            d.categories.toSet().size() == d.categories.size() &&
+            d.categories.hasOnly([
+              'Rock Shelter', 'Cave System', 'Surface Flint Source',
+              'Flint Mine / Quarry', 'Lithic Scatter', 'Habitation Zone',
+              'Mining Debris Field', 'Water Source', 'Waterfall Corridor',
+              'Trail / Travel Corridor', 'Overlook', 'Other'
+            ]))) &&
         d.confidence in ['Unverified', 'Possible', 'Probable', 'Strong Evidence'] &&
         d.coords is map &&
         d.coords.keys().hasAll(['lat', 'lng']) &&

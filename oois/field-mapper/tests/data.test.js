@@ -56,3 +56,12 @@ test("keywords never claim AI image inspection or confidence", () => {
   );
   assert.ok(!a.confidenceLabel.includes("Strong Evidence"));
 });
+
+test("backup validation accepts legacy records and preserves per-site categories and video", () => {
+  const base = record({ id: "legacy" });
+  const video = { id: "clip", name: "clip.webm", dataUrl: "data:video/webm;base64,YQ==" };
+  const current = { ...base, id: "current", categories: ["Rock Shelter", "Water Source"], videos: [video] };
+  assert.deepEqual(validateImport({ sites: [base, current] }), [base, current]);
+  assert.throws(() => validateSite({ ...current, categories: ["Water Source"] }), /category/);
+  assert.throws(() => validateSite({ ...current, videos: [{ ...video, dataUrl: "data:text/html;base64,YQ==" }] }), /Invalid video/);
+});

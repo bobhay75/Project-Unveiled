@@ -3,6 +3,8 @@ import {
   MapContainer,
   Marker,
   Popup,
+  Polyline,
+  ScaleControl,
   TileLayer,
   useMap,
   useMapEvents,
@@ -11,8 +13,8 @@ import L from "leaflet";
 import { Capacitor } from "@capacitor/core";
 import { Geolocation } from "@capacitor/geolocation";
 import { analyzeSiteLocally } from "./analyzer.js";
-import { linkNearbySites } from "./geo.js";
-import { CONFIDENCE_LEVELS, SITE_TYPES, TYPE_COLORS } from "./siteTypes.js";
+import { linkNearbySites, metersBetween } from "./geo.js";
+import { CONFIDENCE_LEVELS, TYPE_COLORS } from "./siteTypes.js";
 import {
   loadSites,
   saveSite,
@@ -21,6 +23,8 @@ import {
   photoFromFile,
   validateImport,
   migrateLegacy,
+  siteCategories,
+  videoFromFile,
 } from "./data.js";
 import {
   analyzeSiteCloud,
@@ -32,6 +36,8 @@ import {
   cloudLogout,
   cloudUser,
 } from "./firebase.js";
+import CategoryPicker from "./CategoryPicker.jsx";
+import MediaLibrary from "./MediaLibrary.jsx";
 function makeIcon(type) {
   return L.divIcon({
     className: "oois-marker",
@@ -40,11 +46,15 @@ function makeIcon(type) {
     iconAnchor: [14, 14],
   });
 }
-function MapEvents({ onClick, center }) {
+function MapEvents({ onClick, center, expanded }) {
   const map = useMap();
   useEffect(() => {
-    if (center) map.setView([center.lat, center.lng], 15);
+    if (center) map.setView([center.lat, center.lng], Math.max(15, map.getZoom()));
   }, [center, map]);
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => map.invalidateSize({ pan: false }));
+    return () => cancelAnimationFrame(frame);
+  }, [map, expanded]);
   useMapEvents({
     click: (e) => {
       const p = e.latlng.wrap();
@@ -55,11 +65,12 @@ function MapEvents({ onClick, center }) {
 }
 const initialForm = () => ({
   name: "",
-  type: "Rock Shelter",
+  categories: [],
   confidence: "Unverified",
   notes: "",
   observedIndicatorsText: "",
   photos: [],
+  videos: [],
 });
 async function download(name, value) {
   if (Capacitor.isNativePlatform()) {
@@ -68,7 +79,7 @@ async function download(name, value) {
     const { Share } = await import("@capacitor/share");
     const result = await Filesystem.writeFile({
       path: name,
-      data: JSON.stringify(value, null, 2),
+      data: JSON.stringify(value),
       directory: Directory.Cache,
       encoding: Encoding.UTF8,
     });
@@ -76,7 +87,7 @@ async function download(name, value) {
     return;
   }
   const url = URL.createObjectURL(
-    new Blob([JSON.stringify(value, null, 2)], { type: "application/json" }),
+    new Blob([JSON.stringify(value)], { type: "application/json" }),
   );
   const a = document.createElement("a");
   a.href = url;
@@ -95,7 +106,11 @@ export default function App() {
     [busy, setBusy] = useState(false),
     [layer, setLayer] = useState("satellite"),
     [query, setQuery] = useState(""),
-    [filter, setFilter] = useState(""),
+    [filter, setFilter] = useState([]),
+    [expanded, setExpanded] = useState(false),
+    [moving, setMoving] = useState(null),
+    [measuring, setMeasuring] = useState(false),
+    [points, setPoints] = useState([]),
     [email, setEmail] = useState(""),
     [password, setPassword] = useState(""),
     [user, setUser] = useState(null),
@@ -105,6 +120,23 @@ export default function App() {
     importInput = useRef(),
     initialized = useRef(false);
   const active = sites.find((s) => s.id === activeId);
+  const distance = points.slice(1).reduce(
+    (sum, point, index) => sum + metersBetween(points[index], point),
+    0,
+  );
+  useEffect(() => {
+    if (!expanded) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const escape = (event) => {
+      if (event.key === "Escape" && !entry.current.open) setExpanded(false);
+    };
+    window.addEventListener("keydown", escape);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", escape);
+    };
+  }, [expanded]);
   const refresh = async () => setSites(await loadSites());
   useEffect(() => {
     if (!initialized.current) {
@@ -144,12 +176,23 @@ export default function App() {
       site
         ? {
             ...site,
+            categories: siteCategories(site),
+            videos: [...(site.videos ?? [])],
             photos: [...site.photos],
             observedIndicatorsText: site.observedIndicators.join(", "),
           }
         : initialForm(),
     );
+    entry.current.querySelector(".category-picker").open = false;
     entry.current.showModal();
+  };
+  const mapClick = (point) => {
+    if (measuring) {
+      setPoints((previous) => [...previous, point]);
+    } else {
+      openEntry(point, moving);
+      setMoving(null);
+    }
   };
   const captureGPS = () =>
     run(async () => {
@@ -178,16 +221,25 @@ export default function App() {
       for (const f of files) additions.push(await photoFromFile(f));
       setForm((prev) => ({ ...prev, photos: [...prev.photos, ...additions] }));
     });
+  const addVideos = (files) =>
+    run(async () => {
+      if (form.videos.length + files.length > 3)
+        throw Error("Use up to three videos per site.");
+      const videos = await Promise.all(files.map(videoFromFile));
+      setForm((previous) => ({ ...previous, videos: [...previous.videos, ...videos] }));
+    });
   const save = async (event) => {
     event.preventDefault();
     await run(async () => {
+      if (!form.categories.length) throw Error("Choose at least one site category.");
       const now = new Date().toISOString();
       const s = {
         id: editing?.id || crypto.randomUUID(),
         createdAt: editing?.createdAt || now,
         updatedAt: now,
         name: form.name.trim(),
-        type: form.type,
+        type: form.categories[0],
+        categories: form.categories,
         confidence: form.confidence,
         coords: { lat: Number(coords.lat), lng: Number(coords.lng) },
         accuracyMeters: coords.accuracyMeters ?? null,
@@ -197,6 +249,7 @@ export default function App() {
           .map((x) => x.trim())
           .filter(Boolean),
         photos: form.photos,
+        videos: form.videos,
         isPrivate: true,
         isSynced: false,
         cloudRevision: editing?.cloudRevision || 0,
@@ -210,7 +263,7 @@ export default function App() {
       setActiveId(s.id);
       entry.current.close();
       setStatus(
-        "Record and photos saved on this device. Documentation checklist updated.",
+        "Record and media saved on this device. Documentation checklist updated.",
       );
     });
   };
@@ -262,7 +315,7 @@ export default function App() {
     run(async () => {
       if (
         !confirm(
-          "Upload this record, precise location, and photos to your private Firebase account?",
+          "Upload this record, precise location, and photos to your private Firebase account? Videos stay on this device and in exported backups.",
         )
       )
         return;
@@ -288,8 +341,8 @@ export default function App() {
     () =>
       sites.filter(
         (s) =>
-          (!filter || s.type === filter) &&
-          [s.name, s.notes, ...s.observedIndicators]
+          (!filter.length || filter.some((type) => siteCategories(s).includes(type))) &&
+          [s.name, s.notes, ...siteCategories(s), ...s.observedIndicators]
             .join(" ")
             .toLowerCase()
             .includes(query.toLowerCase()),
@@ -322,7 +375,7 @@ export default function App() {
         </div>
         <div className="top-actions">
           <button
-            onClick={() => openEntry(center || { lat: 36.6437, lng: -93.2982 })}
+            onClick={() => openEntry({ lat: "", lng: "" })}
           >
             + Add a find
           </button>
@@ -374,11 +427,11 @@ export default function App() {
         {status}
       </div>
       <section className="workspace">
-        <div className="map-card">
+        <div className={expanded ? "map-card map-expanded" : "map-card"}>
           <div className="card-head">
             <div>
               <h2>Follow the evidence.</h2>
-              <p>Tap a spot to record what you found.</p>
+              <p>{moving ? "Tap the new position for " + moving.name : measuring ? "Tap along a path to measure it." : "Tap a spot to record what you found."}</p>
             </div>
             <label>
               Map layer
@@ -389,19 +442,37 @@ export default function App() {
               </select>
             </label>
           </div>
+          <div className="button-row map-tools">
+            <button type="button" aria-pressed={expanded} onClick={() => setExpanded(!expanded)}>
+              {expanded ? "Exit full-screen map" : "Full-screen map"}
+            </button>
+            <button type="button" aria-pressed={measuring} disabled={!!moving} onClick={() => {
+              setMeasuring(!measuring);
+              setPoints([]);
+            }}>
+              {measuring ? "Finish measuring" : "Measure distance"}
+            </button>
+            {moving && <button onClick={() => setMoving(null)}>Cancel moving pin</button>}
+            {measuring && <button onClick={() => setPoints(points.slice(0, -1))} disabled={!points.length}>Undo point</button>}
+            {measuring && <output aria-live="polite">{Math.round(distance)} m · {(distance * 3.28084).toFixed(0)} ft</output>}
+          </div>
           <div className="map-wrap">
             <MapContainer
               center={[36.6437, -93.2982]}
               zoom={12}
+              maxZoom={22}
               className="map"
             >
-              <MapEvents onClick={openEntry} center={center} />
+              <MapEvents onClick={mapClick} center={center} expanded={expanded} />
+              <ScaleControl position="bottomleft" />
+              {points.length > 1 && <Polyline positions={points.map(({ lat, lng }) => [lat, lng])} interactive={false} /> }
               {layer !== "none" && online && (
                 <TileLayer
                   key={layer}
                   url={tiles.url}
                   attribution={tiles.attribution}
-                  maxZoom={tiles.maxZoom}
+                  maxNativeZoom={tiles.maxZoom}
+                  maxZoom={22}
                   eventHandlers={{
                     tileerror: () =>
                       setStatus(
@@ -415,9 +486,12 @@ export default function App() {
                   key={s.id}
                   icon={makeIcon(s.type)}
                   position={[s.coords.lat, s.coords.lng]}
-                  eventHandlers={{ click: () => show(s) }}
+                  eventHandlers={{ click: () => {
+                    if (moving || measuring) mapClick(s.coords);
+                    else show(s);
+                  } }}
                 >
-                  <Popup>{s.name}</Popup>
+                  <Popup>{s.name}<br />{siteCategories(s).join(" · ")}</Popup>
                 </Marker>
               ))}
             </MapContainer>
@@ -430,7 +504,7 @@ export default function App() {
         <aside className="side-panel">
           {active && (
             <section className="panel">
-              <div className="badge">{active.type}</div>
+              <div className="badge">{siteCategories(active).join(" · ")}</div>
               <h2>{active.name}</h2>
               <p className="coords">
                 {active.coords.lat.toFixed(6)}, {active.coords.lng.toFixed(6)}
@@ -442,16 +516,19 @@ export default function App() {
                 {active.notes || "No observation notes."}
               </p>
               <p className="muted">Your review status: {active.confidence}</p>
-              <div className="photo-grid">
-                {active.photos.map((p) => (
-                  <a key={p.id} href={p.dataUrl} download={p.name + ".jpg"}>
-                    <img src={p.dataUrl} alt={p.name} />
-                  </a>
-                ))}
-              </div>
+              <MediaLibrary site={active} />
               <div className="button-row">
                 <button onClick={() => openEntry(active.coords, active)}>
                   Edit
+                </button>
+                <button className="secondary" onClick={() => {
+                  setMeasuring(false);
+                  setPoints([]);
+                  setMoving(active);
+                  setCenter(active.coords);
+                  setExpanded(true);
+                }}>
+                  Move pin on map
                 </button>
                 <button className="danger" onClick={() => deleteRecord(active)}>
                   Delete device record
@@ -532,24 +609,13 @@ export default function App() {
                 placeholder="Names, notes, tags…"
               />
             </label>
-            <label>
-              Filter category
-              <select
-                value={filter}
-                onChange={(e) => setFilter(e.target.value)}
-              >
-                <option value="">All categories</option>
-                {SITE_TYPES.map((t) => (
-                  <option key={t}>{t}</option>
-                ))}
-              </select>
-            </label>
+            <CategoryPicker label="Filter categories" selected={filter} onChange={setFilter} emptyLabel="All categories" />
             <div className="record-list">
               {visible.map((s) => (
                 <button key={s.id} className="record" onClick={() => show(s)}>
                   <strong>{s.name}</strong>
                   <span>
-                    {s.type} · {s.photos.length} photos
+                    {siteCategories(s).join(" · ")} · {s.photos.length} photos · {s.videos?.length ?? 0} videos
                   </span>
                   <small>
                     {s.coords.lat.toFixed(5)}, {s.coords.lng.toFixed(5)}
@@ -597,17 +663,12 @@ export default function App() {
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
               />
             </label>
-            <label>
-              Site type
-              <select
-                value={form.type}
-                onChange={(e) => setForm({ ...form, type: e.target.value })}
-              >
-                {SITE_TYPES.map((t) => (
-                  <option key={t}>{t}</option>
-                ))}
-              </select>
-            </label>
+            <CategoryPicker
+              label="Site categories"
+              selected={form.categories}
+              onChange={(categories) => setForm((previous) => ({ ...previous, categories }))}
+              emptyLabel="Choose one or more"
+            />
             <label>
               Latitude
               <input
@@ -691,27 +752,20 @@ export default function App() {
               }}
             />
           </label>
-          <div className="photo-grid">
-            {form.photos.map((p) => (
-              <div className="photo-thumb" key={p.id}>
-                <img src={p.dataUrl} alt={p.name} />
-                <button
-                  type="button"
-                  onClick={() =>
-                    setForm({
-                      ...form,
-                      photos: form.photos.filter((x) => x.id !== p.id),
-                    })
-                  }
-                >
-                  Remove
-                </button>
-              </div>
-            ))}
-          </div>
+          <label>
+            Add videos (up to 3, 4 MB each)
+            <input type="file" accept="video/mp4,video/webm" multiple disabled={busy}
+              onChange={(event) => {
+                addVideos(Array.from(event.target.files));
+                event.target.value = "";
+              }}
+            />
+          </label>
+          <MediaLibrary site={form} onRemove={(kind, id) =>
+            setForm((previous) => ({ ...previous, [kind]: previous[kind].filter((item) => item.id !== id) }))
+          } />
           <p className="muted">
-            Photos are resized JPEG copies. Preserve originals separately.
-            Records stay on this device until you choose a cloud action.
+            Photos are resized JPEG copies. Videos are included in device backups.
           </p>
           <p role="status">{status}</p>
           <div className="button-row">

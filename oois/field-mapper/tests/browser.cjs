@@ -10,6 +10,11 @@ const { chromium } = require("playwright"),
     { stdio: "ignore" },
   );
   let browser;
+  const chooseCategories = async (target, ...categories) => {
+    await target.locator("dialog[open] .category-picker summary").click();
+    for (const category of categories)
+      await target.locator("dialog[open]").getByRole("checkbox", { name: category, exact: true }).check();
+  };
   try {
     for (let i = 0; i < 40; i++) {
       try {
@@ -42,7 +47,16 @@ const { chromium } = require("playwright"),
       .getByText("Your next discovery starts here.", { exact: false })
       .waitFor();
     await page.getByLabel("Map layer").selectOption("none");
+    const originalHeight = (await page.locator(".map").boundingBox()).height;
+    await page.getByRole("button", { name: "Full-screen map", exact: true }).click();
+    assert.ok((await page.locator(".map").boundingBox()).height > originalHeight);
+    await page.getByRole("button", { name: "Measure distance" }).click();
+    await page.locator(".map").click({ position: { x: 225, y: 190 } });
     await page.locator(".map").click({ position: { x: 300, y: 230 } });
+    assert.match(await page.locator("output").textContent(), /^[1-9]/);
+    await page.getByRole("button", { name: "Finish measuring" }).click();
+    await page.locator(".map").click({ position: { x: 300, y: 230 } });
+    await chooseCategories(page, "Rock Shelter", "Water Source");
     await page.getByLabel("Site name").fill("TEST ONLY — field observation");
     await page
       .getByLabel("Evidence notes")
@@ -60,13 +74,29 @@ const { chromium } = require("playwright"),
         buffer: png,
       });
     await page.locator("dialog .photo-thumb img").waitFor();
+    if (process.env.OOIS_TEST_VIDEO) {
+      await page.getByLabel("Add videos (up to 3, 4 MB each)").setInputFiles(process.env.OOIS_TEST_VIDEO);
+      await page.locator("dialog video").waitFor();
+    }
     await page
       .getByRole("button", { name: "Save record", exact: true })
       .click();
     await page.locator(".record").waitFor();
+    await page.getByRole("button", { name: "Exit full-screen map" }).click();
     await page.reload();
     await page.locator(".record").click();
     assert.equal(await page.locator(".panel .photo-grid img").count(), 1);
+    assert.match(await page.locator(".panel .badge").first().textContent(), /Rock Shelter · Water Source/);
+    if (process.env.OOIS_TEST_VIDEO) {
+      await page.locator(".panel video").waitFor();
+      await page.waitForFunction(() => document.querySelector(".panel video")?.readyState >= 1);
+    }
+    const previousCoords = await page.locator(".panel .coords").textContent();
+    await page.getByRole("button", { name: "Move pin on map" }).click();
+    await page.locator(".map").click({ position: { x: 300, y: 230 } });
+    await page.getByRole("button", { name: "Save record", exact: true }).click();
+    await page.getByRole("button", { name: "Exit full-screen map" }).click();
+    assert.notEqual(await page.locator(".panel .coords").textContent(), previousCoords);
     await page.getByRole("button", { name: "Edit", exact: true }).click();
     await page.getByLabel("Site name").fill("<img src=x onerror=alert(1)>");
     await page
@@ -82,6 +112,7 @@ const { chromium } = require("playwright"),
       .getByRole("button", { name: "Capture GPS", exact: true })
       .click();
     await page.getByLabel("Site name").fill("TEST ONLY — second find");
+    await chooseCategories(page, "Other");
     assert.equal(
       await page.getByLabel("Latitude", { exact: true }).inputValue(),
       "36.65",
@@ -102,6 +133,11 @@ const { chromium } = require("playwright"),
     const file = await (await dlp).path();
     const backup = JSON.parse(fs.readFileSync(file));
     assert.equal(backup.sites.length, 2);
+    assert.deepEqual(backup.sites.find((site) => site.photos.length).categories, ["Rock Shelter", "Water Source"]);
+    if (process.env.OOIS_TEST_VIDEO) {
+      assert.equal(backup.sites.find((site) => site.photos.length).videos.length, 1);
+      assert.equal(backup.sites.find((site) => !site.photos.length).videos.length, 0);
+    }
     assert.equal(
       backup.sites.reduce((sum, s) => sum + s.photos.length, 0),
       1,
@@ -120,6 +156,10 @@ const { chromium } = require("playwright"),
     await restored.waitForFunction(
       () => document.querySelectorAll(".record").length === 2,
     );
+    if (process.env.OOIS_TEST_VIDEO) {
+      await restored.locator(".record").filter({ hasText: "Water Source" }).click();
+      await restored.waitForFunction(() => document.querySelector(".panel video")?.readyState >= 1);
+    }
     await context2.close();
     await page.evaluate(() => navigator.serviceWorker.ready);
     await page.reload();
@@ -133,6 +173,9 @@ const { chromium } = require("playwright"),
     );
     await page.getByRole("button", { name: "Add a find" }).click();
     await page.getByLabel("Site name").fill("Offline save");
+    await chooseCategories(page, "Other");
+    await page.getByLabel("Latitude", { exact: true }).fill("36.64");
+    await page.getByLabel("Longitude", { exact: true }).fill("-93.29");
     await page
       .getByRole("button", { name: "Save record", exact: true })
       .click();

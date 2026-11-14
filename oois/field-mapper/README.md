@@ -82,3 +82,26 @@ The production web build and five data/geography tests pass. The browser workflo
 - Capacitor 8 Android build requirements: https://capacitorjs.com/docs/updating/8-0
 
 Earlier cPanel-only exploratory work was not added as a competing app; this PR remains the canonical OOIS implementation. No real findings, sensitive locations, credentials or production runtime records are bundled.
+
+## Map and site media update
+
+- Tap the map to open a find with its coordinates filled in. Use the category
+  dropdown checkboxes to choose one or more categories. The first selection
+  supplies the marker color. Category filters match any checked category.
+- Use Full-screen map for a larger workspace. Satellite and topo imagery
+  enlarge past the source tile resolution without adding imagery detail.
+  Open a record and select Move pin on map to correct its location.
+- Use Measure distance to tap a series of points and see the total in meters
+  and feet. Measurements are temporary and represent map distance.
+- Each site has separate Photos and Videos sections. The device notebook
+  supports five compressed photos and three MP4/WebM clips up to 4 MB each
+  per site, within the shared 18 MB notebook limit. JSON backups include
+  both. The existing cloud copy covers record fields and photos. Deploy the
+  updated Firestore rules before saving records with multiple categories.
+- Existing single-category records and photo backups open directly. For a
+  new browser origin or separate Android install, export from the old build
+  and import into the new one to carry your data over.
+
+The integrated offline atlas, sourced historical/terrain overlays, timeline,
+persistent routes and pace tracking, corridor scoring, and reconstruction are
+still pending. The offline notebook supports saved records and coordinates.

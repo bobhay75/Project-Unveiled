@@ -1,4 +1,8 @@
 import { SITE_TYPES, CONFIDENCE_LEVELS } from "./siteTypes.js";
+export const siteCategories = (site) => site.categories ?? [site.type];
+const videoLimit = 4 * 1024 * 1024;
+const videoTypes = ["video/mp4", "video/webm"];
+
 export function validateSite(s) {
   if (
     !s ||
@@ -21,6 +25,31 @@ export function validateSite(s) {
     throw Error("Invalid coordinates.");
   if (!SITE_TYPES.includes(s.type) || !CONFIDENCE_LEVELS.includes(s.confidence))
     throw Error("Invalid record category or review status.");
+  const categories = siteCategories(s);
+  if (
+    !Array.isArray(categories) ||
+    categories[0] !== s.type ||
+    new Set(categories).size !== categories.length ||
+    categories.some((type) => !SITE_TYPES.includes(type))
+  )
+    throw Error("Choose at least one valid site category.");
+  if (s.videos !== undefined) {
+    if (!Array.isArray(s.videos) || s.videos.length > 3)
+      throw Error("Use up to three videos per site.");
+    for (const video of s.videos) {
+      if (
+        !video ||
+        typeof video.id !== "string" ||
+        !/^[\w-]{1,80}$/.test(video.id) ||
+        typeof video.name !== "string" ||
+        video.name.length > 160 ||
+        typeof video.dataUrl !== "string" ||
+        video.dataUrl.length > Math.ceil(videoLimit / 3) * 4 + 32 ||
+        !/^data:video\/(mp4|webm);base64,[A-Za-z0-9+/]+=*$/.test(video.dataUrl)
+      )
+        throw Error("Invalid video. Use MP4 or WebM up to 4 MB.");
+    }
+  }
   if (
     typeof s.notes !== "string" ||
     s.notes.length > 6000 ||
@@ -121,7 +150,7 @@ export const saveSite = (site, expected) => {
     if (!current && all.length >= 1000)
       throw Error("Notebook limit reached. Export a backup.");
     if (
-      JSON.stringify([...all.filter((s) => s.id !== site.id), site]).length >
+      new TextEncoder().encode(JSON.stringify([...all.filter((s) => s.id !== site.id), site])).length >
       18 * 1024 * 1024
     )
       throw Error(
@@ -137,7 +166,7 @@ export const mergeSites = (incoming) => {
     const add = incoming.filter((s) => !ids.has(s.id));
     if (all.length + add.length > 1000)
       throw Error("Notebook exceeds 1,000 records.");
-    if (JSON.stringify([...all, ...add]).length > 18 * 1024 * 1024)
+    if (new TextEncoder().encode(JSON.stringify([...all, ...add])).length > 18 * 1024 * 1024)
       throw Error("Import exceeds the 18 MB device notebook limit.");
     for (const s of add) store.put(s);
     return add.length;
@@ -223,4 +252,19 @@ export async function migrateLegacy() {
   }
   await mergeSites(legacy);
   localStorage.setItem("oois_legacy_migrated", "1");
+}
+
+export function videoFromFile(file) {
+  if (!videoTypes.includes(file.type) || !file.size || file.size > videoLimit)
+    throw Error("Use a short MP4 or WebM clip up to 4 MB.");
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve({
+      id: crypto.randomUUID(),
+      name: file.name.slice(0, 160),
+      dataUrl: reader.result,
+    });
+    reader.onerror = () => reject(Error("Could not read this video."));
+    reader.readAsDataURL(file);
+  });
 }
