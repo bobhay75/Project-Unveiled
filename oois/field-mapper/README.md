@@ -92,7 +92,9 @@ Earlier cPanel-only exploratory work was not added as a competing app; this PR r
   enlarge past the source tile resolution without adding imagery detail.
   Open a record and select Move pin on map to correct its location.
 - Use Measure distance to tap a series of points and see the total in meters
-  and feet. Measurements are temporary and represent map distance.
+  and feet. Choose Save route to name and store the line on this device.
+  Open a route from Saved routes to zoom to it. JSON backups include routes.
+  Measurements represent map distance and do not track walking pace.
 - Each site has separate Photos and Videos sections. The device notebook
   supports five compressed photos and three MP4/WebM clips up to 4 MB each
   per site, within the shared 18 MB notebook limit. JSON backups include
@@ -103,5 +105,5 @@ Earlier cPanel-only exploratory work was not added as a competing app; this PR r
   and import into the new one to carry your data over.
 
 The integrated offline atlas, sourced historical/terrain overlays, timeline,
-persistent routes and pace tracking, corridor scoring, and reconstruction are
+GPS tracks and pace tracking, corridor scoring, and reconstruction are
 still pending. The offline notebook supports saved records and coordinates.

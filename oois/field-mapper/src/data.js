@@ -1,3 +1,4 @@
+import { validateRoutes } from "./routes.js";
 import { SITE_TYPES, CONFIDENCE_LEVELS } from "./siteTypes.js";
 export const siteCategories = (site) => site.categories ?? [site.type];
 const videoLimit = 4 * 1024 * 1024;
@@ -104,26 +105,41 @@ export function validateImport(data) {
 let connection;
 function db() {
   return (connection ??= new Promise((resolve, reject) => {
-    const req = indexedDB.open("oois-field-notebook-v1", 1);
-    req.onupgradeneeded = () =>
-      req.result.createObjectStore("sites", { keyPath: "id" });
-    req.onsuccess = () => resolve(req.result);
+    const req = indexedDB.open("oois-field-notebook-v1", 2);
+    req.onupgradeneeded = (event) => {
+      if (event.oldVersion < 1) req.result.createObjectStore("sites", { keyPath: "id" });
+      req.result.createObjectStore("routes", { keyPath: "id" });
+    };
+    req.onblocked = () => {
+      connection = undefined;
+      reject(Error("Close other Field Mapper tabs, then reopen this one to update storage."));
+    };
+    req.onsuccess = () => {
+      req.result.onversionchange = () => {
+        req.result.close();
+        connection = undefined;
+      };
+      resolve(req.result);
+    };
     req.onerror = () =>
       reject(Error("Device storage unavailable. Use a normal browser window."));
   }));
 }
-export async function loadSites() {
+async function loadStore(name) {
   const d = await db();
   return new Promise((resolve, reject) => {
-    const r = d.transaction("sites", "readonly").objectStore("sites").getAll();
+    const r = d.transaction(name, "readonly").objectStore(name).getAll();
     r.onsuccess = () => resolve(r.result);
     r.onerror = () => reject(r.error);
   });
 }
-async function mutate(fn) {
+export const loadSites = () => loadStore("sites");
+export const loadRoutes = () => loadStore("routes");
+
+async function mutate(fn, incomingRoutes) {
   const d = await db();
   return new Promise((resolve, reject) => {
-    const tx = d.transaction("sites", "readwrite"),
+    const tx = d.transaction(incomingRoutes ? ["sites", "routes"] : "sites", "readwrite"),
       s = tx.objectStore("sites");
     let error, result;
     tx.oncomplete = () => resolve(result);
@@ -134,6 +150,17 @@ async function mutate(fn) {
     s.getAll().onsuccess = (e) => {
       try {
         result = fn(e.target.result, s);
+        if (incomingRoutes) {
+          const routes = tx.objectStore("routes");
+          routes.getAll().onsuccess = ({ target }) => {
+            try {
+              result = { sites: result, routes: mergeRoutes(target.result, routes, incomingRoutes) };
+            } catch (err) {
+              error = err;
+              tx.abort();
+            }
+          };
+        }
       } catch (err) {
         error = err;
         tx.abort();
@@ -159,7 +186,7 @@ export const saveSite = (site, expected) => {
     store.put(site);
   });
 };
-export const mergeSites = (incoming) => {
+export const mergeSites = (incoming, routes) => {
   validateImport({ sites: incoming });
   return mutate((all, store) => {
     const ids = new Set(all.map((s) => s.id));
@@ -170,7 +197,7 @@ export const mergeSites = (incoming) => {
       throw Error("Import exceeds the 18 MB device notebook limit.");
     for (const s of add) store.put(s);
     return add.length;
-  });
+  }, routes);
 };
 export const removeSite = (id) =>
   mutate((all, store) => {
@@ -266,5 +293,43 @@ export function videoFromFile(file) {
     });
     reader.onerror = () => reject(Error("Could not read this video."));
     reader.readAsDataURL(file);
+  });
+}
+
+function mergeRoutes(existing, store, incoming) {
+  const ids = new Set(existing.map((route) => route.id));
+  const additions = incoming.filter((route) => !ids.has(route.id));
+  validateRoutes([...existing, ...additions]);
+  for (const route of additions) store.add(route);
+  return additions.length;
+}
+
+export async function saveRoute(route) {
+  const [normalized] = validateRoutes([route]);
+  const database = await db();
+  return new Promise((resolve, reject) => {
+    const transaction = database.transaction("routes", "readwrite");
+    const store = transaction.objectStore("routes");
+    let validationError;
+    transaction.oncomplete = () => resolve(normalized);
+    transaction.onabort = () => reject(validationError || transaction.error);
+    store.getAll().onsuccess = ({ target }) => {
+      try {
+        mergeRoutes(target.result, store, [normalized]);
+      } catch (error) {
+        validationError = error;
+        transaction.abort();
+      }
+    };
+  });
+}
+
+export async function removeRoute(id) {
+  const database = await db();
+  return new Promise((resolve, reject) => {
+    const transaction = database.transaction("routes", "readwrite");
+    transaction.oncomplete = () => resolve();
+    transaction.onabort = () => reject(transaction.error);
+    transaction.objectStore("routes").delete(id);
   });
 }

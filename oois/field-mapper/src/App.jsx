@@ -17,6 +17,9 @@ import { linkNearbySites, metersBetween } from "./geo.js";
 import { CONFIDENCE_LEVELS, TYPE_COLORS } from "./siteTypes.js";
 import {
   loadSites,
+  loadRoutes,
+  saveRoute,
+  removeRoute,
   saveSite,
   mergeSites,
   removeSite,
@@ -36,6 +39,7 @@ import {
   cloudLogout,
   cloudUser,
 } from "./firebase.js";
+import { routePointLimit, validateRoutes } from "./routes.js";
 import CategoryPicker from "./CategoryPicker.jsx";
 import MediaLibrary from "./MediaLibrary.jsx";
 function makeIcon(type) {
@@ -46,7 +50,7 @@ function makeIcon(type) {
     iconAnchor: [14, 14],
   });
 }
-function MapEvents({ onClick, center, expanded }) {
+function MapEvents({ onClick, center, expanded, route }) {
   const map = useMap();
   useEffect(() => {
     if (center) map.setView([center.lat, center.lng], Math.max(15, map.getZoom()));
@@ -55,6 +59,11 @@ function MapEvents({ onClick, center, expanded }) {
     const frame = requestAnimationFrame(() => map.invalidateSize({ pan: false }));
     return () => cancelAnimationFrame(frame);
   }, [map, expanded]);
+  useEffect(() => {
+    if (route) map.fitBounds(route.points.map(({ lat, lng }) => [lat, lng]), {
+      padding: [32, 32], maxZoom: 19,
+    });
+  }, [map, route]);
   useMapEvents({
     click: (e) => {
       const p = e.latlng.wrap();
@@ -111,12 +120,16 @@ export default function App() {
     [moving, setMoving] = useState(null),
     [measuring, setMeasuring] = useState(false),
     [points, setPoints] = useState([]),
+    [routes, setRoutes] = useState([]),
+    [routeName, setRouteName] = useState(""),
+    [selectedRoute, setSelectedRoute] = useState(null),
     [email, setEmail] = useState(""),
     [password, setPassword] = useState(""),
     [user, setUser] = useState(null),
     [online, setOnline] = useState(navigator.onLine);
   const entry = useRef(),
     settings = useRef(),
+    routeDialog = useRef(),
     importInput = useRef(),
     initialized = useRef(false);
   const active = sites.find((s) => s.id === activeId);
@@ -129,7 +142,7 @@ export default function App() {
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     const escape = (event) => {
-      if (event.key === "Escape" && !entry.current.open) setExpanded(false);
+      if (event.key === "Escape" && !entry.current.open && !routeDialog.current.open) setExpanded(false);
     };
     window.addEventListener("keydown", escape);
     return () => {
@@ -145,6 +158,7 @@ export default function App() {
         try {
           await migrateLegacy();
           await refresh();
+          setRoutes(await loadRoutes());
           setStatus("Saved on this device. Export regular backups.");
         } catch (e) {
           setStatus(e.message);
@@ -188,6 +202,10 @@ export default function App() {
   };
   const mapClick = (point) => {
     if (measuring) {
+      if (points.length >= routePointLimit) {
+        setStatus("This route has 250 points. Save it or undo a point.");
+        return;
+      }
       setPoints((previous) => [...previous, point]);
     } else {
       openEntry(point, moving);
@@ -275,16 +293,19 @@ export default function App() {
     run(async () => {
       if (!file) return;
       if (file.size > 20 * 1024 * 1024) throw Error("Backup exceeds 20 MB.");
-      const incoming = validateImport(JSON.parse(await file.text()));
+      const backup = JSON.parse(await file.text());
+      const incoming = validateImport(backup);
+      const incomingRoutes = validateRoutes(backup.routes ?? []);
       if (
         !confirm(
-          `Import ${incoming.length} records? Existing IDs remain unchanged.`,
+          `Import ${incoming.length} records and ${incomingRoutes.length} routes? Existing IDs remain unchanged.`,
         )
       )
         return;
-      const count = await mergeSites(incoming);
+      const added = await mergeSites(incoming, incomingRoutes);
       await refresh();
-      setStatus(`${count} records added. Existing records preserved.`);
+      setRoutes(await loadRoutes());
+      setStatus(`${added.sites} records and ${added.routes} routes added.`);
     });
   const analyze = (site) =>
     run(async () => {
@@ -386,9 +407,10 @@ export default function App() {
               run(() =>
                 download("oois-field-records.json", {
                   project: "Ozark Occupation Intelligence System",
-                  version: 1,
+                  version: 2,
                   exportedAt: new Date().toISOString(),
                   sites,
+                  routes,
                 }),
               )
             }
@@ -447,6 +469,7 @@ export default function App() {
               {expanded ? "Exit full-screen map" : "Full-screen map"}
             </button>
             <button type="button" aria-pressed={measuring} disabled={!!moving} onClick={() => {
+              setSelectedRoute(null);
               setMeasuring(!measuring);
               setPoints([]);
             }}>
@@ -454,6 +477,11 @@ export default function App() {
             </button>
             {moving && <button onClick={() => setMoving(null)}>Cancel moving pin</button>}
             {measuring && <button onClick={() => setPoints(points.slice(0, -1))} disabled={!points.length}>Undo point</button>}
+            {measuring && <button disabled={points.length < 2 || busy} onClick={() => {
+              setRouteName("");
+              routeDialog.current.showModal();
+            }}>Save route</button>}
+            {selectedRoute && <button onClick={() => setSelectedRoute(null)}>Hide route</button>}
             {measuring && <output aria-live="polite">{Math.round(distance)} m · {(distance * 3.28084).toFixed(0)} ft</output>}
           </div>
           <div className="map-wrap">
@@ -463,8 +491,9 @@ export default function App() {
               maxZoom={22}
               className="map"
             >
-              <MapEvents onClick={mapClick} center={center} expanded={expanded} />
+              <MapEvents onClick={mapClick} center={center} expanded={expanded} route={selectedRoute} />
               <ScaleControl position="bottomleft" />
+              {selectedRoute && <Polyline positions={selectedRoute.points.map(({ lat, lng }) => [lat, lng])} interactive={false} />}
               {points.length > 1 && <Polyline positions={points.map(({ lat, lng }) => [lat, lng])} interactive={false} /> }
               {layer !== "none" && online && (
                 <TileLayer
@@ -595,6 +624,30 @@ export default function App() {
               </div>
             </section>
           )}
+          {routes.length > 0 && (
+            <section className="panel">
+              <h2>Saved routes</h2>
+              {routes.map((route) => (
+                <div className="button-row" key={route.id}>
+                  <button className="secondary" onClick={() => {
+                    setMoving(null);
+                    setMeasuring(false);
+                    setPoints([]);
+                    setSelectedRoute(route);
+                    setExpanded(true);
+                  }}>{route.name}</button>
+                  <button className="danger" disabled={busy} aria-label={`Delete route ${route.name}`} onClick={() =>
+                    run(async () => {
+                      if (!confirm(`Delete the device route “${route.name}”?`)) return;
+                      await removeRoute(route.id);
+                      if (selectedRoute?.id === route.id) setSelectedRoute(null);
+                      setRoutes(await loadRoutes());
+                    })
+                  }>Delete</button>
+                </div>
+              ))}
+            </section>
+          )}
           <section className="panel">
             <div className="eyebrow">YOUR DEVICE NOTEBOOK</div>
             <h2>
@@ -637,6 +690,31 @@ export default function App() {
           </section>
         </aside>
       </section>
+      <dialog ref={routeDialog} className="entry-modal">
+        <form onSubmit={(event) => {
+          event.preventDefault();
+          run(async () => {
+            const route = await saveRoute({ id: crypto.randomUUID(), name: routeName.trim(), points });
+            setRoutes(await loadRoutes());
+            setMeasuring(false);
+            setPoints([]);
+            setSelectedRoute(route);
+            routeDialog.current.close();
+            setStatus(`Saved route “${route.name}” on this device.`);
+          });
+        }}>
+          <h2>Save measured route</h2>
+          <label>Route name
+            <input autoFocus required maxLength={120} value={routeName}
+              onChange={(event) => setRouteName(event.target.value)} />
+          </label>
+          <p role="status">{status}</p>
+          <div className="button-row">
+            <button disabled={busy || !routeName.trim()}>Save route</button>
+            <button type="button" className="secondary" onClick={() => routeDialog.current.close()}>Cancel</button>
+          </div>
+        </form>
+      </dialog>
       <dialog ref={entry} className="entry-modal">
         <form onSubmit={save}>
           <div className="modal-head">

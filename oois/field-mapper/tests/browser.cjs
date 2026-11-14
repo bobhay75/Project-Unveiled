@@ -54,7 +54,10 @@ const { chromium } = require("playwright"),
     await page.locator(".map").click({ position: { x: 225, y: 190 } });
     await page.locator(".map").click({ position: { x: 300, y: 230 } });
     assert.match(await page.locator("output").textContent(), /^[1-9]/);
-    await page.getByRole("button", { name: "Finish measuring" }).click();
+    await page.getByRole("button", { name: "Save route", exact: true }).click();
+    await page.getByLabel("Route name").fill("Test trail");
+    await page.locator("dialog[open]").getByRole("button", { name: "Save route" }).click();
+    await page.getByRole("button", { name: "Hide route" }).click();
     await page.locator(".map").click({ position: { x: 300, y: 230 } });
     await chooseCategories(page, "Rock Shelter", "Water Source");
     await page.getByLabel("Site name").fill("TEST ONLY — field observation");
@@ -133,6 +136,8 @@ const { chromium } = require("playwright"),
     const file = await (await dlp).path();
     const backup = JSON.parse(fs.readFileSync(file));
     assert.equal(backup.sites.length, 2);
+    assert.equal(backup.routes[0].name, "Test trail");
+    assert.equal(backup.routes[0].points.length, 2);
     assert.deepEqual(backup.sites.find((site) => site.photos.length).categories, ["Rock Shelter", "Water Source"]);
     if (process.env.OOIS_TEST_VIDEO) {
       assert.equal(backup.sites.find((site) => site.photos.length).videos.length, 1);
@@ -160,6 +165,8 @@ const { chromium } = require("playwright"),
       await restored.locator(".record").filter({ hasText: "Water Source" }).click();
       await restored.waitForFunction(() => document.querySelector(".panel video")?.readyState >= 1);
     }
+    await restored.getByRole("button", { name: "Test trail", exact: true }).click();
+    await restored.getByRole("button", { name: "Hide route" }).waitFor();
     await context2.close();
     await page.evaluate(() => navigator.serviceWorker.ready);
     await page.reload();
@@ -171,6 +178,8 @@ const { chromium } = require("playwright"),
     await page.waitForFunction(
       () => document.querySelectorAll(".record").length === 2,
     );
+    await page.getByRole("button", { name: "Test trail", exact: true }).click();
+    await page.getByRole("button", { name: "Exit full-screen map" }).click();
     await page.getByRole("button", { name: "Add a find" }).click();
     await page.getByLabel("Site name").fill("Offline save");
     await chooseCategories(page, "Other");
@@ -218,7 +227,7 @@ const { chromium } = require("playwright"),
       });
     }
     console.log(
-      "OOIS browser checks passed: map entry, photos, persistence, edit, text injection, GPS, search, backup restore, offline reload/save, deletion, cloud unavailable state, mobile layout, keyboard dialog.",
+      "OOIS browser checks passed: map entry, photos, persistence, edit, text injection, GPS, search, route save and restore, offline reload/save, deletion, cloud unavailable state, mobile layout, keyboard dialog.",
     );
   } finally {
     if (browser) await browser.close();
