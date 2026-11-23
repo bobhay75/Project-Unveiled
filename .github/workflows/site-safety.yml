@@ -107,3 +107,20 @@ jobs:
 
       - name: Validate Trust-Worthy release contract
         run: bash tests/trust-worthy-lab/run_all.sh
+
+      - name: Review guided research mobile and desktop layout
+        run: node tests/trust-worthy-public/guided-layout.mjs "$RUNNER_TEMP/trust-worthy-guided-layout"
+
+      - name: Verify paid finding recovery in the browser
+        run: node tests/trust-worthy-public/paid-recovery-browser.mjs "$RUNNER_TEMP/trust-worthy-paid-recovery"
+
+      - name: Preserve synthetic guided research review
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: guided-research-review-${{ github.run_id }}
+          path: |
+            ${{ runner.temp }}/trust-worthy-guided-layout
+            ${{ runner.temp }}/trust-worthy-paid-recovery
+          if-no-files-found: warn
+          retention-days: 14
