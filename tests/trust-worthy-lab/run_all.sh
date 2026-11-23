@@ -8,7 +8,9 @@ node --check truth/lab/research-sweep.js
 node --check truth/lab/app.js
 node --check truth/lab/observer.js
 node --check truth/entry-v2.js
+node --check truth/investigation-client.js
 node --check truth/investigation-ui.js
+node --test tests/trust-worthy-public/guided-client.cjs
 node --check truth/paid-continue.js
 node --check tests/trust-worthy-lab/release-integrity.mjs
 node --check tests/trust-worthy-lab/release-manifest.mjs
@@ -35,14 +37,21 @@ if command -v php >/dev/null 2>&1; then
   php -l truth/paypal-return.php >/dev/null
   php -l truth/paid-continue.php >/dev/null
   php -l truth/paid-resume.php >/dev/null
+  php -l truth/paid-status.php >/dev/null
   php tests/trust-worthy-public/deep-v2-contract.php
   php tests/trust-worthy-public/deep-reuse-contract.php
   php tests/trust-worthy-public/paid-continuation.php
+  php tests/trust-worthy-public/guided-release.php
+  python3 tests/trust-worthy-public/guided-http.py
+  python3 tests/trust-worthy-public/paid-recovery-http.py
   php tests/trust-worthy-public/paid-funnel-contract.php
   php tests/trust-worthy-public/story-scout-contract.php
   php tests/trust-worthy-public/source-family.php
   php tests/trust-worthy-public/deep-auth.php
+  php tests/trust-worthy-lab/prosper-authorization.php
+  python3 tests/trust-worthy-lab/prosper-authorization-http.py
   php tests/trust-worthy-public/backend-hardening.php
+  php tests/trust-worthy-public/provider-errors.php
   php tests/trust-worthy-intake/intake-storage.php
   bash tests/trust-worthy-intake/request-gate.sh
   php tests/trust-worthy-daily/hardening.php

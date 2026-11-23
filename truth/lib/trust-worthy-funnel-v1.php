@@ -102,12 +102,17 @@ function tw_funnel_finish_run(string $caseId, ?callable $onReceipt=null): array 
     });
     if (!is_array($claimed) || ($claimed['state']??'')!=='finishing') return ['ok'=>false,'message'=>'Paid continuation was already started.'];
 
+    $fail = static function(string $stage) use ($caseId): array {
+        tw_paid_mark_failed($caseId, $stage);
+        return ['ok'=>false,'stage'=>$stage,'case_reference'=>$caseId,'message'=>'Paid continuation stopped. Keep your case reference and PayPal receipt, and contact Bobsome1 for recovery or refund review. Do not pay again for this investigation.'];
+    };
+
     $payload=is_array($claimed['payload']??null)?$claimed['payload']:[];
     $question=(string)($payload['question']??'');
     $context=(string)($payload['context']??'');
     $claimMap=(string)($payload['claim_map']??'');
     $passes=is_array($payload['passes']??null)?$payload['passes']:[];
-    if ($question==='' || $claimMap==='' || !isset($passes['origin'],$passes['primary'],$passes['corroboration'])) return ['ok'=>false,'message'=>'Stored free investigation state was incomplete.'];
+    if ($question==='' || $claimMap==='' || !isset($passes['origin'],$passes['primary'],$passes['corroboration'])) return $fail('stored_state');
 
     $emit=static function(array $receipt) use ($onReceipt): void { if ($onReceipt!==null) $onReceipt($receipt); };
     $baseSystem=tw_deep_base_system();
@@ -115,7 +120,7 @@ function tw_funnel_finish_run(string $caseId, ?callable $onReceipt=null): array 
 
     $dependencyPacket=tw_deep_reuse_packet($passes,['origin','primary','corroboration'],3600,16);
     $dependency=tw_deep_provider_pass($baseSystem,$subject."\n\nCONFIRMED CLAIM MAP:\n".$claimMap."\n\nEXISTING EVIDENCE RECEIPTS:\n".$dependencyPacket."\n\nDEPENDENCY AUDIT OBJECTIVE:\nUsing only these already-collected receipts, identify likely shared upstream evidence and echo chains. Do not browse. If the receipts cannot establish a dependency, label it unresolved rather than guessing.",false);
-    if (!($dependency['ok']??false)) return ['ok'=>false,'message'=>'Paid continuation stopped during dependency audit.','stage'=>'dependency'];
+    if (!($dependency['ok']??false)) return $fail('dependency');
     $passes['dependency']=$dependency;
     $dependencyReceipt=tw_deep_receipt('dependency','Source dependency and echo tracing',$dependency);
     $dependencyReceipt['research_mode']='reuse_no_web';
@@ -123,13 +128,13 @@ function tw_funnel_finish_run(string $caseId, ?callable $onReceipt=null): array 
 
     [$counterLabel,$counterInstruction]=tw_funnel_web_plan()['counter'];
     $counter=tw_deep_provider_pass($baseSystem,$subject."\n\nCONFIRMED CLAIM MAP:\n".$claimMap."\n\nPASS OBJECTIVE:\n{$counterInstruction}\n\nReturn concise findings plus material unknowns.",true);
-    if (!($counter['ok']??false)) return ['ok'=>false,'message'=>'Paid continuation stopped during counterevidence.','stage'=>'counter'];
+    if (!($counter['ok']??false)) return $fail('counter');
     $passes['counter']=$counter;
     $emit(tw_deep_receipt('counter',$counterLabel,$counter));
 
     $contextPacket=tw_deep_reuse_packet($passes,['origin','primary','corroboration','dependency','counter'],3000,10);
     $contextPass=tw_deep_provider_pass($baseSystem,$subject."\n\nCONFIRMED CLAIM MAP:\n".$claimMap."\n\nEXISTING EVIDENCE RECEIPTS:\n".$contextPacket."\n\nCONTEXT + CHRONOLOGY OBJECTIVE:\nBuild chronology and material context only from evidence already collected. Do not browse. Mark unresolved chronology gaps instead of filling them from memory.",false);
-    if (!($contextPass['ok']??false)) return ['ok'=>false,'message'=>'Paid continuation stopped during context reconstruction.','stage'=>'context'];
+    if (!($contextPass['ok']??false)) return $fail('context');
     $passes['context']=$contextPass;
     $contextReceipt=tw_deep_receipt('context','Context and chronology',$contextPass);
     $contextReceipt['research_mode']='reuse_no_web';
@@ -152,15 +157,13 @@ function tw_funnel_finish_run(string $caseId, ?callable $onReceipt=null): array 
         ? 'The evidence floor is met. Begin with exactly: VERDICT: one of SUPPORTED, LIKELY, MIXED, UNLIKELY, CONTRADICTED; then PROBABILITY: integer 0-100. Explain verified facts, inferences, misleading framing, strongest evidence, strongest counterevidence, dependency risks, distinct evidence paths, and unresolved unknowns.'
         : 'The evidence floor is NOT met. Begin with exactly: VERDICT: INSUFFICIENT EVIDENCE — NO VERDICT and PROBABILITY: NONE. Explain the failed gate, evidence found, dependency risks, and unresolved gaps.';
     $synthesis=tw_deep_provider_pass($baseSystem,$subject."\n\nCONFIRMED CLAIM MAP:\n".$claimMap."\n\nCOMPACT EVIDENCE PACKET:\n".$packet."\n\nUnique URLs: ".count($unique)."; source families: ".(int)$families['family_count'].". Domain diversity is not proof of editorial independence.\n\n".$instruction,false);
-    if (!($synthesis['ok']??false)) return ['ok'=>false,'message'=>'Paid continuation stopped during synthesis.','stage'=>'synthesis'];
+    if (!($synthesis['ok']??false)) return $fail('synthesis');
 
-    $verdict='INSUFFICIENT EVIDENCE — NO VERDICT';
-    if (preg_match('/^VERDICT:\s*(.+)$/mi',(string)$synthesis['text'],$m)) $verdict=trim($m[1]);
-    $probability=null;
-    if ($evidenceFloorMet && preg_match('/^PROBABILITY:\s*(\d{1,3})\s*$/mi',(string)$synthesis['text'],$m)) {
-        $candidate=(int)$m[1]; if ($candidate>=0 && $candidate<=100) $probability=$candidate;
-    }
-    if (!$evidenceFloorMet) { $verdict='INSUFFICIENT EVIDENCE — NO VERDICT'; $probability=null; }
+    $finding=tw_deep_parse_finding((string)$synthesis['text'],$evidenceFloorMet);
+    if (!$finding['ok']) return $fail('synthesis');
+    $verdict=$finding['verdict'];
+    $probability=$finding['probability'];
+    $synthesis['text']=$finding['text'];
 
     $freeUsage=is_array($payload['free_usage']??null)?$payload['free_usage']:[];
     $paidUsage=tw_deep_usage_total([$dependency,$counter,$contextPass,$synthesis]);
@@ -171,9 +174,9 @@ function tw_funnel_finish_run(string $caseId, ?callable $onReceipt=null): array 
     ];
     $usage['total_tokens']=$usage['input_tokens']+$usage['output_tokens'];
     $finalReceipt=['stage'=>'synthesis','label'=>'Finding generated','completed'=>true,'source_count'=>count($unique),'source_family_count'=>(int)$families['family_count'],'evidence_floor_met'=>$evidenceFloorMet,'verdict'=>$verdict,'probability'=>$probability,'usage'=>$usage,'at_utc'=>gmdate('c')];
-    $emit($finalReceipt);
-
     $result=['ok'=>true,'investigation_id'=>'TW-P-'.strtoupper(substr($caseId,0,12)),'claim'=>$question,'claim_map'=>$claimMap,'sources'=>array_values($unique),'metrics'=>['unique_sources'=>count($unique),'source_families'=>(int)$families['family_count'],'counter_sources'=>count($passes['counter']['sources']??[]),'counter_families'=>(int)$counterFamilies['family_count'],'corroboration_sources'=>count($passes['corroboration']['sources']??[]),'corroboration_families'=>(int)$corroborationFamilies['family_count'],'research_profile'=>'paid_evidence_reuse_v1','evidence_floor_met'=>$evidenceFloorMet,'usage'=>$usage],'verdict'=>$verdict,'probability'=>$probability,'analysis'=>$synthesis['text']];
-    tw_paid_update_case($caseId,static function(array $r) use ($result): array { $r['state']='completed'; $r['completed_at']=time(); $r['result']=$result; return $r; });
+    $saved=tw_paid_update_case($caseId,static function(array $r) use ($result): ?array { if (($r['state']??'')!=='finishing') return null; $r['state']='completed'; $r['completed_at']=time(); $r['result']=$result; return $r; });
+    if (!is_array($saved) || ($saved['state']??'')!=='completed') return $fail('save_result');
+    $emit($finalReceipt);
     return $result;
 }

@@ -156,17 +156,11 @@ function tw_deep_run_reuse_v1(string $question, string $context = '', ?callable 
     );
     if (!($synthesis['ok'] ?? false)) return $synthesis;
 
-    $verdict = 'INSUFFICIENT EVIDENCE — NO VERDICT';
-    if (preg_match('/^VERDICT:\s*(.+)$/mi', (string)$synthesis['text'], $m)) $verdict = trim($m[1]);
-    $probability = null;
-    if ($evidenceFloorMet && preg_match('/^PROBABILITY:\s*(\d{1,3})\s*$/mi', (string)$synthesis['text'], $m)) {
-        $candidate = (int)$m[1];
-        if ($candidate >= 0 && $candidate <= 100) $probability = $candidate;
-    }
-    if (!$evidenceFloorMet) {
-        $verdict = 'INSUFFICIENT EVIDENCE — NO VERDICT';
-        $probability = null;
-    }
+    $finding = tw_deep_parse_finding((string)$synthesis['text'], $evidenceFloorMet);
+    if (!$finding['ok']) return $finding;
+    $verdict = $finding['verdict'];
+    $probability = $finding['probability'];
+    $synthesis['text'] = $finding['text'];
 
     $usage = tw_deep_usage_total(array_merge([$decompose], array_values($passes), [$synthesis]));
     $finalReceipt = [

@@ -1,5 +1,7 @@
 <?php
 declare(strict_types=1);
+require_once __DIR__ . '/lib/trust-worthy-guided-access.php';
+tw_guided_require_enabled();
 
 header_remove('X-Powered-By');
 header('Cache-Control: no-store, max-age=0');
@@ -60,6 +62,7 @@ $goals=$_POST['goals']??'';
 if(!is_string($goals)) tw_deep_stream_fail(422,'Investigation goals were invalid.');
 $goals=mb_substr(trim($goals),0,1000,'UTF-8');
 
+tw_guided_require_provider_access();
 $secret=tw_question_secret();
 if($secret==='') tw_deep_stream_fail(503,'Private research storage is unavailable.');
 $remote=(string)($_SERVER['REMOTE_ADDR']??'');

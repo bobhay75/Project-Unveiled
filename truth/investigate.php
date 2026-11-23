@@ -73,7 +73,7 @@ function render_trial_body(string $body): string {
 function page(string $title,string $body,int $status=200): never {
   http_response_code($status);
   header('Content-Type: text/html; charset=UTF-8');
-  ?><!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title><?=htmlspecialchars($title,ENT_QUOTES|ENT_SUBSTITUTE,'UTF-8')?> | Truth on Trial</title><link rel="stylesheet" href="/truth/truth-worthy.css"></head><body><header class="topbar"><div class="wrap nav"><a class="brand" href="/truth/">PROJECT UNVEILED <span>TRUTH ON TRIAL</span></a></div></header><main><section class="section"><div class="wrap"><article class="card"><div class="eyebrow">FREE PRELIMINARY INVESTIGATION</div><h1><?=htmlspecialchars($title,ENT_QUOTES|ENT_SUBSTITUTE,'UTF-8')?></h1><div class="trial-result"><?=render_trial_body($body)?></div><p><a class="button" href="/truth/deep-dive.php">Request the Deep Dive</a> <a class="button" href="/truth/#ask">Try Another Question</a></p><p><small>This is an AI-assisted preliminary synthesis, not a final verdict. Claims requiring current or specialized evidence should be verified against the cited primary record during a full investigation.</small></p></article></div></section></main></body></html><?php exit;
+  ?><!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title><?=htmlspecialchars($title,ENT_QUOTES|ENT_SUBSTITUTE,'UTF-8')?> | Truth on Trial</title><link rel="stylesheet" href="/truth/truth-worthy.css"></head><body><header class="topbar"><div class="wrap nav"><a class="brand" href="/truth/">PROJECT UNVEILED <span>TRUTH ON TRIAL</span></a></div></header><main><section class="section"><div class="wrap"><article class="card"><div class="eyebrow">FREE PRELIMINARY INVESTIGATION</div><h1><?=htmlspecialchars($title,ENT_QUOTES|ENT_SUBSTITUTE,'UTF-8')?></h1><div class="trial-result"><?=render_trial_body($body)?></div><p><a class="button" href="/truth/deep-dive.php">Request the Deep Dive</a> <a class="button" href="/truth/#investigate">Try Another Question</a></p><p><small>This is an AI-assisted preliminary synthesis, not a final verdict. Claims requiring current or specialized evidence should be verified against the cited primary record during a full investigation.</small></p></article></div></section></main></body></html><?php exit;
 }
 
 $contentLength=(string)($_SERVER['CONTENT_LENGTH']??'');
@@ -115,6 +115,12 @@ $formAge=time()-$opened;
 if($opened<1||$formAge<4||$formAge>7200) page('Try again','Please reload the page, then take a few seconds to review your question before submitting it.',422);
 [$validInput,$question,$context,$inputError]=tw_validate_trial_input($_POST['question']??null,$_POST['context']??'');
 if(!$validInput) page('Question needed',$inputError,422);
+
+// Optional Prosper permission check; no submitted question is sent to the gateway.
+require_once __DIR__ . '/lib/prosper-authorization.php';
+if (!tw_prosper_authorized()) {
+  page('Research engine unavailable','Investigation authorization is temporarily unavailable. Please try again later.',503);
+}
 
 $secret=tw_question_secret();
 if($secret==='') page('Research engine unavailable','Private research storage could not be secured. Please try again later.',503);

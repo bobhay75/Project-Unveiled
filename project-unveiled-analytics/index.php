@@ -169,6 +169,7 @@ $sources = [];
 $campaigns = [];
 $daily = [];
 $eventTotal = 0;
+$journeyShareClicks = 0;
 $exportCsv = is_string($_GET['export'] ?? null) && $_GET['export'] === 'csv';
 
 $aggregate = static function (array $event) use (
@@ -179,13 +180,17 @@ $aggregate = static function (array $event) use (
     &$chapters,
     &$sources,
     &$campaigns,
-    &$daily
+    &$daily,
+    &$journeyShareClicks
 ): void {
     $name = (string)($event['event'] ?? 'unknown');
     $counts[$name] = ($counts[$name] ?? 0) + 1;
     $sid = (string)($event['session'] ?? 'anonymous');
     $sessions[$sid] = true;
     $path = (string)($event['path'] ?? '/');
+    if ($name === 'share_click' && in_array($path, ['/unveiled/confirmed.html', '/unveiled/welcome.html'], true)) {
+        $journeyShareClicks++;
+    }
     $date = substr((string)($event['t'] ?? ''), 0, 10);
     if ($date !== '') $daily[$date] = ($daily[$date] ?? 0) + ($name === 'pageview' ? 1 : 0);
     if ($name === 'pageview') {
@@ -294,15 +299,15 @@ if ($exportCsv) {
 
 $completedSessions = 0;
 $journeyLandingSessions = 0;
-$journeyRequestSessions = 0;
-$journeyConfirmedSessions = 0;
+$journeyCheckEmailSessions = 0;
+$journeyWelcomeSessions = 0;
 foreach ($sessionPaths as $paths) {
     $hasOne = isset($paths['/book/read/chapter-01.html']);
     $hasThirteen = isset($paths['/book/read/chapter-13.html']);
     if ($hasOne && $hasThirteen) $completedSessions++;
     if (isset($paths['/unveiled/']) || isset($paths['/unveiled/index.html'])) $journeyLandingSessions++;
-    if (isset($paths['/unveiled/confirmed.html'])) $journeyRequestSessions++;
-    if (isset($paths['/unveiled/welcome.html'])) $journeyConfirmedSessions++;
+    if (isset($paths['/unveiled/confirmed.html'])) $journeyCheckEmailSessions++;
+    if (isset($paths['/unveiled/welcome.html'])) $journeyWelcomeSessions++;
 }
 
 $pageviews = (int)($counts['pageview'] ?? 0);
@@ -316,8 +321,6 @@ $journeySignupClicks = (int)($counts['journey_signup_click'] ?? 0);
 $pageviewsPerSession = $sessionCount ? $pageviews / $sessionCount : 0;
 $paypalRate = $sessionCount ? ($paypalClicks / $sessionCount) * 100 : 0;
 $completionRate = $sessionCount ? ($completedSessions / $sessionCount) * 100 : 0;
-$journeyRequestRate = $journeyLandingSessions ? ($journeyRequestSessions / $journeyLandingSessions) * 100 : 0;
-$journeyConfirmRate = $journeyRequestSessions ? ($journeyConfirmedSessions / $journeyRequestSessions) * 100 : 0;
 
 arsort($pages); arsort($chapters); arsort($sources); arsort($campaigns); ksort($daily);
 $maxDaily = max([1, ...array_values($daily)]);
@@ -348,7 +351,8 @@ $campaignLinks = [
 <body>
 <header><div class="wrap top"><div><div class="label">Private analytics</div><h1>Project Unveiled Traffic Dashboard</h1></div><nav class="nav"><a href="?range=7">7 days</a><a href="?range=30">30 days</a><a href="?range=90">90 days</a><a href="?range=<?= $range ?>&amp;export=csv">Export CSV</a><form method="post"><input type="hidden" name="action" value="logout"><input type="hidden" name="csrf" value="<?= h($_SESSION['csrf']) ?>"><button type="submit">Log out</button></form></nav></div></header>
 <main class="wrap">
-<div class="notice"><strong>What this measures:</strong> anonymous reading sessions, page views, Journey calls to action, signup-button selections, visits to the check-email page, confirmed-reader visits, chapter movement, shares, support-page visits, and PayPal link clicks. It does <strong>not</strong> collect form names or email addresses, and it does not confirm whether a PayPal payment was completed.</div>
+<div class="notice"><strong>What this measures:</strong> anonymous reading sessions, page views, Journey calls to action, signup-button selections, visits to the check-email page, welcome-page visits, chapter movement, share-button clicks, support-page visits, and PayPal link clicks. It does <strong>not</strong> collect form names or email addresses, and it does not confirm whether a PayPal payment was completed.</div>
+<div class="notice"><strong>Journey measurement limits:</strong> these are browser-tab visits and button selections, not verified signup requests, confirmed subscribers, email deliveries, or completed shares. Both follow-up pages can be opened directly. A new tab, another device, tracking opt-outs, and the reporting window can change these counts. No subscriber conversion rate or post-to-confirmation attribution is established here. Journey cards include all sources; the source and campaign tables below count sitewide page views.</div>
 <section class="grid">
 <div class="card"><div class="label">Reading sessions</div><div class="metric"><?= number_format($sessionCount) ?></div><div class="sub">Anonymous browser-tab sessions</div></div>
 <div class="card"><div class="label">Page views</div><div class="metric"><?= number_format($pageviews) ?></div><div class="sub"><?= number_format($pageviewsPerSession, 1) ?> pages per session</div></div>
@@ -357,11 +361,12 @@ $campaignLinks = [
 <div class="card"><div class="label">Support page clicks</div><div class="metric"><?= number_format($supportClicks) ?></div><div class="sub">Interest before PayPal</div></div>
 <div class="card"><div class="label">Chapter-next clicks</div><div class="metric"><?= number_format($nextClicks) ?></div><div class="sub">Reader progression</div></div>
 <div class="card"><div class="label">Share clicks</div><div class="metric"><?= number_format($shares) ?></div><div class="sub">On-site share controls</div></div>
-<div class="card"><div class="label">Journey CTA clicks</div><div class="metric"><?= number_format($journeyCtaClicks) ?></div><div class="sub">Homepage and campaign calls to action</div></div>
-<div class="card"><div class="label">Journey visitors</div><div class="metric"><?= number_format($journeyLandingSessions) ?></div><div class="sub">Anonymous landing-page sessions</div></div>
-<div class="card"><div class="label">Signup selections</div><div class="metric"><?= number_format($journeySignupClicks) ?></div><div class="sub">No names or addresses collected here</div></div>
-<div class="card"><div class="label">Signup requests</div><div class="metric"><?= number_format($journeyRequestSessions) ?></div><div class="sub"><?= pct($journeyRequestRate) ?> of Journey sessions</div></div>
-<div class="card"><div class="label">Confirmed readers</div><div class="metric"><?= number_format($journeyConfirmedSessions) ?></div><div class="sub"><?= pct($journeyConfirmRate) ?> of signup requests</div></div>
+<div class="card"><div class="label">Journey CTA clicks</div><div class="metric"><?= number_format($journeyCtaClicks) ?></div><div class="sub">On-site Journey controls only</div></div>
+<div class="card"><div class="label">Journey landing sessions</div><div class="metric"><?= number_format($journeyLandingSessions) ?></div><div class="sub">Anonymous landing-page sessions</div></div>
+<div class="card"><div class="label">Signup selections</div><div class="metric"><?= number_format($journeySignupClicks) ?></div><div class="sub">Button selections, including invalid attempts</div></div>
+<div class="card"><div class="label">Check-email-page sessions</div><div class="metric"><?= number_format($journeyCheckEmailSessions) ?></div><div class="sub">Page visits; requests are not verified</div></div>
+<div class="card"><div class="label">Welcome-page sessions</div><div class="metric"><?= number_format($journeyWelcomeSessions) ?></div><div class="sub">Page visits; confirmations are not verified</div></div>
+<div class="card"><div class="label">Journey share-button clicks</div><div class="metric"><?= number_format($journeyShareClicks) ?></div><div class="sub">Check-email and welcome pages only; sharing is not verified</div></div>
 <div class="card"><div class="label">Reporting window</div><div class="metric"><?= $range ?></div><div class="sub">days ending today</div></div>
 </section>
 

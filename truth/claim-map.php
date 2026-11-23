@@ -1,5 +1,7 @@
 <?php
 declare(strict_types=1);
+require_once __DIR__ . '/lib/trust-worthy-guided-access.php';
+tw_guided_require_enabled();
 
 header_remove('X-Powered-By');
 header('Cache-Control: no-store, max-age=0');
@@ -51,6 +53,7 @@ if($opened<1||$age<4||$age>7200) tw_claim_map_fail(422,'Please reload and review
 [$valid,$question,$context,$inputError]=tw_validate_trial_input($_POST['question']??null,$_POST['context']??'');
 if(!$valid) tw_claim_map_fail(422,$inputError);
 
+tw_guided_require_provider_access();
 $secret=tw_question_secret();
 if($secret==='') tw_claim_map_fail(503,'Private research storage is unavailable.');
 $remote=(string)($_SERVER['REMOTE_ADDR']??'');

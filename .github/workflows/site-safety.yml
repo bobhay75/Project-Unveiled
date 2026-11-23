@@ -36,6 +36,17 @@ jobs:
       - name: Test guarded cPanel deployment
         run: bash tests/deployment/run.sh
 
+      - name: Ensure PHP payment and bundle validation extensions
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! php -r 'exit(extension_loaded("curl") && extension_loaded("mbstring") && class_exists("ZipArchive") ? 0 : 1);'; then
+            PHP_RUNTIME_VERSION="$(php -r 'echo PHP_MAJOR_VERSION, ".", PHP_MINOR_VERSION;')"
+            sudo apt-get update
+            sudo apt-get install --no-install-recommends -y "php${PHP_RUNTIME_VERSION}-curl" "php${PHP_RUNTIME_VERSION}-mbstring" "php${PHP_RUNTIME_VERSION}-zip"
+          fi
+          php -r 'foreach (["curl", "mbstring", "zip"] as $extension) { if (!extension_loaded($extension)) { fwrite(STDERR, "Missing required PHP extension: " . $extension . PHP_EOL); exit(1); } } if (!class_exists("ZipArchive")) { exit(1); }'
+
       - name: Validate PHP syntax
         shell: bash
         run: |
@@ -52,8 +63,64 @@ jobs:
             node --check "$file"
           done < <(find . -path './.git' -prune -o -type f -name '*.js' -print0)
 
+      - name: Verify Journey evidence gates
+        shell: bash
+        run: |
+          set -euo pipefail
+          evidence_root="$RUNNER_TEMP/project-unveiled-journey-evidence"
+          mkdir -p "$evidence_root"
+          php tests/project-unveiled-analytics/dashboard-evidence.php "$evidence_root/dashboard.html"
+          php tests/unveiled-journey/suppression.php
+          node tests/project-unveiled-analytics/dashboard-layout.mjs "$evidence_root/dashboard.html" "$evidence_root/browser"
+
+      - name: Preserve synthetic dashboard review
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: journey-evidence-${{ github.run_id }}
+          path: ${{ runner.temp }}/project-unveiled-journey-evidence
+          if-no-files-found: warn
+          retention-days: 14
+
       - name: Validate public files and local links
         run: python3 scripts/validate_site.py
 
+      - name: Test Living Story source grounding and private preview controls
+        run: |
+          php tests/living-story/backend.php
+          python3 tests/living-story/http_flow.py
+
+      - name: Test service briefs and protected owner inbox
+        run: python3 tests/services/contact-flow.py
+
+      - name: Test conversion paths and service form behavior
+        run: node tests/services/conversion-flow.mjs
+
+      - name: Test smart-store intent routing and guarded walkthrough actions
+        run: node tests/services/smart-store.mjs
+
+      - name: Test deterministic buyer bundle assembly and manifest validation
+        run: python3 tests/commerce/bundle-build.py
+
+      - name: Test verified-bundle payment and private delivery controls
+        run: php tests/commerce/backend.php
+
       - name: Validate Trust-Worthy release contract
         run: bash tests/trust-worthy-lab/run_all.sh
+
+      - name: Review guided research mobile and desktop layout
+        run: node tests/trust-worthy-public/guided-layout.mjs "$RUNNER_TEMP/trust-worthy-guided-layout"
+
+      - name: Verify paid finding recovery in the browser
+        run: node tests/trust-worthy-public/paid-recovery-browser.mjs "$RUNNER_TEMP/trust-worthy-paid-recovery"
+
+      - name: Preserve synthetic guided research review
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: guided-research-review-${{ github.run_id }}
+          path: |
+            ${{ runner.temp }}/trust-worthy-guided-layout
+            ${{ runner.temp }}/trust-worthy-paid-recovery
+          if-no-files-found: warn
+          retention-days: 14

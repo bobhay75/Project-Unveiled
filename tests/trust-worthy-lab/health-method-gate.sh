@@ -13,6 +13,7 @@ private_dir="$scratch_dir/private"
 body_file="$scratch_dir/body"
 header_file="$scratch_dir/headers"
 server_log="$scratch_dir/server.log"
+router_file="$scratch_dir/router.php"
 server_pid=""
 
 cleanup() {
@@ -24,9 +25,20 @@ cleanup() {
 }
 trap cleanup EXIT
 
+cat > "$router_file" <<'PHP'
+<?php
+declare(strict_types=1);
+define('TW_PRIVATE_DIR_OVERRIDE', (string)getenv('TW_TEST_PRIVATE_DIR'));
+if (parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) === '/truth/health.php') {
+    require (string)getenv('TW_TEST_SOURCE_ROOT') . '/truth/health.php';
+    return true;
+}
+return false;
+PHP
+
 OPENAI_API_KEY="health-gate-placeholder" \
-TW_PRIVATE_DIR_OVERRIDE="$private_dir" \
-php -S "127.0.0.1:${port}" -t "$repo_dir" >"$server_log" 2>&1 &
+TW_TEST_PRIVATE_DIR="$private_dir" TW_TEST_SOURCE_ROOT="$repo_dir" \
+php -S "127.0.0.1:${port}" -t "$repo_dir" "$router_file" >"$server_log" 2>&1 &
 server_pid=$!
 
 ready=0

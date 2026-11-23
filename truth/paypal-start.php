@@ -1,5 +1,8 @@
 <?php
 declare(strict_types=1);
+require_once __DIR__ . '/lib/trust-worthy-guided-access.php';
+tw_guided_require_enabled();
+tw_guided_post_gate(30000);
 header_remove('X-Powered-By');
 header('Cache-Control: no-store, max-age=0');
 header('Pragma: no-cache');

@@ -5,7 +5,7 @@ $root = dirname(__DIR__, 2);
 $deep = file_get_contents($root . '/truth/lib/trust-worthy-deep.php');
 $claimMap = file_get_contents($root . '/truth/claim-map.php');
 $stream = file_get_contents($root . '/truth/deep-stream.php');
-$entry = file_get_contents($root . '/truth/index.php');
+$entry = file_get_contents($root . '/truth/guided.php');
 $workspace = file_get_contents($root . '/truth/investigation.php');
 $ui = file_get_contents($root . '/truth/investigation-ui.js');
 
@@ -43,8 +43,8 @@ $mustContain($deep, "'total_tokens'", 'deep engine does not expose total token u
 $mustMatch($deep, '/\$floor\s*=\s*count\(\$unique\)/', 'deep engine missing evidence floor');
 $mustContain($deep, 'INSUFFICIENT EVIDENCE — NO VERDICT', 'deep engine missing no-verdict terminal state');
 $mustContain($deep, 'PROBABILITY: NONE', 'deep engine must explicitly suppress probability when the evidence floor fails');
-$mustMatch($deep, "/'probability'\s*=>\s*\$prob/", 'deep engine must expose parsed probability separately from verdict');
-$mustMatch($deep, "/if\s*\(\s*\$floor\s*&&\s*preg_match\(/", 'deep engine must only parse numeric probability after the evidence floor is met');
+$mustMatch($deep, '/\'probability\'\s*=>\s*\$prob/', 'deep engine must expose parsed probability separately from verdict');
+$mustContain($deep, 'tw_deep_parse_finding((string)$syn[\'text\'],$floor)', 'deep engine must validate both rendered finding and score against the evidence floor');
 $mustMatch($deep, "/'minimum_source_families'\\s*=>\\s*3/", 'deep engine does not gate on source-family diversity');
 $mustMatch($deep, "/'minimum_corroboration_families'\\s*=>\\s*2/", 'deep engine does not require corroboration-family diversity');
 $mustContain($deep, 'tw_deep_source_family', 'deep engine lacks deterministic source-family classification');
@@ -73,7 +73,8 @@ $mustNotContain($stream, 'tw_rate_limit(', 'deep research should use the already
 
 $mustContain($entry, 'START GUIDED DEEP INVESTIGATION', 'entry page does not lead with guided investigation');
 $mustContain($entry, 'QUICK PRELIMINARY CHECK', 'entry page does not distinguish preliminary mode');
-$mustContain($entry, 'action="/truth/investigate.php"', 'deep entry does not route to workspace');
+$mustContain($entry, 'action="/truth/investigate.php"', 'preliminary entry does not route to preliminary engine');
+$mustContain($entry, 'formaction="/truth/investigation.php"', 'deep entry does not route to workspace');
 $mustContain($workspace, 'Choose what matters', 'workspace does not guide the user through investigation intent');
 $mustContain($workspace, 'REVIEW THE CLAIM MAP', 'workspace does not stop for claim-map review');
 $mustContain($workspace, 'YOUR APPROVAL REQUIRED', 'workspace does not make user confirmation explicit');

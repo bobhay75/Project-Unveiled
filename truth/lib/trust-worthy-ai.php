@@ -829,16 +829,47 @@ function tw_ai_safe_diagnostic_identifier(mixed $value, string $kind): string {
             'api_error', 'authentication_error', 'invalid_request_error',
             'invalid_output_contract', 'incomplete_output', 'not_found_error',
             'permission_error', 'rate_limit_error', 'server_error',
+            'insufficient_quota', 'service_unavailable_error',
             'unverified_output',
         ]
         : [
             'api_error', 'billing_hard_limit_reached', 'content_policy_violation',
             'context_length_exceeded', 'incomplete_output', 'insufficient_quota',
+            'credit_balance_exhausted', 'organization_spend_limit_exceeded',
+            'project_spend_limit_exceeded', 'organization_usage_limit_exceeded',
             'invalid_api_key', 'invalid_prompt', 'invalid_value', 'model_not_found',
-            'rate_limit_exceeded', 'server_error', 'unsupported_parameter',
+            'rate_limit_exceeded', 'slow_down', 'server_is_overloaded',
+            'server_error', 'unsupported_parameter',
             'unsupported_value',
         ];
     return in_array($value, $allowed, true) ? $value : 'other';
+}
+
+function tw_ai_provider_failure(int $status, array $data): array {
+    $error = is_array($data['error'] ?? null) ? $data['error'] : [];
+    $type = tw_ai_safe_diagnostic_identifier($error['type'] ?? '', 'type');
+    $code = tw_ai_safe_diagnostic_identifier($error['code'] ?? '', 'code');
+    $accountCodes = [
+        'billing_hard_limit_reached', 'insufficient_quota',
+        'credit_balance_exhausted', 'organization_spend_limit_exceeded',
+        'project_spend_limit_exceeded', 'organization_usage_limit_exceeded',
+    ];
+    // Account limits are not temporary traffic limits. Do not suggest immediate
+    // retries or infer which balance/limit needs attention from HTTP 429 alone.
+    if (in_array($code, $accountCodes, true) || $type === 'insufficient_quota') {
+        $message = 'The research service is unavailable while its account access is restored. Please try again later.';
+    } elseif (in_array($code, ['rate_limit_exceeded', 'slow_down', 'server_is_overloaded'], true)
+        || $type === 'rate_limit_error' || $type === 'service_unavailable_error') {
+        $message = 'The research service is busy. Please wait before trying again.';
+    } elseif (in_array($status, [401, 403], true)
+        || in_array($code, ['invalid_api_key', 'model_not_found', 'unsupported_parameter', 'unsupported_value'], true)) {
+        $message = 'The research service needs an operator configuration update. Please try again later.';
+    } else {
+        $message = 'The research service could not complete this request. Please try again later.';
+    }
+    // Keep the existing conservative local allowance accounting. No automatic
+    // provider retries are introduced; raw provider text never reaches readers.
+    return ['ok' => false, 'message' => $message, 'quota_consumed' => true];
 }
 
 function tw_prepare_ai_diagnostic_log(string $secret): void {
@@ -1315,9 +1346,7 @@ PROMPT;
     if (!is_array($data)) $data = [];
     if ($status < 200 || $status >= 300) {
         tw_log_openai_diagnostic($status, $data, '', 0, $secret);
-        $error = is_array($data['error'] ?? null) ? $data['error'] : [];
-        $code = tw_ai_safe_diagnostic_identifier($error['code'] ?? $error['type'] ?? 'api_error', 'code') ?: 'api_error';
-        return ['ok'=>false,'message'=>'OpenAI API request failed safely. Diagnostic: HTTP '.$status.' · '.$code,'quota_consumed'=>true];
+        return tw_ai_provider_failure($status, $data);
     }
 
     $incomplete = (($data['status'] ?? '') === 'incomplete');

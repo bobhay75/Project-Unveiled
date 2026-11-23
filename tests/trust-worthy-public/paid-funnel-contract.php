@@ -23,7 +23,9 @@ $not($start,"\$_POST['amount']",'client can supply checkout amount');
 $not($start,"\$_POST['currency']",'client can supply checkout currency');
 $has($start,"tw_paid_verify_state(\$state,'checkout'",'checkout start lacks signed state verification');
 $has($return,'tw_paid_capture_paypal_order','PayPal return does not verify/capture server-side');
-$has($return,"(\$case['state']??'')!=='awaiting_payment'",'PayPal return can replay against an already processed case');
+$has($return,'tw_paid_recover_checkout','Recorded exact payments lack a separate read-only recovery branch');
+$has($paid,'function tw_paid_recovery_case','Signed case/order recovery boundary is missing');
+$has($return,"(\$case['state']??'')!=='awaiting_payment'",'New capture is not restricted to an active awaiting-payment case');
 
 $has($funnel,"foreach (['origin','primary','corroboration'] as \$stage)",'free phase does not stop after corroboration');
 $has($funnel,"'locked_stages'=>['dependency','counter','context','synthesis']",'paid stages are not explicit at handoff');
