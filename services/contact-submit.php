@@ -22,13 +22,14 @@ function services_out(string $message, int $code = 400, ?int $retryAfter = null)
     exit;
 }
 
-function services_received(): never
+function services_received(string $offer = ''): never
 {
     if (str_contains((string)($_SERVER['HTTP_ACCEPT'] ?? ''), 'application/json')) {
         header('Content-Type: application/json; charset=UTF-8');
-        echo json_encode(['ok' => true]);
+        echo json_encode($offer === 'partnership' ? ['ok' => true, 'offer' => 'partnership'] : ['ok' => true]);
     } else {
-        header('Location: /services/contact-received.html', true, 303);
+        $receipt = $offer === 'partnership' ? '/services/contact-received.html?offer=partnership' : '/services/contact-received.html';
+        header('Location: ' . $receipt, true, 303);
     }
     exit;
 }
@@ -54,11 +55,12 @@ try {
 
     $business = tw_intake_clean_text(tw_intake_post_scalar('business', true), 2, 180, true);
     $offer = tw_intake_post_scalar('offer');
-    if (!in_array($offer, ['', 'visibility-starter'], true)) {
+    if (!in_array($offer, ['', 'visibility-starter', 'partnership'], true)) {
         throw new TwIntakeException('Choose a published offer or send a general brief.', 422);
     }
     $problem = tw_intake_clean_text(tw_intake_post_scalar('problem', true), 10, 2000);
-    $cost = tw_intake_clean_text(tw_intake_post_scalar('cost'), 0, 1200);
+    $costField = tw_intake_post_scalar('cost');
+    $cost = $offer === 'partnership' ? '' : tw_intake_clean_text($costField, 0, 1200);
     $win = tw_intake_clean_text(tw_intake_post_scalar('win', true), 5, 1200);
     $deadline = tw_intake_clean_text(tw_intake_post_scalar('deadline'), 0, 100, true);
     $website = tw_intake_clean_text(tw_intake_post_scalar('website_url'), 0, 300, true);
@@ -89,10 +91,10 @@ try {
         'ip_hash' => tw_intake_client_ip_hash('lead'),
     ]);
 
-    services_received();
+    services_received($offer);
 } catch (TwIntakeException $error) {
     services_out($error->getMessage(), $error->httpStatus, $error->retryAfter);
 } catch (Throwable $error) {
     error_log('Services lead intake failed safely: ' . get_class($error));
-    services_out('Your problem brief could not be saved. Please try again later or email thebobsomest1@gmail.com.', 500);
+    services_out('Your inquiry could not be saved. Please try again later or email thebobsomest1@gmail.com.', 500);
 }

@@ -1519,6 +1519,7 @@ body[data-cinematic-theme="bobsome1"]::before {
 .contact-optional .contact-form-grid{margin-top:1rem}
 .contact-optional textarea{min-height:80px}
 .intake-next-steps{display:grid;gap:1rem;margin:1.5rem 0 0;padding-left:1.2rem;color:var(--muted);font-size:.9rem}
+#service-next-steps[hidden],#contact-cost-field[hidden]{display:none}
 .intake-next-steps strong{color:var(--paper)}
 .contact-received-card a{overflow-wrap:anywhere}
 .contact-form .button{font-size:.83rem}
