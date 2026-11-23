@@ -17,12 +17,13 @@ const fixture = String.raw`$_SERVER=['REQUEST_METHOD'=>'POST','HTTP_HOST'=>'bobs
 const instrument = String.raw`<script>
 window.addEventListener('load',async function(){
  const behavior=window.__runGuidedBehavior?await window.__runGuidedBehavior():null;
- const shown=e=>{const r=e.getBoundingClientRect(),s=getComputedStyle(e);return r.width>0&&r.height>0&&s.visibility!=='hidden'&&s.display!=='none'};
+ document.querySelectorAll('details').forEach(e=>{e.open=true});
+ const shown=e=>{const r=e.getBoundingClientRect(),s=getComputedStyle(e);return r.width>0&&r.height>0&&s.visibility!=='hidden'&&s.display!=='none'&&!e.closest('[hidden],[aria-hidden="true"]')};
  const controls=[...document.querySelectorAll('a[href],button:not([disabled]),input:not([type="hidden"]):not([disabled]),textarea:not([disabled]),select:not([disabled])')].filter(shown);
  const failures=[];
  controls.forEach(e=>{e.focus({preventScroll:true});if(document.activeElement!==e)failures.push(e.id||e.tagName)});
  window.scrollTo(0,0);
- const result={behavior,width:innerWidth,documentWidth:document.documentElement.scrollWidth,focusable:controls.length,focusFailures:failures,heading:document.querySelector('h1')?.textContent?.trim(),deepAction:document.querySelector('[value="deep"]')?.getAttribute('formaction')||null};
+ const result={behavior,width:innerWidth,documentWidth:document.documentElement.scrollWidth,focusable:controls.length,focusFailures:failures,heading:document.querySelector('h1')?.textContent?.trim(),deepAction:document.querySelector('button[formaction]')?.getAttribute('formaction')||null};
  const pre=document.createElement('pre');pre.id='guided-layout-result';pre.hidden=true;pre.textContent=btoa(JSON.stringify(result));document.body.append(pre);parent.postMessage({type:'guided-layout-result',result},'*');
 });</script>`;
 for (const page of ['guided','investigation']) {
