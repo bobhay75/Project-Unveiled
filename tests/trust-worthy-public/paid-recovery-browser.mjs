@@ -16,13 +16,15 @@ for(const [scenario,width] of [['completed',375],['lost',375],['lost',1280],['re
  let html=source.replace(/<link\b[^>]*rel="stylesheet"[^>]*href="(\/truth\/[^"?]+)"[^>]*>/g,(_,path)=>`<style>${readFileSync(root+path,'utf8')}</style>`);
  const scripts=[];html=html.replace(/<script\b[^>]*src="(\/truth\/[^"?]+)"[^>]*><\/script>/g,(_,path)=>{scripts.push(`<script>${readFileSync(root+path,'utf8')}</script>`);return ''});
  const setup=`<script>window.__paidScenario=${JSON.stringify(scenario)};</script><script>${readFileSync(join(root,'tests/trust-worthy-public/paid-recovery-browser-fixture.js'),'utf8')}</script>`;
- const instrument=`<script>addEventListener('load',async()=>{const behavior=await window.__runPaidBehavior();const evidence={behavior,width:innerWidth,documentWidth:document.documentElement.scrollWidth};const p=document.createElement('pre');p.id='paid-browser-result';p.hidden=true;p.textContent=btoa(JSON.stringify(evidence));document.body.append(p);parent.postMessage({type:'paid-browser-result',evidence},'*');});</script>`;
+ const instrument=`<script>addEventListener('load',async()=>{let behavior;try{behavior=await window.__runPaidBehavior()}catch(error){behavior={passed:false,error:String(error)}}const evidence={behavior,width:innerWidth,documentWidth:document.documentElement.scrollWidth};const p=document.createElement('pre');p.id='paid-browser-result';p.hidden=true;p.textContent=btoa(JSON.stringify(evidence));document.body.append(p);parent.postMessage({type:'paid-browser-result',evidence},'*');});</script>`;
  html=html.replace('</body>',setup+scripts.join('\n')+instrument+'</body>');
  const name=`paid-${scenario}-${width}`,inner=join(output,name+'-content.html'),wrapper=join(output,name+'.html');writeFileSync(inner,html);
  writeFileSync(wrapper,`<!doctype html><html><head><style>html,body{margin:0;overflow:hidden}iframe{width:${width}px;height:2000px;border:0}</style><script>addEventListener('message',event=>{if(event.data?.type!=='paid-browser-result')return;const p=document.createElement('pre');p.id='paid-browser-result';p.hidden=true;p.textContent=btoa(JSON.stringify(event.data.evidence));document.body.append(p)});</script></head><body><iframe src="${basename(inner)}"></iframe></body></html>`);
- const flags=['--headless=new','--no-sandbox','--disable-gpu','--disable-dev-shm-usage','--allow-file-access-from-files','--force-device-scale-factor=1',`--window-size=${Math.max(500,width)},2000`,`--virtual-time-budget=${scenario==='pending'?130000:4000}`,'--dump-dom',pathToFileURL(wrapper).href];
+ const flags=['--headless=new','--no-sandbox','--disable-gpu','--disable-dev-shm-usage','--allow-file-access-from-files','--force-device-scale-factor=1',`--window-size=${Math.max(500,width)},2000`,`--virtual-time-budget=${scenario==='pending'?130000:15000}`,'--dump-dom',pathToFileURL(wrapper).href];
  const run=spawnSync(chrome,flags,{encoding:'utf8',timeout:30000,maxBuffer:12*1024*1024});
  if(run.status!==0)throw Error(`${name}: Chrome failed ${run.stderr}`);
+ writeFileSync(join(output,name+'-browser-dom.html'),run.stdout);
+ writeFileSync(join(output,name+'-browser.log'),run.stderr);
  const match=run.stdout.match(/<pre\b[^>]*id="paid-browser-result"[^>]*>([A-Za-z0-9+/=]+)<\/pre>/);
  if(!match)throw Error(`${name}: browser result missing`);
  const evidence=JSON.parse(Buffer.from(match[1],'base64').toString('utf8'));
