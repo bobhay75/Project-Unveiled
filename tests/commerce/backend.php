@@ -193,6 +193,7 @@ try {
         check(bc_order(['private_dir' => $temp], $local['id'])['download_count'] === 20, 'Concurrent changes are not lost');
     }
     require __DIR__ . '/bundle-contract.php';
+    require __DIR__ . '/payment-recovery.php';
     echo "Commerce backend: {$checks} checks passed (offline; no PayPal calls).\n";
 } finally {
     // Only this exact, randomly named test directory and its known children.

@@ -366,7 +366,36 @@ function bc_error(Throwable $error): never
     $message = $error instanceof BcException ? $error->getMessage() : 'Checkout could not be confirmed. Please try again later.';
     $status = $error instanceof BcException ? $error->httpStatus : 503;
     if (!$error instanceof BcException) error_log('Bobsome1 checkout failed safely: ' . get_class($error));
-    bc_page('Checkout needs attention', '<p>' . bc_h($message) . '</p><p>If PayPal already shows a charge, do not pay again. Keep your PayPal receipt and contact purchase support so Robert can verify and deliver your edition.</p><p><a href="/store/">Return to the store</a></p>', $status);
+    $existing = is_string($_SESSION['order_id'] ?? null) && bc_id($_SESSION['order_id']);
+    $return = $existing
+        ? '<p><a href="' . BC_BASE . '">Return to your existing checkout</a> to check the same payment without creating another charge.</p>'
+        : '<p><a href="/store/">Return to the store</a></p>';
+    bc_page('Checkout needs attention', '<p>' . bc_h($message) . '</p><p>If PayPal already shows a charge, do not pay again. Keep your PayPal receipt and contact purchase support so Robert can verify and deliver your edition.</p>' . $return, $status);
+}
+
+/* A reload must retain the original checkout. The recovery action only reads
+ * PayPal; resuming an unfinished approval reuses the existing order and keys.
+ */
+function bc_existing_checkout_content(array $order, string $csrf, int $now): string
+{
+    if (!in_array($order['state'] ?? '', ['creating', 'created'], true)) {
+        bc_fail('This checkout needs purchase support. Do not pay again.', 409);
+    }
+    $content = '<p>Your earlier checkout is still saved in this browser. If payment was interrupted, check it here before trying again.</p>';
+    if ($order['state'] === 'created' && bc_paypal_id((string)($order['paypal_order_id'] ?? ''))) {
+        $content .= '<form action="check.php" method="post"><input type="hidden" name="csrf" value="' . bc_h($csrf)
+            . '"><button type="submit">Check my existing payment</button></form><p class="small">This check cannot create or capture a payment. A verified completed payment unlocks the original study bundle.</p>';
+    }
+    if (($order['checkout_expires_at'] ?? 0) > $now && !is_int($order['capture_attempted_at'] ?? null)) {
+        $content .= '<form action="start.php" method="post"><input type="hidden" name="csrf" value="' . bc_h($csrf)
+            . '"><button type="submit">Resume my existing PayPal checkout</button></form><p class="small">Resume only if you have not paid. The saved order is reused; a new order is not created.</p>';
+    } elseif (($order['checkout_expires_at'] ?? 0) > $now && $order['state'] === 'created') {
+        $content .= '<form action="capture.php" method="post"><input type="hidden" name="csrf" value="' . bc_h($csrf)
+            . '"><button type="submit">Retry the same $7 payment confirmation</button></form><p class="small">Check the existing payment first. This confirmation reuses the original PayPal payment request; it can complete that purchase if the earlier attempt did not reach PayPal.</p>';
+    } else {
+        $content .= '<p class="notice">New payment attempts are paused for this checkout. Check the existing payment or contact purchase support with your PayPal receipt.</p>';
+    }
+    return $content;
 }
 
 function bc_id(string $value): bool
@@ -580,6 +609,40 @@ function bc_validate_paid_order(array $remote, array $local, string $merchantId)
         bc_fail('The payment details do not match this edition.', 409);
     }
     return bc_validate_capture($captures[0]);
+}
+
+/* Read-only provider reconciliation. The injectable transport is an internal
+ * test seam, never a request/configuration option. No create/capture call is
+ * permitted on this path, even for an expired or uncertain checkout.
+ */
+function bc_reconcile_order(array $config, array $order, ?callable $transport = null): array
+{
+    bc_require_order_asset($config, $order);
+    if (!in_array($order['state'] ?? '', ['created', 'paid'], true)
+        || !bc_paypal_id((string)($order['paypal_order_id'] ?? ''))) {
+        bc_fail('This checkout needs purchase support. Do not pay again.', 409);
+    }
+    $fetch = $transport ?? 'bc_api';
+    $remote = $fetch($config, 'GET', '/v2/checkout/orders/' . $order['paypal_order_id']);
+    $captureId = bc_validate_paid_order($remote, $order, $config['merchant_id']);
+    // The order representation may predate a refund. Verify the current capture
+    // before restoring a grant, as the download endpoint also does each time.
+    $capture = $fetch($config, 'GET', '/v2/payments/captures/' . $captureId);
+    bc_validate_capture($capture, $captureId);
+    return bc_store($config['private_dir'], static function (array &$ledger) use ($order, $captureId, $config): array {
+        $current = $ledger['orders'][$order['id']] ?? null;
+        if (!is_array($current) || ($current['paypal_order_id'] ?? null) !== $order['paypal_order_id']) {
+            bc_fail('The saved checkout changed. Contact purchase support without paying again.', 409);
+        }
+        bc_require_order_asset($config, $current);
+        foreach ($ledger['orders'] as $id => $existing) {
+            if ($id !== $order['id'] && ($existing['capture_id'] ?? null) === $captureId) {
+                bc_fail('This payment has already been allocated.', 409);
+            }
+        }
+        $ledger['orders'][$order['id']] = bc_paid_transition($current, $captureId, time());
+        return $ledger['orders'][$order['id']];
+    });
 }
 
 function bc_paid_transition(array $order, string $captureId, int $now): array

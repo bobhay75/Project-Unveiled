@@ -10,6 +10,7 @@ try {
     if (isset($_SESSION['order_id'])) {
         $current = bc_session_order($config);
         if ($current['state'] === 'paid') bc_success($current);
+        bc_page('Your saved study-bundle checkout', $notice . bc_existing_checkout_content($current, (string)$_SESSION['csrf'], time()));
     }
     bc_page('Project Unveiled complete study bundle', $notice . '<p>Get the owner-approved illustrated ebook, timeline, Deep Study Guide, and No More Milk advanced theology kit in one ZIP download. Extract the ZIP to read the PDFs and open the timeline on your own device.</p><p><strong>$7 USD · one-time purchase · no subscription</strong></p><p>Approve the purchase securely with PayPal, return here, then confirm payment to unlock your download. Card details are handled by PayPal, not this website.</p><form action="start.php" method="post"><input type="hidden" name="csrf" value="' . bc_h((string)$_SESSION['csrf']) . '"><button type="submit">Continue to PayPal — $7 USD</button></form><p class="small">After verified payment, your download is available in this browser session for 24 hours, with up to 10 download attempts. Save it to your device. If delivery fails, contact purchase support using your PayPal receipt.</p><p><a href="/book/">Read online before buying</a></p>');
 } catch (Throwable $error) {

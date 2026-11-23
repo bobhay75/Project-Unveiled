@@ -19,14 +19,6 @@ try {
             // The authoritative GET below determines whether delivery is allowed.
         }
     }
-    $remote = bc_api($config, 'GET', '/v2/checkout/orders/' . $order['paypal_order_id']);
-    $captureId = bc_validate_paid_order($remote, $order, $config['merchant_id']);
-    $paid = bc_store($config['private_dir'], static function (array &$ledger) use ($order, $captureId): array {
-        foreach ($ledger['orders'] as $id => $existing) {
-            if ($id !== $order['id'] && ($existing['capture_id'] ?? null) === $captureId) bc_fail('This payment has already been allocated.', 409);
-        }
-        $ledger['orders'][$order['id']] = bc_paid_transition($ledger['orders'][$order['id']], $captureId, time());
-        return $ledger['orders'][$order['id']];
-    });
+    $paid = bc_reconcile_order($config, $order);
     bc_success($paid);
 } catch (Throwable $error) { bc_error($error); }

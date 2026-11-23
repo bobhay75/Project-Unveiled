@@ -137,6 +137,7 @@ services/services.css
 sitemap.xml
 store/checkout/.htaccess
 store/checkout/capture.php
+store/checkout/check.php
 store/checkout/config.example.php
 store/checkout/download.php
 store/checkout/index.php
