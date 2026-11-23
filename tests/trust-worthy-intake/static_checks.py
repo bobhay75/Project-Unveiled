@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Source-level intake contract checks that run even when PHP CLI is absent."""
 
+import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -8,6 +9,10 @@ HELPER = (ROOT / "truth/lib/intake.php").read_text(encoding="utf-8")
 QUESTION = (ROOT / "truth/question-submit.php").read_text(encoding="utf-8")
 CHALLENGE = (ROOT / "truth/challenge-submit.php").read_text(encoding="utf-8")
 CASE = (ROOT / "truth/case-000002.php").read_text(encoding="utf-8")
+RESURRECTION_CASE = (ROOT / "truth/case-000005.php").read_text(encoding="utf-8")
+RESURRECTION_REGISTRY = json.loads(
+    (ROOT / "truth/cases/TW-CLAIM-000005.json").read_text(encoding="utf-8")
+)
 QUESTION_RECEIPT = (ROOT / "truth/question-received.php").read_text(encoding="utf-8")
 CHALLENGE_RECEIPT = (ROOT / "truth/challenge-received.php").read_text(encoding="utf-8")
 PRIVACY = (ROOT / "privacy.html").read_text(encoding="utf-8")
@@ -99,6 +104,10 @@ for endpoint in (QUESTION, CHALLENGE):
 assert "tw_intake_assert_known_case($caseId)" in CHALLENGE, "nonexistent case IDs are not rejected"
 assert "'opinion'" in CHALLENGE, "Bobinated Opinion form value is not accepted"
 assert '<option value="opinion">Bobinated Opinion</option>' in CASE, "opinion challenge option disappeared"
+assert "$intakeCaseId = 'TW-CLAIM-000005'" in RESURRECTION_CASE, "resurrection challenge uses an unregistered intake ID"
+assert 'name="case_id" value="<?php echo $intakeCaseId; ?>"' in RESURRECTION_CASE, "resurrection challenge does not submit its intake ID"
+assert RESURRECTION_REGISTRY["case_id"] == "TW-CLAIM-000005", "resurrection registry ID is inconsistent"
+assert RESURRECTION_REGISTRY["public_url"].endswith("/truth/case-000005.php"), "resurrection registry URL is inconsistent"
 assert "tw_intake_enforce_post_request(65536)" in QUESTION, "question body cap changed unexpectedly"
 assert "tw_intake_enforce_post_request(114688)" in CHALLENGE, "challenge body cap changed unexpectedly"
 for route, limit in (("question-submit.php", "65536"), ("challenge-submit.php", "114688")):
@@ -107,6 +116,7 @@ for route, limit in (("question-submit.php", "65536"), ("challenge-submit.php", 
 
 privacy_anchor = '/privacy.html#truth-intake-privacy'
 assert privacy_anchor in CASE, "challenge form does not link to the intake privacy notice"
+assert privacy_anchor in RESURRECTION_CASE, "resurrection challenge form does not link to the intake privacy notice"
 assert privacy_anchor in QUESTION_RECEIPT, "question receipt does not link to the intake privacy notice"
 assert privacy_anchor in CHALLENGE_RECEIPT, "challenge receipt does not link to the intake privacy notice"
 for disclosure in (

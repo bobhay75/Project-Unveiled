@@ -69,6 +69,7 @@ RewriteRule ^truth/(?:index\.php|today\.php|deep-dive\.php|case-00000[1-4]\.php|
 # through Apache routing, so denying their public URLs cannot break callers.
 RewriteRule ^truth/lib(?:/|$) - [F,L,NC]
 RewriteRule ^project-unveiled-analytics/lib\.php$ - [F,L,NC]
+RewriteRule ^store/checkout/(?:lib|config\.example)\.php$ - [F,L,NC]
 
 # Block old installer payloads and test application folders while leaving the live site alone.
 RewriteRule ^(?:_pu_[^/]+|pu-signup-v73|truth-unveiled-os-0\.0\.1)(?:/|$) - [F,L,NC]
@@ -99,6 +100,9 @@ RewriteRule (^|/)[^/]*BACKUP[^/]*\.html$ - [F,L,NC]
     # The lab declares a stricter route-specific policy with approved research
     # providers. Avoid intersecting it with this broader public-site policy.
     SetEnvIf Request_URI "^/truth/lab(?:/|$)" PU_LAB_SCOPE=1
+    # Checkout owns a stricter policy. Its entry/start policies permit only
+    # approved PayPal redirects after the same-origin checkout form POST.
+    SetEnvIf Request_URI "^/store/checkout(?:/|$)" PU_LAB_SCOPE=1
     Header always set Content-Security-Policy "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; frame-src 'none'; form-action 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self'; media-src 'self' blob:; worker-src 'self' blob:; manifest-src 'self'; upgrade-insecure-requests" env=!PU_LAB_SCOPE
   </IfModule>
 </IfModule>

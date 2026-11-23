@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Enter Project Unveiled’s Living Story. Follow three illustrated investigations, choose your next question, and return to the book and its sources.">
+  <meta name="theme-color" content="#15110e">
+  <link rel="canonical" href="https://bobsome1.com/living-story/">
+  <title>The Living Story | Project Unveiled</title>
+  <link rel="stylesheet" href="/living-story/style.css">
+  <script defer src="/living-story/app.js"></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to the story</a>
+<header>
+  <a class="logo" href="/">PROJECT <span>UNVEILED</span></a>
+  <div class="header-actions"><a href="/book/read/">Read the book</a><button id="restart" hidden>Begin again</button><button id="logout" hidden>End private preview</button></div>
+</header>
+<main id="main">
+  <section id="home">
+    <p class="eyebrow">THE LIVING STORY · INTERACTIVE INVESTIGATION</p>
+    <h1>Truth is not afraid<br>of <em>questions.</em></h1>
+    <p class="intro">Step into the story. Follow the Way, examine the reach of empire, or open the manuscript trail. Choose the questions you are willing to ask.</p>
+    <p class="notice">An imaginative companion to Project Unveiled. Scenes and illustrations are reconstructions; the book and its sources remain open for inspection.</p>
+    <form id="story-form" class="form">
+      <label for="path">WHERE DOES YOUR INVESTIGATION BEGIN?</label>
+      <select id="path">
+        <option value="way">The Way Before the Machine</option>
+        <option value="empire">Empire and Institution</option>
+        <option value="manuscripts">The Manuscript Trail</option>
+      </select>
+      <div id="character-field" hidden><label for="character">WHO ARE YOU IN THE STORY?</label><input id="character" maxlength="300" value="A curious present-day investigator carrying a weathered notebook"></div>
+      <button class="primary" id="begin" type="submit">Enter the sample story</button>
+      <button class="secondary" id="resume" type="button" hidden>Continue your saved sample</button>
+      <p id="mode-note" class="small">The sample uses prepared scenes and existing illustrations. No account or AI charges.</p>
+    </form>
+    <details id="preview-access" hidden>
+      <summary>Private AI preview</summary>
+      <form id="access-form" class="form">
+        <p>Preview access lets you generate new scenes and ask your own questions. Your text is sent to OpenAI to create the story and illustration. Please leave out sensitive personal information.</p>
+        <label for="access-code">PREVIEW CODE</label><input id="access-code" type="password" autocomplete="current-password" maxlength="200" required>
+        <button class="primary" type="submit">Open private preview</button>
+      </form>
+    </details>
+  </section>
+  <section id="reader" hidden aria-labelledby="scene-title">
+    <p class="eyebrow" id="chapter"></p>
+    <h2 id="scene-title" tabindex="-1"></h2>
+    <figure class="art"><img id="image" alt="Imaginative historical illustration; not a documentary record" width="1536" height="1024" hidden><div id="noimage" hidden>Illustration unavailable. Your investigation continues below.</div></figure>
+    <p class="scene" id="scene"></p>
+    <p class="disclosure" id="source-note"></p>
+    <aside class="sources" aria-label="Related reading"><strong>Keep the evidence open</strong><ul id="sources"></ul><p>These links provide reading context, not proof of every detail in the dramatization.</p></aside>
+    <h3>Where will you investigate next?</h3>
+    <div id="choices"></div>
+    <form id="question-form" hidden><label for="custom">OR ASK YOUR OWN QUESTION</label><div class="custom"><input id="custom" maxlength="400" placeholder="What evidence supports that claim?" required><button type="submit">Continue</button></div></form>
+  </section>
+  <section id="loading" hidden role="status" aria-live="polite"><div class="spark" aria-hidden="true">✦</div><h2>The story is unfolding…</h2><p id="progress">Preparing your scene and illustration. This can take a minute.</p></section>
+  <p id="error" role="alert" hidden></p>
+</main>
+<footer><a href="/">bobsome1.com</a> · <a href="/book/read/">Read Project Unveiled</a> · <a href="/book/research.html">Research standards</a> · <a href="/privacy.html#living-story">Privacy</a><p>Historical scenes are dramatizations, not documentary records.</p></footer>
+</body>
+</html>
