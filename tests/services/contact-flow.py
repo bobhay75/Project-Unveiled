@@ -92,6 +92,22 @@ with tempfile.TemporaryDirectory(prefix='bobsome1-contact-') as temporary:
         status, headers, _ = request(data=brief(), headers={'Accept': 'text/html'})
         assert status == 303 and headers['Location'] == '/services/contact-received.html'
 
+        assert request(data=brief(offer='partnership', problem='short'))[0] == 422
+        assert request(data=brief(offer='partnership', win=''))[0] == 422
+        sponsor = brief(offer='partnership', business='Synthetic evidence file',
+                        problem='Our lab offers loan equipment.',
+                        win='A documented <comparison>.', deadline='End of the trial',
+                        cost='Should not be stored on a partnership inquiry')
+        status, headers, body = request(data=sponsor)
+        assert status == 200 and json.loads(body) == {'ok': True, 'offer': 'partnership'}
+        assert headers['Cache-Control'].startswith('no-store')
+        record = json.loads(queue.read_text())[-1]
+        assert record['offer'] == 'partnership' and record['business'] == sponsor['business']
+        assert all(record[key] == sponsor[key] for key in ('problem', 'win', 'deadline'))
+        assert record['cost'] == ''
+        status, headers, _ = request(data=sponsor, headers={'Accept': 'text/html'})
+        assert status == 303 and headers['Location'] == '/services/contact-received.html?offer=partnership'
+
         status, _, body = request('/owner/leads.php', 'GET')
         assert status == 403 and 'visitor@example.invalid' not in body
         assert request('/owner/leads.php', 'GET', headers={'Authorization': 'Basic ZmFrZTpmYWtl',
@@ -100,12 +116,16 @@ with tempfile.TemporaryDirectory(prefix='bobsome1-contact-') as temporary:
         status, headers, body = request('/owner/leads.php', 'GET', headers=auth)
         assert status == 200 and 'visitor@example.invalid' in body
         assert '$250 Visibility Starter' in body and 'scope request only' in body
+        assert 'Partnership or sponsorship' in body and 'not payment or approval' in body
+        assert 'Contribution' in body and 'Expected return' in body and 'End of the trial' in body
+        assert 'A documented &lt;comparison&gt;.' in body
+        assert 'Should not be stored' not in body
         assert '<script>alert(1)</script>' not in body and '&lt;script&gt;alert(1)&lt;/script&gt;' in body
         assert headers['Cache-Control'].startswith('no-store')
         assert headers['X-Robots-Tag'] == 'noindex, nofollow, noarchive'
         assert request('/owner/leads.php', 'POST', headers=auth)[0] == 405
 
-        for _ in range(3):
+        for _ in range(1):
             assert request(data=brief())[0] == 200
         before = queue.read_bytes()
         status, headers, body = request(data=brief())
@@ -134,7 +154,7 @@ with tempfile.TemporaryDirectory(prefix='bobsome1-contact-') as temporary:
         assert request(data=brief())[0] == 500
         assert request('/owner/leads.php', 'GET', headers=auth)[0] == 503
         assert hashlib.sha256(target.read_bytes()).hexdigest() == digest
-        print('Service contact flow passed: save/redirect, JSON errors, origin/method/body/URL guards, '
+        print('Service contact flow passed: generic/Starter/partnership save and receipts, JSON errors, origin/method/body/URL guards, '
               'rate limits, private permissions, owner auth, escaped output, retention, corrupt/symlink storage.')
     finally:
         server.terminate()

@@ -13,21 +13,36 @@ function boot(search = '', existingProblem = '') {
   const windowEvents = {};
   const starterEvents = {};
   const contactSection = { scrollIntoView() { this.scrolled = true; } };
-  const contactTitle = { focus() { this.focused = true; } };
-  const problem = { value: existingProblem };
+  const contactTitle = { textContent: 'What needs to work better?', focus() { this.focused = true; } };
+  const nodes = { contact: contactSection, 'contact-title': contactTitle,
+    'contact-eyebrow': {textContent: 'Bring us the bottleneck'},
+    'contact-intro': {textContent: 'Ordinary introduction'},
+    'contact-business-label': {textContent: 'Business or project'},
+    'contact-problem-label': {textContent: 'What needs fixing?'},
+    'contact-win-label': {textContent: 'What result do you need?'},
+    'contact-optional-title': {textContent: 'Add a website, deadline or impact estimate (optional)'},
+    'contact-submit-label': {textContent: 'Request a next step'},
+    'service-next-steps': {hidden: false}, 'partner-next-steps': {hidden: true},
+    'contact-cost-field': {hidden: false} };
+  const problem = { value: existingProblem, placeholder: 'Ordinary problem' };
+  const business = { placeholder: 'Ordinary business' };
+  const win = { placeholder: 'Ordinary result' };
+  const cost = { disabled: false };
   const opened = { value: '' };
   const status = { textContent: '', focus() { this.focused = true; } };
   const submit = { disabled: false };
   const offer = { hidden: true };
+  const partnershipOffer = { hidden: true };
   const offerField = { value: '' };
   const form = {
     action: '/services/contact-submit.php',
-    elements: { namedItem: name => name === 'problem' ? problem : null },
+    elements: { namedItem: name => ({ problem, business, win, cost })[name] ?? null },
     querySelector: selector => ({
       '[data-opened-at]': opened,
       '[data-contact-status]': status,
       'button[type="submit"]': submit,
       '[data-selected-offer]': offer,
+      '[data-partnership-offer]': partnershipOffer,
       '[data-selected-offer-id]': offerField,
     })[selector] || null,
     addEventListener: (name, callback) => { events[name] = callback; },
@@ -41,9 +56,9 @@ function boot(search = '', existingProblem = '') {
   let responseFactory = async () => ({ ok: true, status: 200, json: async () => ({ ok: true }) });
   vm.runInNewContext(source, {
     document: {
-      querySelector: () => form,
+      querySelector: selector => selector === '[data-services-intake]' ? form : null,
       querySelectorAll: () => [{ addEventListener: (name, callback) => { starterEvents[name] = callback; } }],
-      getElementById: id => ({ contact: contactSection, 'contact-title': contactTitle })[id],
+      getElementById: id => nodes[id],
     },
     window: {
       location: { search, assign: path => assigned.push(path) },
@@ -55,7 +70,7 @@ function boot(search = '', existingProblem = '') {
   });
   return {
     form, problem, opened, status, submit, offer, offerField, events, windowEvents, assigned, requests,
-    starterEvents, contactSection, contactTitle,
+    starterEvents, contactSection, contactTitle, nodes, cost, partnershipOffer,
     setResponseFactory(factory) { responseFactory = factory; },
   };
 }
@@ -74,6 +89,35 @@ for (const query of ['', '?offer=unknown', '?offer=%3Cscript%3Ealert(1)%3C%2Fscr
   assert.equal(app.offerField.value, '', 'Only the allowlisted offer may enter the submitted offer field');
   assert.equal(app.problem.value, '', 'Untrusted query text must never enter the brief');
 }
+app = boot('?offer=partnership', 'Preserve sponsor contribution');
+assert.equal(app.offer.hidden, true);
+assert.equal(app.partnershipOffer.hidden, false);
+assert.equal(app.offerField.value, 'partnership');
+assert.equal(app.cost.disabled, true);
+assert.equal(app.nodes['contact-cost-field'].hidden, true);
+assert.equal(app.nodes['service-next-steps'].hidden, true);
+assert.match(app.nodes['contact-business-label'].textContent, /Which project/);
+assert.match(app.nodes['contact-problem-label'].textContent, /contribute/);
+assert.match(app.nodes['contact-win-label'].textContent, /return/);
+assert.match(app.nodes['contact-optional-title'].textContent, /deadline/);
+app.setResponseFactory(async () => ({ ok: true, status: 200, json: async () => ({ ok: true, offer: 'partnership' }) }));
+await app.events.submit(event());
+assert.deepEqual(app.assigned, ['/services/contact-received.html?offer=partnership']);
+assert.equal(app.requests[0][1].body.get('offer'), 'partnership');
+app.starterEvents.click({ button: 0, preventDefault() {} });
+assert.equal(app.offerField.value, 'visibility-starter');
+assert.equal(app.problem.value, 'Preserve sponsor contribution');
+assert.equal(app.cost.disabled, false);
+assert.equal(app.partnershipOffer.hidden, true);
+assert.equal(app.nodes['contact-problem-label'].textContent, 'What needs fixing?');
+const receipt = { hidden: true };
+const receiptNodes = { 'receipt-eyebrow': {}, 'received-title': {}, 'service-receipt-details': {} };
+const receiptDocument = { querySelector: selector => selector === '[data-partnership-receipt]' ? receipt : null, getElementById: id => receiptNodes[id] };
+vm.runInNewContext(source, { document: receiptDocument, window: { location: { search: '?offer=partnership' } }, URLSearchParams });
+assert.equal(receipt.hidden, false);
+assert.equal(receiptNodes['service-receipt-details'].hidden, true);
+assert.match(receiptDocument.title, /Partnership inquiry/);
+
 app = boot('?offer=visibility-starter', 'Existing visitor note');
 assert.equal(app.problem.value, 'Existing visitor note', 'Prefill must not overwrite restored input');
 app = boot('', 'My partially written brief');
@@ -154,7 +198,7 @@ for (const control of required) {
   assert(id && services.includes(`for="${id}"`), 'Every required control needs an explicit label');
 }
 assert.match(services, /data-contact-status[^>]*role="status"[^>]*aria-live="polite"/);
-assert.match(services, /<details class="contact-optional"><summary>/);
+assert.match(services, /<details class="contact-optional"><summary id="contact-optional-title">/);
 assert.match(services, /name="email" type="email" autocomplete="email" inputmode="email"/);
 assert.match(services, /type="hidden" name="offer" value="" data-selected-offer-id/);
 assert(!/<a\b[^>]*href="https?:\/\/[^"\s]*paypal/i.test(services), 'Services must request scope before payment');
@@ -162,6 +206,7 @@ assert(!/<a\b[^>]*href="https?:\/\/[^"\s]*paypal/i.test(store), 'Store must use 
 assert.equal((store.match(/href="\/store\/checkout\/index.php"/g) || []).length, 1);
 assert.equal((store.match(/href="\/services\/\?offer=visibility-starter#contact"/g) || []).length, 1);
 assert.match(services, /href="\/services\/\?offer=visibility-starter#contact"/);
+assert.match(store, /href="\/services\/\?offer=partnership#contact" data-pu-event="partner_inquiry_click"/);
 assert.match(store, /Digital edition · \$7/);
 for (const component of ["Illustrated ebook", "Illustrated timeline", "Deep Study Guide", "No More Milk"]) assert.ok(store.includes(component));
 assert.match(store, /Four components in one ZIP download/);

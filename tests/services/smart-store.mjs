@@ -123,9 +123,9 @@ const expectedActions = {
   truth: ['/truth/'],
   visibility: ['/services/?offer=visibility-starter#contact'],
   bottleneck: ['/services/#contact', '/services/'],
-  sponsor: ['/services/#contact'],
-  technology: ['/services/#contact'],
-  local: ['/services/#contact'],
+  sponsor: ['/services/?offer=partnership#contact'],
+  technology: ['/services/?offer=partnership#contact'],
+  local: ['/services/?offer=partnership#contact'],
 };
 for (const button of app.walkthroughButtons) {
   const flow = button.dataset.walkthrough;
@@ -158,6 +158,7 @@ for (const button of app.walkthroughButtons) {
   assert(!/href="https?:\/\/[^"\s]*paypal/i.test(final.innerHTML), `${flow}: cannot bypass guarded checkout or scope approval`);
   if (flow === 'book') assert.match(final.innerHTML, /data-pu-event="product_checkout_click"/);
   if (flow === 'visibility') assert.match(final.innerHTML, /data-pu-event="qualified_lead_click"/);
+  if (['sponsor', 'technology', 'local'].includes(flow)) assert.match(final.innerHTML, /data-pu-event="partner_inquiry_click"/);
   app.nodes['.close'].click();
   assert.equal(app.dialog.open, false);
   assert.equal(app.focused, button, `${flow}: Close restores initiating control focus`);
