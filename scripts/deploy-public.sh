@@ -19,7 +19,7 @@ public_manifest="$repo_root/deployment/public-files.txt"
 is_public_path() {
   local candidate_lower="${1,,}"
   case "$candidate_lower" in
-    .git|.git/*|.github|.github/*|deployment|deployment/*|docs|docs/*|scripts|scripts/*|tests|tests/*|__pycache__|__pycache__/*|*/__pycache__|*/__pycache__/*)
+    oois/field-mapper|oois/field-mapper/*|.git|.git/*|.github|.github/*|deployment|deployment/*|docs|docs/*|scripts|scripts/*|tests|tests/*|__pycache__|__pycache__/*|*/__pycache__|*/__pycache__/*)
       return 1
       ;;
     site-private|site-private/*|*/site-private|*/site-private/*)
