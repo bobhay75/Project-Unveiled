@@ -19,6 +19,7 @@ if command -v php >/dev/null 2>&1; then
   php tests/trust-worthy-lab/prosper-authorization.php
   python3 tests/trust-worthy-lab/prosper-authorization-http.py
   php tests/trust-worthy-public/backend-hardening.php
+  php tests/trust-worthy-public/provider-errors.php
   php tests/trust-worthy-intake/intake-storage.php
   bash tests/trust-worthy-intake/request-gate.sh
   php tests/trust-worthy-daily/hardening.php
