@@ -82,6 +82,8 @@ node tests/services/conversion-flow.mjs
 node tests/services/smart-store.mjs
 python3 tests/services/contact-flow.py
 php tests/commerce/backend.php
+python3 tests/commerce/recovery-http.py
+node tests/commerce/recovery-layout.mjs /tmp/bundle-checkout-review
 bash tests/trust-worthy-lab/run_all.sh
 ```
 
@@ -232,6 +234,29 @@ through the guarded process. Register each removed public checkout file in
 an old whole-site snapshot. Preserve the service-intake work and private leads.
 
 ## Known limits
+
+### Interrupted payment recovery
+
+Reloading the checkout now shows the saved order rather than a new-purchase
+prompt. `check.php` accepts a same-origin, CSRF-protected POST and reads that
+order and its current capture from PayPal; it cannot create or capture a payment. Amount, currency,
+merchant, completed capture, original bundle identity, and duplicate-allocation
+checks still apply before delivery. A delayed response cannot revive a blocked
+order or extend a download grant. Provider checks are spaced at least five
+seconds apart in the checkout session.
+
+An unexpired interrupted capture also offers an explicitly labelled retry of
+the original payment confirmation, using its original idempotency key. Expired
+orders offer read-only reconciliation only. A timeout or unverified payment
+keeps the original ledger unchanged and links back to the saved checkout;
+it never starts a replacement purchase. A lost browser session still requires
+purchase support with the PayPal receipt.
+
+The HTTP suite runs the actual PHP routes against synthetic private bundles
+and a temporary test-only transport, with `curl_exec` disabled. It covers
+refresh, lost capture results, expired orders, refunds, provider failure,
+CSRF/origin/session rejection, private headers, and repeated checks. This does
+not replace configured PayPal sandbox or production-host acceptance.
 
 This version is a same-browser digital-bundle checkout, not a customer account
 system, email fulfillment service, subscription platform or automated service

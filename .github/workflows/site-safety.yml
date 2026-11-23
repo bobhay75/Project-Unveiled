@@ -105,6 +105,21 @@ jobs:
       - name: Test verified-bundle payment and private delivery controls
         run: php tests/commerce/backend.php
 
+      - name: Verify interrupted bundle payment recovery over HTTP
+        run: python3 tests/commerce/recovery-http.py
+
+      - name: Review saved bundle checkout layout and controls
+        run: node tests/commerce/recovery-layout.mjs "$RUNNER_TEMP/bundle-checkout-review"
+
+      - name: Preserve synthetic bundle checkout review
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: bundle-checkout-review-${{ github.run_id }}
+          path: ${{ runner.temp }}/bundle-checkout-review
+          if-no-files-found: warn
+          retention-days: 14
+
       - name: Validate Trust-Worthy release contract
         run: bash tests/trust-worthy-lab/run_all.sh
 
