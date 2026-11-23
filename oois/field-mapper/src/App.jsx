@@ -18,6 +18,7 @@ import { CONFIDENCE_LEVELS, TYPE_COLORS } from "./siteTypes.js";
 import {
   loadSites,
   loadRoutes,
+  readNotebookSnapshot,
   saveRoute,
   removeRoute,
   saveSite,
@@ -404,15 +405,16 @@ export default function App() {
           <button
             className="secondary"
             onClick={() =>
-              run(() =>
-                download("oois-field-records.json", {
+              run(async () => {
+                const snapshot = await readNotebookSnapshot();
+                await download("oois-field-records.json", {
                   project: "Ozark Occupation Intelligence System",
                   version: 2,
                   exportedAt: new Date().toISOString(),
-                  sites,
-                  routes,
-                }),
-              )
+                  ...snapshot,
+                });
+                setStatus("Private backup exported with the latest saved records, routes and exact locations. Keep it in a private folder.");
+              })
             }
           >
             Export backup

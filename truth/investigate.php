@@ -116,6 +116,12 @@ if($opened<1||$formAge<4||$formAge>7200) page('Try again','Please reload the pag
 [$validInput,$question,$context,$inputError]=tw_validate_trial_input($_POST['question']??null,$_POST['context']??'');
 if(!$validInput) page('Question needed',$inputError,422);
 
+// Optional Prosper permission check; no submitted question is sent to the gateway.
+require_once __DIR__ . '/lib/prosper-authorization.php';
+if (!tw_prosper_authorized()) {
+  page('Research engine unavailable','Investigation authorization is temporarily unavailable. Please try again later.',503);
+}
+
 $secret=tw_question_secret();
 if($secret==='') page('Research engine unavailable','Private research storage could not be secured. Please try again later.',503);
 try {

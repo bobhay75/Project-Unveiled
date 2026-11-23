@@ -129,6 +129,16 @@ const { chromium } = require("playwright"),
     await page.getByLabel("Search records").fill("second");
     assert.equal(await page.locator(".record").count(), 1);
     await page.getByLabel("Search records").fill("");
+    // Keep this page's state stale while another tab changes durable storage.
+    const editor = await context.newPage();
+    editor.on("dialog", (d) => d.accept());
+    await editor.goto("http://127.0.0.1:8790");
+    await editor.locator(".record").filter({ hasText: "second find" }).click();
+    await editor.getByRole("button", { name: "Edit", exact: true }).click();
+    await editor.getByLabel("Evidence notes").fill("Committed in the other tab before backup.");
+    await editor.getByRole("button", { name: "Save record", exact: true }).click();
+    await editor.locator(".panel .evidence").filter({ hasText: "Committed in the other tab" }).waitFor();
+    await editor.close();
     const dlp = page.waitForEvent("download");
     await page
       .getByRole("button", { name: "Export backup", exact: true })
@@ -136,6 +146,8 @@ const { chromium } = require("playwright"),
     const file = await (await dlp).path();
     const backup = JSON.parse(fs.readFileSync(file));
     assert.equal(backup.sites.length, 2);
+    assert.equal(backup.sites.find((site) => site.name.includes("second find")).notes,
+      "Committed in the other tab before backup.");
     assert.equal(backup.routes[0].name, "Test trail");
     assert.equal(backup.routes[0].points.length, 2);
     assert.deepEqual(backup.sites.find((site) => site.photos.length).categories, ["Rock Shelter", "Water Source"]);
@@ -227,7 +239,7 @@ const { chromium } = require("playwright"),
       });
     }
     console.log(
-      "OOIS browser checks passed: map entry, photos, persistence, edit, text injection, GPS, search, route save and restore, offline reload/save, deletion, cloud unavailable state, mobile layout, keyboard dialog.",
+      "OOIS browser checks passed: map entry, photos, persistence, edit, text injection, GPS, search, latest committed cross-tab backup, route save and restore, offline reload/save, deletion, cloud unavailable state, mobile layout, keyboard dialog.",
     );
   } finally {
     if (browser) await browser.close();

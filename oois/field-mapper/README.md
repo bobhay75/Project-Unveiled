@@ -1,14 +1,14 @@
 # OOIS Field Mapper
 
-A working private field notebook under the existing PR #35. The web application builds and runs locally. The selected release route is a dedicated OOIS Firebase project and Google Play internal testing first. It has not been deployed, provisioned in Firebase, production-signed, uploaded to Play, merged, or published.
+A private field notebook maintained in PR #35. The device-only web application builds as static files for cPanel and works without Firebase or a paid service. Optional cloud analysis and Google Play distribution have separate account and release requirements. This source checkout does not establish that the app is deployed or published; see `RELEASE-STATUS.md` and the current PR checks for verified progress.
 
 ## What works
 
 - Click/tap a map location, enter coordinates manually, or capture GPS.
 - Save, edit, search, filter and delete records with notes, tags, categories and owner-assigned review status.
 - Up to five compressed JPEG photo copies per record in IndexedDB. Originals stay separate. Saved records survive reloads; competing edits from another tab are rejected.
-- Versioned JSON export/import. Imports merge new IDs and retain existing local records. Up to 1,000 records and an 18 MB notebook ensure full backups fit the 20 MB import limit.
-- Offline application shell and record entry after the first online visit. External map tiles require connectivity. No tile prefetch/download feature.
+- Versioned JSON export/import. Each export reads a fresh, consistent snapshot of saved records and routes, including changes committed by another tab. Imports merge new IDs and retain existing local records. Up to 1,000 records and an 18 MB notebook ensure full backups fit the 20 MB import limit.
+- Offline application shell and record entry after the first online visit. Each installation keeps its own public-shell cache. Private, credential-bearing, and unrelated requests are excluded. External map tiles require connectivity. No tile prefetch/download feature.
 - Nearby records within one mile, measured by straight-line distance. These are comparison candidates, not evidence of a historical relationship.
 - A clearly labeled local documentation checklist based on note keywords. It does not analyze photographs or manufacture confidence scores.
 - An optional Gemini image-analysis function using the maintained Google GenAI SDK, real inline JPEG inputs, private Secret Manager binding, owner allowlist, daily request limit, schema-constrained output, bounded input/output, and fail-closed errors. The UI asks before sending notes/photos; exact coordinate fields and nearby records are excluded.
@@ -29,7 +29,7 @@ npm run build
 npm run preview
 ```
 
-For the browser workflow suite, install Playwright in the test environment and Chromium, then run `node tests/browser.cjs` from this directory. `ATLAS_TEST_CHROMIUM` can select an installed Chromium binary. The test creates an isolated local server/browser profile, uses synthetic records and blocks external tiles. It tests map entry, JPEG conversion, persistence, editing, text injection, GPS, search, backup restore, offline reload/save, deletion, unavailable-cloud messaging, mobile layout and dialog dismissal.
+For the browser workflow suite, install Playwright in the test environment and Chromium, then run `node tests/browser.cjs` from this directory. `ATLAS_TEST_CHROMIUM` can select an installed Chromium binary. The test creates an isolated local server/browser profile, uses synthetic records and blocks external tiles. It tests map entry, JPEG conversion, persistence, editing, text injection, GPS, search, saved routes, a backup made after another tab saves an edit, backup restore, offline reload/save, deletion, unavailable-cloud messaging, mobile layout and dialog dismissal. The pull-request workflow now runs this browser suite alongside the unit tests and dependency audit.
 
 For cloud access rules, use Java 21 and Node 22+, run `npm ci --ignore-scripts` then `npm test` in `tests/cloud/`. The isolated test dependencies are locked separately. This starts Firestore/Storage emulators for `demo-oois-tests` only, without a paid project, credentials, production data or real AI calls. It checks owner CRUD, account isolation, strict private-record schema, server-enforced revision increments, owner/quota administration restrictions, private photo access, upload bounds, overwrite denial and access revocation. The pull-request workflow runs the same suite.
 
@@ -37,9 +37,9 @@ For cloud access rules, use Java 21 and Node 22+, run `npm ci --ignore-scripts` 
 
 The repository’s public deploy script deliberately excludes `oois/field-mapper/` source, dependencies, secrets scaffolding and native project. It must not upload these files as a live application. The root `.htaccess` blocks source access and permits the built app’s scoped security headers at `/oois/app/`.
 
-After review and explicit deployment approval, place **the contents of `dist/` only** at `/home/bobsome1/public_html/oois/app/`, including the hidden `.htaccess`. The intended address is `https://bobsome1.com/oois/app/`; this is an intended deployment target, not a verified live URL. Keep the previous deployed build for rollback. Removing this folder disables the served build; an installed offline copy may continue on a device. Do not delete local/browser records or backups during rollback.
+Deploy **the contents of `dist/` only** at `/home/bobsome1/public_html/oois/app/`, including the hidden `.htaccess`. The intended address is `https://bobsome1.com/oois/app/`; verify this address and its runtime headers after upload. Keep the previous deployed build for rollback. Removing this folder disables the served build; an installed offline copy may continue on a device. Do not delete local/browser records or backups during rollback.
 
-The downloaded web-build ZIP contains no live credentials and has cloud features disabled. It can be hosted as static files and used immediately for the device notebook. To enable cloud features, configure the project and rebuild.
+The **OOIS-Web-Preview** workflow artifact contains the built web files, including `.htaccess`, with cloud features disabled and no live credentials. It can be hosted as static files and used immediately for the device notebook. To enable cloud features, configure the project and rebuild. A JSON notebook backup contains exact locations, notes, photos, videos and routes in plaintext; keep it private and do not include it in a deployed build.
 
 ## Cloud provisioning and release gates
 
@@ -70,7 +70,7 @@ A successful CI build is not physical-device verification. A signed release AAB,
 
 ## Validation and references
 
-The production web build and five data/geography tests pass. The browser workflow suite passes. Runtime dependencies reported zero known vulnerabilities in `npm audit --omit=dev` during the web build. This is not a security certification. Consult the current PR checks for emulator/native build results; live cloud/AI and physical Android behavior still require verification.
+On 2026-11-23, all 15 local data/geography and offline-worker tests passed, the production web build passed, and both web and function runtime dependencies reported zero known vulnerabilities in `npm audit --omit=dev`. A targeted `@grpc/grpc-js` override replaces Firebase's vulnerable transitive version with 1.13.7. The worker tests cover separate installation caches, private-response rejection, anonymous precaching, request exclusions and offline asset failures. Consult the current PR checks for browser, emulator and native build results; live cloud/AI and physical Android behavior still require verification. These checks are not a security certification.
 
 - Leaflet distribution and attribution: https://leafletjs.com/download.html
 - USGS topographic service: https://basemap.nationalmap.gov/arcgis/rest/services/USGSTopo/MapServer

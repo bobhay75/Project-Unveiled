@@ -3,6 +3,7 @@ import react from "@vitejs/plugin-react";
 import { writeFileSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { createHash } from "node:crypto";
+import { offlineWorkerSource } from "./scripts/offline-worker.mjs";
 export default defineConfig({
   base: "./",
   plugins: [
@@ -27,7 +28,7 @@ export default defineConfig({
           ),
         );
         // The generated worker caches only hashed build assets and public shell files.
-        const code = `const CACHE='oois-shell-${createHash('sha256').update(readFileSync(resolve('dist/asset-manifest.json'))).digest('hex').slice(0,12)}';self.addEventListener('install',e=>e.waitUntil(fetch('asset-manifest.json').then(r=>r.json()).then(files=>caches.open(CACHE).then(c=>c.addAll(files)))));self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('oois-shell-')&&k!==CACHE).map(k=>caches.delete(k))))));self.addEventListener('fetch',e=>{const u=new URL(e.request.url),scope=new URL(self.registration.scope);if(e.request.method!=='GET'||u.origin!==scope.origin||!u.pathname.startsWith(scope.pathname))return;const p=u.pathname.slice(scope.pathname.length);if(!['','index.html','manifest.webmanifest','privacy-policy.html','icon.svg','icon-192.png','icon-512.png'].includes(p)&&!/^assets\\/[^/]+\\.(js|css)$/.test(p))return;e.respondWith(fetch(e.request).then(r=>{if(r.ok){const copy=r.clone();caches.open(CACHE).then(c=>c.put(e.request,copy));}return r;}).catch(()=>caches.match(e.request).then(r=>r||caches.match('index.html'))));});`;
+        const code = offlineWorkerSource(createHash('sha256').update(readFileSync(resolve('dist/asset-manifest.json'))).digest('hex').slice(0,12));
         writeFileSync(resolve("dist/sw.js"), code);
       },
       generateBundle(_, bundle) {

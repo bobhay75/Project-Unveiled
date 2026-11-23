@@ -196,6 +196,7 @@ truth/lab/sitemap.xml
 truth/lab/status.json
 truth/lab/styles.css
 truth/lib/intake.php
+truth/lib/prosper-authorization.php
 truth/lib/trust-worthy-ai.php
 truth/question-received.php
 truth/question-submit.php

@@ -25,6 +25,22 @@ jobs:
         run: npm ci
       - name: Check field data and build
         run: npm test && npm run release:check -- --allow-cloud-disabled && npm run build
+      - name: Check runtime dependency advisories
+        run: npm audit --omit=dev --audit-level=moderate
+      - name: Install isolated browser test engine
+        run: |
+          npm install --no-save --no-package-lock playwright@1.62.1
+          npx playwright install --with-deps chromium
+      - name: Verify private notebook, latest backup and offline browser workflows
+        run: node tests/browser.cjs
+      - name: Save deployable device-only web build
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: OOIS-Web-Preview
+          path: oois/field-mapper/dist/
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 14
       - name: Check production function dependencies and syntax
         working-directory: oois/field-mapper/functions
         run: npm ci && npm audit --omit=dev --audit-level=moderate && node --check index.js

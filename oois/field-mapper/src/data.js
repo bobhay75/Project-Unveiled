@@ -136,6 +136,21 @@ async function loadStore(name) {
 export const loadSites = () => loadStore("sites");
 export const loadRoutes = () => loadStore("routes");
 
+// Read both stores in one transaction. Another tab may have committed changes
+// since React last refreshed; an export must include those durable records.
+export async function readNotebookSnapshot() {
+  const database = await db();
+  return new Promise((resolve, reject) => {
+    const transaction = database.transaction(["sites", "routes"], "readonly");
+    const sites = transaction.objectStore("sites").getAll();
+    const routes = transaction.objectStore("routes").getAll();
+    transaction.oncomplete = () => resolve({ sites: sites.result, routes: routes.result });
+    transaction.onabort = transaction.onerror = () => reject(
+      transaction.error || Error("Backup could not read device storage. Nothing was exported."),
+    );
+  });
+}
+
 async function mutate(fn, incomingRoutes) {
   const d = await db();
   return new Promise((resolve, reject) => {
