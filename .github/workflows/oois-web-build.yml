@@ -95,6 +95,15 @@ jobs:
       - name: Compile and lint native Android app
         working-directory: oois/field-mapper/android
         run: ./gradlew --no-daemon assembleDebug lintDebug
+      - name: Verify Android preview signature, identity and package integrity
+        working-directory: oois/field-mapper/android
+        run: |
+          apk=app/build/outputs/apk/debug/app-debug.apk
+          build_tools="$(find "$ANDROID_HOME/build-tools" -mindepth 1 -maxdepth 1 -type d | sort -V | tail -1)"
+          "$build_tools/apksigner" verify --verbose "$apk"
+          "$build_tools/aapt" dump badging "$apk" > "$RUNNER_TEMP/oois-badging.txt"
+          grep -F "package: name='com.bobsome1.oois.preview'" "$RUNNER_TEMP/oois-badging.txt"
+          unzip -tq "$apk"
       - name: Package test APK
         run: |
           mkdir -p preview-package
