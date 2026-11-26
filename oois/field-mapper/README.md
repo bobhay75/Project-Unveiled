@@ -1,6 +1,6 @@
 # OOIS Field Mapper
 
-A private field notebook maintained in PR #35. The device-only web application builds as static files for cPanel and works without Firebase or a paid service. Optional cloud analysis and Google Play distribution have separate account and release requirements. This source checkout does not establish that the app is deployed or published; see `RELEASE-STATUS.md` and the current PR checks for verified progress.
+A private field notebook merged into `main` from PR #35. The device-only web application builds as static files for cPanel and works without Firebase or a paid service. Optional cloud analysis and Google Play distribution have separate account and release requirements. This source checkout does not establish that the app is deployed or published; see `RELEASE-STATUS.md` and the current PR checks for verified progress.
 
 ## What works
 
@@ -66,7 +66,7 @@ The pull-request workflow uses JDK 21 and the Android SDK to compile a separate 
 
 After the dedicated Firebase project and owner-controlled upload key are configured, the manual **OOIS Signed Internal Bundle** workflow validates the exact project values, injects version metadata, builds and verifies a signed production AAB, and retains it as a private workflow artifact for 14 days. It does not upload to Play. Required GitHub variables, encrypted secrets, Play declarations and approval gates are listed in `PLAY-INTERNAL-TEST.md`.
 
-A successful CI build is not physical-device verification. A signed release AAB, GPS/photo/share tests on the Galaxy A17, internal testing, privacy/data-safety review, and Play Console submission remain release gates. No Play app, upload or release was attempted.
+A successful CI build is not physical-device verification. A signed release AAB, GPS/photo/share tests on the Pixel 7 Pro, internal testing, privacy/data-safety review, and Play Console submission remain release gates. No Play app, upload or release was attempted.
 
 ## Validation and references
 

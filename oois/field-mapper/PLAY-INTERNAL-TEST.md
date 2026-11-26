@@ -57,12 +57,12 @@ Run **OOIS Signed Internal Bundle** manually with version code `1` and version n
 
 1. Verify the owner's Play Console identity and create the app as **OOIS Field Mapper**, default language English (United States), app (not game), free, and package `com.bobsome1.oois`. The package becomes fixed after the first AAB upload.
 2. Enroll in Play App Signing and upload the signed AAB only after owner approval.
-3. Add the Galaxy A17 owner's Google account to an internal tester list. Confirm the existing public support/privacy address `thebobsomest1@gmail.com` for the Play listing, or replace it consistently in the policy and release check before building; do not expose the private Firebase sign-in password.
+3. Add the Pixel 7 Pro owner's Google account to an internal tester list. Confirm the existing public support/privacy address `thebobsomest1@gmail.com` for the Play listing, or replace it consistently in the policy and release check before building; do not expose the private Firebase sign-in password.
 4. Provide a public privacy-policy URL at `https://bobsome1.com/oois/app/privacy-policy.html` after the approved web build is live.
 5. Declare foreground precise/approximate location, user-selected photos, field notes and optional account email accurately in Data safety. They are used for app functionality, encrypted in transit when cloud features are chosen, not sold, and not used for advertising. Firebase/Google Cloud and Gemini act as service providers for the optional cloud paths.
 6. In **App access**, explain that the notebook works without sign-in. Supply the isolated reviewer account through Play Console—not in source, chat or store text—so reviewers can exercise private cloud and AI features without seeing primary-owner records.
 7. Complete content rating, target audience (not designed for children), ads declaration (no ads), store listing, app icon, phone screenshots and feature graphic.
-8. Install from the Play internal-test link on the Galaxy A17. Complete every item in `ANDROID-TESTING.md`, then export and preserve the evidence receipt and notebook backup.
+8. Install from the Play internal-test link on the Pixel 7 Pro. Complete every item in `ANDROID-TESTING.md`, then export and preserve the evidence receipt and notebook backup.
 
 ## Release blockers that remain owner-only
 
@@ -72,6 +72,6 @@ Run **OOIS Signed Internal Bundle** manually with version code `1` and version n
 - Gemini secret entry and the real authorized image receipt.
 - Upload-key creation, encrypted backup and GitHub secret entry.
 - Play Console app creation, declarations, listing assets and AAB upload.
-- Galaxy A17 physical test and Play pre-launch report review.
+- Pixel 7 Pro physical test and Play pre-launch report review.
 
 The PR must remain draft until the live verification receipt and Galaxy field-test evidence pass. Production publication still requires a later, separate approval after internal testing.

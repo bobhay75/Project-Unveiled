@@ -10,7 +10,7 @@ This APK is a device-only test build, not a Google Play release. Its app ID is `
 4. Edit the test record. Add another nearby record and confirm it appears as a comparison candidate. The local checklist does not analyze pictures or authenticate finds.
 5. Export a backup and save it through Android's share sheet. Import it into a browser notebook to confirm the record and photo transfer. Keep this backup outside the app before uninstalling or trying another build.
 6. Turn on airplane mode, reopen the app, and save another record. The notebook works offline; new map tiles do not.
-7. Check that the phone's status bar, camera cutout, keyboard and gesture bar do not cover buttons. Test portrait and landscape.
+7. On the **Pixel 7 Pro**, check that the status bar, centered camera cutout, keyboard and gesture-navigation bar do not cover buttons. Test portrait and landscape.
 
 The CI job compiles the APK and runs Android lint. These checks do not prove GPS, photo selection, file sharing or layout work on a physical phone; the steps above are still required.
 
@@ -24,7 +24,7 @@ The selected route is a dedicated **OOIS Field Mapper** Firebase project, `bobso
 
 After the dedicated Firebase project passes live verification and the owner approves the first Play upload, install the production package from the Play internal-test link rather than sideloading it. Use only synthetic records for this pass.
 
-1. Record the app version, Android version and Galaxy A17 model/build.
+1. Record the app version, Android version, **Pixel 7 Pro** model/build, and current Google Play system update.
 2. Confirm the installed package is **OOIS Field Mapper**, not **OOIS Field Preview**, and that Play Protect reports no issue.
 3. Repeat all seven device checks above. Also deny location once before granting it, background and resume the app during an unsaved entry, rotate while the editor and Cloud settings dialogs are open, and confirm no field or photo is silently lost.
 4. Sign in with the private owner account. Save, import and delete one synthetic cloud record with a photo. Confirm the non-owner denial test and one authorized Gemini image test already have a passing sanitized receipt.
@@ -34,4 +34,4 @@ After the dedicated Firebase project passes live verification and the owner appr
 
 Internal testing is the current milestone; no public release is authorized.
 
-Source and build checks: https://github.com/bobhay75/Project-Unveiled/pull/35
+Source and build history: https://github.com/bobhay75/Project-Unveiled/pull/35
