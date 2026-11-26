@@ -66,7 +66,7 @@ The pull-request workflow uses JDK 21 and the Android SDK to compile a separate 
 
 After the dedicated Firebase project and owner-controlled upload key are configured, the manual **OOIS Signed Internal Bundle** workflow validates the exact project values, injects version metadata, builds and verifies a signed production AAB, and retains it as a private workflow artifact for 14 days. It does not upload to Play. Required GitHub variables, encrypted secrets, Play declarations and approval gates are listed in `PLAY-INTERNAL-TEST.md`.
 
-A successful CI build is not physical-device verification. A signed release AAB, GPS/photo/share tests on the Galaxy A17, internal testing, privacy/data-safety review, and Play Console submission remain release gates. No Play app, upload or release was attempted.
+A successful CI build is not physical-device verification. A signed release AAB, GPS/photo/share tests on the Pixel 7 Pro, internal testing, privacy/data-safety review, and Play Console submission remain release gates. No Play app, upload or release was attempted.
 
 ## Validation and references
 
