@@ -85,6 +85,9 @@ jobs:
       - name: Validate public files and local links
         run: python3 scripts/validate_site.py
 
+      - name: Render the packaged sunrise artwork on mobile and desktop
+        run: python3 tests/deployment/sunrise-browser.py
+
       - name: Test Living Story source grounding and private preview controls
         run: |
           php tests/living-story/backend.php
