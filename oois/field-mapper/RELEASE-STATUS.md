@@ -1,6 +1,6 @@
 # OOIS Release Status
 
-Updated: 2026-11-23
+Updated: 2026-11-26
 
 ## Device-only release candidate
 
@@ -32,6 +32,6 @@ The static device-only notebook can be deployed as soon as hosting access is ava
 2. Configure owner/reviewer accounts, rules, CORS, the callable function and Gemini secret. Run the live verification harness and preserve its sanitized receipt.
 3. Create and back up the owner's Play upload key, configure the protected GitHub environment, and run the signed internal bundle workflow.
 4. Complete the real Play Console app identity, Data safety, App access, privacy and support details. No invented declarations or review credentials.
-5. Install the preview on the target Galaxy A17 and verify GPS, camera/media import, native backup sharing, airplane-mode use and recovery. For Play, upload to internal testing first and review its pre-launch report.
+5. Install the preview on the target Pixel 7 Pro and verify GPS, camera/media import, native backup sharing, airplane-mode use and recovery. For Play, upload to internal testing first and review its pre-launch report.
 
 External map tiles still require connectivity. The saved device notebook supports offline records and routes, but downloaded offline topo maps, terrain/history overlays, GPS track/pace recording and satellite-change analysis are not implemented. The separate God's Eye encrypted-registry prototype is not silently included or represented as satellite analysis.
