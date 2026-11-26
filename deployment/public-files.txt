@@ -77,6 +77,7 @@ images/chapter-12-body-alive.png
 images/chapter-12-body-alive.webp
 images/hosea-4-6.jpg
 images/open-your-eyes.jpg
+images/project-unveiled-sunrise.webp
 images/project-unveiled.jpg
 images/support-right-hand.jpg
 images/tear-the-veil.jpg
