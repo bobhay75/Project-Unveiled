@@ -1,10 +1,10 @@
 # OOIS Release Status
 
-Updated: 2026-11-23
+Updated: 2026-11-26
 
 ## Device-only release candidate
 
-The canonical implementation is `oois/field-mapper` in [PR #35](https://github.com/bobhay75/Project-Unveiled/pull/35). The web notebook and separate Android preview can operate without Firebase, Gemini, a paid backend or production credentials. Neither a successful build nor this document establishes a completed live deployment or store release.
+The canonical implementation is `oois/field-mapper` on `main`, merged from [PR #35](https://github.com/bobhay75/Project-Unveiled/pull/35). The web notebook and separate Android preview can operate without Firebase, Gemini, a paid backend or production credentials. Neither a successful build nor this document establishes a completed live deployment or store release.
 
 The latest source fixes exports to read records and routes directly from one IndexedDB transaction, so an open tab cannot back up an older in-memory copy after another tab saves. The offline worker isolates cache names and reads to the installed origin/path and current build. It excludes private responses, token-bearing URLs and non-shell requests; missing scripts do not receive an HTML fallback. A patched transitive gRPC dependency removes the four high advisory findings in the previous web lockfile.
 
@@ -32,6 +32,6 @@ The static device-only notebook can be deployed as soon as hosting access is ava
 2. Configure owner/reviewer accounts, rules, CORS, the callable function and Gemini secret. Run the live verification harness and preserve its sanitized receipt.
 3. Create and back up the owner's Play upload key, configure the protected GitHub environment, and run the signed internal bundle workflow.
 4. Complete the real Play Console app identity, Data safety, App access, privacy and support details. No invented declarations or review credentials.
-5. Install the preview on the target Galaxy A17 and verify GPS, camera/media import, native backup sharing, airplane-mode use and recovery. For Play, upload to internal testing first and review its pre-launch report.
+5. Install the preview on the target Pixel 7 Pro and verify GPS, camera/media import, native backup sharing, airplane-mode use and recovery. For Play, upload to internal testing first and review its pre-launch report.
 
 External map tiles still require connectivity. The saved device notebook supports offline records and routes, but downloaded offline topo maps, terrain/history overlays, GPS track/pace recording and satellite-change analysis are not implemented. The separate God's Eye encrypted-registry prototype is not silently included or represented as satellite analysis.
