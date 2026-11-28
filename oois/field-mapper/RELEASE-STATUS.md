@@ -15,7 +15,7 @@ Local verification on this date:
 - Web and function runtime dependency audits reported zero vulnerabilities.
 - Function JavaScript syntax and Git whitespace checks passed.
 
-The **OOIS Web Build** pull-request workflow runs the browser acceptance suite, Firestore/Storage isolation tests, Android preview APK compilation/lint, and unsigned production AAB compilation/lint. Use the checks for the exact current PR head as the evidence; older successful runs do not verify newer source changes.
+The **OOIS Web Build** workflow runs the browser acceptance suite, Firestore/Storage isolation tests, Android preview APK compilation/lint, and unsigned production AAB compilation/lint on relevant pull requests and merges to `main`. Use the successful run for the exact release commit. If the artifacts expire, run the workflow from `main` and verify that the resulting run is for the intended commit before using its artifacts.
 
 ## Deployable artifacts
 
