@@ -44,6 +44,7 @@ if command -v php >/dev/null 2>&1; then
   php tests/trust-worthy-public/guided-release.php
   python3 tests/trust-worthy-public/guided-http.py
   python3 tests/trust-worthy-public/paid-recovery-http.py
+  python3 tests/trust-worthy-public/public-cases-http.py
   php tests/trust-worthy-public/paid-funnel-contract.php
   php tests/trust-worthy-public/story-scout-contract.php
   php tests/trust-worthy-public/source-family.php
