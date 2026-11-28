@@ -15,6 +15,13 @@ Bobsome1.com is the public home of Project Unveiled by Robert J. Hayes.
 - Support Right Hand Ministry: https://bobsome1.com/book/read/support-right-hand.html
 - Privacy: https://bobsome1.com/privacy.html
 
+## Trust-Worthy evidence
+- Public cases and editorial context: https://bobsome1.com/truth/
+- OpenAPI for searching published claims and retrieving case records: https://bobsome1.com/truth/api/openapi.json
+- Public case catalog: https://bobsome1.com/truth/api/claims.php
+
+These are published, provisional case assessments. Cite the public case URL, ID, and version. A missing match only means the published catalog did not return a record.
+
 ## Content notes
 Project Unveiled is a complete public edition with 13 chapters and supporting appendices. It distinguishes documented history, interpretation, theological argument, and open questions. Corrections and stronger evidence are welcomed.
 

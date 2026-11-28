@@ -131,11 +131,11 @@ For theological questions, Trust-Worthy may separately ask:
 The analysis must disclose textual, translation, dating and interpretive disputes. It must never claim privileged access to God's mind.
 
 ## Machine-readable infrastructure
-Long-term objective: make the evidence graph usable by other AI systems.
+The public read-only API lets other AI systems discover published case records and retrieve their available evidence and revision history. After deployment, the OpenAPI document is available at `/truth/api/openapi.json`. `claim_lookup` searches or lists case summaries at `/truth/api/claims.php`. `case_get` retrieves the published JSON at `/truth/api/case.php?case_id=TW-CLAIM-000001`.
 
-Proposed API concepts:
-- `claim_lookup`
-- `case_get`
+Coverage is limited to the public `truth/cases/TW-CLAIM-*.json` catalog. Empty searches and unknown IDs provide no evidence about the claim. Cite the case's public URL, ID, and version, and carry forward its provisional status and uncertainty. Use public keywords in searches because URL queries can appear in access logs. Retrieval does not create an investigation or call the provider.
+
+Proposed API concepts for later work:
 - `evidence_search`
 - `source_lineage`
 - `challenge_submit`

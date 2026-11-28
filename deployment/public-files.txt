@@ -148,6 +148,9 @@ store/checkout/start.php
 store/index.html
 store/store.css
 store/store.js
+truth/api/case.php
+truth/api/claims.php
+truth/api/openapi.json
 truth/case-000001.php
 truth/case-000002.php
 truth/case-000003.php
@@ -209,6 +212,7 @@ truth/lab/status.json
 truth/lab/styles.css
 truth/lib/intake.php
 truth/lib/prosper-authorization.php
+truth/lib/public-cases.php
 truth/lib/trust-worthy-ai.php
 truth/lib/trust-worthy-deep-reuse-v1.php
 truth/lib/trust-worthy-deep.php

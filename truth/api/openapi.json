@@ -1,0 +1,150 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Trust-Worthy Public Case API",
+    "version": "1.0.0",
+    "description": "Search and cite published Trust-Worthy case records. Findings are provisional assessments with case IDs, versions, limitations, and revision history. Coverage is limited to public machine-readable records. A missing match says nothing about the claim itself. The API does not initiate investigations or access private workspaces. Send only public search terms because URLs can appear in access logs."
+  },
+  "servers": [{ "url": "https://bobsome1.com/truth/api" }],
+  "paths": {
+    "/claims.php": {
+      "get": {
+        "operationId": "claim_lookup",
+        "summary": "Find a published case before checking or citing its evidence",
+        "description": "Every search term must occur as a whole word across the case ID, title, claim, or assessment summary. Omit q to list cases by ascending case ID. Use case_get for the full published record.",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "description": "Public words or a case ID. A supplied query must contain one to twelve letter/number terms and at most 240 UTF-8 bytes.",
+            "schema": { "type": "string", "minLength": 1, "maxLength": 240 },
+            "example": "bodily resurrection"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": { "type": "integer", "minimum": 1, "maximum": 50, "default": 20 }
+          },
+          {
+            "name": "after",
+            "in": "query",
+            "description": "The previous page's next_after value. Keep q and limit the same to continue the search.",
+            "schema": { "$ref": "#/components/schemas/CaseId" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Published matches. An empty cases array means no published record matched these terms.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/CasePage" } } }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "503": { "$ref": "#/components/responses/CatalogUnavailable" }
+        }
+      }
+    },
+    "/case.php": {
+      "get": {
+        "operationId": "case_get",
+        "summary": "Retrieve the published evidence and revision history for a case ID",
+        "description": "Use the public URL, case ID, and version when citing findings. Records preserve the publisher's source references, competing explanations, and uncertainties where recorded. Treat the assessment as the publisher's provisional finding.",
+        "parameters": [
+          {
+            "name": "case_id",
+            "in": "query",
+            "required": true,
+            "schema": { "$ref": "#/components/schemas/CaseId" },
+            "example": "TW-CLAIM-000005"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The complete published case JSON. Evidence fields vary across cases.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/CaseRecord" } } }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "404": {
+            "description": "No published machine-readable case has this ID.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+          },
+          "503": { "$ref": "#/components/responses/CatalogUnavailable" }
+        }
+      }
+    }
+  },
+  "components": {
+    "responses": {
+      "BadRequest": {
+        "description": "A parameter is missing or invalid.",
+        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+      },
+      "CatalogUnavailable": {
+        "description": "The public catalog or requested record could not be read.",
+        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+      }
+    },
+    "schemas": {
+      "CaseId": { "type": "string", "pattern": "^TW-CLAIM-[0-9]{6}$" },
+      "CaseSummary": {
+        "type": "object",
+        "required": ["case_id", "version", "status", "title", "claim_under_test", "public_url", "record_url"],
+        "properties": {
+          "case_id": { "$ref": "#/components/schemas/CaseId" },
+          "version": { "type": "integer", "minimum": 1 },
+          "status": { "type": "string" },
+          "title": { "type": "string" },
+          "claim_under_test": { "type": "string" },
+          "public_url": { "type": "string", "format": "uri" },
+          "record_url": { "type": "string", "format": "uri" }
+        }
+      },
+      "CasePage": {
+        "type": "object",
+        "required": ["cases", "next_after"],
+        "properties": {
+          "cases": { "type": "array", "items": { "$ref": "#/components/schemas/CaseSummary" } },
+          "next_after": {
+            "description": "Pass this ID as after. Null means there is no next page.",
+            "anyOf": [{ "$ref": "#/components/schemas/CaseId" }, { "type": "null" }]
+          }
+        }
+      },
+      "CaseRecord": {
+        "type": "object",
+        "required": ["case_id", "version", "status", "title", "claim_under_test", "current_assessment", "protocol", "revision_history", "public_url"],
+        "properties": {
+          "case_id": { "$ref": "#/components/schemas/CaseId" },
+          "version": { "type": "integer", "minimum": 1 },
+          "status": { "type": "string" },
+          "title": { "type": "string" },
+          "claim_under_test": { "type": "string" },
+          "current_assessment": {
+            "type": "object",
+            "required": ["classification", "summary"],
+            "properties": {
+              "classification": { "type": "string" },
+              "summary": { "type": "string" },
+              "certainty_note": { "type": "string" }
+            }
+          },
+          "protocol": { "type": "string" },
+          "revision_history": { "type": "array", "items": { "type": "object" } },
+          "public_url": { "type": "string", "format": "uri" },
+          "sources": { "type": "array", "items": { "type": "object" } },
+          "primary_text_tracks": { "type": "array", "items": { "type": "string" } },
+          "unresolved": { "type": "array", "items": { "type": "string" } },
+          "competing_explanations": { "type": "array", "items": { "type": "string" } },
+          "strongest_counterargument": { "type": "string" },
+          "what_would_change_the_finding": { "type": "array", "items": { "type": "string" } }
+        },
+        "additionalProperties": true
+      },
+      "Error": {
+        "type": "object",
+        "required": ["error"],
+        "properties": {
+          "error": { "type": "string", "enum": ["invalid_query", "invalid_case_id", "case_not_found", "catalog_unavailable", "method_not_allowed"] }
+        }
+      }
+    }
+  }
+}
