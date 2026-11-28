@@ -12,11 +12,11 @@ Runtime requirement: select PHP 8.1 or newer for `bobsome1.com` in cPanel MultiP
 2. Confirm the working tree is clean with `git status --short`.
 3. Use cPanel Git Version Control → **Deploy HEAD Commit**.
 4. Confirm the deployment log contains both `Retired-path cleanup passed` and `Tracked public-file sync completed without broad deletion`.
-5. Confirm the site remains on HTTPS and test the reader, timeline, research pages, and signup.
+5. Run `python3 scripts/verify-live-public.py` from the exact released checkout and confirm the public pages match. Test signup and the protected owner sign-in separately.
 
 ## Guarded public-file sync
 
-`.cpanel.yml` delegates to `scripts/deploy-public.sh`. The script accepts only `/home/bobsome1/public_html`, requires a clean production checkout with no tracked differences or untracked files, verifies `deployment/public-files.txt` against the Git-tracked tree, and then copies only that exact public allowlist with fixed directory and file permissions. It rejects an incomplete or extra manifest entry, an internal/private path, an untracked path, a symlinked deployment root, and any other production destination. This binds the copied working-tree bytes to the HEAD commit cPanel reports as deployed.
+`.cpanel.yml` delegates to `scripts/deploy-public.sh`. The script accepts only `/home/bobsome1/public_html`, requires a clean production checkout with no tracked differences or untracked files, verifies `deployment/public-files.txt` against the Git-tracked tree, and then copies only that exact public allowlist with fixed directory and file permissions. It rejects an incomplete or extra manifest entry, an internal/private path, an untracked path, a symlinked deployment root, and any other production destination. Rsync compares file checksums so stale files with matching sizes and timestamps are replaced. This binds the copied working-tree bytes to the HEAD commit cPanel reports as deployed.
 
 Broad `rsync --delete` is intentionally disabled because `public_html` can contain runtime data and separately managed applications. Files removed or renamed in Git are instead deleted through the exact allowlist in `deployment/retired-public-paths.txt`:
 

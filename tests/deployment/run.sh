@@ -38,9 +38,21 @@ test ! -e "$deploy_root/docs"
 test ! -e "$deploy_root/scripts"
 test ! -e "$deploy_root/tests"
 
-# A second run is idempotent and still preserves files outside this repository.
+# An older file with the same size and mtime must still be replaced.
+python3 - "$deploy_root/index.html" <<'PY'
+import os
+import sys
+from pathlib import Path
+
+page = Path(sys.argv[1])
+original = page.stat()
+data = page.read_bytes()
+page.write_bytes(bytes([data[0] ^ 1]) + data[1:])
+os.utime(page, ns=(original.st_atime_ns, original.st_mtime_ns))
+PY
 PROJECT_UNVEILED_DEPLOY_TEST_MODE=1 \
   /bin/bash scripts/deploy-public.sh "$deploy_root"
+cmp -s index.html "$deploy_root/index.html"
 test -f "$deploy_root/unmanaged-app/keep.txt"
 
 # Traversal and attempts to retire a current repository file must fail closed.
