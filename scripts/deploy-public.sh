@@ -161,6 +161,7 @@ fi
 
 /usr/bin/rsync \
   -rlt \
+  --checksum \
   --files-from="$public_manifest" \
   --no-implied-dirs \
   --prune-empty-dirs \
